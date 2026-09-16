@@ -162,9 +162,24 @@ Anything that still reaches the arena is swept once a second, in two passes:
 - `ActorManager.allActors` — chests (`Treasure`) and loose items, which are
   Actors rather than Entities so the first pass misses them.
 
+Only five things derive from `Entity` — `Hero`, `Summon`, `Monster`,
+`PropEntity` and `MockEntity` — so the entity pass covers everything a hero
+could legally auto-attack except other players. Summons are judged by ownership
+rather than skipped outright: a monster's summon outlives the monster being
+destroyed, stays hostile, and is a perfectly good auto-attack target with
+nothing obvious on screen. Players' own summons survive.
+
 Items are matched through `IItem`, which also covers a hero's own equipped
 skills — so only genuinely unclaimed ones are taken: `handOwner`, `owner` and
 `tempOwner` must all be empty. Getting that wrong would strip the players' kits.
+
+### Diagnosing phantom targets
+
+If a hero auto-attacks with nothing visible, `arena_scan` lists every entity in
+the room with the facts that decide targeting — type, owner, relation, active
+state, and any untargetable/invisible/invulnerable flags — split into what a
+hero could attack and what it could not. It mirrors `AbilityTargetValidator`'s
+own logic, so whatever it marks ATTACKABLE is what is drawing fire.
 
 Heroes, summons and rifts are left alone throughout, and `Destroy()` is used
 rather than `Kill()` so nothing drops rewards or opens the exit rift.
@@ -295,7 +310,8 @@ Host only, three ways, all the same settings:
   for the rest of the options.
 - **Console** (Developer Mode, F1): `arena`, `arena_on`, `arena_off`,
   `arena_mode <FreeForAll|TwoTeams|Peaceful>`, `arena_room <Room_...>`,
-  `arena_revive <seconds>`, `arena_start`, `arena_purge`, `arena_status`.
+  `arena_revive <seconds>`, `arena_start`, `arena_purge`, `arena_scan`,
+  `arena_status`.
 - **Mod manager** — the Config button, for persisted defaults.
 
 The in-lobby window generates its widgets from `DreamArenaConfig` via

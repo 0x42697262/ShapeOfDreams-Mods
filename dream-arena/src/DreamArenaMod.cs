@@ -231,6 +231,12 @@ public class DreamArenaMod : ModBehaviour
 		ArenaStage.StartFight(config);
 	}
 
+	[ConsoleCommand("List everything in this room a hero could attack", "arena_scan")]
+	public void Cmd_ArenaScan()
+	{
+		ArenaDiagnostics.ReportTargets();
+	}
+
 	[ConsoleCommand("Sweep all monsters, props and pickups from this room", "arena_purge")]
 	public void Cmd_ArenaPurge()
 	{

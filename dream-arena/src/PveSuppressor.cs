@@ -139,18 +139,40 @@ internal static class PveSuppressor
 	}
 
 	/// <summary>
-	/// PvE content is monsters (bosses included, since <c>BossMonster</c>
-	/// derives from <c>Monster</c>) and props such as stones, wells and
-	/// merchants.
+	/// PvE content: monsters (bosses included, since <c>BossMonster</c> derives
+	/// from <c>Monster</c>), props such as stones and merchants, and any summon
+	/// that does not belong to a player.
 	/// </summary>
+	/// <remarks>
+	/// Only five things derive from <c>Entity</c> — <c>Hero</c>, <c>Summon</c>,
+	/// <c>Monster</c>, <c>PropEntity</c> and <c>MockEntity</c> — so this covers
+	/// everything a hero could legally auto-attack except other players.
+	///
+	/// Summons need the ownership test rather than a blanket skip: a monster's
+	/// summon outlives the monster being destroyed, stays hostile, and is a
+	/// perfectly good auto-attack target even when there is nothing obvious on
+	/// screen. Players' own summons must survive.
+	/// </remarks>
 	private static bool IsPve(Entity entity)
 	{
-		if (entity is Hero || entity is Summon)
+		if (entity is Hero)
 		{
 			return false;
 		}
 
+		if (entity is Summon)
+		{
+			return !IsOwnedByPlayer(entity);
+		}
+
 		return entity is Monster || entity is PropEntity;
+	}
+
+	/// <summary>True when a human player owns this entity.</summary>
+	private static bool IsOwnedByPlayer(Entity entity)
+	{
+		DewPlayer owner = entity.owner;
+		return owner != null && owner.isHumanPlayer;
 	}
 
 	public static void Reset()
