@@ -17,8 +17,6 @@ internal static class ArenaRules
 
 	private const float NormalMonsters = 1f;
 
-	private const string PureDreamModifier = "RoomMod_PureDream";
-
 	/// <summary>
 	/// Pushes the current config onto the live <see cref="GameManager"/>.
 	/// Safe to call repeatedly; it is how the rules are re-asserted after a
@@ -45,7 +43,8 @@ internal static class ArenaRules
 		game.isGameOverEnabled = !(active && config.neverEndRun);
 
 		// maxSpawnedPopulation and GetAdjustedMonsterSpawnPopulation both
-		// multiply by this, so zero empties the arena.
+		// multiply by this, so zero empties the arena. It is also what keeps
+		// the boss from appearing in a boss room.
 		game.maxAndSpawnedPopulationMultiplier =
 			(active && config.suppressMonsters) ? NoMonsters : NormalMonsters;
 
@@ -78,23 +77,32 @@ internal static class ArenaRules
 	}
 
 	/// <summary>
-	/// Tags the current room with the Pure White Dream modifier for the white
-	/// arena look.
+	/// Redirects every node the players can travel to into the arena room.
 	/// </summary>
 	/// <remarks>
-	/// <c>RoomMod_PureDream</c> is a <c>RoomModifierBase</c> prefab resolved by
-	/// short type name from <c>ModifierData.type</c>. Its <c>roomOverride</c>
-	/// is blank, so it decorates the room rather than swapping it, and it
-	/// spawns no boss.
+	/// <c>WorldNodeData</c> carries both a <c>room</c> and a
+	/// <c>roomOverride</c>; travel loads the override when it is set
+	/// (<c>ZoneManager</c>: <c>IsNullOrEmpty(roomOverride) ? room : roomOverride</c>).
+	/// <c>SetRoomOverride</c> is a public server method that writes it back
+	/// into the <c>nodes</c> SyncList, so the change replicates and unmodded
+	/// clients load the same room.
 	///
-	/// This is the least certain part of the mod: world generation is
-	/// involved and applying a modifier after a node already loaded may not
-	/// retroactively decorate it. Failures are logged, never thrown.
+	/// The current node is deliberately skipped: the game itself warns that
+	/// overriding the room you are standing in is "prone to bugs". So the
+	/// players start in the normal first room and land in the arena on their
+	/// first travel.
 	/// </remarks>
-	public static void TryApplyPureWhiteDream()
+	public static void ApplyArenaRoom(DreamArenaConfig config)
 	{
-		if (!NetworkServer.active)
+		if (!NetworkServer.active || config == null
+		    || !config.arenaEnabled || !config.forceArenaRoom)
 		{
+			return;
+		}
+
+		if (string.IsNullOrEmpty(config.arenaRoom))
+		{
+			Debug.LogWarning($"{ModIdentity.LogPrefix}no arena room configured; skipping.");
 			return;
 		}
 
@@ -106,27 +114,31 @@ internal static class ArenaRules
 				return;
 			}
 
-			// WorldNodeData is a struct, so this is a copy — but `modifiers` is a
-			// List reference, so adding to it still reaches the real node.
-			WorldNodeData node = zones.currentNode;
-			if (node.modifiers == null)
+			int changed = 0;
+
+			for (int i = 0; i < zones.nodes.Count; i++)
 			{
-				Debug.LogWarning($"{ModIdentity.LogPrefix}current node has no modifier list; " +
-				                 "skipping pure white dream.");
-				return;
+				if (i == zones.currentNodeIndex)
+				{
+					continue;
+				}
+
+				if (zones.nodes[i].roomOverride == config.arenaRoom)
+				{
+					continue;
+				}
+
+				zones.SetRoomOverride(i, config.arenaRoom);
+				changed++;
 			}
 
-			if (node.HasModifier(PureDreamModifier))
-			{
-				return;
-			}
-
-			node.modifiers.Add(new ModifierData(PureDreamModifier));
-			Debug.Log($"{ModIdentity.LogPrefix}applied {PureDreamModifier} to the current room.");
+			Debug.Log($"{ModIdentity.LogPrefix}arena room '{config.arenaRoom}' applied to " +
+			          $"{changed} node(s). Travel to any node to enter it.");
 		}
 		catch (Exception e)
 		{
-			Debug.LogWarning($"{ModIdentity.LogPrefix}could not apply {PureDreamModifier}: {e.Message}");
+			Debug.LogWarning($"{ModIdentity.LogPrefix}could not apply arena room " +
+			                 $"'{config.arenaRoom}': {e.Message}");
 		}
 	}
 }

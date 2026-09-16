@@ -22,6 +22,8 @@ public class DreamArenaMod : ModBehaviour
 
 	public static DreamArenaMod Instance { get; private set; }
 
+	private readonly ReviveController _revives = new ReviveController();
+
 	/// <summary>True while the run should be prevented from concluding.</summary>
 	public static bool ShouldBlockRunEnd =>
 		Instance != null && Instance.config.arenaEnabled && Instance.config.neverEndRun;
@@ -90,14 +92,17 @@ public class DreamArenaMod : ModBehaviour
 			return;
 		}
 
+		_revives.Reset();
 		ApplyNow();
 
-		if (config.arenaEnabled && config.pureWhiteDream)
-		{
-			// Deferred: the first room is not decorated yet on the frame the
-			// manager starts.
-			Dew.CallDelayed(ArenaRules.TryApplyPureWhiteDream);
-		}
+		// Deferred: the world is not generated yet on the frame the manager starts.
+		Dew.CallDelayed(() => ArenaRules.ApplyArenaRoom(config));
+	}
+
+	/// <summary>Drives the revive timers. Runs on the host only.</summary>
+	private void Update()
+	{
+		_revives.Tick(Time.deltaTime, config);
 	}
 
 	private void OnRosterChanged(DewPlayer _)
@@ -117,6 +122,7 @@ public class DreamArenaMod : ModBehaviour
 		}
 
 		ArenaRules.Apply(config);
+		ArenaRules.ApplyArenaRoom(config);
 		RelationController.Apply(config.arenaEnabled ? config.teamMode : TeamMode.Peaceful);
 	}
 
@@ -136,7 +142,8 @@ public class DreamArenaMod : ModBehaviour
 
 		Debug.Log($"{ModIdentity.LogPrefix}config applied: arena={config.arenaEnabled}, " +
 		          $"mode={config.teamMode}, neverEnd={config.neverEndRun}, " +
-		          $"noMonsters={config.suppressMonsters}, white={config.pureWhiteDream}");
+		          $"noMonsters={config.suppressMonsters}, room={config.arenaRoom}, " +
+		          $"revive={config.autoReviveSeconds}s@{config.reviveHealthPercent}%");
 	}
 
 	// ---- console commands (host, developer mode: F1) ----
@@ -184,8 +191,23 @@ public class DreamArenaMod : ModBehaviour
 
 		Debug.Log($"{ModIdentity.LogPrefix}arena={config.arenaEnabled} mode={config.teamMode} " +
 		          $"neverEnd={config.neverEndRun} noMonsters={config.suppressMonsters} " +
-		          $"white={config.pureWhiteDream} | server={NetworkServer.active} " +
+		          $"room={config.arenaRoom} revive={config.autoReviveSeconds}s " +
+		          $"| server={NetworkServer.active} " +
 		          $"players={RelationController.GetHumanPlayers().Count} " +
 		          $"gameOverEnabled={(game != null ? game.isGameOverEnabled.ToString() : "n/a")}");
+	}
+
+	[ConsoleCommand("Set the arena room, e.g. Room_Primus_Boss_0", "arena_room")]
+	public void Cmd_ArenaRoom(string room)
+	{
+		config.arenaRoom = room;
+		ApplyAndPersist();
+	}
+
+	[ConsoleCommand("Set auto-revive delay in seconds, 0 to disable", "arena_revive")]
+	public void Cmd_ArenaRevive(int seconds)
+	{
+		config.autoReviveSeconds = Mathf.Max(0, seconds);
+		ApplyAndPersist();
 	}
 }

@@ -1,8 +1,8 @@
 Host-only PvP arena for friendly matches.
 
-Turns on player-versus-player combat, empties the arena of monsters, and keeps
-the run going when players are knocked out. Free-for-all by default, with a
-two-team mode.
+Turns on player-versus-player combat, empties the arena of monsters, drops you
+into the Lone King's Zenith, and revives knocked-out players so a match keeps
+going. Free-for-all by default, with a two-team mode.
 
 ONLY THE HOST NEEDS THIS MOD. Everything is enforced server-side, so your
 friends can join and fight with nothing installed.

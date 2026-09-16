@@ -48,8 +48,9 @@ every change is written to both sides.
 | Arena mode | master switch | — |
 | Team mode | FreeForAll / TwoTeams / Peaceful | `enemies` / `allies` SyncLists |
 | Never end the run | players can die, run continues | prefix blocking `GameManager.WrapUpAndShowResult` |
-| No monsters | empty arena | `maxAndSpawnedPopulationMultiplier = 0` |
-| Pure white dream | white arena look, no boss | `RoomMod_PureDream` on the current node |
+| No monsters | empty arena, no boss | `maxAndSpawnedPopulationMultiplier = 0` |
+| Force arena room | every travel lands in the arena | `ZoneManager.SetRoomOverride` |
+| Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
 
 `WrapUpAndShowResult` is the single funnel every run-ending path goes through
 (`CheckGameOver`, `ConcludePureWhiteDream`, `ConcludeUnknownFate`), which is why
@@ -58,13 +59,51 @@ stops the all-knocked-out countdown. Both are applied.
 
 Win conditions are deliberately absent. This build just holds the game open.
 
+### The arena
+
+Default is **the Lone King's Zenith** — `Room_Primus_Boss_0`. Confirmed from the
+scene file `level149`, which contains `Special_TheLoneKingsZenith` (the room
+announcer string), `Room_Primus_Boss_0` (the room), `Mon_Primus_BossPrimusAeron`
+(the Lone King himself) and `Room_BossArena` (the arena-area marker).
+
+`WorldNodeData` carries both a `room` and a `roomOverride`, and travel loads the
+override when set:
+
+```csharp
+string sceneName = string.IsNullOrEmpty(nodes[s.to].roomOverride)
+    ? nodes[s.to].room
+    : nodes[s.to].roomOverride;
+```
+
+`SetRoomOverride(nodeIndex, room)` is a public server method that writes back
+into the `nodes` SyncList, so the change replicates and unmodded clients load
+the same room.
+
+Two reasons no boss appears: the node keeps its original **type** (only the room
+asset changes, so no `ExitBoss` encounter is triggered), and the population
+multiplier is zero anyway. Travel to a normal node rather than the zone's own
+boss node.
+
+The current node is skipped deliberately — the game itself warns that
+overriding the room you are standing in is "prone to bugs". So players start in
+the normal first room and reach the arena on their first travel.
+
+### Revive
+
+Knocked-out heroes never recover on their own, and this mod blocks the run from
+ending, so without revives a free-for-all stops after one death each.
+`Se_HeroKnockedOut.Revive(float)` sets health and destroys the effect; it is
+found via `hero.Status.GetStatusEffect<Se_HeroKnockedOut>()`. Default is 10
+seconds at 100% health, both configurable.
+
 ## Configuring it
 
 Host only, three ways, all the same settings:
 
 - **In lobby** — a "Dream Arena" button is injected into the lobby settings panel.
 - **Console** (Developer Mode, F1): `arena`, `arena_on`, `arena_off`,
-  `arena_mode <FreeForAll|TwoTeams|Peaceful>`, `arena_status`.
+  `arena_mode <FreeForAll|TwoTeams|Peaceful>`, `arena_room <Room_...>`,
+  `arena_revive <seconds>`, `arena_status`.
 - **Mod manager** — the Config button, for persisted defaults.
 
 The in-lobby window generates its widgets from `DreamArenaConfig` via
@@ -83,7 +122,8 @@ src/
   DreamArenaConfig.cs     settings (ModConfig; also drives the lobby window)
   TeamMode.cs             FreeForAll / TwoTeams / Peaceful
   RelationController.cs   the PvP core: writes the relation SyncLists
-  ArenaRules.cs           no game over, no monsters, pure white dream
+  ArenaRules.cs           no game over, no monsters, arena room override
+  ReviveController.cs     auto-revive timers for knocked-out players
   ArenaConfigWindow.cs    host's in-lobby settings window
   InjectedUi.cs           teardown for live reload
   ModIdentity.cs          names stamped on created objects
@@ -114,6 +154,8 @@ so editing here is what the compiler and game both see.
 ```
 [DreamArena] FreeForAll applied to N players (M hostile pairs).
 [DreamArena] rules applied: gameOverEnabled=False, populationMultiplier=0
+[DreamArena] arena room 'Room_Primus_Boss_0' applied to N node(s).
+[DreamArena] revived <hero> at 100% health.
 ```
 
 Nameplates turning hostile on an unmodded client is the signal that the
@@ -129,16 +171,15 @@ Confidence, highest first:
   from the decompiled source; the values are plain server-side state.
 - **Lobby button injection** — defensive and logged; if the lobby layout differs
   it logs a warning and the `arena` console command still works.
-- **Pure white dream** — least certain. `RoomMod_PureDream` is a
-  `RoomModifierBase` prefab with a blank `roomOverride`, so it should decorate
-  the room without swapping it or spawning a boss. But applying a modifier to a
-  node that already loaded may not decorate retroactively. Failures are caught
-  and logged, never thrown.
+- **Arena room + revive** — both use public server APIs (`SetRoomOverride`,
+  `Revive`) that the game calls itself, but the timing is unproven: the room
+  override is applied one frame after the game manager starts, and revive runs
+  off a per-frame scan of `ActorManager.allHeroes`.
 
 Known gaps, for the next pass:
 
-- **No revive.** A knocked-out player stays down. `Se_HeroKnockedOut.Revive(float)`
-  is the entry point; the open question is locating that effect on a hero.
+- **Travelling to the zone's own boss node** would still stage that boss fight.
+  Use a normal node.
 - **Quests untouched.** Not wired up, per the brief. Quest code does react to
   knockouts, so odd log entries are possible.
 - **Teams are join-order based** (even/odd index). No picker yet.

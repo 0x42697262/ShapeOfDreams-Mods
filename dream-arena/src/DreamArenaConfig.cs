@@ -29,13 +29,28 @@ public class DreamArenaConfig : ModConfig
 	public bool neverEndRun = true;
 
 	[LabelText("No monsters")]
-	[Description("Sets the monster population budget to zero so the arena stays empty.")]
+	[Description("Sets the monster population budget to zero so the arena stays empty. " +
+	             "This is also what keeps the boss from showing up.")]
 	public bool suppressMonsters = true;
 
-	[LabelText("Pure white dream")]
-	[Description("Applies the RoomMod_PureDream room modifier for the white arena look. " +
-	             "Cosmetic; no boss is spawned by this.")]
-	public bool pureWhiteDream = true;
+	[LabelText("Force arena room")]
+	[Description("Redirects every room you travel to into the arena room below.")]
+	public bool forceArenaRoom = true;
+
+	[LabelText("Arena room")]
+	[Description("Room asset name. Default is the Lone King's Zenith, the Primus boss arena. " +
+	             "Others: Room_Ink_Boss_0, Room_Despair_Boss_0, Room_Sky_Boss_0, " +
+	             "Room_Forest_Boss_0, Room_LavaLand_Boss_0, Room_DarkCave_Boss_0, " +
+	             "Room_SnowMountain_Boss_0.")]
+	public string arenaRoom = "Room_Primus_Boss_0";
+
+	[LabelText("Auto revive seconds")]
+	[Description("Seconds a knocked-out player waits before being revived. 0 disables it.")]
+	public int autoReviveSeconds = 10;
+
+	[LabelText("Revive health percent")]
+	[Description("Health to revive with, as a percentage of maximum.")]
+	public int reviveHealthPercent = 100;
 
 	/// <summary>Copies the live values onto another instance without replacing the object.</summary>
 	public void CopyValuesTo(DreamArenaConfig other)
@@ -49,6 +64,9 @@ public class DreamArenaConfig : ModConfig
 		other.teamMode = teamMode;
 		other.neverEndRun = neverEndRun;
 		other.suppressMonsters = suppressMonsters;
-		other.pureWhiteDream = pureWhiteDream;
+		other.forceArenaRoom = forceArenaRoom;
+		other.arenaRoom = arenaRoom;
+		other.autoReviveSeconds = autoReviveSeconds;
+		other.reviveHealthPercent = reviveHealthPercent;
 	}
 }
