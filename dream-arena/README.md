@@ -90,6 +90,20 @@ The current node is skipped deliberately — the game itself warns that
 overriding the room you are standing in is "prone to bugs". So players start in
 the normal first room and reach the arena on their first travel.
 
+### Choosing PvP
+
+PvP is a mode, not a checkbox. `UI_Lobby_DifficultyGroup.Start` builds the row
+by instantiating one `UI_Lobby_DifficultyItem` per entry in its `difficulties`
+list, so a postfix adds one more from the same prefab.
+
+The extra item borrows a real difficulty's visuals and is tinted red.
+`UI_DifficultyIcon.Setup` resolves its sprite through
+`DewResources.GetByName<DewDifficultySettings>(type)`, so an invented type would
+fail to load. A prefix on `UI_Lobby_DifficultyItem.Click` intercepts the PvP
+item and toggles arena mode instead of writing an unknown value into
+`GameSettingsManager.difficulty`; clicking any real difficulty turns PvP back
+off, keeping the choices mutually exclusive.
+
 ### Starting a match
 
 A boss room has two states. You arrive in an antechamber, and when every hero
@@ -151,7 +165,11 @@ seconds at 100% health, both configurable.
 
 Host only, three ways, all the same settings:
 
-- **In lobby** — a "Dream Arena" button is injected into the lobby settings panel.
+- **Difficulty row** — PvP appears as an extra option next to Normal, Nightmare
+  and Limbo. Picking it turns arena mode on; picking a real difficulty turns it
+  off. This is the intended way in.
+- **In lobby** — a "Dream Arena" button is injected into the lobby settings panel
+  for the rest of the options.
 - **Console** (Developer Mode, F1): `arena`, `arena_on`, `arena_off`,
   `arena_mode <FreeForAll|TwoTeams|Peaceful>`, `arena_room <Room_...>`,
   `arena_revive <seconds>`, `arena_start`, `arena_nuke_boss`, `arena_give`,
@@ -184,6 +202,8 @@ src/
   ModIdentity.cs          names stamped on created objects
   Patches/
     DejavuPatches.cs      banks picks, expands the déjà vu spawn
+    GameModePatch.cs      PvP option in the lobby difficulty row
+    WorldGenPatch.cs      applies the arena room once the world exists
     GameEndPatch.cs       blocks WrapUpAndShowResult
     LobbySettingsPatch.cs injects the lobby button
 ```

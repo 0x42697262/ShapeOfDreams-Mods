@@ -229,6 +229,14 @@
       <HintPath>$(GameManagedDir)\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(GameManagedDir)\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityUIExtensions">
+      <HintPath>$(GameManagedDir)\UnityUIExtensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.XR.LegacyInputHelpers">
       <HintPath>$(GameManagedDir)\UnityEngine.XR.LegacyInputHelpers.dll</HintPath>
       <Private>False</Private>

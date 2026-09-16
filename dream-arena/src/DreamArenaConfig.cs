@@ -14,8 +14,9 @@ namespace DreamArena;
 /// </remarks>
 public class DreamArenaConfig : ModConfig
 {
-	[LabelText("Arena mode")]
-	[Description("Master switch. When off, this mod does nothing and the run plays normally.")]
+	[LabelText("PvP mode")]
+	[Description("Normally chosen with the PvP icon in the lobby's difficulty row, " +
+	             "next to Normal and Limbo. Shown here as a fallback.")]
 	public bool arenaEnabled = false;
 
 	[LabelText("Team mode")]
