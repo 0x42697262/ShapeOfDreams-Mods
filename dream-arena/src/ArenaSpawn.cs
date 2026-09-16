@@ -5,8 +5,13 @@ using UnityEngine;
 namespace DreamArena;
 
 /// <summary>
-/// Places players around the arena and shields them briefly at round start.
+/// Places players around the arena so a round does not open with everyone
+/// stacked in one spot.
 /// </summary>
+/// <remarks>
+/// No spawn immunity is granted: players arrive from the safety of the camp,
+/// so the round only becomes hostile once they are already through the rift.
+/// </remarks>
 internal static class ArenaSpawn
 {
 	/// <summary>Fallback ring size when the arena does not declare one.</summary>
@@ -15,7 +20,7 @@ internal static class ArenaSpawn
 	/// <summary>Keeps players off the arena's very edge.</summary>
 	private const float RadiusUsage = 0.75f;
 
-	public static void SpreadAndProtect(DreamArenaConfig config)
+	public static void PlaceHeroes(DreamArenaConfig config)
 	{
 		if (!NetworkServer.active || config == null)
 		{
@@ -45,11 +50,6 @@ internal static class ArenaSpawn
 		if (config.spreadSpawns)
 		{
 			Spread(heroes);
-		}
-
-		if (config.spawnProtectionSeconds > 0f)
-		{
-			Protect(heroes, actors, config.spawnProtectionSeconds);
 		}
 	}
 
@@ -125,24 +125,4 @@ internal static class ArenaSpawn
 		return true;
 	}
 
-	/// <summary>
-	/// Grants a short immunity so nobody is hit, or auto-attacks, before
-	/// everyone has landed.
-	/// </summary>
-	private static void Protect(List<Hero> heroes, ActorManager actors, float seconds)
-	{
-		Actor server = actors.serverActor;
-		if (server == null)
-		{
-			return;
-		}
-
-		foreach (Hero hero in heroes)
-		{
-			server.CreateBasicEffect(hero, new InvulnerableEffect(), seconds);
-		}
-
-		Debug.Log($"{ModIdentity.LogPrefix}granted {seconds:0.#}s spawn protection " +
-		          $"to {heroes.Count} players.");
-	}
 }

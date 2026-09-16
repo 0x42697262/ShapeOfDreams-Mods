@@ -31,23 +31,17 @@ internal static class CutscenePatch
 }
 
 /// <summary>
-/// Spreads players around the arena and gives them a moment before they can be
-/// hit.
+/// Spreads players around the arena as they arrive.
 /// </summary>
 /// <remarks>
 /// <para>
 /// Stock <c>TeleportAllHeroes</c> drops everyone in a tight line, which for PvP
-/// means the round opens with auto-attacks already in range. This runs after it
+/// means everyone lands stacked together. This runs after it
 /// and repositions the heroes evenly around the arena instead.
 /// </para>
 /// <para>
 /// Patching the teleporter rather than the caller covers both routes into the
 /// arena: walking onto the entry trigger, and the <c>arena_start</c> command.
-/// </para>
-/// <para>
-/// The grace period is an <c>InvulnerableEffect</c> created through
-/// <c>ActorManager.serverActor</c>, the same way the game grants temporary
-/// immunity after a revive.
 /// </para>
 /// </remarks>
 [HarmonyPatch(typeof(DewHeroesTeleporter), "TeleportAllHeroes")]
@@ -62,6 +56,6 @@ internal static class ArenaSpawnPatch
 			return;
 		}
 
-		ArenaSpawn.SpreadAndProtect(mod.config);
+		ArenaSpawn.PlaceHeroes(mod.config);
 	}
 }

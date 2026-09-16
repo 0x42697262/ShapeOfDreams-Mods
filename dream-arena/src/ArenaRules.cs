@@ -87,10 +87,13 @@ internal static class ArenaRules
 	/// into the <c>nodes</c> SyncList, so the change replicates and unmodded
 	/// clients load the same room.
 	///
-	/// The current node is deliberately skipped: the game itself warns that
-	/// overriding the room you are standing in is "prone to bugs". So the
-	/// players start in the normal first room and land in the arena on their
-	/// first travel.
+	/// The Start node is deliberately left alone. World generation always makes
+	/// node 0 <c>WorldNodeType.Start</c> with a room from the zone's
+	/// <c>startRooms</c> — the campfire a run normally opens in — so players
+	/// spawn in a safe camp and reach the arena by taking the rift out of it.
+	///
+	/// The current node is skipped too: the game warns that overriding the room
+	/// you are standing in is "prone to bugs".
 	/// </remarks>
 	public static void ApplyArenaRoom(DreamArenaConfig config)
 	{
@@ -123,6 +126,12 @@ internal static class ArenaRules
 					continue;
 				}
 
+				// The camp stays the camp.
+				if (zones.nodes[i].type == WorldNodeType.Start)
+				{
+					continue;
+				}
+
 				if (zones.nodes[i].roomOverride == config.arenaRoom)
 				{
 					continue;
@@ -133,7 +142,7 @@ internal static class ArenaRules
 			}
 
 			Debug.Log($"{ModIdentity.LogPrefix}arena room '{config.arenaRoom}' applied to " +
-			          $"{changed} node(s). Travel to any node to enter it.");
+			          $"{changed} node(s). Camp stays intact; take the rift to fight.");
 		}
 		catch (Exception e)
 		{

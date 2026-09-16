@@ -1,14 +1,13 @@
 Host-only PvP arena for friendly matches.
 
-Turns on player-versus-player combat, empties the arena of monsters, drops you
-into the Lone King's Zenith, and revives knocked-out players so a match keeps
-going. Free-for-all by default, with a two-team mode.
+Pick "PvP Arena" as the game mode when creating a lobby. Your run opens at the
+usual campfire, where everyone is friendly - use it to regroup between rounds.
+Take the rift out of camp and you arrive in the Lone King's Zenith with PvP
+live: no monsters, no boss, and knocked-out players get back up so the match
+keeps going. Free-for-all by default, with a two-team mode.
 
 ONLY THE HOST NEEDS THIS MOD. Everything is enforced server-side, so your
 friends can join and fight with nothing installed.
-
-Configure it from the Dream Arena button in the lobby settings, or with the
-arena console commands in Developer Mode.
 
 Proof of concept: there are no win conditions yet, so a match never ends on
 its own.

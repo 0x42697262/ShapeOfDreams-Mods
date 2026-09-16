@@ -23,10 +23,8 @@ public class DreamArenaMod : ModBehaviour
 	public static DreamArenaMod Instance { get; private set; }
 
 	private readonly ReviveController _revives = new ReviveController();
+	private readonly ArenaPhase _phase = new ArenaPhase();
 
-	/// <summary>True while deja vu picks should be banked and granted as builds.</summary>
-	public static bool IsLoadoutActive =>
-		Instance != null && Instance.config.arenaEnabled && Instance.config.loadoutEnabled;
 
 	/// <summary>True while the run should be prevented from concluding.</summary>
 	public static bool ShouldBlockRunEnd =>
@@ -98,6 +96,7 @@ public class DreamArenaMod : ModBehaviour
 
 		_revives.Reset();
 		ArenaStage.Reset();
+		_phase.Reset();
 		ApplyNow();
 
 		// Deferred: the world is not generated yet on the frame the manager starts.
@@ -108,6 +107,7 @@ public class DreamArenaMod : ModBehaviour
 	private void Update()
 	{
 		float dt = Time.deltaTime;
+		_phase.Tick(config);
 		_revives.Tick(dt, config);
 		ArenaStage.Tick(dt, config);
 	}
@@ -116,7 +116,8 @@ public class DreamArenaMod : ModBehaviour
 	{
 		if (NetworkServer.active && config.arenaEnabled)
 		{
-			RelationController.Apply(config.teamMode);
+			// A late joiner must land on the right side of the camp/arena line.
+			_phase.Reapply(config);
 		}
 	}
 
@@ -130,7 +131,16 @@ public class DreamArenaMod : ModBehaviour
 
 		ArenaRules.Apply(config);
 		ArenaRules.ApplyArenaRoom(config);
-		RelationController.Apply(config.arenaEnabled ? config.teamMode : TeamMode.Peaceful);
+
+		// Hostility depends on where the players are, not just on the mode.
+		if (config.arenaEnabled)
+		{
+			_phase.Reapply(config);
+		}
+		else
+		{
+			RelationController.Apply(TeamMode.Peaceful);
+		}
 	}
 
 	/// <summary>Applies the config and writes it to disk. Used by the in-lobby window.</summary>
@@ -199,25 +209,12 @@ public class DreamArenaMod : ModBehaviour
 		Debug.Log($"{ModIdentity.LogPrefix}arena={config.arenaEnabled} mode={config.teamMode} " +
 		          $"neverEnd={config.neverEndRun} noMonsters={config.suppressMonsters} " +
 		          $"room={config.arenaRoom} revive={config.autoReviveSeconds}s " +
-		          $"loadouts={config.loadoutEnabled}({LoadoutRegistry.Count} banked, " +
-		          $"{config.maxEssences}e@q{config.essenceQuality}/{config.maxMemories}m@L{config.memoryLevel}) " +
+		          $"phase={_phase.Current} " +
 		          $"| server={NetworkServer.active} " +
 		          $"players={RelationController.GetHumanPlayers().Count} " +
 		          $"gameOverEnabled={(game != null ? game.isGameOverEnabled.ToString() : "n/a")}");
 	}
 
-	[ConsoleCommand("Grant every player their banked loadout right now", "arena_give")]
-	public void Cmd_ArenaGive()
-	{
-		LoadoutGranter.GrantAllPlayers(config);
-	}
-
-	[ConsoleCommand("Forget every banked loadout", "arena_clear_loadouts")]
-	public void Cmd_ArenaClearLoadouts()
-	{
-		LoadoutRegistry.ClearAll();
-		Debug.Log($"{ModIdentity.LogPrefix}all banked loadouts cleared.");
-	}
 
 	[ConsoleCommand("Teleport everyone into the arena, as the boss trigger would", "arena_start")]
 	public void Cmd_ArenaStart()
