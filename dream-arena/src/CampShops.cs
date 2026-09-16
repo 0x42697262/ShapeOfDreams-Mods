@@ -13,9 +13,10 @@ namespace DreamArena;
 /// A PvP match is only interesting if everyone can actually build what they
 /// want, so the camp gets ten remnants: memories down the left, essences down
 /// the right, each row running Common to Unique. Everything is free, since gold
-/// is PvE progression, and each remnant is worth one pick per player — a
-/// budget to spend rather than a shelf to clear. The limit is per player, not
-/// per remnant, so two players wanting the same memory both get it.
+/// is PvE progression. A remnant can be used as often as a player likes; what
+/// runs out is the individual item, which disappears from that player's
+/// offering once taken. The ledger is per player, so two players wanting the
+/// same memory both get it.
 /// </para>
 /// <para>
 /// These are <c>ChoiceShrine</c>s — the Retrospection and Enlightenment
@@ -64,6 +65,16 @@ internal static class CampShops
 	private static readonly Dictionary<int, ShopAssignment> Assignments =
 		new Dictionary<int, ShopAssignment>();
 
+	/// <summary>Item type names each player has already taken, keyed by guid.</summary>
+	/// <remarks>
+	/// Server-side and per run, cleared alongside the rest of the arena state when
+	/// a game starts. It deliberately outlives a single camp: a run visits the
+	/// camp several times, and a limit that reset each visit would just be a
+	/// slower way of handing out the same memory over and over.
+	/// </remarks>
+	private static readonly Dictionary<string, HashSet<string>> Taken =
+		new Dictionary<string, HashSet<string>>();
+
 	private static int _builtNode = -1;
 
 	internal readonly struct ShopAssignment
@@ -85,6 +96,31 @@ internal static class CampShops
 
 		return remnant != null
 		       && Assignments.TryGetValue(remnant.GetInstanceID(), out assignment);
+	}
+
+	/// <summary>Whether this player has already taken this item.</summary>
+	public static bool HasTaken(string playerGuid, string typeName)
+	{
+		return playerGuid != null
+		       && Taken.TryGetValue(playerGuid, out HashSet<string> taken)
+		       && taken.Contains(typeName);
+	}
+
+	/// <summary>Strikes an item off a player's list for the rest of the run.</summary>
+	public static void RecordTaken(string playerGuid, string typeName)
+	{
+		if (playerGuid == null || string.IsNullOrEmpty(typeName))
+		{
+			return;
+		}
+
+		if (!Taken.TryGetValue(playerGuid, out HashSet<string> taken))
+		{
+			taken = new HashSet<string>();
+			Taken[playerGuid] = taken;
+		}
+
+		taken.Add(typeName);
 	}
 
 	public static void Tick(DreamArenaConfig config, PhaseKind phase)
@@ -401,30 +437,28 @@ internal static class CampShops
 	}
 
 	/// <summary>
-	/// Gives every player one pick from a remnant, independently of the others.
+	/// Makes a remnant a permanent fixture rather than a one-off reward.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// A negative total is the game's own "no limit" value, so a remnant never
-	/// runs dry: two players wanting the same memory is normal here, and one
-	/// taking it must not deny the other. The per-player cap is what actually
-	/// makes a pick a decision — <c>Shrine</c> counts uses per player guid, and
-	/// both <c>CanInteract</c> and <c>OnInteract</c> check that count against
-	/// this cap, so spending a pick only closes the remnant for the player who
-	/// spent it. Its <c>isAvailable</c> flag is shared, but the game recomputes
-	/// it as "some live player still has a use left", so it only goes dark once
-	/// everybody is done.
+	/// Both use counts stay at the game's own "no limit" value. Neither is the
+	/// right lever here: <c>maxTotalUseCount</c> is shared, so one player picking
+	/// would use up everybody's turn, and <c>maxUseCountPerPlayer</c> would close
+	/// the whole bracket after a single memory rather than just that memory. The
+	/// once-each rule is enforced on the offering instead — see
+	/// <c>Patches.CampRemnantChoices</c> — so the remnant stays open and only what
+	/// a player has already taken goes away.
 	/// </para>
 	/// <para>
-	/// The cooldown, by contrast, really is shared — it is one last-use
-	/// timestamp on the remnant — so it goes, otherwise one player picking would
-	/// briefly lock everybody else out.
+	/// The cooldown is shared across players — it is one last-use timestamp on the
+	/// remnant — so it goes too, otherwise one player picking would briefly lock
+	/// everybody else out.
 	/// </para>
 	/// </remarks>
 	private static void Configure(ChoiceShrine remnant)
 	{
 		remnant.maxTotalUseCount = -1;
-		remnant.maxUseCountPerPlayer = 1;
+		remnant.maxUseCountPerPlayer = -1;
 		remnant.useCooldown = 0f;
 		remnant.baseGoldCost = 0;
 		remnant.unavailableByDefault = false;
@@ -470,6 +504,7 @@ internal static class CampShops
 	public static void Reset()
 	{
 		Assignments.Clear();
+		Taken.Clear();
 		_builtNode = -1;
 	}
 }
