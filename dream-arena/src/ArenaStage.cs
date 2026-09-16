@@ -4,89 +4,94 @@ using UnityEngine;
 namespace DreamArena;
 
 /// <summary>
-/// Puts the players inside the boss arena and keeps the boss out of it.
+/// Gets everyone into the fighting area as soon as they arrive.
 /// </summary>
 /// <remarks>
 /// <para>
-/// A boss room has two states. You arrive in an antechamber, and when every
-/// hero stands in the entry zone the fight "triggers": a cutscene plays and
-/// <c>DewHeroesTeleporter.TeleportAllHeroes()</c> drops everyone into the
-/// sealed arena proper. That triggered state is the PvP arena we want.
+/// A boss room is two spaces: an antechamber you land in, and the arena proper,
+/// which the game only puts you in once every hero stands on the entry trigger.
+/// Left alone, players arrive in the antechamber with PvP already live and
+/// fight in the corridor instead of the arena. The distance varies by room —
+/// <c>Room_SnowMountain_Boss_0</c> has a notably long approach.
 /// </para>
 /// <para>
-/// The wiring is <c>DewBossRoomEntry</c>, which requires a
-/// <c>DewAllHeroesPresentZone</c> and a <c>DewHeroesTeleporter</c>. Walking
-/// into the entry zone together still works normally; <see cref="StartFight"/>
-/// just calls the same public teleport directly so a match can be started
-/// without herding everyone onto the trigger.
-/// </para>
-/// <para>
-/// Server-side only. The teleport and the despawn both replicate, so clients
-/// need no mod.
+/// So arrival is staged directly: on entering an arena room, everyone is placed
+/// inside the arena straight away. Placement is anchored on
+/// <c>Room_BossArena</c>, the marker component the boss rooms carry, rather
+/// than on the entry teleporter — its destination is the arena's edge, and not
+/// every room is guaranteed to wire one up.
 /// </para>
 /// </remarks>
 internal static class ArenaStage
 {
-	/// <summary>How often to look for a boss that needs removing.</summary>
-	private const float SweepInterval = 1f;
+	/// <summary>Node the players were last staged into, so it happens once per arrival.</summary>
+	private static int _stagedNode = -1;
 
-	private static float _sweepTimer;
+	public static void Tick(DreamArenaConfig config, PhaseKind phase)
+	{
+		if (!NetworkServer.active || config == null || !config.arenaEnabled)
+		{
+			return;
+		}
+
+		if (phase != PhaseKind.Arena)
+		{
+			// Back in camp; stage again next time they come through.
+			_stagedNode = -1;
+			return;
+		}
+
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.instance;
+		if (zones == null || zones.isInAnyTransition)
+		{
+			return;
+		}
+
+		if (zones.currentNodeIndex == _stagedNode)
+		{
+			return;
+		}
+
+		if (!TryStage(config))
+		{
+			// Room or heroes not ready yet; try again next frame.
+			return;
+		}
+
+		_stagedNode = zones.currentNodeIndex;
+	}
 
 	/// <summary>
-	/// Removes the room's boss if one exists.
+	/// Places everyone in the arena. Returns false while the room is still
+	/// settling.
 	/// </summary>
-	/// <remarks>
-	/// Suppressing the monster population budget should stop most spawns, but a
-	/// boss room may place its boss through room logic rather than the
-	/// population system, so this sweeps for it explicitly.
-	///
-	/// <c>Destroy()</c> is used rather than <c>Kill()</c>: killing a boss would
-	/// run the defeat path, spawn rewards and open the exit rift.
-	/// </remarks>
-	public static bool RemoveBoss()
+	private static bool TryStage(DreamArenaConfig config)
 	{
-		if (!NetworkServer.active)
+		ActorManager actors = NetworkedManagerBase<ActorManager>.instance;
+		if (actors == null || actors.allHeroes.Count == 0)
 		{
 			return false;
 		}
 
-		BossMonster boss = Dew.FindActorOfType<BossMonster>();
-		if (boss.IsNullOrInactive())
+		// Only stage once somewhere real to stand has been identified; the
+		// hero-midpoint fallback would just shuffle people around the
+		// antechamber they are trying to leave.
+		if (!ArenaSpawn.HasArenaAnchor())
 		{
 			return false;
 		}
 
-		string name = boss.name;
-		boss.Destroy();
+		PveSuppressor.Sweep();
+		ArenaSpawn.PlaceHeroes(config, force: true);
 
-		Debug.Log($"{ModIdentity.LogPrefix}removed boss '{name}' from the arena.");
+		Debug.Log($"{ModIdentity.LogPrefix}staged {actors.allHeroes.Count} players into the arena.");
 		return true;
 	}
 
-	/// <summary>Periodic boss sweep, driven from the mod's Update.</summary>
-	public static void Tick(float deltaTime, DreamArenaConfig config)
-	{
-		if (!NetworkServer.active || config == null
-		    || !config.arenaEnabled || !config.removeBoss)
-		{
-			return;
-		}
-
-		_sweepTimer += deltaTime;
-		if (_sweepTimer < SweepInterval)
-		{
-			return;
-		}
-
-		_sweepTimer = 0f;
-		RemoveBoss();
-	}
-
 	/// <summary>
-	/// Teleports every hero into the arena, the same move the boss-fight
-	/// trigger performs.
+	/// Re-stages on demand, for restarting a round without leaving the room.
 	/// </summary>
-	public static bool StartFight()
+	public static bool StartFight(DreamArenaConfig config)
 	{
 		if (!NetworkServer.active)
 		{
@@ -94,30 +99,20 @@ internal static class ArenaStage
 			return false;
 		}
 
-		DewBossRoomEntry entry = Object.FindAnyObjectByType<DewBossRoomEntry>();
-		if (entry == null)
+		if (!ArenaSpawn.HasArenaAnchor())
 		{
-			Debug.LogWarning($"{ModIdentity.LogPrefix}no boss room entry here. " +
-			                 "Travel to the arena room first.");
+			Debug.LogWarning($"{ModIdentity.LogPrefix}no arena anchor in this room. " +
+			                 "Take the rift out of camp first.");
 			return false;
 		}
 
-		DewHeroesTeleporter teleporter = entry.GetComponent<DewHeroesTeleporter>();
-		if (teleporter == null)
-		{
-			Debug.LogWarning($"{ModIdentity.LogPrefix}boss room entry has no teleporter.");
-			return false;
-		}
-
-		RemoveBoss();
-		teleporter.TeleportAllHeroes();
-
-		Debug.Log($"{ModIdentity.LogPrefix}teleported all heroes into the arena.");
+		PveSuppressor.Sweep();
+		ArenaSpawn.PlaceHeroes(config, force: true);
 		return true;
 	}
 
 	public static void Reset()
 	{
-		_sweepTimer = 0f;
+		_stagedNode = -1;
 	}
 }

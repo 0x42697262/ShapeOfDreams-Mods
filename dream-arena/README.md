@@ -238,10 +238,25 @@ onto the entry trigger and the `arena_start` command:
 - **No intro cutscene.** A prefix on `DewCutsceneDirector.PlayNetworked`
   suppresses the RPC, removing the "press space to skip" wait between rounds.
   The entry routine still runs its fade and teleport, so the flow is unchanged.
-- **Spread spawns.** Stock teleport drops everyone in a tight line. Players are
-  redistributed evenly around a ring, sized from `Room_BossArena`'s own centre
-  and radius and snapped to walkable ground with
+- **Staged into the arena.** A boss room is two spaces: an antechamber you land
+  in, and the arena proper, which the game only puts you in once every hero
+  stands on the entry trigger. Left alone, players arrive with PvP already live
+  and fight in the corridor — `Room_SnowMountain_Boss_0` has a notably long
+  approach. So arrival is staged directly: everyone is placed inside the arena
+  on entry, then ringed evenly and snapped to walkable ground with
   `Dew.GetValidAgentDestination_LinearSweep`.
+
+  Boss rooms are inconsistent about marking their arena, so three anchors are
+  tried in order:
+
+  | anchor | rooms |
+  |---|---|
+  | `Room_BossArena` — real centre and radius | LavaLand, Primus, Despair |
+  | `DewHeroesTeleporter.destination` — where the game drops heroes to start a fight | fallback |
+  | heroes' own midpoint | last resort, spread only |
+
+  Staging waits for a real anchor: the midpoint fallback would just shuffle
+  people around the antechamber they are trying to leave.
 
 No spawn immunity is granted: players arrive from the safety of camp, so nothing
 is hostile until they are already through the rift.

@@ -20,7 +20,7 @@ internal static class ArenaSpawn
 	/// <summary>Keeps players off the arena's very edge.</summary>
 	private const float RadiusUsage = 0.75f;
 
-	public static void PlaceHeroes(DreamArenaConfig config)
+	public static void PlaceHeroes(DreamArenaConfig config, bool force = false)
 	{
 		if (!NetworkServer.active || config == null)
 		{
@@ -47,7 +47,7 @@ internal static class ArenaSpawn
 			return;
 		}
 
-		if (config.spreadSpawns)
+		if (force || config.spreadSpawns)
 		{
 			Spread(heroes);
 		}
@@ -64,11 +64,8 @@ internal static class ArenaSpawn
 			return;
 		}
 
-		// One player has no one to be spread away from.
-		if (heroes.Count < 2)
-		{
-			return;
-		}
+		// One player still gets moved into the arena; there is just nobody to
+		// be spread away from.
 
 		float ring = Mathf.Max(1f, radius * RadiusUsage);
 		float step = 360f / heroes.Count;
@@ -100,11 +97,21 @@ internal static class ArenaSpawn
 	/// Finds the arena's centre and size.
 	/// </summary>
 	/// <remarks>
-	/// <c>Room_BossArena</c> is the marker the boss rooms carry, exposing the
-	/// centre and radius of the fighting area. Without it, fall back to the
-	/// heroes' own midpoint so the spread still does something sensible.
+	/// <para>
+	/// Boss rooms are not consistent about this, so three anchors are tried in
+	/// order of how well they describe the fighting area:
+	/// </para>
+	/// <list type="number">
+	/// <item><c>Room_BossArena</c> — the explicit marker, giving a real centre
+	/// and radius. Only some rooms carry it.</item>
+	/// <item><c>DewHeroesTeleporter.destination</c> — where the game itself
+	/// drops heroes when a fight starts, so it is inside the arena by
+	/// definition even when the marker is absent.</item>
+	/// <item>The heroes' own midpoint — last resort, which only spreads them
+	/// apart rather than moving them anywhere meaningful.</item>
+	/// </list>
 	/// </remarks>
-	private static bool TryGetArena(List<Hero> heroes, out Vector3 center, out float radius)
+	public static bool TryGetArena(List<Hero> heroes, out Vector3 center, out float radius)
 	{
 		Room_BossArena arena = SingletonBehaviour<Room_BossArena>.instance;
 		if (arena != null)
@@ -112,6 +119,21 @@ internal static class ArenaSpawn
 			center = arena.center;
 			radius = arena.radius;
 			return true;
+		}
+
+		DewHeroesTeleporter teleporter = Object.FindAnyObjectByType<DewHeroesTeleporter>();
+		if (teleporter != null && teleporter.destination != null)
+		{
+			center = Dew.GetPositionOnGround(teleporter.destination.position);
+			radius = FallbackRadius;
+			return true;
+		}
+
+		if (heroes == null || heroes.Count == 0)
+		{
+			center = Vector3.zero;
+			radius = FallbackRadius;
+			return false;
 		}
 
 		center = Vector3.zero;
@@ -123,6 +145,19 @@ internal static class ArenaSpawn
 		center /= heroes.Count;
 		radius = FallbackRadius;
 		return true;
+	}
+
+	/// <summary>True when a real arena anchor exists, as opposed to only the
+	/// heroes' own midpoint.</summary>
+	public static bool HasArenaAnchor()
+	{
+		if (SingletonBehaviour<Room_BossArena>.instance != null)
+		{
+			return true;
+		}
+
+		DewHeroesTeleporter teleporter = Object.FindAnyObjectByType<DewHeroesTeleporter>();
+		return teleporter != null && teleporter.destination != null;
 	}
 
 }

@@ -114,7 +114,7 @@ public class DreamArenaMod : ModBehaviour
 		float dt = Time.deltaTime;
 		_phase.Tick(config);
 		_revives.Tick(dt, config);
-		ArenaStage.Tick(dt, config);
+		ArenaStage.Tick(config, _phase.Current);
 		PveSuppressor.Tick(dt, config, _phase.Current);
 		CampRift.Tick(dt, config, _phase.Current);
 	}
@@ -228,7 +228,7 @@ public class DreamArenaMod : ModBehaviour
 	[ConsoleCommand("Teleport everyone into the arena, as the boss trigger would", "arena_start")]
 	public void Cmd_ArenaStart()
 	{
-		ArenaStage.StartFight();
+		ArenaStage.StartFight(config);
 	}
 
 	[ConsoleCommand("Sweep all monsters, props and pickups from this room", "arena_purge")]
