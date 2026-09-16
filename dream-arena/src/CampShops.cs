@@ -204,10 +204,12 @@ internal static class CampShops
 	/// ground. A candidate origin, heading and spacing is accepted only when
 	/// <em>every</em> slot lands on walkable ground, so the result is either a
 	/// clean formation or none at all. Candidates are tried widest-first and
-	/// scored by how far the rows keep clear of the rift, which is why the rows
-	/// swing around the room instead of the rift being moved: the rift is a
-	/// scene object with no position syncing, so relocating it host-side would
-	/// leave clients interacting with thin air.
+	/// scored so that the rows sit in the middle of the room: keeping clear of
+	/// the rift earns a candidate points only up to <see cref="RiftClearance"/>,
+	/// after which the distance from the anchor decides, so a layout only drifts
+	/// off-centre as far as the rift forces it to. The rows move rather than the
+	/// rift because the rift is a scene object with no position syncing, so
+	/// relocating it host-side would leave clients interacting with thin air.
 	/// </para>
 	/// </remarks>
 	private static bool TrySolveFormation(Vector3 anchor, int rows, out Formation formation)
@@ -223,6 +225,7 @@ internal static class CampShops
 		Vector3[] slots = new Vector3[rows * 2];
 		Vector3[] best = null;
 		float bestScore = float.NegativeInfinity;
+		float bestClearance = 0f;
 		Vector3 bestOrigin = anchor;
 		Vector3 bestForward = Vector3.forward;
 		Vector3 bestSideways = Vector3.right;
@@ -244,13 +247,18 @@ internal static class CampShops
 						continue;
 					}
 
-					float score = hasRift ? Mathf.Min(clearance, RiftClearance * 2f) : 0f;
+					float clear = hasRift
+						? Mathf.Min(clearance, RiftClearance)
+						: RiftClearance;
+
+					float score = clear - Vector3.Distance(origin, anchor) * 0.5f;
 					if (score <= bestScore)
 					{
 						continue;
 					}
 
 					bestScore = score;
+					bestClearance = clear;
 					best = (Vector3[])slots.Clone();
 					bestOrigin = origin;
 					bestForward = forward;
@@ -260,7 +268,7 @@ internal static class CampShops
 			}
 
 			// A tighter spacing is only worth trying if nothing fit at this one.
-			if (best != null && (!hasRift || bestScore >= RiftClearance))
+			if (best != null && (!hasRift || bestClearance >= RiftClearance))
 			{
 				break;
 			}
@@ -275,7 +283,14 @@ internal static class CampShops
 		return true;
 	}
 
-	/// <summary>Centres to try, walking away from the rift.</summary>
+	/// <summary>
+	/// Centres to try: the anchor first, then short steps away from the rift.
+	/// </summary>
+	/// <remarks>
+	/// Only an escape hatch for when the rift sits on the anchor. The scoring in
+	/// <see cref="TrySolveFormation"/> prefers the anchor, so these outer steps
+	/// win only when the anchor cannot clear the rift at any heading or spacing.
+	/// </remarks>
 	private static Vector3[] BuildOrigins(Vector3 anchor, bool hasRift, Vector3 riftPosition)
 	{
 		if (!hasRift)
@@ -296,9 +311,8 @@ internal static class CampShops
 		return new[]
 		{
 			anchor,
-			Dew.GetValidAgentPosition(anchor + away * 4f),
-			Dew.GetValidAgentPosition(anchor + away * 8f),
-			Dew.GetValidAgentPosition(anchor + away * 12f)
+			Dew.GetValidAgentPosition(anchor + away * 3f),
+			Dew.GetValidAgentPosition(anchor + away * 6f)
 		};
 	}
 
