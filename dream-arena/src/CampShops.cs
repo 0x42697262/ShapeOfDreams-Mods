@@ -10,9 +10,14 @@ namespace DreamArena;
 /// <remarks>
 /// <para>
 /// A PvP match is only interesting if everyone can actually build what they
-/// want, so the camp becomes a shopping floor: Memories along one row,
-/// Essences along another, each split by rarity. Everything is free, since
-/// gold is a PvE progression currency and has no meaning here.
+/// want, so the camp gets two stalls: one for Memories, one for Essences, each
+/// carrying every rarity. Everything is free and effectively unlimited, since
+/// gold is PvE progression and two players wanting the same build is normal.
+/// </para>
+/// <para>
+/// This was ten stalls split by rarity, which read more clearly but cost ten
+/// merchant entities and their networking in a room players sit in between
+/// rounds. Two is enough.
 /// </para>
 /// <para>
 /// Merchants are ordinary <c>PropEnt_Merchant_Jonas</c> entities, spawned
@@ -25,11 +30,11 @@ internal static class CampShops
 {
 	private const string MerchantResource = "PropEnt_Merchant_Jonas";
 
-	/// <summary>Spacing between shops along a row, in metres.</summary>
-	private const float ColumnSpacing = 4.5f;
+	/// <summary>Gap between the two stalls, in metres.</summary>
+	private const float StallSpacing = 6f;
 
-	/// <summary>Gap between the Memories row and the Essences row.</summary>
-	private const float RowSpacing = 5f;
+	/// <summary>How far clear of the rift the stalls are placed.</summary>
+	private const float RiftClearance = 9f;
 
 	/// <summary>Which shop each spawned merchant is, keyed by instance id.</summary>
 	private static readonly Dictionary<int, ShopAssignment> Assignments =
@@ -40,12 +45,10 @@ internal static class CampShops
 	internal readonly struct ShopAssignment
 	{
 		public readonly ShopKind Kind;
-		public readonly Rarity Rarity;
 
-		public ShopAssignment(ShopKind kind, Rarity rarity)
+		public ShopAssignment(ShopKind kind)
 		{
 			Kind = kind;
-			Rarity = rarity;
 		}
 	}
 
@@ -107,43 +110,70 @@ internal static class CampShops
 
 		Assignments.Clear();
 
-		int columns = ShopCatalog.StockedRarities.Length;
-		float rowWidth = ColumnSpacing * (columns - 1);
+		GetStallAxes(anchor, out Vector3 origin, out Vector3 sideways);
 
 		int built = 0;
-		built += BuildRow(prefab, ShopKind.Memory, anchor, -RowSpacing * 0.5f, rowWidth);
-		built += BuildRow(prefab, ShopKind.Essence, anchor, RowSpacing * 0.5f, rowWidth);
+		built += Place(prefab, ShopKind.Memory, origin, sideways * (-StallSpacing * 0.5f));
+		built += Place(prefab, ShopKind.Essence, origin, sideways * (StallSpacing * 0.5f));
 
-		Debug.Log($"{ModIdentity.LogPrefix}built {built} camp shop(s) around {anchor}.");
+		Debug.Log($"{ModIdentity.LogPrefix}built {built} camp shop(s) around {origin}.");
 		return built > 0;
 	}
 
-	private static int BuildRow(PropEnt_Merchant_Jonas prefab, ShopKind kind, Vector3 anchor,
-		float rowOffset, float rowWidth)
+	/// <summary>
+	/// Works out where the stalls stand so they never block the rift.
+	/// </summary>
+	/// <remarks>
+	/// The rift is a scene object with no position syncing, so moving it would
+	/// shift it on the host only and leave clients interacting with thin air.
+	/// The stalls are moved instead: they are pushed directly away from the
+	/// rift and laid out along the perpendicular, which keeps the rift clear
+	/// without touching it.
+	/// </remarks>
+	private static void GetStallAxes(Vector3 anchor, out Vector3 origin, out Vector3 sideways)
 	{
-		int built = 0;
+		origin = anchor;
+		sideways = Vector3.right;
 
-		for (int i = 0; i < ShopCatalog.StockedRarities.Length; i++)
+		Rift_RoomExit rift = Rift_RoomExit.softInstance;
+		if (rift.IsNullOrInactive())
 		{
-			Rarity rarity = ShopCatalog.StockedRarities[i];
-
-			Vector3 local = new Vector3(i * ColumnSpacing - rowWidth * 0.5f, 0f, rowOffset);
-			Vector3 target = Dew.GetValidAgentDestination_LinearSweep(anchor, anchor + local);
-
-			PropEnt_Merchant_Jonas merchant = Dew.SpawnEntity(
-				prefab, target, Quaternion.identity, null, DewPlayer.environment, 1);
-
-			if (merchant == null)
-			{
-				continue;
-			}
-
-			merchant.name = ShopCatalog.Describe(kind, rarity) + ModIdentity.OwnedSuffix;
-			Assignments[merchant.GetInstanceID()] = new ShopAssignment(kind, rarity);
-			built++;
+			return;
 		}
 
-		return built;
+		Vector3 away = anchor - rift.transform.position;
+		away.y = 0f;
+
+		// Anchor sitting on top of the rift gives no usable direction.
+		if (away.sqrMagnitude < 0.01f)
+		{
+			away = Vector3.forward;
+		}
+
+		away = away.normalized;
+		sideways = Vector3.Cross(Vector3.up, away).normalized;
+
+		origin = Dew.GetValidAgentDestination_LinearSweep(anchor, anchor + away * RiftClearance);
+
+		Debug.Log($"{ModIdentity.LogPrefix}stalls placed {RiftClearance:0.#}m clear of the rift.");
+	}
+
+	private static int Place(PropEnt_Merchant_Jonas prefab, ShopKind kind, Vector3 origin,
+		Vector3 offset)
+	{
+		Vector3 target = Dew.GetValidAgentDestination_LinearSweep(origin, origin + offset);
+
+		PropEnt_Merchant_Jonas merchant = Dew.SpawnEntity(
+			prefab, target, Quaternion.identity, null, DewPlayer.environment, 1);
+
+		if (merchant == null)
+		{
+			return 0;
+		}
+
+		merchant.name = ShopCatalog.Describe(kind) + ModIdentity.OwnedSuffix;
+		Assignments[merchant.GetInstanceID()] = new ShopAssignment(kind);
+		return 1;
 	}
 
 	/// <summary>

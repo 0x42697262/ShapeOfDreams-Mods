@@ -10,8 +10,9 @@ namespace DreamArena.Patches;
 /// <remarks>
 /// <para>
 /// A merchant normally rolls a handful of random items and prices them. These
-/// shops instead list everything of their kind and rarity at no cost, so
-/// building a specific loadout is a matter of walking to the right stall.
+/// stalls instead list everything of their kind, every rarity, at no cost and
+/// in effectively unlimited stock, so a specific loadout is a matter of
+/// browsing rather than luck.
 /// </para>
 /// <para>
 /// The stock is written after the original runs rather than instead of it: the
@@ -40,7 +41,7 @@ internal static class CampShopStockPatch
 			return;
 		}
 
-		List<string> items = ShopCatalog.GetItems(shop.Kind, shop.Rarity);
+		List<string> items = ShopCatalog.GetItems(shop.Kind);
 		if (items.Count == 0)
 		{
 			return;
@@ -62,7 +63,11 @@ internal static class CampShopStockPatch
 
 				// Gold is PvE progression and means nothing here.
 				price = default,
-				count = 1,
+
+				// Purchase is blocked at count <= 0 and decrements each time, so
+				// there is no unlimited sentinel; a large stock is the same thing
+				// in practice. Two players wanting the same build is normal.
+				count = Mathf.Max(1, mod.config.shopStock),
 			};
 		}
 

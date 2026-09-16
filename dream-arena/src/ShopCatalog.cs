@@ -17,8 +17,10 @@ public enum ShopKind
 /// Builds the item lists the camp shops sell.
 /// </summary>
 /// <remarks>
-/// One shop per kind and rarity, so a player can walk to "Legendary Memories"
-/// and take what they want rather than rolling for it.
+/// One shop per kind, each stocking every rarity in order, so a build is
+/// assembled by browsing rather than rolled for. This was ten stalls split by
+/// rarity, which was clearer to read but cost ten merchant entities and their
+/// networking in a room players sit in between rounds.
 ///
 /// <c>Rarity.Character</c> and <c>Rarity.Identity</c> are skipped: those are a
 /// hero's built-in kit, not lootable items, and the game excludes them from
@@ -39,19 +41,27 @@ internal static class ShopCatalog
 	private static readonly Dictionary<string, List<string>> Cache =
 		new Dictionary<string, List<string>>();
 
-	/// <summary>Every item name of a kind and rarity that may legally be given out.</summary>
-	public static List<string> GetItems(ShopKind kind, Rarity rarity)
+	/// <summary>
+	/// Everything of a kind that may legally be given out, ordered by rarity so
+	/// the stall reads Common first and Unique last.
+	/// </summary>
+	public static List<string> GetItems(ShopKind kind)
 	{
-		string key = kind + ":" + rarity;
+		string key = kind.ToString();
 		if (Cache.TryGetValue(key, out List<string> cached))
 		{
 			return cached;
 		}
 
-		List<string> names = kind == ShopKind.Memory ? CollectMemories(rarity) : CollectEssences(rarity);
+		List<string> names = new List<string>();
+		foreach (Rarity rarity in StockedRarities)
+		{
+			names.AddRange(kind == ShopKind.Memory ? CollectMemories(rarity) : CollectEssences(rarity));
+		}
+
 		Cache[key] = names;
 
-		Debug.Log($"{ModIdentity.LogPrefix}catalog {kind}/{rarity}: {names.Count} item(s).");
+		Debug.Log($"{ModIdentity.LogPrefix}catalog {kind}: {names.Count} item(s).");
 		return names;
 	}
 
@@ -110,9 +120,9 @@ internal static class ShopCatalog
 		Cache.Clear();
 	}
 
-	/// <summary>Shop label, e.g. "Legendary Memories".</summary>
-	public static string Describe(ShopKind kind, Rarity rarity)
+	/// <summary>Shop label.</summary>
+	public static string Describe(ShopKind kind)
 	{
-		return rarity + " " + (kind == ShopKind.Memory ? "Memories" : "Essences");
+		return kind == ShopKind.Memory ? "All Memories" : "All Essences";
 	}
 }
