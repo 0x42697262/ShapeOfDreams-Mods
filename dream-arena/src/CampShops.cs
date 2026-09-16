@@ -12,9 +12,10 @@ namespace DreamArena;
 /// <para>
 /// A PvP match is only interesting if everyone can actually build what they
 /// want, so the camp gets ten remnants: memories down the left, essences down
-/// the right, each row running Common to Unique. Everything is free and
-/// unlimited, since gold is PvE progression and two players wanting the same
-/// build is normal.
+/// the right, each row running Common to Unique. Everything is free, since gold
+/// is PvE progression, and each remnant is worth one pick per player — a
+/// budget to spend rather than a shelf to clear. The limit is per player, not
+/// per remnant, so two players wanting the same memory both get it.
 /// </para>
 /// <para>
 /// These are <c>ChoiceShrine</c>s — the Retrospection and Enlightenment
@@ -400,18 +401,30 @@ internal static class CampShops
 	}
 
 	/// <summary>
-	/// Makes a remnant a permanent fixture rather than a one-off reward.
+	/// Gives every player one pick from a remnant, independently of the others.
 	/// </summary>
 	/// <remarks>
-	/// A negative use count is the game's own "no limit" value, checked as
-	/// <c>maxTotalUseCount &lt; 0</c> before every use, so these never run dry
-	/// for anyone. The cooldown is shared across players, so it goes too —
-	/// otherwise one player picking would briefly lock everybody else out.
+	/// <para>
+	/// A negative total is the game's own "no limit" value, so a remnant never
+	/// runs dry: two players wanting the same memory is normal here, and one
+	/// taking it must not deny the other. The per-player cap is what actually
+	/// makes a pick a decision — <c>Shrine</c> counts uses per player guid, and
+	/// both <c>CanInteract</c> and <c>OnInteract</c> check that count against
+	/// this cap, so spending a pick only closes the remnant for the player who
+	/// spent it. Its <c>isAvailable</c> flag is shared, but the game recomputes
+	/// it as "some live player still has a use left", so it only goes dark once
+	/// everybody is done.
+	/// </para>
+	/// <para>
+	/// The cooldown, by contrast, really is shared — it is one last-use
+	/// timestamp on the remnant — so it goes, otherwise one player picking would
+	/// briefly lock everybody else out.
+	/// </para>
 	/// </remarks>
 	private static void Configure(ChoiceShrine remnant)
 	{
 		remnant.maxTotalUseCount = -1;
-		remnant.maxUseCountPerPlayer = -1;
+		remnant.maxUseCountPerPlayer = 1;
 		remnant.useCooldown = 0f;
 		remnant.baseGoldCost = 0;
 		remnant.unavailableByDefault = false;
