@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DreamArena;
 
-/// <summary>What a camp shop sells.</summary>
+/// <summary>What a camp remnant offers.</summary>
 public enum ShopKind
 {
 	/// <summary>Memories, which are skills (<c>St_</c>).</summary>
@@ -14,13 +14,16 @@ public enum ShopKind
 }
 
 /// <summary>
-/// Builds the item lists the camp shops sell.
+/// Builds the item lists the camp remnants offer.
 /// </summary>
 /// <remarks>
-/// One shop per kind, each stocking every rarity in order, so a build is
-/// assembled by browsing rather than rolled for. This was ten stalls split by
-/// rarity, which was clearer to read but cost ten merchant entities and their
-/// networking in a room players sit in between rounds.
+/// One remnant per kind and rarity, so a build is assembled by picking a
+/// bracket and choosing from it rather than rolled for.
+///
+/// Splitting by rarity is not only for readability. A remnant's choices are
+/// drawn as a <c>GridLayoutGroup</c> with no scrolling, so one remnant holding
+/// every memory in the game would spill off the window. A single rarity is a
+/// few dozen entries, which the grid can lay out.
 ///
 /// <c>Rarity.Character</c> and <c>Rarity.Identity</c> are skipped: those are a
 /// hero's built-in kit, not lootable items, and the game excludes them from
@@ -28,7 +31,7 @@ public enum ShopKind
 /// </remarks>
 internal static class ShopCatalog
 {
-	/// <summary>Rarities worth giving a shop, in display order.</summary>
+	/// <summary>Rarities worth giving a remnant, in display order.</summary>
 	public static readonly Rarity[] StockedRarities =
 	{
 		Rarity.Common,
@@ -42,26 +45,23 @@ internal static class ShopCatalog
 		new Dictionary<string, List<string>>();
 
 	/// <summary>
-	/// Everything of a kind that may legally be given out, ordered by rarity so
-	/// the stall reads Common first and Unique last.
+	/// Everything of a kind and rarity that may legally be given out.
 	/// </summary>
-	public static List<string> GetItems(ShopKind kind)
+	public static List<string> GetItems(ShopKind kind, Rarity rarity)
 	{
-		string key = kind.ToString();
+		string key = kind + ":" + rarity;
 		if (Cache.TryGetValue(key, out List<string> cached))
 		{
 			return cached;
 		}
 
-		List<string> names = new List<string>();
-		foreach (Rarity rarity in StockedRarities)
-		{
-			names.AddRange(kind == ShopKind.Memory ? CollectMemories(rarity) : CollectEssences(rarity));
-		}
+		List<string> names = kind == ShopKind.Memory
+			? CollectMemories(rarity)
+			: CollectEssences(rarity);
 
 		Cache[key] = names;
 
-		Debug.Log($"{ModIdentity.LogPrefix}catalog {kind}: {names.Count} item(s).");
+		Debug.Log($"{ModIdentity.LogPrefix}catalog {Describe(kind, rarity)}: {names.Count} item(s).");
 		return names;
 	}
 
@@ -72,12 +72,6 @@ internal static class ShopCatalog
 		foreach (SkillTrigger skill in DewResources.FindAllByType<SkillTrigger>(ResourceLoadSettings.Light))
 		{
 			if (skill == null || skill.excludeFromPool || skill.rarity != rarity)
-			{
-				continue;
-			}
-
-			// A hero's own kit is not merchandise.
-			if (rarity == Rarity.Character || rarity == Rarity.Identity)
 			{
 				continue;
 			}
@@ -120,9 +114,9 @@ internal static class ShopCatalog
 		Cache.Clear();
 	}
 
-	/// <summary>Shop label.</summary>
-	public static string Describe(ShopKind kind)
+	/// <summary>Remnant label.</summary>
+	public static string Describe(ShopKind kind, Rarity rarity)
 	{
-		return kind == ShopKind.Memory ? "All Memories" : "All Essences";
+		return rarity + " " + (kind == ShopKind.Memory ? "Memories" : "Essences");
 	}
 }

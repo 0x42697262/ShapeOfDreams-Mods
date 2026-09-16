@@ -92,22 +92,18 @@ public class DreamArenaConfig : ModConfig
 	public bool spreadSpawns = true;
 
 
-	[LabelText("Camp shops")]
-	[Description("Builds two free stalls in camp, one for Memories and one for Essences, " +
-	             "each carrying every rarity so any build can be assembled by hand.")]
+	[LabelText("Camp remnants")]
+	[Description("Builds ten free remnants in camp: memories down one side, essences down " +
+	             "the other, one per rarity, so any build can be assembled by hand.")]
 	public bool campShops = true;
 
-	[LabelText("Shop memory level")]
-	[Description("Level every memory is sold at.")]
+	[LabelText("Remnant memory level")]
+	[Description("Level every memory is offered at.")]
 	public int shopMemoryLevel = 10;
 
-	[LabelText("Shop stock per item")]
-	[Description("How many of each item a stall holds. Purchases decrement it and there " +
-	             "is no unlimited value, so this is just a large number.")]
-	public int shopStock = 99;
 
-	[LabelText("Shop essence quality")]
-	[Description("Quality every essence is sold at. 200 Regular, 400 Flawless, " +
+	[LabelText("Remnant essence quality")]
+	[Description("Quality every essence is offered at. 200 Regular, 400 Flawless, " +
 	             "600 Perfect, 1000 Otherworldly.")]
 	public int shopEssenceQuality = 400;
 
@@ -149,7 +145,6 @@ public class DreamArenaConfig : ModConfig
 		other.showModeInHud = showModeInHud;
 		other.campShops = campShops;
 		other.shopMemoryLevel = shopMemoryLevel;
-		other.shopStock = shopStock;
 		other.shopEssenceQuality = shopEssenceQuality;
 		other.maxPlayerLevel = maxPlayerLevel;
 		other.hideObjectives = hideObjectives;

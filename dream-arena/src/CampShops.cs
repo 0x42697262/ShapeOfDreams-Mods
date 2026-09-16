@@ -5,38 +5,44 @@ using UnityEngine;
 namespace DreamArena;
 
 /// <summary>
-/// Stands up a row of free shops in the camp, one per item kind and rarity.
+/// Stands up two rows of free remnants in the camp, one per item kind and rarity.
 /// </summary>
 /// <remarks>
 /// <para>
 /// A PvP match is only interesting if everyone can actually build what they
-/// want, so the camp gets two stalls: one for Memories, one for Essences, each
-/// carrying every rarity. Everything is free and effectively unlimited, since
-/// gold is PvE progression and two players wanting the same build is normal.
+/// want, so the camp gets ten remnants: memories down the left, essences down
+/// the right, each row running Common to Unique. Everything is free and
+/// unlimited, since gold is PvE progression and two players wanting the same
+/// build is normal.
 /// </para>
 /// <para>
-/// This was ten stalls split by rarity, which read more clearly but cost ten
-/// merchant entities and their networking in a room players sit in between
-/// rounds. Two is enough.
+/// These are <c>ChoiceShrine</c>s — the Retrospection and Enlightenment
+/// remnants — rather than merchants. A remnant opens a pick-one window whose
+/// contents are per player and server-authored, which is exactly the shape
+/// this needs; a merchant's shop window is a purchase flow built around gold
+/// and stock counts that mean nothing here.
 /// </para>
 /// <para>
-/// Merchants are ordinary <c>PropEnt_Merchant_Jonas</c> entities, spawned
-/// server-side like any other prop, so unmodded clients see and use them
-/// normally. Their stock is replaced wholesale — see
-/// <c>Patches.CampShopStockPatch</c>.
+/// They are ordinary game actors spawned server-side, so unmodded clients see
+/// and use them normally. Their offering is replaced wholesale — see
+/// <c>Patches.CampRemnantChoicesPatch</c>.
 /// </para>
 /// </remarks>
 internal static class CampShops
 {
-	private const string MerchantResource = "PropEnt_Merchant_Jonas";
+	private const string MemoryRemnant = "Shrine_Retrospection";
+	private const string EssenceRemnant = "Shrine_Enlightenment";
 
-	/// <summary>Gap between the two stalls, in metres.</summary>
-	private const float StallSpacing = 6f;
+	/// <summary>Width of the aisle between the two rows, in metres.</summary>
+	private const float AisleWidth = 7f;
 
-	/// <summary>How far clear of the rift the stalls are placed.</summary>
-	private const float RiftClearance = 9f;
+	/// <summary>Gap between neighbouring remnants in a row, in metres.</summary>
+	private const float RowSpacing = 4.5f;
 
-	/// <summary>Which shop each spawned merchant is, keyed by instance id.</summary>
+	/// <summary>How far clear of the rift the first pair stands.</summary>
+	private const float RiftClearance = 8f;
+
+	/// <summary>What each spawned remnant offers, keyed by instance id.</summary>
 	private static readonly Dictionary<int, ShopAssignment> Assignments =
 		new Dictionary<int, ShopAssignment>();
 
@@ -45,20 +51,22 @@ internal static class CampShops
 	internal readonly struct ShopAssignment
 	{
 		public readonly ShopKind Kind;
+		public readonly Rarity Rarity;
 
-		public ShopAssignment(ShopKind kind)
+		public ShopAssignment(ShopKind kind, Rarity rarity)
 		{
 			Kind = kind;
+			Rarity = rarity;
 		}
 	}
 
-	/// <summary>Looks up what a merchant is meant to sell, if it is one of ours.</summary>
-	public static bool TryGetAssignment(Component merchant, out ShopAssignment assignment)
+	/// <summary>Looks up what a remnant offers, if it is one of ours.</summary>
+	public static bool TryGetAssignment(Component remnant, out ShopAssignment assignment)
 	{
 		assignment = default;
 
-		return merchant != null
-		       && Assignments.TryGetValue(merchant.GetInstanceID(), out assignment);
+		return remnant != null
+		       && Assignments.TryGetValue(remnant.GetInstanceID(), out assignment);
 	}
 
 	public static void Tick(DreamArenaConfig config, PhaseKind phase)
@@ -85,21 +93,24 @@ internal static class CampShops
 			return;
 		}
 
-		if (Build(config))
+		if (Build())
 		{
 			_builtNode = zones.currentNodeIndex;
 		}
 	}
 
-	private static bool Build(DreamArenaConfig config)
+	private static bool Build()
 	{
-		PropEnt_Merchant_Jonas prefab =
-			DewResources.GetByShortTypeName<PropEnt_Merchant_Jonas>(MerchantResource);
+		Shrine_Retrospection memoryPrefab =
+			DewResources.GetByShortTypeName<Shrine_Retrospection>(MemoryRemnant);
 
-		if (prefab == null)
+		Shrine_Enlightenment essencePrefab =
+			DewResources.GetByShortTypeName<Shrine_Enlightenment>(EssenceRemnant);
+
+		if (memoryPrefab == null || essencePrefab == null)
 		{
-			Debug.LogWarning($"{ModIdentity.LogPrefix}merchant prefab '{MerchantResource}' not found; " +
-			                 "no camp shops.");
+			Debug.LogWarning($"{ModIdentity.LogPrefix}remnant prefabs not found " +
+			                 $"('{MemoryRemnant}', '{EssenceRemnant}'); no camp remnants.");
 			return false;
 		}
 
@@ -110,29 +121,41 @@ internal static class CampShops
 
 		Assignments.Clear();
 
-		GetStallAxes(anchor, out Vector3 origin, out Vector3 sideways);
+		GetRowAxes(anchor, out Vector3 origin, out Vector3 forward, out Vector3 sideways);
+
+		Vector3 leftColumn = sideways * (-AisleWidth * 0.5f);
+		Vector3 rightColumn = sideways * (AisleWidth * 0.5f);
 
 		int built = 0;
-		built += Place(prefab, ShopKind.Memory, origin, sideways * (-StallSpacing * 0.5f));
-		built += Place(prefab, ShopKind.Essence, origin, sideways * (StallSpacing * 0.5f));
+		for (int i = 0; i < ShopCatalog.StockedRarities.Length; i++)
+		{
+			Rarity rarity = ShopCatalog.StockedRarities[i];
+			Vector3 along = forward * (i * RowSpacing);
 
-		Debug.Log($"{ModIdentity.LogPrefix}built {built} camp shop(s) around {origin}.");
+			built += Place(memoryPrefab, ShopKind.Memory, rarity, origin, along + leftColumn);
+			built += Place(essencePrefab, ShopKind.Essence, rarity, origin, along + rightColumn);
+		}
+
+		Debug.Log($"{ModIdentity.LogPrefix}built {built} camp remnant(s) around {origin}.");
 		return built > 0;
 	}
 
 	/// <summary>
-	/// Works out where the stalls stand so they never block the rift.
+	/// Works out where the two rows run so they never block the rift.
 	/// </summary>
 	/// <remarks>
 	/// The rift is a scene object with no position syncing, so moving it would
 	/// shift it on the host only and leave clients interacting with thin air.
-	/// The stalls are moved instead: they are pushed directly away from the
-	/// rift and laid out along the perpendicular, which keeps the rift clear
-	/// without touching it.
+	/// The remnants are laid out around it instead: the rows run directly away
+	/// from the rift, straddling an aisle, and start a clear distance from it.
+	/// That keeps the rift approachable and adapts to whatever camp room the
+	/// run generates rather than assuming a fixed direction.
 	/// </remarks>
-	private static void GetStallAxes(Vector3 anchor, out Vector3 origin, out Vector3 sideways)
+	private static void GetRowAxes(Vector3 anchor, out Vector3 origin, out Vector3 forward,
+		out Vector3 sideways)
 	{
 		origin = anchor;
+		forward = Vector3.forward;
 		sideways = Vector3.right;
 
 		Rift_RoomExit rift = Rift_RoomExit.softInstance;
@@ -150,30 +173,46 @@ internal static class CampShops
 			away = Vector3.forward;
 		}
 
-		away = away.normalized;
-		sideways = Vector3.Cross(Vector3.up, away).normalized;
+		forward = away.normalized;
+		sideways = Vector3.Cross(Vector3.up, forward).normalized;
 
-		origin = Dew.GetValidAgentDestination_LinearSweep(anchor, anchor + away * RiftClearance);
-
-		Debug.Log($"{ModIdentity.LogPrefix}stalls placed {RiftClearance:0.#}m clear of the rift.");
+		origin = Dew.GetValidAgentDestination_LinearSweep(anchor, anchor + forward * RiftClearance);
 	}
 
-	private static int Place(PropEnt_Merchant_Jonas prefab, ShopKind kind, Vector3 origin,
-		Vector3 offset)
+	private static int Place<T>(T prefab, ShopKind kind, Rarity rarity, Vector3 origin,
+		Vector3 offset) where T : ChoiceShrine
 	{
 		Vector3 target = Dew.GetValidAgentDestination_LinearSweep(origin, origin + offset);
 
-		PropEnt_Merchant_Jonas merchant = Dew.SpawnEntity(
-			prefab, target, Quaternion.identity, null, DewPlayer.environment, 1);
+		T remnant = Dew.CreateActor(prefab, target, Quaternion.identity, null, Configure);
 
-		if (merchant == null)
+		if (remnant == null)
 		{
 			return 0;
 		}
 
-		merchant.name = ShopCatalog.Describe(kind) + ModIdentity.OwnedSuffix;
-		Assignments[merchant.GetInstanceID()] = new ShopAssignment(kind);
+		remnant.name = ShopCatalog.Describe(kind, rarity) + ModIdentity.OwnedSuffix;
+		Assignments[remnant.GetInstanceID()] = new ShopAssignment(kind, rarity);
 		return 1;
+	}
+
+	/// <summary>
+	/// Makes a remnant a permanent fixture rather than a one-off reward.
+	/// </summary>
+	/// <remarks>
+	/// A negative use count is the game's own "no limit" value, checked as
+	/// <c>maxTotalUseCount &lt; 0</c> before every use, so these never run dry
+	/// for anyone. The cooldown is shared across players, so it goes too —
+	/// otherwise one player picking would briefly lock everybody else out.
+	/// </remarks>
+	private static void Configure(ChoiceShrine remnant)
+	{
+		remnant.maxTotalUseCount = -1;
+		remnant.maxUseCountPerPlayer = -1;
+		remnant.useCooldown = 0f;
+		remnant.baseGoldCost = 0;
+		remnant.unavailableByDefault = false;
+		remnant.interactableDelay = 0f;
 	}
 
 	/// <summary>

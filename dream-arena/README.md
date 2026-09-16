@@ -56,6 +56,8 @@ every change is written to both sides.
 | No game modifiers | Obliviax, Mirage Skin, Golden Lizard… | cleared `addedGameMods`, swept `GameModifierBase` |
 | Direct rift | camp exits straight into the arena | `Rift_RoomExit.nextNodeIndex` |
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
+| Camp remnants | ten free pick-anything remnants | spawned `ChoiceShrine`s, offering overwritten |
+| Max player level | everyone at the cap in camp | `Hero.maxLevel` |
 
 `WrapUpAndShowResult` is the single funnel every run-ending path goes through
 (`CheckGameOver`, `ConcludePureWhiteDream`, `ConcludeUnknownFate`), which is why
@@ -127,6 +129,45 @@ on the correct side of that line too.
 
 The index is a single synced int, so it is polled rather than hooked to a
 transition event — no dependency on the exact ordering of the travel pipeline.
+
+### Camp remnants
+
+Ten remnants stand in the camp: **memories down one side, essences down the
+other**, one per rarity, running Common to Unique. Everything is free and
+never runs out, so a build is chosen rather than farmed and two players can
+take the same thing.
+
+They are the game's own Retrospection and Enlightenment remnants
+(`Shrine_Retrospection`, `Shrine_Enlightenment`) rather than merchants. A
+remnant opens a pick-one window whose contents are per player and written by
+the server, which is exactly the shape this needs; a merchant's window is a
+purchase flow built around gold and stock counts that mean nothing here.
+
+A postfix on each `OnPopulateChoices` replaces the usual three random picks
+with every item of that remnant's bracket, at a fixed level or quality. They
+are configured on spawn to be permanent fixtures:
+
+| field | value | why |
+|---|---|---|
+| `maxTotalUseCount` | `-1` | the game's own no-limit value |
+| `maxUseCountPerPlayer` | `-1` | same, per player |
+| `useCooldown` | `0` | the cooldown is shared, so one pick would lock everyone out |
+| `baseGoldCost` | `0` | gold is PvE progression |
+
+`choices` is a `SyncDictionary` keyed by player guid and is never cleared after
+a pick, so a remnant can be used again immediately.
+
+**Why split by rarity rather than one remnant per kind.** The choice window is
+a `GridLayoutGroup` with no scrolling, so a remnant holding every memory in the
+game would spill off screen. A single rarity is a few dozen entries. Remnants
+the world generates are matched by instance id and left completely alone.
+
+**Placement.** `Rift_RoomExit` is a scene object with no position syncing, so
+moving it would shift it on the host only and leave clients interacting with
+thin air. The remnants are laid out around it instead: both rows run directly
+away from the rift, straddling an aisle, starting a clear distance from it.
+That adapts to whatever camp room the run generates rather than assuming a
+fixed direction.
 
 ### Leaving camp
 
