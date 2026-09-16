@@ -51,7 +51,8 @@ every change is written to both sides.
 | No monsters | empty arena, no boss | `maxAndSpawnedPopulationMultiplier = 0` |
 | Camp and arena | safe camp, PvP past the rift | `SetRoomOverride` on every non-Start node |
 | No PvE | no monsters, props, boss, chests or loose items | blocked `RoomProps`, plus an actor sweep |
-| Clean HUD | no Goal, no room modifiers | hidden quests, stripped node modifiers |
+| Clean HUD | no Goal, no room modifiers, mode always shown | hidden quests, stripped node modifiers, replaced location text |
+| No lucid dreams | PvE progression layer stripped | blocked `AddLucidDream`, cleared available list |
 | Direct rift | camp exits straight into the arena | `Rift_RoomExit.nextNodeIndex` |
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
 
@@ -183,6 +184,7 @@ Worth being precise about, since a hidden effect is still an effect:
 | Room modifiers (Accelerated Time, …) | **removed** — stripped from the node before the room ever loads, so they never apply |
 | Monsters, boss, props, chests, items | **removed** — blocked at spawn and swept every second |
 | Rescue quests from knockouts | **removed** — `Se_HeroKnockedOut.disableQuest` set before it can fire |
+| Lucid dreams | **removed** — never added, and the offer list is emptied |
 | The run's Goal quest | **hidden only** — still tracking, see below |
 
 The Goal is the one thing suppressed purely visually, through a postfix on
@@ -200,6 +202,32 @@ mod had already stripped. Both are gated behind the effect's own public
 
 The camp is deliberately untouched — it should still look and behave like a
 normal starting room.
+
+### Lucid dreams
+
+A PvE progression layer: run-wide modifiers players bring in or pick up from
+shrines. `GameManager.GetLucidDreams()` is the single place they become actors,
+so anything left in `activeLucidDreams` is genuinely in effect — hiding them
+would not do.
+
+`AddLucidDream` is refused outright, whatever offered it, and
+`UpdateAvailableLucidDreams` is emptied as it is rebuilt so nothing is
+selectable in the lobby. The game recomputes that offer list whenever the roster
+changes, so clearing it once would not hold.
+
+PvP also gets **its own settings save slot**, `dreamarena_pvp`.
+`PlayLobbyManager.StartGame_Imp` writes the lobby's settings back to whichever
+slot is active — difficulty, banned items and lucid dreams included. Sharing the
+Shape of Dreams slot would mean one PvP match overwriting the host's normal-run
+lucid dream selections with an empty list. Limbo already solves this with its
+own `"limbo"` key; PvP does the same.
+
+### HUD
+
+The location readout, normally "1. Forest of Turbulence", is replaced with the
+match type — "PVP: Free For All", or "PVP: Camp (safe)" while nobody can be
+hurt. `UI_InGame_Location` only rewrites its text on room load, so the label is
+also refreshed whenever the phase or the configured mode changes.
 
 ### Round start
 

@@ -1,3 +1,4 @@
+using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 
@@ -31,6 +32,23 @@ internal static class CreateLobbyModePatch
 	private const string PvpValue = "DreamArena_PvP";
 
 	private const string PvpLabel = "PvP Arena";
+
+	/// <summary>
+	/// Save slot for PvP lobby settings.
+	/// </summary>
+	/// <remarks>
+	/// Without this, PvP would share the Shape of Dreams slot, and
+	/// <c>PlayLobbyManager.StartGame_Imp</c> writes the lobby's settings back to
+	/// whichever slot is active — difficulty, banned items and lucid dreams
+	/// included. Since this mode strips lucid dreams, starting one match would
+	/// overwrite the host's normal-run selections with an empty list. Limbo
+	/// already solves this by using its own "limbo" key; PvP does the same.
+	/// </remarks>
+	private const string PvpSaveKey = "dreamarena_pvp";
+
+	/// <summary>The view's private settings object, the one it starts the lobby with.</summary>
+	private static readonly FieldInfo StateField =
+		AccessTools.Field(typeof(UI_Title_CreateLobbyView), "_state");
 
 	private const string PvpDescription =
 		"Fight each other in the Lone King's Zenith. No monsters, no ending — " +
@@ -83,7 +101,30 @@ internal static class CreateLobbyModePatch
 			__instance.gameModeDescriptionText.text = PvpDescription;
 		}
 
+		ApplySaveKey(__instance, isPvp);
 		SetArenaMode(isPvp);
+	}
+
+	/// <summary>
+	/// Routes PvP lobby settings to their own save slot, leaving the normal
+	/// run's selections alone.
+	/// </summary>
+	private static void ApplySaveKey(UI_Title_CreateLobbyView view, bool isPvp)
+	{
+		if (!(StateField?.GetValue(view) is DewNetworkStartSettings state))
+		{
+			return;
+		}
+
+		// Only touch the key for our own mode; Limbo manages its own.
+		if (isPvp)
+		{
+			state.customGameSettingsSaveKey = PvpSaveKey;
+		}
+		else if (state.customGameSettingsSaveKey == PvpSaveKey)
+		{
+			state.customGameSettingsSaveKey = null;
+		}
 	}
 
 	/// <summary>Writes the mode only when it actually changes, since

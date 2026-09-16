@@ -64,3 +64,28 @@ internal static class QuestDisplayPatch
 		__result = false;
 	}
 }
+
+/// <summary>
+/// Overwrites the location readout with the match type.
+/// </summary>
+/// <remarks>
+/// <c>UI_InGame_Location.OnRoomLoaded</c> is the only place that field is
+/// written, so a postfix owns it cleanly. Running after the original means the
+/// stock text is still produced and then replaced, which keeps normal runs
+/// untouched when PvP is off.
+/// </remarks>
+[HarmonyPatch(typeof(UI_InGame_Location), "OnRoomLoaded")]
+internal static class LocationLabelPatch
+{
+	[HarmonyPostfix]
+	private static void Postfix()
+	{
+		DreamArenaMod mod = DreamArenaMod.Instance;
+		if (mod == null)
+		{
+			return;
+		}
+
+		LocationLabel.Refresh(mod.config, mod.Phase);
+	}
+}

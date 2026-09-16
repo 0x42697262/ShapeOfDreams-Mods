@@ -102,6 +102,8 @@ internal sealed class ArenaPhase
 		TeamMode mode = phase == PhaseKind.Arena ? config.teamMode : TeamMode.Peaceful;
 		RelationController.Apply(mode);
 
+		LocationLabel.Refresh(config, phase);
+
 		Debug.Log($"{ModIdentity.LogPrefix}phase -> {phase} " +
 		          $"({(phase == PhaseKind.Camp ? "safe, everyone allied" : mode.ToString())}).");
 	}

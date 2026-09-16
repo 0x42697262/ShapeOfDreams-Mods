@@ -50,11 +50,21 @@ public class DreamArenaConfig : ModConfig
 	             "Despawn, not kill, so no rewards drop and no exit rift opens.")]
 	public bool removeBoss = true;
 
+	[LabelText("Show mode in HUD")]
+	[Description("Replaces the location readout with the match type, so the rules in " +
+	             "force are always on screen.")]
+	public bool showModeInHud = true;
+
 	[LabelText("Hide objectives")]
 	[Description("Drops the Goal and any side quests from the HUD. Display only - the " +
 	             "run's own goal keeps tracking quietly, since cancelling it could end " +
 	             "the run.")]
 	public bool hideObjectives = true;
+
+	[LabelText("No lucid dreams")]
+	[Description("Strips the run-wide lucid dream modifiers, a PvE progression layer. " +
+	             "Removed outright, not hidden.")]
+	public bool removeLucidDreams = true;
 
 	[LabelText("No rescue quests")]
 	[Description("Stops a knockout from starting a Lost Soul quest and dropping a " +
@@ -107,7 +117,9 @@ public class DreamArenaConfig : ModConfig
 		other.removeBoss = removeBoss;
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
+		other.showModeInHud = showModeInHud;
 		other.hideObjectives = hideObjectives;
+		other.removeLucidDreams = removeLucidDreams;
 		other.suppressKnockoutQuests = suppressKnockoutQuests;
 		other.stripRoomModifiers = stripRoomModifiers;
 		other.skipCutscenes = skipCutscenes;

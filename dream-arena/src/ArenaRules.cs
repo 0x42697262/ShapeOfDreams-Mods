@@ -49,9 +49,39 @@ internal static class ArenaRules
 		game.maxAndSpawnedPopulationMultiplier =
 			(active && config.suppressMonsters) ? NoMonsters : NormalMonsters;
 
+		ClearLucidDreams(active, config);
+
 		Debug.Log($"{ModIdentity.LogPrefix}rules applied: " +
 		          $"gameOverEnabled={game.isGameOverEnabled}, " +
 		          $"populationMultiplier={game.maxAndSpawnedPopulationMultiplier}.");
+	}
+
+	/// <summary>
+	/// Drops any lucid dreams already in effect.
+	/// </summary>
+	/// <remarks>
+	/// The patch stops new ones being added, but a lobby configured before PvP
+	/// was selected can already carry some, and <c>GameManager</c> reads the
+	/// active list directly — so leaving them would leave them in force.
+	/// <c>ClearLucidDreams</c> is the game's own server-side method for this.
+	/// </remarks>
+	private static void ClearLucidDreams(bool active, DreamArenaConfig config)
+	{
+		if (!active || !config.removeLucidDreams)
+		{
+			return;
+		}
+
+		GameSettingsManager settings = NetworkedManagerBase<GameSettingsManager>.instance;
+		if (settings == null || settings.activeLucidDreams.Count == 0)
+		{
+			return;
+		}
+
+		int count = settings.activeLucidDreams.Count;
+		settings.ClearLucidDreams();
+
+		Debug.Log($"{ModIdentity.LogPrefix}cleared {count} active lucid dream(s).");
 	}
 
 	/// <summary>
