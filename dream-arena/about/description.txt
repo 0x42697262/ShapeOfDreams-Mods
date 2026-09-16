@@ -1,13 +1,5 @@
 Host-only PvP arena for friendly matches.
 
-Pick "PvP Arena" as the game mode when creating a lobby. Your run opens at the
-usual campfire, where everyone is friendly - use it to regroup between rounds.
-Take the rift out of camp and you arrive in the Lone King's Zenith with PvP
-live: no monsters, no boss, and knocked-out players get back up so the match
-keeps going. Free-for-all by default, with a two-team mode.
+Play with your friends and test out builds against each other! Supports FFA and Team Fights. Just select "PvP Arena" as the game mode when creating your lobby.
 
-ONLY THE HOST NEEDS THIS MOD. Everything is enforced server-side, so your
-friends can join and fight with nothing installed.
-
-Proof of concept: there are no win conditions yet, so a match never ends on
-its own.
+Note: Only the host needs this mod. Your friends can join on a fully vanilla client.
