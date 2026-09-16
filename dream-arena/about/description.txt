@@ -1,0 +1,14 @@
+Host-only PvP arena for friendly matches.
+
+Turns on player-versus-player combat, empties the arena of monsters, and keeps
+the run going when players are knocked out. Free-for-all by default, with a
+two-team mode.
+
+ONLY THE HOST NEEDS THIS MOD. Everything is enforced server-side, so your
+friends can join and fight with nothing installed.
+
+Configure it from the Dream Arena button in the lobby settings, or with the
+arena console commands in Developer Mode.
+
+Proof of concept: there are no win conditions yet, so a match never ends on
+its own.
