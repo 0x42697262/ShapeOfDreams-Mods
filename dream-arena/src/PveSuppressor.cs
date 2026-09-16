@@ -141,6 +141,15 @@ internal static class PveSuppressor
 			return false;
 		}
 
+		// Game modifiers are the PvE content generators: hunters, elite skins,
+		// roaming spawns. DewQuest is also a GameEffect, so this matches the
+		// modifier type specifically rather than the shared base.
+		if (actor is GameModifierBase)
+		{
+			DreamArenaMod mod = DreamArenaMod.Instance;
+			return mod == null || mod.config.removeGameModifiers;
+		}
+
 		if (actor is Shrine || actor is Treasure || actor is Artifact
 		    || actor is Room_Trap_Toggleable)
 		{

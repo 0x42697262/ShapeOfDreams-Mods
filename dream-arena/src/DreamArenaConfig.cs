@@ -61,6 +61,11 @@ public class DreamArenaConfig : ModConfig
 	             "the run.")]
 	public bool hideObjectives = true;
 
+	[LabelText("No game modifiers")]
+	[Description("Removes the run-wide PvE generators - Obliviax, Mirage Skin, Golden " +
+	             "Lizard, Corrupted Chaos - which the game adds to every run by default.")]
+	public bool removeGameModifiers = true;
+
 	[LabelText("No lucid dreams")]
 	[Description("Strips the run-wide lucid dream modifiers, a PvE progression layer. " +
 	             "Removed outright, not hidden.")]
@@ -119,6 +124,7 @@ public class DreamArenaConfig : ModConfig
 		other.reviveHealthPercent = reviveHealthPercent;
 		other.showModeInHud = showModeInHud;
 		other.hideObjectives = hideObjectives;
+		other.removeGameModifiers = removeGameModifiers;
 		other.removeLucidDreams = removeLucidDreams;
 		other.suppressKnockoutQuests = suppressKnockoutQuests;
 		other.stripRoomModifiers = stripRoomModifiers;

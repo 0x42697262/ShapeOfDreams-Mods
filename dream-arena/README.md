@@ -53,6 +53,7 @@ every change is written to both sides.
 | No PvE | no monsters, props, boss, chests or loose items | blocked `RoomProps`, plus an actor sweep |
 | Clean HUD | no Goal, no room modifiers, mode always shown | hidden quests, stripped node modifiers, replaced location text |
 | No lucid dreams | PvE progression layer stripped | blocked `AddLucidDream`, cleared available list |
+| No game modifiers | Obliviax, Mirage Skin, Golden Lizard… | cleared `addedGameMods`, swept `GameModifierBase` |
 | Direct rift | camp exits straight into the arena | `Rift_RoomExit.nextNodeIndex` |
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
 
@@ -226,6 +227,30 @@ mod had already stripped. Both are gated behind the effect's own public
 
 The camp is deliberately untouched — it should still look and behave like a
 normal starting room.
+
+### Game modifiers
+
+`GameSettingsManager.OnStartServer` does more than copy the lobby's choices. It
+walks every `GameModifierBase` in the game and adds any that is not excluded
+from the pool:
+
+```csharp
+foreach (GameModifierBase item in DewResources.FindAllByType<GameModifierBase>(...)) {
+    if (Dew.IsGameModifierIncludedInGame(text) && !Dew.IsExcludedFromPool(text)
+        && !addedGameMods.Contains(text))
+        addedGameMods.Add(text);
+}
+```
+
+So every run silently carries Obliviax, Mirage Skin, Golden Lizard and Corrupted
+Chaos — PvE content generators, and exactly the sort of thing that keeps
+producing entities in a supposedly empty arena. The list is cleared in a
+postfix so the actors are never created, and `PveSuppressor` also sweeps
+`GameModifierBase` in case manager start order puts creation first.
+
+`DewQuest` shares the `GameEffect` base, so the sweep matches the modifier type
+specifically rather than the base — otherwise it would take the run's own goal
+with it.
 
 ### Lucid dreams
 

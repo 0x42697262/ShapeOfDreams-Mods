@@ -66,3 +66,41 @@ internal static class LucidDreamPatch
 		__instance.availableLucidDreams.Clear();
 	}
 }
+
+/// <summary>
+/// Stops the run's default game modifiers being registered at all.
+/// </summary>
+/// <remarks>
+/// <c>GameSettingsManager.OnStartServer</c> does more than copy the lobby's
+/// choices: it walks every <c>GameModifierBase</c> in the game and adds any
+/// that is not excluded from the pool, so a normal run silently carries
+/// Obliviax, Mirage Skin, Golden Lizard and friends. Those are PvE content
+/// generators and have no place in a match.
+///
+/// Clearing the list here means the actors are never created, rather than
+/// being spawned and swept a second later. <see cref="PveSuppressor"/> still
+/// removes any that slip through, since manager start order is not guaranteed.
+/// </remarks>
+[HarmonyPatch(typeof(GameSettingsManager), "OnStartServer")]
+internal static class GameModifierPatch
+{
+	[HarmonyPostfix]
+	private static void Postfix(GameSettingsManager __instance)
+	{
+		DreamArenaMod mod = DreamArenaMod.Instance;
+		if (mod == null || !mod.config.arenaEnabled || !mod.config.removeGameModifiers)
+		{
+			return;
+		}
+
+		if (__instance.addedGameMods.Count == 0)
+		{
+			return;
+		}
+
+		int count = __instance.addedGameMods.Count;
+		__instance.addedGameMods.Clear();
+
+		Debug.Log($"{ModIdentity.LogPrefix}cleared {count} default game modifier(s).");
+	}
+}
