@@ -50,7 +50,8 @@ every change is written to both sides.
 | Never end the run | players can die, run continues | prefix blocking `GameManager.WrapUpAndShowResult` |
 | No monsters | empty arena, no boss | `maxAndSpawnedPopulationMultiplier = 0` |
 | Camp and arena | safe camp, PvP past the rift | `SetRoomOverride` on every non-Start node |
-| No PvE | no monsters, props, boss or hazards | blocked `RoomProps`, plus an entity sweep |
+| No PvE | no monsters, props, boss, chests or loose items | blocked `RoomProps`, plus an actor sweep |
+| Clean HUD | no Goal, no room modifiers | hidden quests, stripped node modifiers |
 | Direct rift | camp exits straight into the arena | `Rift_RoomExit.nextNodeIndex` |
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
 
@@ -136,8 +137,11 @@ if (nextNodeIndex >= 0) { confirm -> CmdTravelToNode(nextNodeIndex); return; }
 if (currentNode.type != ExitBoss && !forceTravelToNextZone) { show world map; return; }
 ```
 
-Setting it gives the boss-room feel: one "move to the next location" prompt,
-then straight into the fight. It is a SyncVar, so the host setting it is enough.
+Setting it gives the boss-room feel: one prompt, then straight into the fight.
+The prompt text itself is swapped for a PvP-themed one by intercepting the
+`InGame_Message_RiftMoveToNextLocation` lookup in `DewLocalization.GetUIValue` —
+far less invasive than reimplementing the rift's interaction, and it leaves
+every other string alone. It is a SyncVar, so the host setting it is enough.
 A connected non-camp node is preferred, with any non-camp node as a fallback.
 
 ### Removing PvE
@@ -150,11 +154,30 @@ Zeroing the monster population budget stops waves, but not everything:
 - **The boss and its hazards** — a boss room places these as part of the room
   itself, so they appear regardless of the spawn budget.
 
-Anything that still reaches the arena is swept once a second: every `Monster`
-(bosses included, since `BossMonster` derives from it) and every `PropEntity`
-in `ActorManager.allEntities` is destroyed. Heroes, summons and rifts are left
-alone. `Destroy()` rather than `Kill()`, so nothing drops rewards or opens the
-exit rift.
+Anything that still reaches the arena is swept once a second, in two passes:
+
+- `ActorManager.allEntities` — every `Monster` (bosses included, since
+  `BossMonster` derives from it) and every `PropEntity`.
+- `ActorManager.allActors` — chests (`Treasure`) and loose items, which are
+  Actors rather than Entities so the first pass misses them.
+
+Items are matched through `IItem`, which also covers a hero's own equipped
+skills — so only genuinely unclaimed ones are taken: `handOwner`, `owner` and
+`tempOwner` must all be empty. Getting that wrong would strip the players' kits.
+
+Heroes, summons and rifts are left alone throughout, and `Destroy()` is used
+rather than `Kill()` so nothing drops rewards or opens the exit rift.
+
+**Room modifiers** are stripped from arena nodes as the room override is
+applied. Rolls like Accelerated Time change everyone's movement and attack
+speed, which has no place in a match meant to be even. `RemoveModifier` is used
+rather than editing the list in place, since `WorldNodeData` is a struct inside
+a SyncList and must be written back to replicate.
+
+**Objectives** are hidden rather than cancelled. "Goal: Shape of Dreams" and any
+side quests are dropped from the HUD through a postfix on
+`DewQuest.IsVisibleLocally`. `DewQuest` is wired into run progression, so
+completing or removing the main goal could end the run; hiding cannot misfire.
 
 The camp is deliberately untouched — it should still look and behave like a
 normal starting room.
@@ -243,6 +266,7 @@ src/
     CreateLobbyModePatch.cs  PvP Arena in the Create Lobby game mode dropdown
     RoundStartPatch.cs    skips cutscenes, spreads spawns
     PveSuppressionPatch.cs  blocks room prop spawning
+    HudPatches.cs         PvP rift prompt, hides objectives
     WorldGenPatch.cs      applies the arena room once the world exists
     GameEndPatch.cs       blocks WrapUpAndShowResult
     LobbySettingsPatch.cs injects the lobby button

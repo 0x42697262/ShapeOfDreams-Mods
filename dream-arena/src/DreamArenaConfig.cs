@@ -50,6 +50,16 @@ public class DreamArenaConfig : ModConfig
 	             "Despawn, not kill, so no rewards drop and no exit rift opens.")]
 	public bool removeBoss = true;
 
+	[LabelText("Hide objectives")]
+	[Description("Drops the Goal and any side quests from the HUD. They mean nothing " +
+	             "in an arena match.")]
+	public bool hideObjectives = true;
+
+	[LabelText("Strip room modifiers")]
+	[Description("Removes modifiers like Accelerated Time from arena rooms, which would " +
+	             "otherwise change everyone's movement and attack speed mid-match.")]
+	public bool stripRoomModifiers = true;
+
 	[LabelText("Skip intro cutscenes")]
 	[Description("Suppresses the arena intro with its 'press space to skip' prompt, " +
 	             "which is just a delay between rounds.")]
@@ -91,6 +101,8 @@ public class DreamArenaConfig : ModConfig
 		other.removeBoss = removeBoss;
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
+		other.hideObjectives = hideObjectives;
+		other.stripRoomModifiers = stripRoomModifiers;
 		other.skipCutscenes = skipCutscenes;
 		other.spreadSpawns = spreadSpawns;
 	}

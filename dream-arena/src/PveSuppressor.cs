@@ -27,7 +27,8 @@ internal static class PveSuppressor
 
 	private static float _timer;
 
-	private static readonly List<Entity> Doomed = new List<Entity>();
+	private static readonly List<Entity> DoomedEntities = new List<Entity>();
+	private static readonly List<Actor> DoomedActors = new List<Actor>();
 
 	/// <summary>
 	/// True when PvE content should be kept out of the room the players are in.
@@ -70,31 +71,71 @@ internal static class PveSuppressor
 			return 0;
 		}
 
-		Doomed.Clear();
+		DoomedEntities.Clear();
+		DoomedActors.Clear();
 
 		foreach (Entity entity in actors.allEntities)
 		{
-			if (entity.IsNullOrInactive() || !IsPve(entity))
+			if (!entity.IsNullOrInactive() && IsPve(entity))
 			{
-				continue;
+				DoomedEntities.Add(entity);
 			}
-
-			Doomed.Add(entity);
 		}
 
-		foreach (Entity entity in Doomed)
+		// Treasures and loose items are Actors, not Entities, so they need a
+		// second pass over the wider collection.
+		foreach (Actor actor in actors.allActors)
 		{
-			// Destroy, not Kill: a kill would drop rewards and, for a boss, run
-			// the defeat path and open the exit rift.
+			if (!actor.IsNullOrInactive() && IsUnwantedActor(actor))
+			{
+				DoomedActors.Add(actor);
+			}
+		}
+
+		// Destroy, not Kill: a kill would drop rewards and, for a boss, run the
+		// defeat path and open the exit rift.
+		foreach (Entity entity in DoomedEntities)
+		{
 			entity.Destroy();
 		}
 
-		if (Doomed.Count > 0)
+		foreach (Actor actor in DoomedActors)
 		{
-			Debug.Log($"{ModIdentity.LogPrefix}swept {Doomed.Count} PvE object(s) from the arena.");
+			actor.Destroy();
 		}
 
-		return Doomed.Count;
+		int total = DoomedEntities.Count + DoomedActors.Count;
+		if (total > 0)
+		{
+			Debug.Log($"{ModIdentity.LogPrefix}swept {total} PvE object(s) from the arena.");
+		}
+
+		return total;
+	}
+
+	/// <summary>
+	/// Chests and items lying on the ground.
+	/// </summary>
+	/// <remarks>
+	/// Items are matched through <c>IItem</c>, which covers gems and skills.
+	/// A hero's own equipped skills implement the same interface, so only
+	/// genuinely unclaimed ones are taken: <c>handOwner</c>, <c>owner</c> and
+	/// <c>tempOwner</c> must all be empty. Getting that wrong would strip the
+	/// players' kits.
+	/// </remarks>
+	private static bool IsUnwantedActor(Actor actor)
+	{
+		if (actor is Treasure)
+		{
+			return true;
+		}
+
+		if (actor is IItem item)
+		{
+			return item.handOwner == null && item.owner == null && item.tempOwner == null;
+		}
+
+		return false;
 	}
 
 	/// <summary>

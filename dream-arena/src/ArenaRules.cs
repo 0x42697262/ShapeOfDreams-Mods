@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
@@ -138,6 +139,7 @@ internal static class ArenaRules
 				}
 
 				zones.SetRoomOverride(i, config.arenaRoom);
+				StripModifiers(zones, i, config);
 				changed++;
 			}
 
@@ -148,6 +150,42 @@ internal static class ArenaRules
 		{
 			Debug.LogWarning($"{ModIdentity.LogPrefix}could not apply arena room " +
 			                 $"'{config.arenaRoom}': {e.Message}");
+		}
+	}
+
+	/// <summary>
+	/// Clears a node's room modifiers.
+	/// </summary>
+	/// <remarks>
+	/// Modifiers such as Accelerated Time are rolled onto nodes during world
+	/// generation and change how everyone moves and attacks, which has no place
+	/// in a match meant to be even. <c>RemoveModifier</c> is used rather than
+	/// editing the list in place, because <c>WorldNodeData</c> is a struct
+	/// inside a SyncList and has to be written back to replicate.
+	/// </remarks>
+	private static void StripModifiers(ZoneManager zones, int nodeIndex, DreamArenaConfig config)
+	{
+		if (!config.stripRoomModifiers)
+		{
+			return;
+		}
+
+		List<ModifierData> modifiers = zones.nodes[nodeIndex].modifiers;
+		if (modifiers == null || modifiers.Count == 0)
+		{
+			return;
+		}
+
+		// Snapshot the ids: removal rewrites the list being read.
+		List<int> ids = new List<int>();
+		foreach (ModifierData modifier in modifiers)
+		{
+			ids.Add(modifier.id);
+		}
+
+		foreach (int id in ids)
+		{
+			zones.RemoveModifier(nodeIndex, id);
 		}
 	}
 }
