@@ -57,6 +57,30 @@ public class DreamArenaConfig : ModConfig
 	[Description("Health to revive with, as a percentage of maximum.")]
 	public int reviveHealthPercent = 100;
 
+	[LabelText("Loadouts from deja vu")]
+	[Description("Banks every deja vu item a player picks in the lobby and grants the whole " +
+	             "set at run start. Players pick one at a time in the stock UI; the host " +
+	             "remembers the sequence. Clearing the slot starts their list over.")]
+	public bool loadoutEnabled = true;
+
+	[LabelText("Max essences")]
+	[Description("Most essences one player can bank. A full build is 12.")]
+	public int maxEssences = 12;
+
+	[LabelText("Max memories")]
+	[Description("Most memories one player can bank. A full build is 2.")]
+	public int maxMemories = 2;
+
+	[LabelText("Essence quality")]
+	[Description("Fixed quality every granted essence gets, so builds compete on composition " +
+	             "rather than luck. Tiers: 50 Chipped, 100 Flawed, 200 Regular, 400 Flawless, " +
+	             "600 Perfect, 1000 Otherworldly, above that Transcendent. Stock deja vu gives 100.")]
+	public int essenceQuality = 400;
+
+	[LabelText("Memory level")]
+	[Description("Fixed level every granted memory gets. Stock deja vu gives level 1.")]
+	public int memoryLevel = 1;
+
 	/// <summary>Copies the live values onto another instance without replacing the object.</summary>
 	public void CopyValuesTo(DreamArenaConfig other)
 	{
@@ -74,5 +98,10 @@ public class DreamArenaConfig : ModConfig
 		other.removeBoss = removeBoss;
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
+		other.loadoutEnabled = loadoutEnabled;
+		other.maxEssences = maxEssences;
+		other.maxMemories = maxMemories;
+		other.essenceQuality = essenceQuality;
+		other.memoryLevel = memoryLevel;
 	}
 }

@@ -24,6 +24,10 @@ public class DreamArenaMod : ModBehaviour
 
 	private readonly ReviveController _revives = new ReviveController();
 
+	/// <summary>True while deja vu picks should be banked and granted as builds.</summary>
+	public static bool IsLoadoutActive =>
+		Instance != null && Instance.config.arenaEnabled && Instance.config.loadoutEnabled;
+
 	/// <summary>True while the run should be prevented from concluding.</summary>
 	public static bool ShouldBlockRunEnd =>
 		Instance != null && Instance.config.arenaEnabled && Instance.config.neverEndRun;
@@ -195,9 +199,24 @@ public class DreamArenaMod : ModBehaviour
 		Debug.Log($"{ModIdentity.LogPrefix}arena={config.arenaEnabled} mode={config.teamMode} " +
 		          $"neverEnd={config.neverEndRun} noMonsters={config.suppressMonsters} " +
 		          $"room={config.arenaRoom} revive={config.autoReviveSeconds}s " +
+		          $"loadouts={config.loadoutEnabled}({LoadoutRegistry.Count} banked, " +
+		          $"{config.maxEssences}e@q{config.essenceQuality}/{config.maxMemories}m@L{config.memoryLevel}) " +
 		          $"| server={NetworkServer.active} " +
 		          $"players={RelationController.GetHumanPlayers().Count} " +
 		          $"gameOverEnabled={(game != null ? game.isGameOverEnabled.ToString() : "n/a")}");
+	}
+
+	[ConsoleCommand("Grant every player their banked loadout right now", "arena_give")]
+	public void Cmd_ArenaGive()
+	{
+		LoadoutGranter.GrantAllPlayers(config);
+	}
+
+	[ConsoleCommand("Forget every banked loadout", "arena_clear_loadouts")]
+	public void Cmd_ArenaClearLoadouts()
+	{
+		LoadoutRegistry.ClearAll();
+		Debug.Log($"{ModIdentity.LogPrefix}all banked loadouts cleared.");
 	}
 
 	[ConsoleCommand("Teleport everyone into the arena, as the boss trigger would", "arena_start")]

@@ -52,6 +52,7 @@ every change is written to both sides.
 | Force arena room | every travel lands in the arena | `ZoneManager.SetRoomOverride` |
 | Remove the boss | arena stays empty | sweep for `BossMonster`, `Destroy()` |
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
+| Loadouts | bring a full build into the arena | banked déjà vu picks, respawned at fixed quality |
 
 `WrapUpAndShowResult` is the single funnel every run-ending path goes through
 (`CheckGameOver`, `ConcludePureWhiteDream`, `ConcludeUnknownFate`), which is why
@@ -105,6 +106,39 @@ The boss is swept for once a second and removed with `Destroy()` rather than
 `Kill()` — killing it would run the defeat path, drop rewards and open the exit
 rift.
 
+### Loadouts
+
+A player has exactly one déjà vu slot — `selectedDejavuItem` is a single string
+SyncVar and the picker UI has one slot, so there is no count to raise. The limit
+is the data model.
+
+The way around it without touching clients: `CmdSetDejavuItem` is sent by the
+client but **validated and applied on the host**. A postfix on
+`UserCode_CmdSetDejavuItem__String` banks each accepted pick, so players choose
+items one at a time in the stock UI while the host accumulates the sequence.
+Clearing the slot starts their list over. Their machine is unchanged; only the
+host is keeping history.
+
+At run start a postfix on `PlayGameManager.DoDejavuSpawn` spawns the rest of the
+build. `Dew.CreateGem` and `Dew.CreateSkillTrigger` create networked entities,
+so unmodded clients just see items appear as ordinary drops.
+
+Quality and level are **fixed by config, not inherited**, so builds compete on
+composition rather than on who banked the shiniest essence. Defaults are 12
+essences at quality 400 and 2 memories at level 1.
+
+Gem quality is not a percentage:
+
+| quality | tier |
+|---|---|
+| < 50 | Chipped |
+| < 100 | Flawed |
+| < 200 | Regular ← stock déjà vu grants 100 |
+| < 400 | Flawless |
+| < 600 | Perfect |
+| < 1000 | Otherworldly |
+| ≥ 1000 | Transcendent |
+
 ### Revive
 
 Knocked-out heroes never recover on their own, and this mod blocks the run from
@@ -120,7 +154,8 @@ Host only, three ways, all the same settings:
 - **In lobby** — a "Dream Arena" button is injected into the lobby settings panel.
 - **Console** (Developer Mode, F1): `arena`, `arena_on`, `arena_off`,
   `arena_mode <FreeForAll|TwoTeams|Peaceful>`, `arena_room <Room_...>`,
-  `arena_revive <seconds>`, `arena_start`, `arena_nuke_boss`, `arena_status`.
+  `arena_revive <seconds>`, `arena_start`, `arena_nuke_boss`, `arena_give`,
+  `arena_clear_loadouts`, `arena_status`.
 - **Mod manager** — the Config button, for persisted defaults.
 
 The in-lobby window generates its widgets from `DreamArenaConfig` via
@@ -141,11 +176,14 @@ src/
   RelationController.cs   the PvP core: writes the relation SyncLists
   ArenaRules.cs           no game over, no monsters, arena room override
   ArenaStage.cs           boss removal and teleport into the arena
+  LoadoutRegistry.cs      banks each player's déjà vu picks
+  LoadoutGranter.cs       spawns banked builds at fixed quality
   ReviveController.cs     auto-revive timers for knocked-out players
   ArenaConfigWindow.cs    host's in-lobby settings window
   InjectedUi.cs           teardown for live reload
   ModIdentity.cs          names stamped on created objects
   Patches/
+    DejavuPatches.cs      banks picks, expands the déjà vu spawn
     GameEndPatch.cs       blocks WrapUpAndShowResult
     LobbySettingsPatch.cs injects the lobby button
 ```
@@ -165,7 +203,9 @@ so editing here is what the compiler and game both see.
 
 1. Developer Mode on, load the mod from the title screen.
 2. Host a lobby, open **Dream Arena** from lobby settings, tick **Arena mode**, Apply.
-3. Start a run with at least two players and hit each other.
+3. In the lobby, each player picks déjà vu items one at a time — every pick is
+   banked host-side. Watch `arena_give` / the log to confirm.
+4. Start a run with at least two players and hit each other.
 
 `arena_status` reports the live state. Expect this in the log:
 
