@@ -114,18 +114,35 @@ internal static class PveSuppressor
 	}
 
 	/// <summary>
-	/// Chests and items lying on the ground.
+	/// Room furniture: shrines, chests, artifacts, traps and loose items.
 	/// </summary>
 	/// <remarks>
-	/// Items are matched through <c>IItem</c>, which covers gems and skills.
-	/// A hero's own equipped skills implement the same interface, so only
-	/// genuinely unclaimed ones are taken: <c>handOwner</c>, <c>owner</c> and
-	/// <c>tempOwner</c> must all be empty. Getting that wrong would strip the
-	/// players' kits.
+	/// <para>
+	/// These all derive from <c>Actor</c> rather than <c>Entity</c>, which is
+	/// why an earlier entity-only sweep left shrines standing in the arena.
+	/// </para>
+	/// <para>
+	/// <c>Rift</c> is deliberately spared — it is the way out of the room.
+	/// So are <c>AbilityTrigger</c>, <c>AbilityInstance</c>, <c>GameEffect</c>
+	/// and <c>ServerActor</c>, which are the players' own kit and the machinery
+	/// running the match.
+	/// </para>
+	/// <para>
+	/// Items are matched through <c>IItem</c>, which a hero's equipped skills
+	/// also implement, so only genuinely unclaimed ones are taken:
+	/// <c>handOwner</c>, <c>owner</c> and <c>tempOwner</c> must all be empty.
+	/// Getting that wrong would strip the players' kits.
+	/// </para>
 	/// </remarks>
 	private static bool IsUnwantedActor(Actor actor)
 	{
-		if (actor is Treasure)
+		if (actor is Rift)
+		{
+			return false;
+		}
+
+		if (actor is Shrine || actor is Treasure || actor is Artifact
+		    || actor is Room_Trap_Toggleable)
 		{
 			return true;
 		}

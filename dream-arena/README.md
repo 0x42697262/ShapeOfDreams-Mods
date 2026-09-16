@@ -159,8 +159,13 @@ Anything that still reaches the arena is swept once a second, in two passes:
 
 - `ActorManager.allEntities` — every `Monster` (bosses included, since
   `BossMonster` derives from it) and every `PropEntity`.
-- `ActorManager.allActors` — chests (`Treasure`) and loose items, which are
-  Actors rather than Entities so the first pass misses them.
+- `ActorManager.allActors` — shrines, chests (`Treasure`), artifacts, traps and
+  loose items. These derive from `Actor` rather than `Entity`, so the first
+  pass misses them entirely.
+
+  `Rift` is deliberately spared — it is the way out of the room. So are
+  `AbilityTrigger`, `AbilityInstance`, `GameEffect` and `ServerActor`, which
+  are the players' own kit and the machinery running the match.
 
 Only five things derive from `Entity` — `Hero`, `Summon`, `Monster`,
 `PropEntity` and `MockEntity` — so the entity pass covers everything a hero
@@ -175,11 +180,15 @@ skills — so only genuinely unclaimed ones are taken: `handOwner`, `owner` and
 
 ### Diagnosing phantom targets
 
-If a hero auto-attacks with nothing visible, `arena_scan` lists every entity in
-the room with the facts that decide targeting — type, owner, relation, active
-state, and any untargetable/invisible/invulnerable flags — split into what a
-hero could attack and what it could not. It mirrors `AbilityTargetValidator`'s
-own logic, so whatever it marks ATTACKABLE is what is drawing fire.
+`arena_scan` reports three things: the arena anchor it would use, every entity
+with the facts that decide targeting — type, owner, relation, active state, and
+any untargetable/invisible/invulnerable flags, split into attackable and not —
+and finally a breakdown of every actor in the room by type.
+
+That last part matters. Most room furniture derives from `Actor` and not
+`Entity`, so an entity-only listing will happily report an empty room while
+shrines are plainly still standing in it. The entity list answers "what is
+drawing fire"; the actor list answers "what is still here".
 
 Heroes, summons and rifts are left alone throughout, and `Destroy()` is used
 rather than `Kill()` so nothing drops rewards or opens the exit rift.

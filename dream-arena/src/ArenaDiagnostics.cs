@@ -89,6 +89,41 @@ internal static class ArenaDiagnostics
 		{
 			Debug.Log($"{ModIdentity.LogPrefix}  ignored     {line}");
 		}
+
+		ReportActors(actors);
+	}
+
+	/// <summary>
+	/// Breaks the room's actors down by type.
+	/// </summary>
+	/// <remarks>
+	/// Most room furniture — shrines, chests, artifacts, traps — derives from
+	/// <c>Actor</c> and not <c>Entity</c>, so an entity-only listing reports an
+	/// empty room while structures are plainly still standing in it. This lists
+	/// everything, so nothing can hide behind a bare count again.
+	/// </remarks>
+	private static void ReportActors(ActorManager actors)
+	{
+		Dictionary<string, int> counts = new Dictionary<string, int>();
+
+		foreach (Actor actor in actors.allActors)
+		{
+			if (actor == null)
+			{
+				continue;
+			}
+
+			string key = actor.GetType().Name;
+			counts.TryGetValue(key, out int n);
+			counts[key] = n + 1;
+		}
+
+		Debug.Log($"{ModIdentity.LogPrefix}actors by type ({counts.Count} kinds):");
+
+		foreach (KeyValuePair<string, int> pair in counts)
+		{
+			Debug.Log($"{ModIdentity.LogPrefix}  x{pair.Value,-3} {pair.Key}");
+		}
 	}
 
 	/// <summary>Mirrors what <c>AbilityTargetValidator</c> does for a harmful ability.</summary>
