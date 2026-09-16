@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace DreamArena;
 
@@ -34,13 +35,29 @@ internal static class CampShops
 	private const string EssenceRemnant = "Shrine_Enlightenment";
 
 	/// <summary>Width of the aisle between the two rows, in metres.</summary>
-	private const float AisleWidth = 7f;
+	private const float AisleWidth = 6f;
 
 	/// <summary>Gap between neighbouring remnants in a row, in metres.</summary>
-	private const float RowSpacing = 4.5f;
+	private const float RowSpacing = 4f;
 
-	/// <summary>How far clear of the rift the first pair stands.</summary>
-	private const float RiftClearance = 8f;
+	/// <summary>How close to the rift a remnant may stand.</summary>
+	private const float RiftClearance = 6f;
+
+	/// <summary>
+	/// How far a slot may sit from walkable ground and still count as placed.
+	/// </summary>
+	/// <remarks>
+	/// Small on purpose. A slot is never nudged to fit — either the whole
+	/// formation lands on open ground or that candidate layout is discarded,
+	/// which is what keeps the rows straight.
+	/// </remarks>
+	private const float SlotTolerance = 0.65f;
+
+	/// <summary>Headings tried when looking for somewhere the rows fit.</summary>
+	private const int HeadingCount = 24;
+
+	/// <summary>Spacings tried, largest first, before giving up on a heading.</summary>
+	private static readonly float[] SpacingScales = { 1f, 0.85f, 0.7f, 0.55f };
 
 	/// <summary>What each spawned remnant offers, keyed by instance id.</summary>
 	private static readonly Dictionary<int, ShopAssignment> Assignments =
@@ -119,72 +136,244 @@ internal static class CampShops
 			return false;
 		}
 
-		Assignments.Clear();
-
-		GetRowAxes(anchor, out Vector3 origin, out Vector3 forward, out Vector3 sideways);
-
-		Vector3 leftColumn = sideways * (-AisleWidth * 0.5f);
-		Vector3 rightColumn = sideways * (AisleWidth * 0.5f);
-
-		int built = 0;
-		for (int i = 0; i < ShopCatalog.StockedRarities.Length; i++)
+		int rows = ShopCatalog.StockedRarities.Length;
+		if (!TrySolveFormation(anchor, rows, out Formation formation))
 		{
-			Rarity rarity = ShopCatalog.StockedRarities[i];
-			Vector3 along = forward * (i * RowSpacing);
-
-			built += Place(memoryPrefab, ShopKind.Memory, rarity, origin, along + leftColumn);
-			built += Place(essencePrefab, ShopKind.Essence, rarity, origin, along + rightColumn);
+			Debug.LogWarning($"{ModIdentity.LogPrefix}no room in the camp for " +
+			                 $"{rows * 2} aligned remnants; skipping camp shops.");
+			return false;
 		}
 
-		Debug.Log($"{ModIdentity.LogPrefix}built {built} camp remnant(s) around {origin}.");
+		Assignments.Clear();
+
+		Quaternion faceRight = Quaternion.LookRotation(formation.Sideways, Vector3.up);
+		Quaternion faceLeft = Quaternion.LookRotation(-formation.Sideways, Vector3.up);
+
+		int built = 0;
+		for (int i = 0; i < rows; i++)
+		{
+			Rarity rarity = ShopCatalog.StockedRarities[i];
+
+			built += Place(memoryPrefab, ShopKind.Memory, rarity,
+				formation.Slots[i * 2], faceRight);
+
+			built += Place(essencePrefab, ShopKind.Essence, rarity,
+				formation.Slots[i * 2 + 1], faceLeft);
+		}
+
+		Debug.Log($"{ModIdentity.LogPrefix}built {built} camp remnant(s): two rows of " +
+		          $"{rows} at {formation.Origin}, heading {formation.Forward}, " +
+		          $"spacing {formation.Scale:0.00}x.");
+
 		return built > 0;
 	}
 
-	/// <summary>
-	/// Works out where the two rows run so they never block the rift.
-	/// </summary>
-	/// <remarks>
-	/// The rift is a scene object with no position syncing, so moving it would
-	/// shift it on the host only and leave clients interacting with thin air.
-	/// The remnants are laid out around it instead: the rows run directly away
-	/// from the rift, straddling an aisle, and start a clear distance from it.
-	/// That keeps the rift approachable and adapts to whatever camp room the
-	/// run generates rather than assuming a fixed direction.
-	/// </remarks>
-	private static void GetRowAxes(Vector3 anchor, out Vector3 origin, out Vector3 forward,
-		out Vector3 sideways)
+	/// <summary>A solved layout: ten slots in two straight, evenly spaced rows.</summary>
+	private readonly struct Formation
 	{
-		origin = anchor;
-		forward = Vector3.forward;
-		sideways = Vector3.right;
+		public readonly Vector3[] Slots;
+		public readonly Vector3 Origin;
+		public readonly Vector3 Forward;
+		public readonly Vector3 Sideways;
+		public readonly float Scale;
 
-		Rift_RoomExit rift = Rift_RoomExit.softInstance;
-		if (rift.IsNullOrInactive())
+		public Formation(Vector3[] slots, Vector3 origin, Vector3 forward, Vector3 sideways,
+			float scale)
 		{
-			return;
+			Slots = slots;
+			Origin = origin;
+			Forward = forward;
+			Sideways = sideways;
+			Scale = scale;
 		}
-
-		Vector3 away = anchor - rift.transform.position;
-		away.y = 0f;
-
-		// Anchor sitting on top of the rift gives no usable direction.
-		if (away.sqrMagnitude < 0.01f)
-		{
-			away = Vector3.forward;
-		}
-
-		forward = away.normalized;
-		sideways = Vector3.Cross(Vector3.up, forward).normalized;
-
-		origin = Dew.GetValidAgentDestination_LinearSweep(anchor, anchor + forward * RiftClearance);
 	}
 
-	private static int Place<T>(T prefab, ShopKind kind, Rarity rarity, Vector3 origin,
-		Vector3 offset) where T : ChoiceShrine
+	/// <summary>
+	/// Finds a place and heading where both rows fit without bending.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// The earlier version placed each remnant with a navmesh sweep that pulled
+	/// an unreachable slot back toward the anchor. Every blocked slot therefore
+	/// landed somewhere different, which is why the camp ended up looking like
+	/// the remnants had been scattered rather than arranged.
+	/// </para>
+	/// <para>
+	/// The layout is rigid instead. Slot positions come from exact grid maths
+	/// and are never moved sideways — only their height is taken from the
+	/// ground. A candidate origin, heading and spacing is accepted only when
+	/// <em>every</em> slot lands on walkable ground, so the result is either a
+	/// clean formation or none at all. Candidates are tried widest-first and
+	/// scored by how far the rows keep clear of the rift, which is why the rows
+	/// swing around the room instead of the rift being moved: the rift is a
+	/// scene object with no position syncing, so relocating it host-side would
+	/// leave clients interacting with thin air.
+	/// </para>
+	/// </remarks>
+	private static bool TrySolveFormation(Vector3 anchor, int rows, out Formation formation)
 	{
-		Vector3 target = Dew.GetValidAgentDestination_LinearSweep(origin, origin + offset);
+		formation = default;
 
-		T remnant = Dew.CreateActor(prefab, target, Quaternion.identity, null, Configure);
+		Rift_RoomExit rift = Rift_RoomExit.softInstance;
+		bool hasRift = !rift.IsNullOrInactive();
+		Vector3 riftPosition = hasRift ? rift.transform.position : Vector3.zero;
+
+		Vector3[] origins = BuildOrigins(anchor, hasRift, riftPosition);
+
+		Vector3[] slots = new Vector3[rows * 2];
+		Vector3[] best = null;
+		float bestScore = float.NegativeInfinity;
+		Vector3 bestOrigin = anchor;
+		Vector3 bestForward = Vector3.forward;
+		Vector3 bestSideways = Vector3.right;
+		float bestScale = 1f;
+
+		foreach (float scale in SpacingScales)
+		{
+			foreach (Vector3 origin in origins)
+			{
+				for (int h = 0; h < HeadingCount; h++)
+				{
+					float angle = h * (360f / HeadingCount);
+					Vector3 forward = Quaternion.Euler(0f, angle, 0f) * Vector3.forward;
+					Vector3 sideways = Vector3.Cross(Vector3.up, forward).normalized;
+
+					if (!TryLayOutRows(origin, forward, sideways, scale, rows, slots,
+						    out float clearance))
+					{
+						continue;
+					}
+
+					float score = hasRift ? Mathf.Min(clearance, RiftClearance * 2f) : 0f;
+					if (score <= bestScore)
+					{
+						continue;
+					}
+
+					bestScore = score;
+					best = (Vector3[])slots.Clone();
+					bestOrigin = origin;
+					bestForward = forward;
+					bestSideways = sideways;
+					bestScale = scale;
+				}
+			}
+
+			// A tighter spacing is only worth trying if nothing fit at this one.
+			if (best != null && (!hasRift || bestScore >= RiftClearance))
+			{
+				break;
+			}
+		}
+
+		if (best == null)
+		{
+			return false;
+		}
+
+		formation = new Formation(best, bestOrigin, bestForward, bestSideways, bestScale);
+		return true;
+	}
+
+	/// <summary>Centres to try, walking away from the rift.</summary>
+	private static Vector3[] BuildOrigins(Vector3 anchor, bool hasRift, Vector3 riftPosition)
+	{
+		if (!hasRift)
+		{
+			return new[] { anchor };
+		}
+
+		Vector3 away = anchor - riftPosition;
+		away.y = 0f;
+
+		if (away.sqrMagnitude < 0.01f)
+		{
+			return new[] { anchor };
+		}
+
+		away.Normalize();
+
+		return new[]
+		{
+			anchor,
+			Dew.GetValidAgentPosition(anchor + away * 4f),
+			Dew.GetValidAgentPosition(anchor + away * 8f),
+			Dew.GetValidAgentPosition(anchor + away * 12f)
+		};
+	}
+
+	/// <summary>
+	/// Fills <paramref name="slots"/> with one exact grid, or reports failure.
+	/// </summary>
+	/// <remarks>
+	/// Rows are centred on the origin so the formation grows symmetrically
+	/// rather than running off in one direction. Only the height of a slot is
+	/// taken from the navmesh; its ground position is left exactly where the
+	/// grid put it, so the rows stay straight and evenly spaced.
+	/// </remarks>
+	private static bool TryLayOutRows(Vector3 origin, Vector3 forward, Vector3 sideways,
+		float scale, int rows, Vector3[] slots, out float riftClearance)
+	{
+		riftClearance = float.MaxValue;
+
+		Rift_RoomExit rift = Rift_RoomExit.softInstance;
+		bool hasRift = !rift.IsNullOrInactive();
+		Vector2 riftFlat = hasRift ? rift.transform.position.ToXY() : Vector2.zero;
+
+		float column = AisleWidth * scale * 0.5f;
+		float spacing = RowSpacing * scale;
+		float firstRow = -(rows - 1) * 0.5f * spacing;
+
+		for (int i = 0; i < rows; i++)
+		{
+			Vector3 along = forward * (firstRow + i * spacing);
+
+			for (int side = 0; side < 2; side++)
+			{
+				Vector3 target = origin + along
+				                 + sideways * (side == 0 ? -column : column);
+
+				if (!TryGroundSlot(target, out Vector3 slot))
+				{
+					return false;
+				}
+
+				if (hasRift)
+				{
+					float distance = Vector2.Distance(slot.ToXY(), riftFlat);
+					if (distance < riftClearance)
+					{
+						riftClearance = distance;
+					}
+				}
+
+				slots[i * 2 + side] = slot;
+			}
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// Takes a slot's height from the ground, refusing to move it sideways.
+	/// </summary>
+	private static bool TryGroundSlot(Vector3 target, out Vector3 slot)
+	{
+		slot = Dew.GetPositionOnGround(target);
+
+		if (!NavMesh.SamplePosition(slot, out NavMeshHit hit, SlotTolerance, NavMesh.AllAreas))
+		{
+			return false;
+		}
+
+		slot.y = hit.position.y;
+		return true;
+	}
+
+	private static int Place<T>(T prefab, ShopKind kind, Rarity rarity, Vector3 position,
+		Quaternion rotation) where T : ChoiceShrine
+	{
+		T remnant = Dew.CreateActor(prefab, position, rotation, null, Configure);
 
 		if (remnant == null)
 		{

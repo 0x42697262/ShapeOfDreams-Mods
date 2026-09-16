@@ -132,8 +132,8 @@ transition event — no dependency on the exact ordering of the travel pipeline.
 
 ### Camp remnants
 
-Ten remnants stand in the camp: **memories down one side, essences down the
-other**, one per rarity, running Common to Unique. Everything is free and
+Ten remnants stand in the camp in two straight, evenly spaced rows —
+**memories down one side, essences down the other** — one per rarity, running Common to Unique. Everything is free and
 never runs out, so a build is chosen rather than farmed and two players can
 take the same thing.
 
@@ -162,12 +162,20 @@ a `GridLayoutGroup` with no scrolling, so a remnant holding every memory in the
 game would spill off screen. A single rarity is a few dozen entries. Remnants
 the world generates are matched by instance id and left completely alone.
 
-**Placement.** `Rift_RoomExit` is a scene object with no position syncing, so
-moving it would shift it on the host only and leave clients interacting with
-thin air. The remnants are laid out around it instead: both rows run directly
-away from the rift, straddling an aisle, starting a clear distance from it.
-That adapts to whatever camp room the run generates rather than assuming a
-fixed direction.
+**Placement is rigid.** Slot positions come from exact grid maths and are never
+nudged sideways; only their height is taken from the ground. The solver tries a
+candidate centre, heading and spacing and accepts it only when *every* slot
+lands on walkable ground, so the camp gets a clean formation or none at all.
+Candidates are tried widest-first and scored by how far the rows stay clear of
+the rift.
+
+This replaced per-remnant navmesh sweeps. A sweep pulls an unreachable point
+back toward its start, so each blocked slot landed somewhere different and the
+rows came out looking scattered rather than arranged.
+
+The rows swing around the room rather than the rift being moved out of the way:
+`Rift_RoomExit` is a scene object with no position syncing, so relocating it
+host-side would leave clients interacting with thin air.
 
 ### Leaving camp
 
