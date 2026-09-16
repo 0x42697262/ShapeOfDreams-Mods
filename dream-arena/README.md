@@ -50,7 +50,8 @@ every change is written to both sides.
 | Never end the run | players can die, run continues | prefix blocking `GameManager.WrapUpAndShowResult` |
 | No monsters | empty arena, no boss | `maxAndSpawnedPopulationMultiplier = 0` |
 | Camp and arena | safe camp, PvP past the rift | `SetRoomOverride` on every non-Start node |
-| Remove the boss | arena stays empty | sweep for `BossMonster`, `Destroy()` |
+| No PvE | no monsters, props, boss or hazards | blocked `RoomProps`, plus an entity sweep |
+| Direct rift | camp exits straight into the arena | `Rift_RoomExit.nextNodeIndex` |
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
 
 `WrapUpAndShowResult` is the single funnel every run-ending path goes through
@@ -124,6 +125,40 @@ on the correct side of that line too.
 The index is a single synced int, so it is polled rather than hooked to a
 transition event — no dependency on the exact ordering of the travel pipeline.
 
+### Leaving camp
+
+Stock behaviour opens the world map and asks which node to travel to, which is
+pointless when every node is the same arena. `Rift_RoomExit` already supports a
+direct route — its interaction checks `nextNodeIndex` before anything else:
+
+```csharp
+if (nextNodeIndex >= 0) { confirm -> CmdTravelToNode(nextNodeIndex); return; }
+if (currentNode.type != ExitBoss && !forceTravelToNextZone) { show world map; return; }
+```
+
+Setting it gives the boss-room feel: one "move to the next location" prompt,
+then straight into the fight. It is a SyncVar, so the host setting it is enough.
+A connected non-camp node is preferred, with any non-camp node as a fallback.
+
+### Removing PvE
+
+Zeroing the monster population budget stops waves, but not everything:
+
+- **Props** — wells, gold and dream-dust stones, merchants and shrines come from
+  `RoomProps.OnRoomStartServer`, an entirely separate path that the population
+  budget never touched. A prefix skips it in the arena.
+- **The boss and its hazards** — a boss room places these as part of the room
+  itself, so they appear regardless of the spawn budget.
+
+Anything that still reaches the arena is swept once a second: every `Monster`
+(bosses included, since `BossMonster` derives from it) and every `PropEntity`
+in `ActorManager.allEntities` is destroyed. Heroes, summons and rifts are left
+alone. `Destroy()` rather than `Kill()`, so nothing drops rewards or opens the
+exit rift.
+
+The camp is deliberately untouched — it should still look and behave like a
+normal starting room.
+
 ### Round start
 
 Three things happen as players enter the arena, all hung off one postfix on
@@ -175,7 +210,7 @@ Host only, three ways, all the same settings:
   for the rest of the options.
 - **Console** (Developer Mode, F1): `arena`, `arena_on`, `arena_off`,
   `arena_mode <FreeForAll|TwoTeams|Peaceful>`, `arena_room <Room_...>`,
-  `arena_revive <seconds>`, `arena_start`, `arena_nuke_boss`, `arena_status`.
+  `arena_revive <seconds>`, `arena_start`, `arena_purge`, `arena_status`.
 - **Mod manager** — the Config button, for persisted defaults.
 
 The in-lobby window generates its widgets from `DreamArenaConfig` via
@@ -198,13 +233,16 @@ src/
   ArenaStage.cs           boss removal and teleport into the arena
   ArenaSpawn.cs           ring placement inside the arena
   ArenaPhase.cs           camp/arena tracking, switches hostility
+  PveSuppressor.cs        sweeps monsters, props and hazards
+  CampRift.cs             points the camp rift straight at the arena
   ReviveController.cs     auto-revive timers for knocked-out players
   ArenaConfigWindow.cs    host's in-lobby settings window
   InjectedUi.cs           teardown for live reload
   ModIdentity.cs          names stamped on created objects
   Patches/
     CreateLobbyModePatch.cs  PvP Arena in the Create Lobby game mode dropdown
-    RoundStartPatch.cs    skips cutscenes, spreads spawns, grants immunity
+    RoundStartPatch.cs    skips cutscenes, spreads spawns
+    PveSuppressionPatch.cs  blocks room prop spawning
     WorldGenPatch.cs      applies the arena room once the world exists
     GameEndPatch.cs       blocks WrapUpAndShowResult
     LobbySettingsPatch.cs injects the lobby button
@@ -226,7 +264,8 @@ so editing here is what the compiler and game both see.
 1. Developer Mode on, load the mod from the title screen.
 2. Host a lobby, open **Dream Arena** from lobby settings, tick **Arena mode**, Apply.
 3. Start the run. You land in the camp — hitting each other there does nothing.
-4. Take the rift out of camp. You arrive in the Zenith and PvP is live.
+4. Take the rift out of camp — one prompt, no map. You arrive in the Zenith,
+   empty of PvE, and PvP is live.
 
 `arena_status` reports the live state. Expect this in the log:
 

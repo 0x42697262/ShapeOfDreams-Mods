@@ -25,6 +25,9 @@ public class DreamArenaMod : ModBehaviour
 	private readonly ReviveController _revives = new ReviveController();
 	private readonly ArenaPhase _phase = new ArenaPhase();
 
+	/// <summary>Where the players currently are: camp, arena, or not in a run.</summary>
+	public PhaseKind Phase => _phase.Current;
+
 
 	/// <summary>True while the run should be prevented from concluding.</summary>
 	public static bool ShouldBlockRunEnd =>
@@ -97,6 +100,8 @@ public class DreamArenaMod : ModBehaviour
 		_revives.Reset();
 		ArenaStage.Reset();
 		_phase.Reset();
+		PveSuppressor.Reset();
+		CampRift.Reset();
 		ApplyNow();
 
 		// Deferred: the world is not generated yet on the frame the manager starts.
@@ -110,6 +115,8 @@ public class DreamArenaMod : ModBehaviour
 		_phase.Tick(config);
 		_revives.Tick(dt, config);
 		ArenaStage.Tick(dt, config);
+		PveSuppressor.Tick(dt, config, _phase.Current);
+		CampRift.Tick(dt, config, _phase.Current);
 	}
 
 	private void OnRosterChanged(DewPlayer _)
@@ -222,13 +229,11 @@ public class DreamArenaMod : ModBehaviour
 		ArenaStage.StartFight();
 	}
 
-	[ConsoleCommand("Despawn the boss in the current room", "arena_nuke_boss")]
-	public void Cmd_ArenaNukeBoss()
+	[ConsoleCommand("Sweep all monsters, props and pickups from this room", "arena_purge")]
+	public void Cmd_ArenaPurge()
 	{
-		if (!ArenaStage.RemoveBoss())
-		{
-			Debug.Log($"{ModIdentity.LogPrefix}no boss found in this room.");
-		}
+		int removed = PveSuppressor.Sweep();
+		Debug.Log($"{ModIdentity.LogPrefix}purge removed {removed} object(s).");
 	}
 
 	[ConsoleCommand("Set the arena room, e.g. Room_Primus_Boss_0", "arena_room")]

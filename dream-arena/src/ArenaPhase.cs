@@ -6,7 +6,7 @@ namespace DreamArena;
 /// <summary>
 /// Which part of the run the players are currently in.
 /// </summary>
-internal enum PhaseKind
+public enum PhaseKind
 {
 	/// <summary>Not in a run, or PvP mode is off.</summary>
 	None,
