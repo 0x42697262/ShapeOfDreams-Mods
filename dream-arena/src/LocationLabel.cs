@@ -49,7 +49,7 @@ internal static class LocationLabel
 		// is not in force yet.
 		if (phase == PhaseKind.Camp)
 		{
-			return "PVP: Camp (safe)";
+			return "PVP: Camp";
 		}
 
 		return "PVP: " + ModeName(config.teamMode);

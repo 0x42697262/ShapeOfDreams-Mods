@@ -101,6 +101,8 @@ public class DreamArenaMod : ModBehaviour
 		ArenaStage.Reset();
 		_phase.Reset();
 		PveSuppressor.Reset();
+		CampShops.Reset();
+		ShopCatalog.ClearCache();
 		CampRift.Reset();
 		ApplyNow();
 
@@ -116,6 +118,8 @@ public class DreamArenaMod : ModBehaviour
 		_revives.Tick(dt, config);
 		ArenaStage.Tick(config, _phase.Current);
 		PveSuppressor.Tick(dt, config, _phase.Current);
+		CampShops.Tick(config, _phase.Current);
+		HeroLeveller.Tick(config);
 		CampRift.Tick(dt, config, _phase.Current);
 	}
 

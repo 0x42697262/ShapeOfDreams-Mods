@@ -92,6 +92,25 @@ public class DreamArenaConfig : ModConfig
 	public bool spreadSpawns = true;
 
 
+	[LabelText("Camp shops")]
+	[Description("Builds free shops in camp, one per rarity for Memories and Essences, " +
+	             "so any build can be assembled by hand.")]
+	public bool campShops = true;
+
+	[LabelText("Shop memory level")]
+	[Description("Level every memory is sold at.")]
+	public int shopMemoryLevel = 1;
+
+	[LabelText("Shop essence quality")]
+	[Description("Quality every essence is sold at. 200 Regular, 400 Flawless, " +
+	             "600 Perfect, 1000 Otherworldly.")]
+	public int shopEssenceQuality = 400;
+
+	[LabelText("Max player level")]
+	[Description("Levels every hero to the cap on entering camp, so builds are compared " +
+	             "at full strength rather than raced for.")]
+	public bool maxPlayerLevel = true;
+
 	[LabelText("Auto revive seconds")]
 	[Description("Seconds a knocked-out player waits before being revived. 0 disables it.")]
 	public int autoReviveSeconds = 10;
@@ -123,6 +142,10 @@ public class DreamArenaConfig : ModConfig
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
 		other.showModeInHud = showModeInHud;
+		other.campShops = campShops;
+		other.shopMemoryLevel = shopMemoryLevel;
+		other.shopEssenceQuality = shopEssenceQuality;
+		other.maxPlayerLevel = maxPlayerLevel;
 		other.hideObjectives = hideObjectives;
 		other.removeGameModifiers = removeGameModifiers;
 		other.removeLucidDreams = removeLucidDreams;
