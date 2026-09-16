@@ -51,9 +51,15 @@ public class DreamArenaConfig : ModConfig
 	public bool removeBoss = true;
 
 	[LabelText("Hide objectives")]
-	[Description("Drops the Goal and any side quests from the HUD. They mean nothing " +
-	             "in an arena match.")]
+	[Description("Drops the Goal and any side quests from the HUD. Display only - the " +
+	             "run's own goal keeps tracking quietly, since cancelling it could end " +
+	             "the run.")]
 	public bool hideObjectives = true;
+
+	[LabelText("No rescue quests")]
+	[Description("Stops a knockout from starting a Lost Soul quest and dropping a " +
+	             "Hero Soul modifier onto a node. Prevented outright, not hidden.")]
+	public bool suppressKnockoutQuests = true;
 
 	[LabelText("Strip room modifiers")]
 	[Description("Removes modifiers like Accelerated Time from arena rooms, which would " +
@@ -102,6 +108,7 @@ public class DreamArenaConfig : ModConfig
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
 		other.hideObjectives = hideObjectives;
+		other.suppressKnockoutQuests = suppressKnockoutQuests;
 		other.stripRoomModifiers = stripRoomModifiers;
 		other.skipCutscenes = skipCutscenes;
 		other.spreadSpawns = spreadSpawns;

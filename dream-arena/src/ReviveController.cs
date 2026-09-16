@@ -29,8 +29,7 @@ internal sealed class ReviveController
 
 	public void Tick(float deltaTime, DreamArenaConfig config)
 	{
-		if (!NetworkServer.active || config == null
-		    || !config.arenaEnabled || config.autoReviveSeconds <= 0)
+		if (!NetworkServer.active || config == null || !config.arenaEnabled)
 		{
 			if (_downSince.Count > 0)
 			{
@@ -48,10 +47,16 @@ internal sealed class ReviveController
 
 		_finished.Clear();
 
-		// Advance timers for heroes that are currently down.
 		foreach (Hero hero in actors.allHeroes)
 		{
 			if (hero == null || !hero.isKnockedOut)
+			{
+				continue;
+			}
+
+			SuppressKnockoutQuest(hero, config);
+
+			if (config.autoReviveSeconds <= 0)
 			{
 				continue;
 			}
@@ -74,6 +79,37 @@ internal sealed class ReviveController
 
 		// Drop entries for heroes that got up some other way, or vanished.
 		PruneRecovered(actors);
+	}
+
+	/// <summary>
+	/// Stops a knockout from generating a rescue quest.
+	/// </summary>
+	/// <remarks>
+	/// A second after any hero goes down, <c>Se_HeroKnockedOut</c> starts a
+	/// <c>Quest_LostSoul</c> and, through <c>CheckAndAddHeroSoul</c>, drops a
+	/// <c>RoomMod_HeroSoul</c> modifier onto a node. In a PvP match knockouts
+	/// are constant, so that would mean a stream of rescue quests and modifiers
+	/// pushed back onto nodes this mod had already stripped.
+	///
+	/// Both are gated behind the effect's own public <c>disableQuest</c> flag,
+	/// so setting it prevents them outright rather than just hiding them. The
+	/// per-frame scan sets it well inside the one-second window.
+	/// </remarks>
+	private static void SuppressKnockoutQuest(Hero hero, DreamArenaConfig config)
+	{
+		if (!config.suppressKnockoutQuests)
+		{
+			return;
+		}
+
+		Se_HeroKnockedOut knockedOut = hero.Status?.GetStatusEffect<Se_HeroKnockedOut>();
+		if (knockedOut == null || knockedOut.disableQuest)
+		{
+			return;
+		}
+
+		knockedOut.disableQuest = true;
+		Debug.Log($"{ModIdentity.LogPrefix}suppressed the rescue quest for {hero.name}.");
 	}
 
 	private static void TryRevive(Hero hero, DreamArenaConfig config)

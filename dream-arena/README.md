@@ -174,10 +174,29 @@ speed, which has no place in a match meant to be even. `RemoveModifier` is used
 rather than editing the list in place, since `WorldNodeData` is a struct inside
 a SyncList and must be written back to replicate.
 
-**Objectives** are hidden rather than cancelled. "Goal: Shape of Dreams" and any
-side quests are dropped from the HUD through a postfix on
-`DewQuest.IsVisibleLocally`. `DewQuest` is wired into run progression, so
-completing or removing the main goal could end the run; hiding cannot misfire.
+### Hidden vs actually removed
+
+Worth being precise about, since a hidden effect is still an effect:
+
+| thing | treatment |
+|---|---|
+| Room modifiers (Accelerated Time, …) | **removed** — stripped from the node before the room ever loads, so they never apply |
+| Monsters, boss, props, chests, items | **removed** — blocked at spawn and swept every second |
+| Rescue quests from knockouts | **removed** — `Se_HeroKnockedOut.disableQuest` set before it can fire |
+| The run's Goal quest | **hidden only** — still tracking, see below |
+
+The Goal is the one thing suppressed purely visually, through a postfix on
+`DewQuest.IsVisibleLocally`. `DewQuest` is wired into run progression, and
+completing or removing the main goal could end the run — which is exactly what
+this mod exists to prevent. It tracks "move deeper into The Rapids" quietly and
+has no effect on a match.
+
+Knockout quests are a different matter and are genuinely prevented. A second
+after any hero goes down, `Se_HeroKnockedOut` starts a `Quest_LostSoul` and
+drops a `RoomMod_HeroSoul` modifier onto a node. With constant knockouts that
+would mean a stream of rescue quests, plus modifiers pushed back onto nodes this
+mod had already stripped. Both are gated behind the effect's own public
+`disableQuest` flag, so setting it stops them outright.
 
 The camp is deliberately untouched — it should still look and behave like a
 normal starting room.
