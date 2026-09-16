@@ -15,8 +15,8 @@ namespace DreamArena;
 public class DreamArenaConfig : ModConfig
 {
 	[LabelText("PvP mode")]
-	[Description("Normally chosen with the PvP icon in the lobby's difficulty row, " +
-	             "next to Normal and Limbo. Shown here as a fallback.")]
+	[Description("Normally chosen as 'PvP Arena' in the Create Lobby game mode dropdown, " +
+	             "next to Shape of Dreams and Limbo. Shown here as a fallback.")]
 	public bool arenaEnabled = false;
 
 	[LabelText("Team mode")]
@@ -49,6 +49,20 @@ public class DreamArenaConfig : ModConfig
 	[Description("Despawns the boss room's boss so the arena stays empty. " +
 	             "Despawn, not kill, so no rewards drop and no exit rift opens.")]
 	public bool removeBoss = true;
+
+	[LabelText("Skip intro cutscenes")]
+	[Description("Suppresses the arena intro with its 'press space to skip' prompt, " +
+	             "which is just a delay between rounds.")]
+	public bool skipCutscenes = true;
+
+	[LabelText("Spread spawns")]
+	[Description("Places players evenly around the arena instead of in a tight line, " +
+	             "so nobody opens the round already in attack range.")]
+	public bool spreadSpawns = true;
+
+	[LabelText("Spawn protection seconds")]
+	[Description("Invulnerability granted as players land in the arena. 0 disables it.")]
+	public float spawnProtectionSeconds = 3f;
 
 	[LabelText("Auto revive seconds")]
 	[Description("Seconds a knocked-out player waits before being revived. 0 disables it.")]
@@ -99,6 +113,9 @@ public class DreamArenaConfig : ModConfig
 		other.removeBoss = removeBoss;
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
+		other.skipCutscenes = skipCutscenes;
+		other.spreadSpawns = spreadSpawns;
+		other.spawnProtectionSeconds = spawnProtectionSeconds;
 		other.loadoutEnabled = loadoutEnabled;
 		other.maxEssences = maxEssences;
 		other.maxMemories = maxMemories;

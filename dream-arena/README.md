@@ -92,17 +92,32 @@ the normal first room and reach the arena on their first travel.
 
 ### Choosing PvP
 
-PvP is a mode, not a checkbox. `UI_Lobby_DifficultyGroup.Start` builds the row
-by instantiating one `UI_Lobby_DifficultyItem` per entry in its `difficulties`
-list, so a postfix adds one more from the same prefab.
+PvP is a game mode, not a checkbox. `UI_Title_CreateLobbyView.OnShow` rebuilds
+the Game Mode dropdown each time the screen opens, adding `(label, value)` pairs
+for `"ShapeOfDreams"` and `"Limbo"`; a postfix appends a third.
 
-The extra item borrows a real difficulty's visuals and is tinted red.
-`UI_DifficultyIcon.Setup` resolves its sprite through
-`DewResources.GetByName<DewDifficultySettings>(type)`, so an invented type would
-fail to load. A prefix on `UI_Lobby_DifficultyItem.Click` intercepts the PvP
-item and toggles arena mode instead of writing an unknown value into
-`GameSettingsManager.difficulty`; clicking any real difficulty turns PvP back
-off, keeping the choices mutually exclusive.
+PvP layers on top of a normal run, so it leaves `addedGameMods` empty — unlike
+Limbo, which adds `GameMod_Limbo`. The view's own handler already clears that
+list for any non-Limbo value, so selecting PvP resets cleanly. A postfix on
+`UpdateUIState` keeps arena mode and the description text in step, writing only
+on an actual change since that method runs constantly.
+
+### Round start
+
+Three things happen as players enter the arena, all hung off one postfix on
+`DewHeroesTeleporter.TeleportAllHeroes` so they cover both routes in — walking
+onto the entry trigger and the `arena_start` command:
+
+- **No intro cutscene.** A prefix on `DewCutsceneDirector.PlayNetworked`
+  suppresses the RPC, removing the "press space to skip" wait between rounds.
+  The entry routine still runs its fade and teleport, so the flow is unchanged.
+- **Spread spawns.** Stock teleport drops everyone in a tight line, which opens
+  a round with auto-attacks already in range. Players are redistributed evenly
+  around a ring, sized from `Room_BossArena`'s own centre and radius and snapped
+  to walkable ground with `Dew.GetValidAgentDestination_LinearSweep`.
+- **Spawn protection.** Three seconds of `InvulnerableEffect` via
+  `ActorManager.serverActor`, the same mechanism the game uses for post-revive
+  immunity.
 
 ### Starting a match
 
@@ -165,9 +180,8 @@ seconds at 100% health, both configurable.
 
 Host only, three ways, all the same settings:
 
-- **Difficulty row** — PvP appears as an extra option next to Normal, Nightmare
-  and Limbo. Picking it turns arena mode on; picking a real difficulty turns it
-  off. This is the intended way in.
+- **Create Lobby → Game Mode** — "PvP Arena" sits beside Shape of Dreams and
+  Limbo. This is the intended way in.
 - **In lobby** — a "Dream Arena" button is injected into the lobby settings panel
   for the rest of the options.
 - **Console** (Developer Mode, F1): `arena`, `arena_on`, `arena_off`,
@@ -194,6 +208,7 @@ src/
   RelationController.cs   the PvP core: writes the relation SyncLists
   ArenaRules.cs           no game over, no monsters, arena room override
   ArenaStage.cs           boss removal and teleport into the arena
+  ArenaSpawn.cs           ring placement and spawn protection
   LoadoutRegistry.cs      banks each player's déjà vu picks
   LoadoutGranter.cs       spawns banked builds at fixed quality
   ReviveController.cs     auto-revive timers for knocked-out players
@@ -202,7 +217,8 @@ src/
   ModIdentity.cs          names stamped on created objects
   Patches/
     DejavuPatches.cs      banks picks, expands the déjà vu spawn
-    GameModePatch.cs      PvP option in the lobby difficulty row
+    CreateLobbyModePatch.cs  PvP Arena in the Create Lobby game mode dropdown
+    RoundStartPatch.cs    skips cutscenes, spreads spawns, grants immunity
     WorldGenPatch.cs      applies the arena room once the world exists
     GameEndPatch.cs       blocks WrapUpAndShowResult
     LobbySettingsPatch.cs injects the lobby button

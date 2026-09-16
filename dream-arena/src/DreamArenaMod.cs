@@ -147,8 +147,6 @@ public class DreamArenaMod : ModBehaviour
 			Debug.LogError($"{ModIdentity.LogPrefix}failed to save config: {e}");
 		}
 
-		Patches.GameModeItemPatch.RefreshAll();
-
 		Debug.Log($"{ModIdentity.LogPrefix}config applied: arena={config.arenaEnabled}, " +
 		          $"mode={config.teamMode}, neverEnd={config.neverEndRun}, " +
 		          $"noMonsters={config.suppressMonsters}, room={config.arenaRoom}, " +

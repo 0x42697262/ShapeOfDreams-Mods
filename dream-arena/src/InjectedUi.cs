@@ -20,14 +20,6 @@ internal static class InjectedUi
 			}
 		}
 
-		foreach (UI_Lobby_DifficultyItem item in Resources.FindObjectsOfTypeAll<UI_Lobby_DifficultyItem>())
-		{
-			if (IsRuntimeSceneObject(item) && ModIdentity.IsOurs(item.name))
-			{
-				UnityEngine.Object.DestroyImmediate(item.gameObject);
-			}
-		}
-
 		foreach (UI_Lobby_SettingsWindow panel in Resources.FindObjectsOfTypeAll<UI_Lobby_SettingsWindow>())
 		{
 			if (!IsRuntimeSceneObject(panel))
