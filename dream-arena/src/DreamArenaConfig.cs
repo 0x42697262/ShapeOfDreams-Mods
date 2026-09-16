@@ -44,6 +44,11 @@ public class DreamArenaConfig : ModConfig
 	             "Room_SnowMountain_Boss_0.")]
 	public string arenaRoom = "Room_Primus_Boss_0";
 
+	[LabelText("Remove the boss")]
+	[Description("Despawns the boss room's boss so the arena stays empty. " +
+	             "Despawn, not kill, so no rewards drop and no exit rift opens.")]
+	public bool removeBoss = true;
+
 	[LabelText("Auto revive seconds")]
 	[Description("Seconds a knocked-out player waits before being revived. 0 disables it.")]
 	public int autoReviveSeconds = 10;
@@ -66,6 +71,7 @@ public class DreamArenaConfig : ModConfig
 		other.suppressMonsters = suppressMonsters;
 		other.forceArenaRoom = forceArenaRoom;
 		other.arenaRoom = arenaRoom;
+		other.removeBoss = removeBoss;
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
 	}

@@ -50,6 +50,7 @@ every change is written to both sides.
 | Never end the run | players can die, run continues | prefix blocking `GameManager.WrapUpAndShowResult` |
 | No monsters | empty arena, no boss | `maxAndSpawnedPopulationMultiplier = 0` |
 | Force arena room | every travel lands in the arena | `ZoneManager.SetRoomOverride` |
+| Remove the boss | arena stays empty | sweep for `BossMonster`, `Destroy()` |
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
 
 `WrapUpAndShowResult` is the single funnel every run-ending path goes through
@@ -88,6 +89,22 @@ The current node is skipped deliberately — the game itself warns that
 overriding the room you are standing in is "prone to bugs". So players start in
 the normal first room and reach the arena on their first travel.
 
+### Starting a match
+
+A boss room has two states. You arrive in an antechamber, and when every hero
+stands in the entry zone the fight *triggers*: a cutscene plays and
+`DewHeroesTeleporter.TeleportAllHeroes()` drops everyone into the sealed arena
+proper. That triggered state is the PvP arena.
+
+The wiring is `DewBossRoomEntry`, which requires a `DewAllHeroesPresentZone` and
+a `DewHeroesTeleporter`. Walking onto the trigger together still works normally;
+`arena_start` calls the same public teleport directly so you can start without
+herding everyone onto the zone.
+
+The boss is swept for once a second and removed with `Destroy()` rather than
+`Kill()` — killing it would run the defeat path, drop rewards and open the exit
+rift.
+
 ### Revive
 
 Knocked-out heroes never recover on their own, and this mod blocks the run from
@@ -103,7 +120,7 @@ Host only, three ways, all the same settings:
 - **In lobby** — a "Dream Arena" button is injected into the lobby settings panel.
 - **Console** (Developer Mode, F1): `arena`, `arena_on`, `arena_off`,
   `arena_mode <FreeForAll|TwoTeams|Peaceful>`, `arena_room <Room_...>`,
-  `arena_revive <seconds>`, `arena_status`.
+  `arena_revive <seconds>`, `arena_start`, `arena_nuke_boss`, `arena_status`.
 - **Mod manager** — the Config button, for persisted defaults.
 
 The in-lobby window generates its widgets from `DreamArenaConfig` via
@@ -123,6 +140,7 @@ src/
   TeamMode.cs             FreeForAll / TwoTeams / Peaceful
   RelationController.cs   the PvP core: writes the relation SyncLists
   ArenaRules.cs           no game over, no monsters, arena room override
+  ArenaStage.cs           boss removal and teleport into the arena
   ReviveController.cs     auto-revive timers for knocked-out players
   ArenaConfigWindow.cs    host's in-lobby settings window
   InjectedUi.cs           teardown for live reload

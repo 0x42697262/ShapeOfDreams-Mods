@@ -93,6 +93,7 @@ public class DreamArenaMod : ModBehaviour
 		}
 
 		_revives.Reset();
+		ArenaStage.Reset();
 		ApplyNow();
 
 		// Deferred: the world is not generated yet on the frame the manager starts.
@@ -102,7 +103,9 @@ public class DreamArenaMod : ModBehaviour
 	/// <summary>Drives the revive timers. Runs on the host only.</summary>
 	private void Update()
 	{
-		_revives.Tick(Time.deltaTime, config);
+		float dt = Time.deltaTime;
+		_revives.Tick(dt, config);
+		ArenaStage.Tick(dt, config);
 	}
 
 	private void OnRosterChanged(DewPlayer _)
@@ -195,6 +198,21 @@ public class DreamArenaMod : ModBehaviour
 		          $"| server={NetworkServer.active} " +
 		          $"players={RelationController.GetHumanPlayers().Count} " +
 		          $"gameOverEnabled={(game != null ? game.isGameOverEnabled.ToString() : "n/a")}");
+	}
+
+	[ConsoleCommand("Teleport everyone into the arena, as the boss trigger would", "arena_start")]
+	public void Cmd_ArenaStart()
+	{
+		ArenaStage.StartFight();
+	}
+
+	[ConsoleCommand("Despawn the boss in the current room", "arena_nuke_boss")]
+	public void Cmd_ArenaNukeBoss()
+	{
+		if (!ArenaStage.RemoveBoss())
+		{
+			Debug.Log($"{ModIdentity.LogPrefix}no boss found in this room.");
+		}
 	}
 
 	[ConsoleCommand("Set the arena room, e.g. Room_Primus_Boss_0", "arena_room")]
