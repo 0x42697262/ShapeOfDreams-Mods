@@ -59,8 +59,10 @@ internal static class ArenaSpawn
 	/// </summary>
 	private static void Spread(List<Hero> heroes)
 	{
-		if (!TryGetArena(heroes, out Vector3 center, out float radius))
+		if (!TryGetArena(heroes, out Vector3 center, out float radius, out string source))
 		{
+			Debug.LogWarning($"{ModIdentity.LogPrefix}no arena anchor found in this room; " +
+			                 "players left where they are.");
 			return;
 		}
 
@@ -89,8 +91,8 @@ internal static class ArenaSpawn
 			}
 		}
 
-		Debug.Log($"{ModIdentity.LogPrefix}spread {heroes.Count} players around the arena " +
-		          $"(radius {ring:0.#}).");
+		Debug.Log($"{ModIdentity.LogPrefix}placed {heroes.Count} player(s) around the arena " +
+		          $"via {source} at {center} (radius {ring:0.#}).");
 	}
 
 	/// <summary>
@@ -107,17 +109,30 @@ internal static class ArenaSpawn
 	/// <item><c>DewHeroesTeleporter.destination</c> — where the game itself
 	/// drops heroes when a fight starts, so it is inside the arena by
 	/// definition even when the marker is absent.</item>
+	/// <item>The room's largest <c>RoomSection</c>. Boss rooms are built as an
+	/// approach plus a big open fighting space, so the widest section is the
+	/// arena. <c>pathablePivot</c> gives a centre that is known to be walkable,
+	/// and the radius follows from the section's area.</item>
 	/// <item>The heroes' own midpoint — last resort, which only spreads them
 	/// apart rather than moving them anywhere meaningful.</item>
 	/// </list>
 	/// </remarks>
 	public static bool TryGetArena(List<Hero> heroes, out Vector3 center, out float radius)
 	{
+		return TryGetArena(heroes, out center, out radius, out string _);
+	}
+
+	public static bool TryGetArena(List<Hero> heroes, out Vector3 center, out float radius,
+		out string source)
+	{
+		source = "none";
+
 		Room_BossArena arena = SingletonBehaviour<Room_BossArena>.instance;
 		if (arena != null)
 		{
 			center = arena.center;
 			radius = arena.radius;
+			source = "Room_BossArena";
 			return true;
 		}
 
@@ -126,6 +141,13 @@ internal static class ArenaSpawn
 		{
 			center = Dew.GetPositionOnGround(teleporter.destination.position);
 			radius = FallbackRadius;
+			source = "DewHeroesTeleporter";
+			return true;
+		}
+
+		if (TryGetLargestSection(out center, out radius))
+		{
+			source = "largest RoomSection";
 			return true;
 		}
 
@@ -144,6 +166,48 @@ internal static class ArenaSpawn
 
 		center /= heroes.Count;
 		radius = FallbackRadius;
+		source = "hero midpoint";
+		return true;
+	}
+
+	/// <summary>
+	/// The room's biggest open space, used when nothing marks the arena
+	/// explicitly.
+	/// </summary>
+	/// <remarks>
+	/// Most boss rooms are an approach corridor feeding a large fighting space,
+	/// so the section with the greatest <c>area</c> is the arena. Its
+	/// <c>pathablePivot</c> is a centre already known to be walkable, and the
+	/// ring radius is derived from the area of a circle of that size, kept
+	/// modest so players are not pushed into the walls.
+	/// </remarks>
+	private static bool TryGetLargestSection(out Vector3 center, out float radius)
+	{
+		center = Vector3.zero;
+		radius = FallbackRadius;
+
+		Room room = SingletonDewNetworkBehaviour<Room>.softInstance;
+		if (room == null || room.sections == null || room.sections.Count == 0)
+		{
+			return false;
+		}
+
+		RoomSection biggest = null;
+		foreach (RoomSection section in room.sections)
+		{
+			if (section != null && (biggest == null || section.area > biggest.area))
+			{
+				biggest = section;
+			}
+		}
+
+		if (biggest == null || biggest.area <= 0f)
+		{
+			return false;
+		}
+
+		center = Dew.GetValidAgentPosition(biggest.pathablePivot);
+		radius = Mathf.Clamp(Mathf.Sqrt(biggest.area / Mathf.PI), 4f, 18f);
 		return true;
 	}
 
@@ -157,7 +221,12 @@ internal static class ArenaSpawn
 		}
 
 		DewHeroesTeleporter teleporter = Object.FindAnyObjectByType<DewHeroesTeleporter>();
-		return teleporter != null && teleporter.destination != null;
+		if (teleporter != null && teleporter.destination != null)
+		{
+			return true;
+		}
+
+		return TryGetLargestSection(out Vector3 _, out float _);
 	}
 
 }

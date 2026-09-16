@@ -43,6 +43,17 @@ internal static class ArenaDiagnostics
 			return;
 		}
 
+		List<Hero> heroes = new List<Hero>(actors.allHeroes);
+		if (ArenaSpawn.TryGetArena(heroes, out Vector3 anchor, out float anchorRadius, out string anchorSource))
+		{
+			Debug.Log($"{ModIdentity.LogPrefix}arena anchor: {anchorSource} at {anchor} " +
+			          $"(radius {anchorRadius:0.#}).");
+		}
+		else
+		{
+			Debug.Log($"{ModIdentity.LogPrefix}arena anchor: NONE FOUND in this room.");
+		}
+
 		List<string> attackable = new List<string>();
 		List<string> ignored = new List<string>();
 

@@ -264,14 +264,18 @@ onto the entry trigger and the `arena_start` command:
   Boss rooms are inconsistent about marking their arena, so three anchors are
   tried in order:
 
-  | anchor | rooms |
+  | anchor | notes |
   |---|---|
-  | `Room_BossArena` — real centre and radius | LavaLand, Primus, Despair |
-  | `DewHeroesTeleporter.destination` — where the game drops heroes to start a fight | fallback |
+  | `Room_BossArena` — real centre and radius | only LavaLand, Primus and Despair name one |
+  | `DewHeroesTeleporter.destination` | where the game itself drops heroes to start a fight |
+  | largest `RoomSection` | boss rooms are an approach plus a big open space, so the widest section is the arena; `pathablePivot` is a known-walkable centre and the radius follows from its area |
   | heroes' own midpoint | last resort, spread only |
 
-  Staging waits for a real anchor: the midpoint fallback would just shuffle
-  people around the antechamber they are trying to leave.
+  Staging waits for one of the first three: the midpoint fallback would just
+  shuffle people around the antechamber they are trying to leave.
+
+  The chosen anchor is logged on every placement, and `arena_scan` reports it,
+  so a room that still fails can be identified rather than guessed at.
 
 No spawn immunity is granted: players arrive from the safety of camp, so nothing
 is hostile until they are already through the rift.
