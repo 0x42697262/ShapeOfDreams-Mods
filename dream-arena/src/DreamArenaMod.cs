@@ -217,7 +217,7 @@ public class DreamArenaMod : ModBehaviour
 	[ConsoleCommand("Report the current arena state", "arena_status")]
 	public void Cmd_ArenaStatus()
 	{
-		GameManager game = NetworkedManagerBase<GameManager>.instance;
+		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
 
 		Debug.Log($"{ModIdentity.LogPrefix}arena={config.arenaEnabled} mode={config.teamMode} " +
 		          $"neverEnd={config.neverEndRun} noMonsters={config.suppressMonsters} " +

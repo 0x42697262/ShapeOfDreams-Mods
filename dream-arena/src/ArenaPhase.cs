@@ -66,7 +66,7 @@ internal sealed class ArenaPhase
 			return;
 		}
 
-		ZoneManager zones = NetworkedManagerBase<ZoneManager>.instance;
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (zones == null)
 		{
 			return;
@@ -119,7 +119,7 @@ internal sealed class ArenaPhase
 			return;
 		}
 
-		ZoneManager zones = NetworkedManagerBase<ZoneManager>.instance;
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		PhaseKind phase = zones == null
 			? PhaseKind.Camp
 			: Resolve(zones, zones.currentNodeIndex);

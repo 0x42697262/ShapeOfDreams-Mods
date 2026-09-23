@@ -30,7 +30,7 @@ internal static class ArenaRules
 			return;
 		}
 
-		GameManager game = NetworkedManagerBase<GameManager>.instance;
+		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
 		if (game == null)
 		{
 			// Still in the lobby; rules get applied when the game manager starts.
@@ -72,7 +72,7 @@ internal static class ArenaRules
 			return;
 		}
 
-		GameSettingsManager settings = NetworkedManagerBase<GameSettingsManager>.instance;
+		GameSettingsManager settings = NetworkedManagerBase<GameSettingsManager>.softInstance;
 		if (settings == null || settings.activeLucidDreams.Count == 0)
 		{
 			return;
@@ -95,7 +95,7 @@ internal static class ArenaRules
 			return;
 		}
 
-		GameManager game = NetworkedManagerBase<GameManager>.instance;
+		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
 		if (game == null)
 		{
 			return;
@@ -142,7 +142,7 @@ internal static class ArenaRules
 
 		try
 		{
-			ZoneManager zones = NetworkedManagerBase<ZoneManager>.instance;
+			ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 			if (zones == null)
 			{
 				return;

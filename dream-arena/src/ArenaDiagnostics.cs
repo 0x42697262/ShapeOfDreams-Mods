@@ -20,7 +20,7 @@ internal static class ArenaDiagnostics
 
 	public static void ReportTargets()
 	{
-		ActorManager actors = NetworkedManagerBase<ActorManager>.instance;
+		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
 		if (actors == null)
 		{
 			Debug.Log($"{ModIdentity.LogPrefix}no actor manager; not in a run.");

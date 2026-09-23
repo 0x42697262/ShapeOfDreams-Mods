@@ -483,6 +483,37 @@ Confidence, highest first:
   override is applied one frame after the game manager starts, and revive runs
   off a per-frame scan of `ActorManager.allHeroes`.
 
+### Networking after the Sep 22 game patch
+
+The patch (still labeled `r.1.4.0.13`) reworked lobbies and transports. The
+mod's own compiled references are unchanged against the new assemblies, but
+the game now treats any modded session differently:
+
+- `DewMod.isAnyModActive` forces the host's **Cross-play off** (and saves that
+  setting). The EOS lobby is published with `crossPlayGate = "STEAM"` and
+  `CrossplayOptOut`, so only Steam players can find or join it. Anyone on
+  another platform gets `CrossPlayMismatch`. This is intended by the game and
+  cannot be fixed host-side.
+- A host with Steam running uses `MultiplexTransport` (Steam + EOS). Clients
+  connect over Steam to the published `steamHost`, then fall back to EOS if
+  that fails. Its packet limit is the smaller of the two transports (EOS:
+  1170 bytes × fragments).
+- The lobby `version` check is only the part before `_`, so any friend whose
+  Steam copy has not finished updating will fail it.
+
+Host-side lag matters more than it used to, because the host is the server:
+a slow host frame stalls every client and can trip EOS peer-inactivity kicks
+during joins. For that reason:
+
+- Per-frame code reads managers through `NetworkedManagerBase<T>.softInstance`,
+  never `.instance`. When the manager is missing, `.instance` runs two
+  whole-scene `FindObjectOfType` searches (the second includes inactive
+  objects). `ZoneManager` and `ActorManager` do not exist in the lobby, so
+  `.instance` there meant several full scene scans every frame for as long as
+  the lobby was open.
+- Camp remnant builds and arena staging retry on a timer instead of every
+  frame.
+
 Known gaps, for the next pass:
 
 - **Travelling to the zone's own boss node** would still stage that boss fight.

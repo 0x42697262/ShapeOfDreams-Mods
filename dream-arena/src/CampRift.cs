@@ -65,7 +65,7 @@ internal static class CampRift
 			return;
 		}
 
-		ZoneManager zones = NetworkedManagerBase<ZoneManager>.instance;
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (zones == null)
 		{
 			return;

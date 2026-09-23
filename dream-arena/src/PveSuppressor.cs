@@ -65,7 +65,7 @@ internal static class PveSuppressor
 	/// </summary>
 	public static int Sweep()
 	{
-		ActorManager actors = NetworkedManagerBase<ActorManager>.instance;
+		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
 		if (actors == null)
 		{
 			return 0;

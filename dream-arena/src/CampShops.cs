@@ -77,6 +77,22 @@ internal static class CampShops
 
 	private static int _builtNode = -1;
 
+	/// <summary>Seconds between build attempts while a camp has no remnants yet.</summary>
+	private const float RetryInterval = 1f;
+
+	/// <summary>Attempts per camp before giving up on it.</summary>
+	/// <remarks>
+	/// A failed build runs the full formation solver — hundreds of ground raycasts
+	/// and navmesh samples — and logs a warning. Retrying that every frame, as
+	/// this used to, tanked the host's frame rate in any camp too cramped for the
+	/// rows, and since the host is the server every client lagged with it.
+	/// </remarks>
+	private const int MaxAttempts = 5;
+
+	private static int _attemptNode = -1;
+	private static int _attempts;
+	private static float _nextAttemptTime;
+
 	internal readonly struct ShopAssignment
 	{
 		public readonly ShopKind Kind;
@@ -136,20 +152,43 @@ internal static class CampShops
 			return;
 		}
 
-		ZoneManager zones = NetworkedManagerBase<ZoneManager>.instance;
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (zones == null || zones.isInAnyTransition)
 		{
 			return;
 		}
 
-		if (zones.currentNodeIndex == _builtNode)
+		int node = zones.currentNodeIndex;
+		if (node == _builtNode)
 		{
 			return;
 		}
 
+		if (node != _attemptNode)
+		{
+			_attemptNode = node;
+			_attempts = 0;
+			_nextAttemptTime = 0f;
+		}
+
+		if (_attempts >= MaxAttempts || Time.unscaledTime < _nextAttemptTime)
+		{
+			return;
+		}
+
+		_attempts++;
+		_nextAttemptTime = Time.unscaledTime + RetryInterval;
+
 		if (Build())
 		{
-			_builtNode = zones.currentNodeIndex;
+			_builtNode = node;
+			return;
+		}
+
+		if (_attempts >= MaxAttempts)
+		{
+			Debug.LogWarning($"{ModIdentity.LogPrefix}gave up on camp remnants for node {node} " +
+			                 $"after {MaxAttempts} attempts.");
 		}
 	}
 
@@ -506,5 +545,8 @@ internal static class CampShops
 		Assignments.Clear();
 		Taken.Clear();
 		_builtNode = -1;
+		_attemptNode = -1;
+		_attempts = 0;
+		_nextAttemptTime = 0f;
 	}
 }

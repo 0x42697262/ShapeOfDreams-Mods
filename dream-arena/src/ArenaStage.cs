@@ -27,6 +27,16 @@ internal static class ArenaStage
 	/// <summary>Node the players were last staged into, so it happens once per arrival.</summary>
 	private static int _stagedNode = -1;
 
+	/// <summary>Seconds between staging attempts while the room is not ready.</summary>
+	/// <remarks>
+	/// Each attempt looks for the arena anchor with whole-scene object searches.
+	/// Doing that every frame in a room that never yields one was a steady drain
+	/// on the host, and so on every client.
+	/// </remarks>
+	private const float RetryInterval = 0.25f;
+
+	private static float _nextAttemptTime;
+
 	public static void Tick(DreamArenaConfig config, PhaseKind phase)
 	{
 		if (!NetworkServer.active || config == null || !config.arenaEnabled)
@@ -41,7 +51,7 @@ internal static class ArenaStage
 			return;
 		}
 
-		ZoneManager zones = NetworkedManagerBase<ZoneManager>.instance;
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (zones == null || zones.isInAnyTransition)
 		{
 			return;
@@ -52,9 +62,16 @@ internal static class ArenaStage
 			return;
 		}
 
+		if (Time.unscaledTime < _nextAttemptTime)
+		{
+			return;
+		}
+
+		_nextAttemptTime = Time.unscaledTime + RetryInterval;
+
 		if (!TryStage(config))
 		{
-			// Room or heroes not ready yet; try again next frame.
+			// Room or heroes not ready yet; try again shortly.
 			return;
 		}
 
@@ -67,7 +84,7 @@ internal static class ArenaStage
 	/// </summary>
 	private static bool TryStage(DreamArenaConfig config)
 	{
-		ActorManager actors = NetworkedManagerBase<ActorManager>.instance;
+		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
 		if (actors == null || actors.allHeroes.Count == 0)
 		{
 			return false;
@@ -114,5 +131,6 @@ internal static class ArenaStage
 	public static void Reset()
 	{
 		_stagedNode = -1;
+		_nextAttemptTime = 0f;
 	}
 }

@@ -27,7 +27,7 @@ internal static class ArenaSpawn
 			return;
 		}
 
-		ActorManager actors = NetworkedManagerBase<ActorManager>.instance;
+		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
 		if (actors == null)
 		{
 			return;
