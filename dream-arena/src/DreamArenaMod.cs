@@ -104,6 +104,7 @@ public class DreamArenaMod : ModBehaviour
 		CampShops.Reset();
 		ShopCatalog.ClearCache();
 		CampRift.Reset();
+		HeroLeveller.Reset();
 		ApplyNow();
 
 		// Deferred: the world is not generated yet on the frame the manager starts.
@@ -119,7 +120,7 @@ public class DreamArenaMod : ModBehaviour
 		ArenaStage.Tick(config, _phase.Current);
 		PveSuppressor.Tick(dt, config, _phase.Current);
 		CampShops.Tick(config, _phase.Current);
-		HeroLeveller.Tick(config);
+		HeroLeveller.Tick(dt, config);
 		CampRift.Tick(dt, config, _phase.Current);
 	}
 

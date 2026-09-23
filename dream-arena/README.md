@@ -58,6 +58,7 @@ every change is written to both sides.
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
 | Camp remnants | ten free pick-anything remnants | spawned `ChoiceShrine`s, offering overwritten |
 | Max player level | everyone at the cap in camp | `Hero.maxLevel` |
+| Starting memory level | every equipped memory, identity included, at least level 10 | `SkillTrigger.level`, as the Upgrade Well sets it |
 
 `WrapUpAndShowResult` is the single funnel every run-ending path goes through
 (`CheckGameOver`, `ConcludePureWhiteDream`, `ConcludeUnknownFate`), which is why
@@ -424,6 +425,7 @@ src/
   PveSuppressor.cs        sweeps monsters, props and hazards
   CampRift.cs             points the camp rift straight at the arena
   ReviveController.cs     auto-revive timers for knocked-out players
+  HeroLeveller.cs         hero level cap and memory level floor
   ArenaConfigWindow.cs    host's in-lobby settings window
   InjectedUi.cs           teardown for live reload
   ModIdentity.cs          names stamped on created objects

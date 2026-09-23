@@ -112,6 +112,11 @@ public class DreamArenaConfig : ModConfig
 	             "at full strength rather than raced for.")]
 	public bool maxPlayerLevel = true;
 
+	[LabelText("Starting memory level")]
+	[Description("Raises every player's equipped memories, identity included, to at least " +
+	             "this level. Never lowers one. 1 or less disables it.")]
+	public int startingMemoryLevel = 10;
+
 	[LabelText("Auto revive seconds")]
 	[Description("Seconds a knocked-out player waits before being revived. 0 disables it.")]
 	public int autoReviveSeconds = 10;
@@ -147,6 +152,7 @@ public class DreamArenaConfig : ModConfig
 		other.shopMemoryLevel = shopMemoryLevel;
 		other.shopEssenceQuality = shopEssenceQuality;
 		other.maxPlayerLevel = maxPlayerLevel;
+		other.startingMemoryLevel = startingMemoryLevel;
 		other.hideObjectives = hideObjectives;
 		other.removeGameModifiers = removeGameModifiers;
 		other.removeLucidDreams = removeLucidDreams;
