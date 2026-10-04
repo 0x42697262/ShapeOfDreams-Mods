@@ -135,10 +135,11 @@ transition event — no dependency on the exact ordering of the travel pipeline.
 
 ### Camp remnants
 
-Ten remnants stand in the camp in two straight, evenly spaced rows —
-**memories down one side, essences down the other** — one per rarity, running Common to Unique. Everything is free and
-never runs out, so a build is chosen rather than farmed and two players can
-take the same thing.
+Ten remnants ring the camp rift, with an opening left toward the camp to walk in
+through — **memories down one half, essences down the other** — one per rarity,
+running Common to Unique, with the two Commons flanking the opening and the
+Uniques meeting at the back. Everything is free and never runs out, so a build is
+chosen rather than farmed and two players can take the same thing.
 
 They are the game's own Retrospection and Enlightenment remnants
 (`Shrine_Retrospection`, `Shrine_Enlightenment`) rather than merchants. A
@@ -165,20 +166,18 @@ a `GridLayoutGroup` with no scrolling, so a remnant holding every memory in the
 game would spill off screen. A single rarity is a few dozen entries. Remnants
 the world generates are matched by instance id and left completely alone.
 
-**Placement is rigid.** Slot positions come from exact grid maths and are never
-nudged sideways; only their height is taken from the ground. The solver tries a
-candidate centre, heading and spacing and accepts it only when *every* slot
-lands on walkable ground, so the camp gets a clean formation or none at all.
-Candidates are tried widest-first and scored by how far the rows stay clear of
-the rift.
+**Placement is rigid.** The circle is centred on the rift. Slot positions come
+from exact circle maths and are never nudged sideways; only their height is taken
+from the ground. The solver tries a radius and rotation and accepts it only when
+*every* slot lands on walkable ground, so the camp gets a clean ring or none at
+all. Radii are tried widest-first, and for each the whole ring is turned by small
+amounts to dodge a blocked slot while keeping the opening near the camp. Each
+remnant faces inward, so a player standing inside the ring sees their fronts.
 
-This replaced per-remnant navmesh sweeps. A sweep pulls an unreachable point
-back toward its start, so each blocked slot landed somewhere different and the
-rows came out looking scattered rather than arranged.
-
-The rows swing around the room rather than the rift being moved out of the way:
-`Rift_RoomExit` is a scene object with no position syncing, so relocating it
-host-side would leave clients interacting with thin air.
+The ring is centred on the rift and never moved, rather than placed off to one
+side: `Rift_RoomExit` is a scene object with no position syncing, so relocating
+it host-side would leave clients interacting with thin air. The remnants go
+around it instead.
 
 ### Leaving camp
 

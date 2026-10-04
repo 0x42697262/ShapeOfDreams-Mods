@@ -6,13 +6,14 @@ using UnityEngine.AI;
 namespace DreamArena;
 
 /// <summary>
-/// Stands up two rows of free remnants in the camp, one per item kind and rarity.
+/// Rings the camp rift with free remnants, one per item kind and rarity.
 /// </summary>
 /// <remarks>
 /// <para>
 /// A PvP match is only interesting if everyone can actually build what they
-/// want, so the camp gets ten remnants: memories down the left, essences down
-/// the right, each row running Common to Unique. Everything is free, since gold
+/// want, so the camp gets ten remnants in a circle around the rift, with an
+/// opening toward the camp to walk in through: memories down one half, essences
+/// down the other, each running Common to Unique. Everything is free, since gold
 /// is PvE progression. A remnant can be used as often as a player likes; what
 /// runs out is the individual item, which disappears from that player's
 /// offering once taken. The ledger is per player, so two players wanting the
@@ -36,30 +37,27 @@ internal static class CampShops
 	private const string MemoryRemnant = "Shrine_Retrospection";
 	private const string EssenceRemnant = "Shrine_Enlightenment";
 
-	/// <summary>Width of the aisle between the two rows, in metres.</summary>
-	private const float AisleWidth = 6f;
+	/// <summary>Width of the opening in the ring, in degrees — the way in to the rift.</summary>
+	private const float OpeningAngle = 90f;
 
-	/// <summary>Gap between neighbouring remnants in a row, in metres.</summary>
-	private const float RowSpacing = 4f;
+	/// <summary>Ring radii tried, widest first, before giving up.</summary>
+	private static readonly float[] RingRadii = { 7f, 6.5f, 6f, 5.5f, 5f };
 
-	/// <summary>How close to the rift a remnant may stand.</summary>
-	private const float RiftClearance = 6f;
+	/// <summary>
+	/// Small turns of the whole ring, tried in order, to dodge a blocked slot
+	/// without moving the opening far off the camp.
+	/// </summary>
+	private static readonly float[] RingRotations = { 0f, 15f, -15f, 30f, -30f, 45f, -45f };
 
 	/// <summary>
 	/// How far a slot may sit from walkable ground and still count as placed.
 	/// </summary>
 	/// <remarks>
-	/// Small on purpose. A slot is never nudged to fit — either the whole
-	/// formation lands on open ground or that candidate layout is discarded,
-	/// which is what keeps the rows straight.
+	/// Small on purpose. A slot is never nudged to fit — either every slot in the
+	/// ring lands on open ground or that candidate is discarded, which is what
+	/// keeps the circle even.
 	/// </remarks>
 	private const float SlotTolerance = 0.65f;
-
-	/// <summary>Headings tried when looking for somewhere the rows fit.</summary>
-	private const int HeadingCount = 24;
-
-	/// <summary>Spacings tried, largest first, before giving up on a heading.</summary>
-	private static readonly float[] SpacingScales = { 1f, 0.85f, 0.7f, 0.55f };
 
 	/// <summary>What each spawned remnant offers, keyed by instance id.</summary>
 	private static readonly Dictionary<int, ShopAssignment> Assignments =
@@ -207,243 +205,144 @@ internal static class CampShops
 			return false;
 		}
 
-		if (!TryGetCampAnchor(out Vector3 anchor))
+		// The ring is built around the rift, so there must be one.
+		Rift_RoomExit rift = Rift_RoomExit.softInstance;
+		if (rift.IsNullOrInactive())
 		{
+			Debug.LogWarning($"{ModIdentity.LogPrefix}no camp rift to ring; skipping camp remnants.");
 			return false;
 		}
 
-		int rows = ShopCatalog.StockedRarities.Length;
-		if (!TrySolveFormation(anchor, rows, out Formation formation))
+		Vector3 center = Dew.GetPositionOnGround(rift.transform.position);
+
+		// The opening faces the open camp, so players walk in from there to the rift.
+		Vector3 openingDir = Vector3.forward;
+		if (TryGetCampAnchor(out Vector3 anchor))
 		{
-			Debug.LogWarning($"{ModIdentity.LogPrefix}no room in the camp for " +
-			                 $"{rows * 2} aligned remnants; skipping camp shops.");
+			Vector3 toCamp = anchor - center;
+			toCamp.y = 0f;
+			if (toCamp.sqrMagnitude > 0.01f)
+			{
+				openingDir = toCamp.normalized;
+			}
+		}
+
+		int rarities = ShopCatalog.StockedRarities.Length;
+		int count = rarities * 2;
+		if (!TrySolveRing(center, openingDir, count, out Vector3[] slots, out Vector3[] facings))
+		{
+			Debug.LogWarning($"{ModIdentity.LogPrefix}no room for a ring of {count} remnants " +
+			                 "around the rift; skipping camp remnants.");
 			return false;
 		}
 
 		Assignments.Clear();
 
-		Quaternion faceRight = Quaternion.LookRotation(formation.Sideways, Vector3.up);
-		Quaternion faceLeft = Quaternion.LookRotation(-formation.Sideways, Vector3.up);
-
+		// Going around from one edge of the opening: memories Common->Unique down
+		// one half, then essences Unique->Common down the other, so the two Commons
+		// flank the opening and the Uniques meet at the back.
 		int built = 0;
-		for (int i = 0; i < rows; i++)
+		for (int i = 0; i < count; i++)
 		{
-			Rarity rarity = ShopCatalog.StockedRarities[i];
+			bool isMemory = i < rarities;
+			int r = isMemory ? i : count - 1 - i;
+			Rarity rarity = ShopCatalog.StockedRarities[r];
+			Quaternion rot = Quaternion.LookRotation(facings[i], Vector3.up);
 
-			built += Place(memoryPrefab, ShopKind.Memory, rarity,
-				formation.Slots[i * 2], faceRight);
-
-			built += Place(essencePrefab, ShopKind.Essence, rarity,
-				formation.Slots[i * 2 + 1], faceLeft);
+			built += isMemory
+				? Place(memoryPrefab, ShopKind.Memory, rarity, slots[i], rot)
+				: Place(essencePrefab, ShopKind.Essence, rarity, slots[i], rot);
 		}
 
-		Debug.Log($"{ModIdentity.LogPrefix}built {built} camp remnant(s): two rows of " +
-		          $"{rows} at {formation.Origin}, heading {formation.Forward}, " +
-		          $"spacing {formation.Scale:0.00}x.");
+		Debug.Log($"{ModIdentity.LogPrefix}built {built} camp remnant(s) in a ring around " +
+		          $"the rift at {center}.");
 
 		return built > 0;
 	}
 
-	/// <summary>A solved layout: ten slots in two straight, evenly spaced rows.</summary>
-	private readonly struct Formation
-	{
-		public readonly Vector3[] Slots;
-		public readonly Vector3 Origin;
-		public readonly Vector3 Forward;
-		public readonly Vector3 Sideways;
-		public readonly float Scale;
-
-		public Formation(Vector3[] slots, Vector3 origin, Vector3 forward, Vector3 sideways,
-			float scale)
-		{
-			Slots = slots;
-			Origin = origin;
-			Forward = forward;
-			Sideways = sideways;
-			Scale = scale;
-		}
-	}
-
 	/// <summary>
-	/// Finds a place and heading where both rows fit without bending.
+	/// Finds a radius and rotation where every remnant in the ring fits.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// The earlier version placed each remnant with a navmesh sweep that pulled
-	/// an unreachable slot back toward the anchor. Every blocked slot therefore
-	/// landed somewhere different, which is why the camp ended up looking like
-	/// the remnants had been scattered rather than arranged.
+	/// The remnants ring the rift with a gap left open toward the camp, so
+	/// players walk in through the opening to reach the rift. The circle is
+	/// centred on the rift and never moved: the rift is a scene object with no
+	/// position syncing, so relocating it host-side would leave clients
+	/// interacting with thin air.
 	/// </para>
 	/// <para>
-	/// The layout is rigid instead. Slot positions come from exact grid maths
-	/// and are never moved sideways — only their height is taken from the
-	/// ground. A candidate origin, heading and spacing is accepted only when
-	/// <em>every</em> slot lands on walkable ground, so the result is either a
-	/// clean formation or none at all. Candidates are tried widest-first and
-	/// scored so that the rows sit in the middle of the room: keeping clear of
-	/// the rift earns a candidate points only up to <see cref="RiftClearance"/>,
-	/// after which the distance from the anchor decides, so a layout only drifts
-	/// off-centre as far as the rift forces it to. The rows move rather than the
-	/// rift because the rift is a scene object with no position syncing, so
-	/// relocating it host-side would leave clients interacting with thin air.
+	/// The layout is rigid. Slot positions come from exact circle maths and are
+	/// never nudged sideways; only their height is taken from the ground. A
+	/// candidate radius and rotation is accepted only when every slot lands on
+	/// walkable ground, so the result is a clean ring or none at all. Radii are
+	/// tried widest-first; for each, the whole ring is turned by small amounts
+	/// to dodge a blocked slot while keeping the opening near the camp.
 	/// </para>
 	/// </remarks>
-	private static bool TrySolveFormation(Vector3 anchor, int rows, out Formation formation)
+	private static bool TrySolveRing(Vector3 center, Vector3 openingDir, int count,
+		out Vector3[] slots, out Vector3[] facings)
 	{
-		formation = default;
+		slots = null;
+		facings = null;
 
-		Rift_RoomExit rift = Rift_RoomExit.softInstance;
-		bool hasRift = !rift.IsNullOrInactive();
-		Vector3 riftPosition = hasRift ? rift.transform.position : Vector3.zero;
+		// Angle (degrees, measured from +Z) that the opening points along.
+		float openingAngle = Mathf.Atan2(openingDir.x, openingDir.z) * Mathf.Rad2Deg;
 
-		Vector3[] origins = BuildOrigins(anchor, hasRift, riftPosition);
-
-		Vector3[] slots = new Vector3[rows * 2];
-		Vector3[] best = null;
-		float bestScore = float.NegativeInfinity;
-		float bestClearance = 0f;
-		Vector3 bestOrigin = anchor;
-		Vector3 bestForward = Vector3.forward;
-		Vector3 bestSideways = Vector3.right;
-		float bestScale = 1f;
-
-		foreach (float scale in SpacingScales)
+		foreach (float radius in RingRadii)
 		{
-			foreach (Vector3 origin in origins)
+			foreach (float rotation in RingRotations)
 			{
-				for (int h = 0; h < HeadingCount; h++)
+				if (TryLayOutRing(center, openingAngle + rotation, radius, count,
+					    out slots, out facings))
 				{
-					float angle = h * (360f / HeadingCount);
-					Vector3 forward = Quaternion.Euler(0f, angle, 0f) * Vector3.forward;
-					Vector3 sideways = Vector3.Cross(Vector3.up, forward).normalized;
-
-					if (!TryLayOutRows(origin, forward, sideways, scale, rows, slots,
-						    out float clearance))
-					{
-						continue;
-					}
-
-					float clear = hasRift
-						? Mathf.Min(clearance, RiftClearance)
-						: RiftClearance;
-
-					float score = clear - Vector3.Distance(origin, anchor) * 0.5f;
-					if (score <= bestScore)
-					{
-						continue;
-					}
-
-					bestScore = score;
-					bestClearance = clear;
-					best = (Vector3[])slots.Clone();
-					bestOrigin = origin;
-					bestForward = forward;
-					bestSideways = sideways;
-					bestScale = scale;
+					return true;
 				}
 			}
-
-			// A tighter spacing is only worth trying if nothing fit at this one.
-			if (best != null && (!hasRift || bestClearance >= RiftClearance))
-			{
-				break;
-			}
 		}
 
-		if (best == null)
-		{
-			return false;
-		}
-
-		formation = new Formation(best, bestOrigin, bestForward, bestSideways, bestScale);
-		return true;
+		return false;
 	}
 
 	/// <summary>
-	/// Centres to try: the anchor first, then short steps away from the rift.
+	/// Lays out one ring: <paramref name="count"/> slots evenly across the arc
+	/// left once the opening is removed, or reports failure.
 	/// </summary>
 	/// <remarks>
-	/// Only an escape hatch for when the rift sits on the anchor. The scoring in
-	/// <see cref="TrySolveFormation"/> prefers the anchor, so these outer steps
-	/// win only when the anchor cannot clear the rift at any heading or spacing.
+	/// Slots run from one edge of the opening, around the back, to the other
+	/// edge, so the ring is symmetric about the opening. Each slot faces inward
+	/// toward the rift, so a player standing inside the ring sees their fronts.
+	/// Only the height of a slot is taken from the navmesh; its ground position
+	/// is left exactly on the circle, so the ring stays even.
 	/// </remarks>
-	private static Vector3[] BuildOrigins(Vector3 anchor, bool hasRift, Vector3 riftPosition)
+	private static bool TryLayOutRing(Vector3 center, float openingAngle, float radius,
+		int count, out Vector3[] slots, out Vector3[] facings)
 	{
-		if (!hasRift)
+		slots = new Vector3[count];
+		facings = new Vector3[count];
+
+		float arc = 360f - OpeningAngle;
+		float backAngle = openingAngle + 180f;
+		float start = backAngle - arc * 0.5f;
+		float step = arc / (count - 1);
+
+		for (int i = 0; i < count; i++)
 		{
-			return new[] { anchor };
-		}
+			float a = (start + step * i) * Mathf.Deg2Rad;
+			Vector3 dir = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a));
+			Vector3 target = center + dir * radius;
 
-		Vector3 away = anchor - riftPosition;
-		away.y = 0f;
-
-		if (away.sqrMagnitude < 0.01f)
-		{
-			return new[] { anchor };
-		}
-
-		away.Normalize();
-
-		return new[]
-		{
-			anchor,
-			Dew.GetValidAgentPosition(anchor + away * 3f),
-			Dew.GetValidAgentPosition(anchor + away * 6f)
-		};
-	}
-
-	/// <summary>
-	/// Fills <paramref name="slots"/> with one exact grid, or reports failure.
-	/// </summary>
-	/// <remarks>
-	/// Rows are centred on the origin so the formation grows symmetrically
-	/// rather than running off in one direction. Only the height of a slot is
-	/// taken from the navmesh; its ground position is left exactly where the
-	/// grid put it, so the rows stay straight and evenly spaced.
-	/// </remarks>
-	private static bool TryLayOutRows(Vector3 origin, Vector3 forward, Vector3 sideways,
-		float scale, int rows, Vector3[] slots, out float riftClearance)
-	{
-		riftClearance = float.MaxValue;
-
-		Rift_RoomExit rift = Rift_RoomExit.softInstance;
-		bool hasRift = !rift.IsNullOrInactive();
-		Vector2 riftFlat = hasRift ? rift.transform.position.ToXY() : Vector2.zero;
-
-		float column = AisleWidth * scale * 0.5f;
-		float spacing = RowSpacing * scale;
-		float firstRow = -(rows - 1) * 0.5f * spacing;
-
-		for (int i = 0; i < rows; i++)
-		{
-			Vector3 along = forward * (firstRow + i * spacing);
-
-			for (int side = 0; side < 2; side++)
+			if (!TryGroundSlot(target, out Vector3 slot))
 			{
-				Vector3 target = origin + along
-				                 + sideways * (side == 0 ? -column : column);
-
-				if (!TryGroundSlot(target, out Vector3 slot))
-				{
-					return false;
-				}
-
-				if (hasRift)
-				{
-					float distance = Vector2.Distance(slot.ToXY(), riftFlat);
-					if (distance < riftClearance)
-					{
-						riftClearance = distance;
-					}
-				}
-
-				slots[i * 2 + side] = slot;
+				return false;
 			}
+
+			slots[i] = slot;
+			facings[i] = -dir;
 		}
 
 		return true;
 	}
-
 	/// <summary>
 	/// Takes a slot's height from the ground, refusing to move it sideways.
 	/// </summary>
