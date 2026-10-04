@@ -193,6 +193,18 @@ internal static class CampRemnantPurchasePatch
 
 		CampShops.RecordTaken(__state.Player.guid, __state.TypeName);
 		__instance.PopulatePlayerChoices(__state.Player);
+
+		// Roll the use count and cooldown back to the untouched state. Both decide
+		// whether a player may interact again, and a client judges that with its
+		// own copy of the limits. `maxUseCountPerPlayer` and `useCooldown` are not
+		// SyncVars, so our spawn-time overrides (-1 and 0) never reach a client; it
+		// keeps the prefab's one-pick-per-player rule. The use count and last-use
+		// time *are* synced, so clearing them here is what the client sees, and its
+		// check (count 0 < limit, no cooldown) passes, letting it pick again. The
+		// host is unaffected: it already has no limit. Our own once-each-item rule
+		// still holds; it lives in the offering, not the use count.
+		__instance.ResetUseCounts();
+		__instance.Network_lastUseTime = double.NegativeInfinity;
 	}
 }
 

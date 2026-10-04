@@ -161,6 +161,17 @@ are configured on spawn to be permanent fixtures:
 `choices` is a `SyncDictionary` keyed by player guid and is never cleared after
 a pick, so a remnant can be used again immediately.
 
+**The per-player limit is not synced, so it is reset per pick.** `maxUseCountPerPlayer`
+and `useCooldown` are plain fields, not SyncVars — setting them on the host never
+reaches a client, which keeps the prefab's one-pick-per-player rule. A client
+decides for itself whether it may interact again, using its own copy of those
+limits against the *synced* per-player use count and last-use time. So a client
+could pick only once, while the host (limit `-1`) had no cap. The fix is to roll
+both synced values back after every pick — `ResetUseCounts()` and clearing
+`_lastUseTime` — so the client's own check always passes. The once-each-item
+rule is unaffected: it lives in the offering, not the use count.
+
+
 **Why split by rarity rather than one remnant per kind.** The choice window is
 a `GridLayoutGroup` with no scrolling, so a remnant holding every memory in the
 game would spill off screen. A single rarity is a few dozen entries. Remnants
