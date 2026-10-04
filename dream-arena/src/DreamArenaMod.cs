@@ -70,6 +70,7 @@ public class DreamArenaMod : ModBehaviour
 		{
 			RelationController.ClearAll();
 			ArenaRules.Restore();
+			HeroHealth.RemoveAll();
 		}
 
 		InjectedUi.CleanupAll();
@@ -105,6 +106,7 @@ public class DreamArenaMod : ModBehaviour
 		ShopCatalog.ClearCache();
 		CampRift.Reset();
 		HeroLeveller.Reset();
+		HeroHealth.Reset();
 		ApplyNow();
 
 		// Deferred: the world is not generated yet on the frame the manager starts.
@@ -121,6 +123,7 @@ public class DreamArenaMod : ModBehaviour
 		PveSuppressor.Tick(dt, config, _phase.Current);
 		CampShops.Tick(config, _phase.Current);
 		HeroLeveller.Tick(dt, config);
+		HeroHealth.Tick(dt, config);
 		CampRift.Tick(dt, config, _phase.Current);
 	}
 

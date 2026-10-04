@@ -50,6 +50,7 @@ every change is written to both sides.
 | Never end the run | players can die, run continues | prefix blocking `GameManager.WrapUpAndShowResult` |
 | No monsters | empty arena, no boss | `maxAndSpawnedPopulationMultiplier = 0` |
 | Camp and arena | safe camp, PvP past the rift | `SetRoomOverride` on every non-Start node |
+| Plain arena | lit, no entry trigger, barriers open | forced `Room.isRevisit`, the synced "already cleared" state |
 | No PvE | no monsters, props, boss, chests or loose items | blocked `RoomProps`, plus an actor sweep |
 | Clean HUD | no Goal, no room modifiers, mode always shown | hidden quests, stripped node modifiers, replaced location text |
 | No lucid dreams | PvE progression layer stripped | blocked `AddLucidDream`, cleared available list |
@@ -59,6 +60,7 @@ every change is written to both sides.
 | Camp remnants | ten free pick-anything remnants | spawned `ChoiceShrine`s, offering overwritten |
 | Max player level | everyone at the cap in camp | `Hero.maxLevel` |
 | Starting memory level | every equipped memory, identity included, at least level 10 | `SkillTrigger.level`, as the Upgrade Well sets it |
+| Hero health multiplier | every hero's max health x100 by default | a `finalStatsProcessors` entry, applied after all bonuses |
 
 `WrapUpAndShowResult` is the single funnel every run-ending path goes through
 (`CheckGameOver`, `ConcludePureWhiteDream`, `ConcludeUnknownFate`), which is why
@@ -195,6 +197,46 @@ The prompt text itself is swapped for a PvP-themed one by intercepting the
 far less invasive than reimplementing the rift's interaction, and it leaves
 every other string alone. It is a SyncVar, so the host setting it is enough.
 A connected non-camp node is preferred, with any non-camp node as a fallback.
+
+### Plain arena
+
+A boss room loads in its pre-fight state, and its intro cutscene brings the
+lights up. `Room_DarkCave_Boss_0` shows this most clearly:
+`DarkCaveCutSceneFogFadeOut` sets the boss fog to full black on load, and
+`BossZoneLights` starts off. Only the cutscene's timeline signals clear them.
+With the cutscene suppressed, the room stayed pitch black.
+
+Lighting, fog and post-processing are drawn locally from the scene on each
+client, so the host cannot restyle them for unmodded players. But the game has
+a synced state for "this boss room is done": `Room.isRevisit`. Rooms read it on
+every client to present themselves as cleared. Dark Cave fades its fog
+instantly, and the server fires `BossSeekerKillBehavior`, which brings the
+sunlight in. Barriers open, and props, monsters and rewards are skipped.
+
+`ZoneManager` sets the flag in the scene-load callback, just before
+`NetworkServer.SpawnObjects` runs `Room.OnStartServer`. A postfix there
+overrides it before any client receives the room. The same postfix switches
+off the server-only entry trigger (`DewAllHeroesPresentZone`), and a postfix on
+`StartRoom` opens any barriers. A cleared room never opens its own exit rift,
+and that is left alone on purpose: there is nothing to leave the arena to.
+
+How lit a room ends up depends on how that room scripts its revisit, so rooms
+can still differ. Room by room, from each scene's own scripts:
+
+| room | revisit lighting | hazards | notes |
+|---|---|---|---|
+| DarkCave_Boss_0 | fog clears, sunlight in | – | verified in play |
+| LavaLand_Boss_0 | none scripted | lava | entry trigger disabled |
+| Sky_Boss_0 | none scripted | damaging light fog | entry trigger disabled |
+| Ink_Boss_0 | none scripted | boss-spawned only | entry trigger disabled |
+| Forest_Boss_0 | none; day/night is per-client | – | barrier opened |
+| SnowMountain_Boss_0 | none | – | barrier opened |
+| Despair_Boss_0 | none; fog follows the camera | – | – |
+| Primus_Boss_0 | none | – | ending scripts only fire on the boss's death |
+
+Floor hazards are left on on purpose, as a bit of environmental challenge. Both
+run on the server (`LavaLand_Lava`, `Sky_LightFogDamager`), so they could be
+switched off host-side if that is ever wanted.
 
 ### Removing PvE
 
@@ -388,6 +430,23 @@ ending, so without revives a free-for-all stops after one death each.
 found via `hero.Status.GetStatusEffect<Se_HeroKnockedOut>()`. Default is 10
 seconds at 100% health, both configurable.
 
+### Hero health
+
+Max health is multiplied, 100x by default, for longer fights that reward play
+over the first burst. Health is calculated on the server
+(`EntityStatus.CalculateStats`) and replicated as the `finalStats` SyncVar, so
+unmodded clients and their health bars see it too.
+
+The multiplier is a `finalStatsProcessors` entry, which runs at the end of the
+stat pipeline, after level scaling and every item bonus, so it scales the
+finished total, a true multiply. A percentage stat bonus would not be: bonus
+percentages are summed and applied once, so the mod's share would dilute what
+the player built. Each hero gets the processor once; it is taken back off when
+the multiplier changes, when arena mode is turned off, or when the mod unloads.
+`CalculateStats` preserves each hero's current/max health fraction across a
+recalculation, so the change scales current health with the maximum instead of
+leaving someone at a sliver or overfull.
+
 ## Configuring it
 
 Host only, three ways, all the same settings:
@@ -426,6 +485,7 @@ src/
   CampRift.cs             points the camp rift straight at the arena
   ReviveController.cs     auto-revive timers for knocked-out players
   HeroLeveller.cs         hero level cap and memory level floor
+  HeroHealth.cs           max-health multiplier for every hero
   ArenaConfigWindow.cs    host's in-lobby settings window
   InjectedUi.cs           teardown for live reload
   ModIdentity.cs          names stamped on created objects
@@ -435,6 +495,7 @@ src/
     PveSuppressionPatch.cs  blocks room prop spawning
     HudPatches.cs         PvP rift prompt, hides objectives
     WorldGenPatch.cs      applies the arena room once the world exists
+    PlainArenaPatch.cs    loads the arena in its cleared, lit state
     GameEndPatch.cs       blocks WrapUpAndShowResult
     LobbySettingsPatch.cs injects the lobby button
 ```

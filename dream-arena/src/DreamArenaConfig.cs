@@ -45,6 +45,12 @@ public class DreamArenaConfig : ModConfig
 	             "Room_SnowMountain_Boss_0.")]
 	public string arenaRoom = "Room_Primus_Boss_0";
 
+	[LabelText("Plain arena")]
+	[Description("Loads the arena as an already-cleared room: lit, barriers open, no entry " +
+	             "trigger or boss staging. Floor hazards such as lava stay on. Uses the game's " +
+	             "own synced revisit state, so players without the mod see it the same way.")]
+	public bool plainArena = true;
+
 	[LabelText("Remove the boss")]
 	[Description("Despawns the boss room's boss so the arena stays empty. " +
 	             "Despawn, not kill, so no rewards drop and no exit rift opens.")]
@@ -117,6 +123,12 @@ public class DreamArenaConfig : ModConfig
 	             "this level. Never lowers one. 1 or less disables it.")]
 	public int startingMemoryLevel = 10;
 
+	[LabelText("Hero health multiplier")]
+	[Description("Multiplies every hero's maximum health. 1 is normal; 100 gives the long, " +
+	             "survivable fights this mode is built around. Applies to everyone, since " +
+	             "health is server-side.")]
+	public float heroHealthMultiplier = 100f;
+
 	[LabelText("Auto revive seconds")]
 	[Description("Seconds a knocked-out player waits before being revived. 0 disables it.")]
 	public int autoReviveSeconds = 10;
@@ -144,6 +156,7 @@ public class DreamArenaConfig : ModConfig
 		other.suppressMonsters = suppressMonsters;
 		other.forceArenaRoom = forceArenaRoom;
 		other.arenaRoom = arenaRoom;
+		other.plainArena = plainArena;
 		other.removeBoss = removeBoss;
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
@@ -153,6 +166,7 @@ public class DreamArenaConfig : ModConfig
 		other.shopEssenceQuality = shopEssenceQuality;
 		other.maxPlayerLevel = maxPlayerLevel;
 		other.startingMemoryLevel = startingMemoryLevel;
+		other.heroHealthMultiplier = heroHealthMultiplier;
 		other.hideObjectives = hideObjectives;
 		other.removeGameModifiers = removeGameModifiers;
 		other.removeLucidDreams = removeLucidDreams;
