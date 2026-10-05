@@ -92,18 +92,21 @@ internal sealed class SessionSettings
 		RarityChance[] rarestFirst =
 		{
 			new RarityChance(Rarity.Legendary, ToChance(config.legendaryDropPercent),
-				ToChance(config.legendaryGrowthPerWave)),
-			new RarityChance(Rarity.Epic, ToChance(config.epicDropPercent), ToChance(config.epicGrowthPerWave)),
-			new RarityChance(Rarity.Rare, ToChance(config.rareDropPercent), ToChance(config.rareGrowthPerWave)),
-			new RarityChance(Rarity.Common, ToChance(config.commonDropPercent), 0),
+				ToChance(config.legendaryDropPercentAtTarget)),
+			new RarityChance(Rarity.Epic, ToChance(config.epicDropPercent), ToChance(config.epicDropPercentAtTarget)),
+			new RarityChance(Rarity.Rare, ToChance(config.rareDropPercent), ToChance(config.rareDropPercentAtTarget)),
+			new RarityChance(Rarity.Common, ToChance(config.commonDropPercent),
+				ToChance(config.commonDropPercentAtTarget)),
 		};
 
 		RarityChance[] chaosRarestFirst =
 		{
 			new RarityChance(Rarity.Legendary, ToChance(config.chaosLegendaryPercent),
-				ToChance(config.chaosLegendaryGrowthPerWave)),
-			new RarityChance(Rarity.Epic, ToChance(config.chaosEpicPercent), ToChance(config.chaosEpicGrowthPerWave)),
-			new RarityChance(Rarity.Rare, ToChance(config.chaosRarePercent), ToChance(config.chaosRareGrowthPerWave)),
+				ToChance(config.chaosLegendaryPercentAtTarget)),
+			new RarityChance(Rarity.Epic, ToChance(config.chaosEpicPercent),
+				ToChance(config.chaosEpicPercentAtTarget)),
+			new RarityChance(Rarity.Rare, ToChance(config.chaosRarePercent),
+				ToChance(config.chaosRarePercentAtTarget)),
 		};
 
 		TierLoot mobs = new TierLoot(Math.Max(0f, config.regularDropMultiplier), config.regularDreamDust,
@@ -120,9 +123,9 @@ internal sealed class SessionSettings
 		};
 
 		return new LootSettings(
-			new RarityTable(rarestFirst),
+			new RarityTable(rarestFirst, config.itemTargetWave),
 			ToChance(config.memorySharePercent),
-			new RarityTable(chaosRarestFirst),
+			new RarityTable(chaosRarestFirst, config.chaosTargetWave),
 			tiers,
 			mobItemsPerPlayerPerWave: Math.Max(0, config.mobItemsPerPlayerPerWave),
 			growthPerWave: Math.Max(0f, config.rewardGrowthPercentPerWave) / Tuning.PercentScale,

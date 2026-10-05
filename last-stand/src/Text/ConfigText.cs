@@ -188,20 +188,27 @@ internal static class ConfigText
 		"Rarity of the chaos reward a miniboss drops on death. The rest of the time it is common. " +
 		"Replaces the game's own roll, which gave a legendary almost every time.";
 
-	public const string RareGrowthLabel = "Rare item chance growth per wave (points)";
-	public const string EpicGrowthLabel = "Epic item chance growth per wave (points)";
-	public const string LegendaryGrowthLabel = "Legendary item chance growth per wave (points)";
-	public const string ItemGrowthDescription =
-		"Percentage points added to this rarity's memory and essence chance every wave after the first. " +
-		"The same amount comes off the common chance until it reaches 0, so drops get better before " +
-		"they get more frequent.";
+	public const string ItemTargetWaveLabel = "Item chances reach target at wave";
+	public const string ItemTargetWaveDescription =
+		"Memory and essence chances move in a straight line from their wave 1 values to their target " +
+		"values over the waves up to this one, then stay there.";
+	public const string CommonAtTargetLabel = "Common chance at target wave (%)";
+	public const string RareAtTargetLabel = "Rare chance at target wave (%)";
+	public const string EpicAtTargetLabel = "Epic chance at target wave (%)";
+	public const string LegendaryAtTargetLabel = "Legendary chance at target wave (%)";
+	public const string ItemAtTargetDescription =
+		"Chance a regular kill drops a memory or essence of this rarity once the target wave is reached. " +
+		"With all four adding up to 100%, every regular kill rolls an item there, still capped per player.";
 
-	public const string ChaosLegendaryGrowthLabel = "Chaos reward: legendary growth per wave (points)";
-	public const string ChaosEpicGrowthLabel = "Chaos reward: epic growth per wave (points)";
-	public const string ChaosRareGrowthLabel = "Chaos reward: rare growth per wave (points)";
-	public const string ChaosGrowthDescription =
-		"Percentage points added to this rarity's chaos reward chance every wave after the first. " +
-		"Common is whatever is left.";
+	public const string ChaosTargetWaveLabel = "Chaos chances reach target at wave";
+	public const string ChaosTargetWaveDescription =
+		"Chaos reward chances move in a straight line from their wave 1 values to their target values " +
+		"over the waves up to this one, then stay there.";
+	public const string ChaosLegendaryAtTargetLabel = "Chaos reward: legendary at target wave (%)";
+	public const string ChaosEpicAtTargetLabel = "Chaos reward: epic at target wave (%)";
+	public const string ChaosRareAtTargetLabel = "Chaos reward: rare at target wave (%)";
+	public const string ChaosAtTargetDescription =
+		"Chaos reward chance of this rarity once the target wave is reached. Common is whatever is left.";
 
 	public const string RegularDreamDustLabel = "Regular: dream dust";
 	public const string RegularGoldLabel = "Regular: bonus gold";

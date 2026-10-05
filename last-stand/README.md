@@ -28,8 +28,8 @@ Dream Well in the middle of the arena turns what you collect into upgrades.
   10 waves.
 - **Loot is scarce but improves.** Monsters drop at most one memory or
   essence per player per wave, by chance. Minibosses roll their own chance.
-  Every wave makes rare, epic and legendary drops, chaos rewards included,
-  a little more likely.
+  Rare, epic and legendary drops get more likely every wave, chaos rewards
+  included, reaching no commons at all by wave 100 (wave 50 for chaos).
 - **No goal.** The run's "Shape of Dreams" goal is removed, since there is
   nowhere to go.
 - **One Dream Well**, unlimited uses, at the center of the arena.
@@ -312,19 +312,23 @@ rarity has its own chance, lower the rarer it is:
 | Legendary | 1% | 1.5% | 2% |
 | **Nothing** | **60%** | **40%** | **20%** |
 
-These are the wave 1 chances. **Every wave after the first** adds 0.15
-percentage points to rare, 0.08 to epic and 0.04 to legendary, and takes the
-same 0.27 points off common. So the overall item chance stays the same and the
-items just get better, until common runs out around wave 93. After that the
-higher rarities keep growing and items get a little more frequent. The tier
-multiplier applies on top.
+These are the wave 1 chances. **They improve every wave** in a straight line
+up to a target at wave 100, then stay there. Common falls to 0, the rest rise,
+and at wave 100 they add up to 100%: every kill rolls an item, and the per-wave
+cap is what keeps items scarce.
 
-| Monster or hunter | Common | Rare | Epic | Legendary |
-|---|---|---|---|---|
-| Wave 1 | 25% | 10% | 4% | 1% |
-| Wave 25 | 18.5% | 13.6% | 5.9% | 2% |
-| Wave 50 | 11.8% | 17.4% | 7.9% | 3% |
-| Wave 100 | 0% | 24.9% | 11.9% | 5% |
+| Monster or hunter | Common | Rare | Epic | Legendary | Any item |
+|---|---|---|---|---|---|
+| Wave 1 | 25% | 10% | 4% | 1% | 40% |
+| Wave 25 | 18.9% | 19.6% | 11.6% | 4.4% | 54.5% |
+| Wave 50 | 12.6% | 29.7% | 19.4% | 7.9% | 69.7% |
+| Wave 75 | 6.3% | 39.7% | 27.3% | 11.5% | 84.8% |
+| Wave 100 on | 0% | 49.8% | 35.2% | 15% | 100% |
+
+The tier multiplier applies on top. Past 100%, the roll is cut from the
+commonest end, so late minibosses lean epic and legendary. At wave 100 a
+miniboss (×1.5) rolls 22.5% legendary, 52.8% epic and 24.7% rare, and a Pain
+miniboss (×2) 30% legendary and 70% epic.
 
 **Monsters and hunters are capped per wave**, however many die: at most one
 item per player (config `Monster items per player per wave`).
@@ -376,15 +380,15 @@ every 10 waves.
 
 In Last Stand, a postfix on `SetRandomRarity` replaces that roll with its own:
 
-| Rarity | Wave 1 | Each wave adds | Wave 10 | Wave 30 | Wave 50 |
-|---|---|---|---|---|---|
-| Legendary | 5% | 0.2 points | 6.8% | 10.8% | 14.8% |
-| Epic | 15% | 0.3 points | 17.7% | 23.7% | 29.7% |
-| Rare | 35% | 0.1 points | 35.9% | 37.9% | 39.9% |
-| Common | the rest | | 39.6% | 27.6% | 15.6% |
+| Rarity | Wave 1 | Wave 10 | Wave 20 | Wave 30 | Wave 40 | Wave 50 on |
+|---|---|---|---|---|---|---|
+| Legendary | 5% | 7.3% | 9.8% | 12.4% | 14.9% | 17.5% |
+| Epic | 15% | 18.7% | 22.8% | 27% | 31.1% | 35.2% |
+| Rare | 35% | 37.3% | 39.8% | 42.3% | 44.8% | 47.3% |
+| Common | 45% | 36.7% | 27.6% | 18.4% | 9.2% | 0% |
 
-Past about wave 85, the three add up to more than 100% and common is gone.
-After that the roll is cut from rare, so the better rarities keep winning.
+The chances move in a straight line to their wave 50 target, then hold. The
+targets are the old wave 50 rates scaled up so common is gone.
 
 The rarity is set before the shrine is spawned, and the shrine builds its
 reward choices from it afterwards (`OnLateStartServer`), so the choices match.
@@ -460,11 +464,13 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Guaranteed drop per wave | off |
 | | Gold growth per wave | 10% |
 | | Common / rare / epic / legendary chance | 25% / 10% / 4% / 1% |
-| | Rare / epic / legendary growth per wave | 0.15 / 0.08 / 0.04 points |
+| | Item chances reach target at wave | 100 |
+| | Common / rare / epic / legendary at target | 0% / 49.8% / 35.2% / 15% |
 | | Memory share | 50% |
 | | Item chance multiplier: monster / miniboss / Pain | 1 / 1.5 / 2 |
 | | Chaos reward: legendary / epic / rare chance | 5% / 15% / 35% |
-| | Chaos reward: legendary / epic / rare growth per wave | 0.2 / 0.3 / 0.1 points |
+| | Chaos chances reach target at wave | 50 |
+| | Chaos reward: legendary / epic / rare at target | 17.5% / 35.2% / 47.3% |
 | | Per-tier dust and gold | see Loot |
 
 ## Console commands

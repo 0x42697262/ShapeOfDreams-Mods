@@ -194,17 +194,25 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.RarityDropDescription)]
 	public float legendaryDropPercent = 1f;
 
-	[LabelText(ConfigText.RareGrowthLabel)]
-	[Description(ConfigText.ItemGrowthDescription)]
-	public float rareGrowthPerWave = 0.15f;
+	[LabelText(ConfigText.ItemTargetWaveLabel)]
+	[Description(ConfigText.ItemTargetWaveDescription)]
+	public int itemTargetWave = 100;
 
-	[LabelText(ConfigText.EpicGrowthLabel)]
-	[Description(ConfigText.ItemGrowthDescription)]
-	public float epicGrowthPerWave = 0.08f;
+	[LabelText(ConfigText.CommonAtTargetLabel)]
+	[Description(ConfigText.ItemAtTargetDescription)]
+	public float commonDropPercentAtTarget = 0f;
 
-	[LabelText(ConfigText.LegendaryGrowthLabel)]
-	[Description(ConfigText.ItemGrowthDescription)]
-	public float legendaryGrowthPerWave = 0.04f;
+	[LabelText(ConfigText.RareAtTargetLabel)]
+	[Description(ConfigText.ItemAtTargetDescription)]
+	public float rareDropPercentAtTarget = 49.8f;
+
+	[LabelText(ConfigText.EpicAtTargetLabel)]
+	[Description(ConfigText.ItemAtTargetDescription)]
+	public float epicDropPercentAtTarget = 35.2f;
+
+	[LabelText(ConfigText.LegendaryAtTargetLabel)]
+	[Description(ConfigText.ItemAtTargetDescription)]
+	public float legendaryDropPercentAtTarget = 15f;
 
 	[LabelText(ConfigText.MemoryShareLabel)]
 	[Description(ConfigText.MemoryShareDescription)]
@@ -246,17 +254,21 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ChaosRarityDescription)]
 	public float chaosRarePercent = 35f;
 
-	[LabelText(ConfigText.ChaosLegendaryGrowthLabel)]
-	[Description(ConfigText.ChaosGrowthDescription)]
-	public float chaosLegendaryGrowthPerWave = 0.2f;
+	[LabelText(ConfigText.ChaosTargetWaveLabel)]
+	[Description(ConfigText.ChaosTargetWaveDescription)]
+	public int chaosTargetWave = 50;
 
-	[LabelText(ConfigText.ChaosEpicGrowthLabel)]
-	[Description(ConfigText.ChaosGrowthDescription)]
-	public float chaosEpicGrowthPerWave = 0.3f;
+	[LabelText(ConfigText.ChaosLegendaryAtTargetLabel)]
+	[Description(ConfigText.ChaosAtTargetDescription)]
+	public float chaosLegendaryPercentAtTarget = 17.5f;
 
-	[LabelText(ConfigText.ChaosRareGrowthLabel)]
-	[Description(ConfigText.ChaosGrowthDescription)]
-	public float chaosRareGrowthPerWave = 0.1f;
+	[LabelText(ConfigText.ChaosEpicAtTargetLabel)]
+	[Description(ConfigText.ChaosAtTargetDescription)]
+	public float chaosEpicPercentAtTarget = 35.2f;
+
+	[LabelText(ConfigText.ChaosRareAtTargetLabel)]
+	[Description(ConfigText.ChaosAtTargetDescription)]
+	public float chaosRarePercentAtTarget = 47.3f;
 
 	[LabelText(ConfigText.PainDropMultiplierLabel)]
 	[Description(ConfigText.DropMultiplierDescription)]
