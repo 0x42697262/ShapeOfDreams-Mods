@@ -130,7 +130,7 @@ set by how fast the party kills, not by a timer. The score is the wave reached.
 | From wave | What changes | Every |
 |---|---|---|
 | 1 | Regular monsters, 6 growing by 2 a wave | wave |
-| 2 | +8% health and +4% damage on every monster, stacking | wave |
+| 2 | +10% health and +10% damage on every monster, stacking | wave |
 | 10 | A monster type from another world joins the pool | 10 waves |
 | 10 | Minibosses (1, 1, 2, 2… up to 4) | 10 waves |
 | 20 | Pain minibosses (1, 1, 2, 2… up to 3) | 20 waves |
@@ -149,9 +149,9 @@ works through these knobs, all using systems the game already syncs:
 
 - **Count:** regular monsters start at 6 and grow by 2 a wave. Each player past
   the first adds half a wave again. Specials are added on top.
-- **Strength, per wave:** every spawned monster gets a stat bonus of +8% max
-  health and +4% attack and ability damage for each wave after the first. So
-  wave 11 is +80% health and +40% damage. This is a server-side
+- **Strength, per wave:** every spawned monster gets a stat bonus of +10% max
+  health and +10% attack and ability damage for each wave after the first. So
+  wave 11 is +100% health and +100% damage. This is a server-side
   `StatBonus`, so clients see it through the synced stats.
 - **Strength, slowly:** the game's ambient level, `GameManager.SetAmbientLevel`,
   sets the level monsters spawn at. It rises by one every 10 waves.
@@ -237,6 +237,28 @@ Last Stand keeps the effect but ties it to the bosses instead of the room:
   Chaos shrines spawn as in the stock modifier. Each Pain miniboss also drops
   the regular miniboss chaos reward.
 
+**The Pain environment.** While a Pain group is alive, the arena also gets the
+real `RoomMod_CorruptedChaos_AuraOfPain` modifier, added with
+`ZoneManager.AddModifier` when the first Pain miniboss spawns and removed when
+the group falls. That is what changes the room's look the way the stock
+Corrupted Chaos room does: its looping effect, outer decorations and the
+hidden ambient particles all come from the modifier, and the modifier actor
+syncs to vanilla clients, who draw it themselves.
+
+Only the look is wanted, so a Harmony prefix on the modifier's own `OnCreate`
+and `OnDestroyActor` runs just the `RoomModifierBase` part (through a reverse
+patch) for the instance Last Stand added. That skips the stock spawning of two
+extra minibosses, the population multiplier, the stat bonus on every entity
+and the Corrupted Chaos shrines, which Last Stand handles itself. The stock
+damage tick never runs either, because the arena is loaded already cleared
+(`didClearRoom`). Instances the game adds by itself, anywhere else, are left
+alone.
+
+Both the Aura of Pain and the hunter zone are *main* modifiers, and the game
+keeps only one main modifier per node. If a Pain group spawns during a hunter
+zone wave, the Pain environment replaces the hunter zone. When the group
+falls, the hunter zone is added back if its wave is still running.
+
 **Multiplayer:** every part of this runs on the server. The damage is a normal
 dispatched damage event, the decorator is a status effect, and the shrine is a
 spawned actor. All of it reaches clients through the game's own syncing.
@@ -281,10 +303,11 @@ player with the fewest items this wave.
 
 | Other drops | Monster or hunter | Miniboss | Pain miniboss |
 |---|---|---|---|
-| Dream dust | 2 | 50 | 50 |
+| Dream dust | 2 | 50 | 150 |
 | Bonus gold | 0 | 40 | 100 |
 
-- Dream dust is flat: 2 per monster or hunter, 50 per miniboss, every wave.
+- Dream dust is flat: 2 per monster or hunter, 50 per miniboss, 150 per Pain
+  miniboss, every wave.
   Bonus gold grows 10% a wave. Normal kill gold is untouched (hunters give
   none, as in the stock game).
 - **Guarantee (off by default):** when on, anyone who got no memory or essence
@@ -366,7 +389,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Max monsters alive / per extra player | 100 / 0 |
 | | Min spawn distance from heroes | 8 m |
 | | Spawn interval / spawns per batch | 0.5 s / 2 |
-| Scaling | Health / damage per wave | 8% / 4% |
+| Scaling | Health / damage per wave | 10% / 10% |
 | | Starting monster level / waves per level | 1 / 10 |
 | Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 4 |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |

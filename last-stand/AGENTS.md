@@ -230,6 +230,15 @@ These were checked in the decompiled code.
   from `poolByRarity.Get(rarity)`. In play, miniboss chaos was legendary nearly
   every time. `Shrine_CorruptedChaos` is a separate `EditSkillShrine` with no
   rarity.
+- **Main room modifiers.** Read from the asset bundle: both `RoomMod_Hunted`
+  and `RoomMod_CorruptedChaos_AuraOfPain` have `isMain = 1` and
+  `disableOtherEnvParticles = 1`. The Aura of Pain has `enableOuterDecorations`
+  and a `fxLoop`. `RoomModifierBase.OnCreate` plays `fxLoop` and hooks events.
+  `OnStart` places decorations and hides `EnvParticle`s. The Aura of Pain's
+  own `OnCreate` adds the gameplay (extra minibosses, pop multiplier, stat
+  bonus, shrines). Its damage tick stops on `room.didClearRoom`.
+  `HandleRuntimeAddition` passes `beforePrepare` into `Dew.CreateActor`, so it
+  runs before `OnCreate`. `HandleRuntimeRemoval` of an unknown id only logs.
 - **Zones.** `ZoneManager.LoadNextZoneByContentSettings` lists zones with
   `DewResources.FindAllByNameSubstring<Zone>("Zone_")` and
   `DewBuildProfile.current.content.FilterZones`. `Zone.zoneTier` orders them.
@@ -284,7 +293,12 @@ Each answer still needs to be seen working:
     one memory and one essence. Minibosses still drop on their own chance.
 18. **Chaos rarity:** miniboss chaos rewards now vary in rarity, and the reward
     choices and color match it on a vanilla client.
-19. **Wave tracker:** which existing quest type to use, given that only progress
+19. **Pain environment:** the Aura of Pain look (fx loop, outer decorations,
+    hidden env particles) shows for the host and a vanilla client while a
+    Pain group lives, and goes away when it falls. Check that no extra
+    minibosses or Corrupted Chaos shrines come from the stock modifier, and
+    that the hunter zone comes back after a Pain group falls mid-zone.
+20. **Wave tracker:** which existing quest type to use, given that only progress
     and step text sync. Chat notices stand in until then.
 
 ## Conventions
