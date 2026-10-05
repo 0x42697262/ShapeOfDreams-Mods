@@ -8,13 +8,10 @@ namespace LastStand.Loot;
 internal sealed class LootService
 {
 	private readonly DropLedger _ledger = new DropLedger();
-	private readonly LootExpiry _expiry = new LootExpiry();
 	private readonly List<DewPlayer> _players = new List<DewPlayer>();
 	private readonly List<string> _guids = new List<string>();
 
-	public int TrackedItems => _expiry.TrackedCount;
-
-	public void OnEnemyDied(EnemyDeath death, int wave, double now, LootSettings settings)
+	public void OnEnemyDied(EnemyDeath death, int wave, LootSettings settings)
 	{
 		LootDecision decision = LootRules.Decide(settings.For(death.Tier), settings, wave, Random.value);
 
@@ -39,7 +36,7 @@ internal sealed class LootService
 		bool memory = LootRules.ChooseMemory(fromMob, PlayerRoster.PlayerCount(), _ledger.MobMemories,
 			_ledger.MobEssences, settings.MemoryShare, Random.value);
 
-		DropItem(death.Position, recipient, memory, decision.ItemRarity, fromMob, now, settings);
+		DropItem(death.Position, recipient, memory, decision.ItemRarity, fromMob);
 	}
 
 	public void OnWaveStarted()
@@ -47,26 +44,20 @@ internal sealed class LootService
 		_ledger.StartWave();
 	}
 
-	public void OnWaveCleared(double now, LootSettings settings)
+	public void OnWaveCleared(LootSettings settings)
 	{
 		if (settings.GuaranteedDropPerWave)
 		{
-			GrantMissedDrops(now, settings);
+			GrantMissedDrops(settings);
 		}
-	}
-
-	public void Tick(double now)
-	{
-		_expiry.Tick(now);
 	}
 
 	public void Reset()
 	{
 		_ledger.StartWave();
-		_expiry.Clear();
 	}
 
-	private void GrantMissedDrops(double now, LootSettings settings)
+	private void GrantMissedDrops(LootSettings settings)
 	{
 		PlayerRoster.FillPlayersWithLiveHeroes(_players);
 		foreach (DewPlayer player in _players)
@@ -78,7 +69,7 @@ internal sealed class LootService
 
 			bool memory = LootRules.ChooseMemory(false, PlayerRoster.PlayerCount(), 0, 0, settings.MemoryShare,
 				Random.value);
-			DropItem(player.hero.agentPosition, player, memory, null, false, now, settings);
+			DropItem(player.hero.agentPosition, player, memory, null, false);
 		}
 	}
 
@@ -127,8 +118,7 @@ internal sealed class LootService
 		return player != null ? player.guid : null;
 	}
 
-	private void DropItem(Vector3 position, DewPlayer recipient, bool memory, Rarity? rarity, bool fromMob,
-		double now, LootSettings settings)
+	private void DropItem(Vector3 position, DewPlayer recipient, bool memory, Rarity? rarity, bool fromMob)
 	{
 		Actor item = memory
 			? LootDropper.DropMemory(position, recipient, rarity)
@@ -143,7 +133,5 @@ internal sealed class LootService
 		{
 			_ledger.Record(recipient.guid, fromMob, memory);
 		}
-
-		_expiry.Track(item, now + settings.DespawnSeconds);
 	}
 }

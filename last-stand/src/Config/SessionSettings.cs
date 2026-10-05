@@ -91,17 +91,19 @@ internal sealed class SessionSettings
 	{
 		RarityChance[] rarestFirst =
 		{
-			new RarityChance(Rarity.Legendary, ToChance(config.legendaryDropPercent)),
-			new RarityChance(Rarity.Epic, ToChance(config.epicDropPercent)),
-			new RarityChance(Rarity.Rare, ToChance(config.rareDropPercent)),
-			new RarityChance(Rarity.Common, ToChance(config.commonDropPercent)),
+			new RarityChance(Rarity.Legendary, ToChance(config.legendaryDropPercent),
+				ToChance(config.legendaryGrowthPerWave)),
+			new RarityChance(Rarity.Epic, ToChance(config.epicDropPercent), ToChance(config.epicGrowthPerWave)),
+			new RarityChance(Rarity.Rare, ToChance(config.rareDropPercent), ToChance(config.rareGrowthPerWave)),
+			new RarityChance(Rarity.Common, ToChance(config.commonDropPercent), 0),
 		};
 
 		RarityChance[] chaosRarestFirst =
 		{
-			new RarityChance(Rarity.Legendary, ToChance(config.chaosLegendaryPercent)),
-			new RarityChance(Rarity.Epic, ToChance(config.chaosEpicPercent)),
-			new RarityChance(Rarity.Rare, ToChance(config.chaosRarePercent)),
+			new RarityChance(Rarity.Legendary, ToChance(config.chaosLegendaryPercent),
+				ToChance(config.chaosLegendaryGrowthPerWave)),
+			new RarityChance(Rarity.Epic, ToChance(config.chaosEpicPercent), ToChance(config.chaosEpicGrowthPerWave)),
+			new RarityChance(Rarity.Rare, ToChance(config.chaosRarePercent), ToChance(config.chaosRareGrowthPerWave)),
 		};
 
 		TierLoot mobs = new TierLoot(Math.Max(0f, config.regularDropMultiplier), config.regularDreamDust,
@@ -118,13 +120,12 @@ internal sealed class SessionSettings
 		};
 
 		return new LootSettings(
-			rarestFirst,
+			new RarityTable(rarestFirst),
 			ToChance(config.memorySharePercent),
-			chaosRarestFirst,
+			new RarityTable(chaosRarestFirst),
 			tiers,
 			mobItemsPerPlayerPerWave: Math.Max(0, config.mobItemsPerPlayerPerWave),
 			growthPerWave: Math.Max(0f, config.rewardGrowthPercentPerWave) / Tuning.PercentScale,
-			despawnSeconds: Math.Max(0f, config.lootDespawnSeconds),
 			guaranteedDropPerWave: config.guaranteedDropPerWave);
 	}
 

@@ -6,9 +6,12 @@ internal readonly struct RarityChance
 
 	public double Chance { get; }
 
-	public RarityChance(Rarity rarity, double chance)
+	public double GrowthPerWave { get; }
+
+	public RarityChance(Rarity rarity, double chance, double growthPerWave)
 	{
 		Rarity = rarity;
 		Chance = chance;
+		GrowthPerWave = growthPerWave;
 	}
 }

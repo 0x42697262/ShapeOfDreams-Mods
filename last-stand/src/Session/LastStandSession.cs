@@ -18,6 +18,7 @@ internal sealed class LastStandSession
 	private readonly EnemyRegistry _enemies = new EnemyRegistry();
 	private readonly ArenaArrival _arrival = new ArenaArrival();
 	private readonly CampRift _campRift = new CampRift();
+	private readonly RunGoal _goal = new RunGoal();
 	private readonly LootService _loot = new LootService();
 	private readonly WaveDirector _waves;
 	private readonly PainService _pain;
@@ -69,6 +70,8 @@ internal sealed class LastStandSession
 			return;
 		}
 
+		_goal.Tick(now);
+
 		if (!ArenaLocator.IsStandingInArena())
 		{
 			if (_phase == SessionPhase.Fighting || _phase == SessionPhase.Arriving)
@@ -90,7 +93,11 @@ internal sealed class LastStandSession
 
 		_waves.Tick(now, _settings.Waves);
 		_pain.Tick(now, _settings.Pain);
-		_loot.Tick(now);
+	}
+
+	public void RerollChaos(Shrine_Chaos shrine)
+	{
+		ChaosRarity.Reroll(shrine, _settings.Loot, Math.Max(Tuning.FirstWave, _waves.CurrentWave));
 	}
 
 	public void StartNextWaveNow()
@@ -130,7 +137,7 @@ internal sealed class LastStandSession
 	{
 		return LogText.Status(LastStandMode.IsSelected(), NetworkServer.active, _phase.ToString(),
 			_waves.CurrentWave, _waves.WaveInProgress, _waves.SecondsUntilNextWave(_now), _enemies.Occupied(_now),
-			_waves.PendingSpawns, _loot.TrackedItems);
+			_waves.PendingSpawns);
 	}
 
 	public void Reset()
@@ -138,6 +145,7 @@ internal sealed class LastStandSession
 		StopFight();
 		PlainArena.Reset();
 		_campRift.Reset();
+		_goal.Reset();
 		_phase = SessionPhase.Inactive;
 	}
 
@@ -187,12 +195,12 @@ internal sealed class LastStandSession
 
 	private void OnWaveCleared(int wave)
 	{
-		_loot.OnWaveCleared(_now, _settings.Loot);
+		_loot.OnWaveCleared(_settings.Loot);
 	}
 
 	private void OnEnemyDied(EnemyDeath death)
 	{
-		_loot.OnEnemyDied(death, _waves.CurrentWave, _now, _settings.Loot);
+		_loot.OnEnemyDied(death, _waves.CurrentWave, _settings.Loot);
 		_pain.OnEnemyDied(death);
 	}
 }

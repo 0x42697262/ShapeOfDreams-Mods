@@ -13,7 +13,7 @@ internal static class LootRules
 		double growth = 1 + settings.GrowthPerWave * Math.Max(0, wave - Tuning.FirstWave);
 
 		return new LootDecision(
-			itemRarity: RollRarity(settings.RarestFirst, tier.DropMultiplier, itemRoll),
+			itemRarity: RollRarity(settings.Items.At(wave), tier.DropMultiplier, itemRoll),
 			dreamDust: tier.DreamDust,
 			gold: (int)Math.Round(tier.Gold * growth));
 	}

@@ -6,7 +6,7 @@ internal static class Tuning
 
 	public const float CampRiftRetrySeconds = 1f;
 
-	public const float LootExpiryCheckSeconds = 1f;
+	public const float GoalCheckSeconds = 1f;
 
 	public const float HudRefreshSeconds = 0.25f;
 

@@ -7,31 +7,28 @@ internal sealed class LootSettings
 {
 	private readonly IReadOnlyDictionary<EnemyTier, TierLoot> _tiers;
 
-	public IReadOnlyList<RarityChance> RarestFirst { get; }
+	public RarityTable Items { get; }
 
 	public double MemoryShare { get; }
 
-	public IReadOnlyList<RarityChance> ChaosRarestFirst { get; }
+	public RarityTable Chaos { get; }
 
 	public int MobItemsPerPlayerPerWave { get; }
 
 	public double GrowthPerWave { get; }
 
-	public double DespawnSeconds { get; }
-
 	public bool GuaranteedDropPerWave { get; }
 
-	public LootSettings(IReadOnlyList<RarityChance> rarestFirst, double memoryShare,
-		IReadOnlyList<RarityChance> chaosRarestFirst, IReadOnlyDictionary<EnemyTier, TierLoot> tiers, int mobItemsPerPlayerPerWave, double growthPerWave,
-		double despawnSeconds, bool guaranteedDropPerWave)
+	public LootSettings(RarityTable items, double memoryShare, RarityTable chaos,
+		IReadOnlyDictionary<EnemyTier, TierLoot> tiers, int mobItemsPerPlayerPerWave, double growthPerWave,
+		bool guaranteedDropPerWave)
 	{
-		RarestFirst = rarestFirst;
+		Items = items;
 		MemoryShare = memoryShare;
-		ChaosRarestFirst = chaosRarestFirst;
+		Chaos = chaos;
 		_tiers = tiers;
 		MobItemsPerPlayerPerWave = mobItemsPerPlayerPerWave;
 		GrowthPerWave = growthPerWave;
-		DespawnSeconds = despawnSeconds;
 		GuaranteedDropPerWave = guaranteedDropPerWave;
 	}
 

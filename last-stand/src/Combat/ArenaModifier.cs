@@ -1,4 +1,5 @@
 using LastStand.Arena;
+using LastStand.Game;
 
 namespace LastStand.Combat;
 
@@ -44,12 +45,19 @@ internal sealed class ArenaModifier<T> where T : RoomModifierBase
 			return;
 		}
 
+		bool shown = !_instance.IsNullOrInactive();
 		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (zones != null && _node >= 0 && _node < zones.nodes.Count)
 		{
 			zones.RemoveModifier(_node, _id);
 		}
 
+		if (shown)
+		{
+			ModifierPanel.Hide();
+		}
+
+		_instance = null;
 		IsActive = false;
 		_node = ArenaLocator.NoNode;
 	}

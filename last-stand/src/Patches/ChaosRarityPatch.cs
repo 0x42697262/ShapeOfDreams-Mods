@@ -1,5 +1,4 @@
 using HarmonyLib;
-using LastStand.Loot;
 using LastStand.Mode;
 
 namespace LastStand.Patches;
@@ -12,7 +11,7 @@ internal static class ChaosRarityPatch
 	{
 		if (LastStandMode.IsHosting())
 		{
-			ChaosRarity.Reroll(__instance, LastStandMod.Current?.Session?.Settings.Loot);
+			LastStandMod.Current?.Session?.RerollChaos(__instance);
 		}
 	}
 }

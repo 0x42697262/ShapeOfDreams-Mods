@@ -1,8 +1,8 @@
 # Last Stand
 
 A host-only wave-survival mode for **Shape of Dreams**, for solo and co-op. The
-party holds a boss arena against endless waves that get harder every minute.
-Memories and essences drop from kills and fade if nobody grabs them. A single
+party holds a boss arena against endless waves that get harder every wave.
+Memories and essences drop from kills, scarce but better as the waves go on. A single
 Dream Well in the middle of the arena turns what you collect into upgrades.
 
 > **Status: first build, not yet tested in-game.** The code compiles and covers
@@ -26,9 +26,12 @@ Dream Well in the middle of the arena turns what you collect into upgrades.
   later the arena becomes a **hunter zone** with falling artillery.
 - **Mirage skins** appear from wave 30, weakest first, a stronger one every
   10 waves.
-- **Loot is scarce and temporary.** Monsters drop at most one memory or
+- **Loot is scarce but improves.** Monsters drop at most one memory or
   essence per player per wave, by chance. Minibosses roll their own chance.
-  Unclaimed memories and essences vanish after **30 seconds**.
+  Every wave makes rare, epic and legendary drops, chaos rewards included,
+  a little more likely.
+- **No goal.** The run's "Shape of Dreams" goal is removed, since there is
+  nowhere to go.
 - **One Dream Well**, unlimited uses, at the center of the arena.
 - **The lobby stays vanilla.** Lucid dreams, Corrupted Chaos and every other
   game modifier can be picked as normal, unlike Dream Arena, which strips them.
@@ -254,6 +257,15 @@ damage tick never runs either, because the arena is loaded already cleared
 (`didClearRoom`). Instances the game adds by itself, anywhere else, are left
 alone.
 
+**The modifier panel.** Adding a main modifier also makes every game show its
+panel under the clock: "Omen of Pain" for the Aura of Pain, "Hunted" for the
+hunter zone. That panel is `UI_InGame_RoomModDisplay`, which each game draws
+for itself. It only hides when a new room starts loading, not when the
+modifier goes away. On the host, Last Stand hides it when it removes a
+modifier that was still showing. A vanilla client keeps the stale panel until
+the next main modifier replaces it or a room loads, and that can't be fixed
+from the host.
+
 Both the Aura of Pain and the hunter zone are *main* modifiers, and the game
 keeps only one main modifier per node. If a Pain group spawns during a hunter
 zone wave, the Pain environment replaces the hunter zone. When the group
@@ -300,6 +312,20 @@ rarity has its own chance, lower the rarer it is:
 | Legendary | 1% | 1.5% | 2% |
 | **Nothing** | **60%** | **40%** | **20%** |
 
+These are the wave 1 chances. **Every wave after the first** adds 0.15
+percentage points to rare, 0.08 to epic and 0.04 to legendary, and takes the
+same 0.27 points off common. So the overall item chance stays the same and the
+items just get better, until common runs out around wave 93. After that the
+higher rarities keep growing and items get a little more frequent. The tier
+multiplier applies on top.
+
+| Monster or hunter | Common | Rare | Epic | Legendary |
+|---|---|---|---|---|
+| Wave 1 | 25% | 10% | 4% | 1% |
+| Wave 25 | 18.5% | 13.6% | 5.9% | 2% |
+| Wave 50 | 11.8% | 17.4% | 7.9% | 3% |
+| Wave 100 | 0% | 24.9% | 11.9% | 5% |
+
 **Monsters and hunters are capped per wave**, however many die: at most one
 item per player (config `Monster items per player per wave`).
 
@@ -336,11 +362,8 @@ player with the fewest items this wave.
   none, as in the stock game).
 - **Guarantee (off by default):** when on, anyone who got no memory or essence
   during a wave gets one at their feet when it's cleared.
-- **Despawn after 30 s.** Every dropped memory and essence is tracked on the
-  server, checked once a second. If it is still on the ground with no owner
-  and nobody carrying it, it is destroyed for everyone. Once picked up or
-  carried, it is never touched again.
-- Gold and dream dust use the game's own pickups and don't despawn.
+- Nothing despawns. Memories and essences stay on the ground until someone
+  takes them, as in the stock game.
 
 ### Chaos rewards
 
@@ -353,12 +376,15 @@ every 10 waves.
 
 In Last Stand, a postfix on `SetRandomRarity` replaces that roll with its own:
 
-| Rarity | Chance |
-|---|---|
-| Legendary | 5% |
-| Epic | 15% |
-| Rare | 35% |
-| Common | the rest (45%) |
+| Rarity | Wave 1 | Each wave adds | Wave 10 | Wave 30 | Wave 50 |
+|---|---|---|---|---|---|
+| Legendary | 5% | 0.2 points | 6.8% | 10.8% | 14.8% |
+| Epic | 15% | 0.3 points | 17.7% | 23.7% | 29.7% |
+| Rare | 35% | 0.1 points | 35.9% | 37.9% | 39.9% |
+| Common | the rest | | 39.6% | 27.6% | 15.6% |
+
+Past about wave 85, the three add up to more than 100% and common is gone.
+After that the roll is cut from rare, so the better rarities keep winning.
 
 The rarity is set before the shrine is spawned, and the shrine builds its
 reward choices from it afterwards (`OnLateStartServer`), so the choices match.
@@ -384,10 +410,16 @@ Waves are announced in chat as plain-text `MessageType.Raw` notices, which
 vanilla clients render as-is: the wave number and what it brings when it
 starts, and when the next one comes once it's cleared.
 
-The goal is still a panel on the right showing **Wave N** and the time to the
-next wave, through the quest tracker. `DewQuest.currentProgress` and
-`DewQuest.step` are synced, but quest titles and descriptions are not, so this
-needs an existing quest type with a sensible localized title. Not built yet.
+The run's own goal, **"Goal: Shape of Dreams — Move deeper into …"**, makes
+no sense here, so the server destroys `Quest_ShapeOfDreams` as soon as it
+exists (checked once a second). That is what the game itself does when it
+starts a Limbo run (`GameMod_Limbo`). Quests are networked actors, so the goal
+disappears for vanilla clients too.
+
+A wave panel in the quest tracker is still an idea. `DewQuest.currentProgress`
+and `DewQuest.step` are synced, but quest titles and descriptions are not, so
+this needs an existing quest type with a sensible localized title. Not built
+yet. The host's [HUD label](#hud-label) shows the wave meanwhile.
 
 ## Settings
 
@@ -424,14 +456,15 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Hunters | Waves per extra hunter / max per wave | 5 / 10 |
 | | Waves between hunter zones / max hunt level | 10 / 3 |
 | Mirage | First wave / waves per new skin / chance | 30 / 10 / 20% |
-| Loot | Despawn | 30 s |
-| | Monster items per player per wave | 1 |
+| Loot | Monster items per player per wave | 1 |
 | | Guaranteed drop per wave | off |
 | | Gold growth per wave | 10% |
 | | Common / rare / epic / legendary chance | 25% / 10% / 4% / 1% |
+| | Rare / epic / legendary growth per wave | 0.15 / 0.08 / 0.04 points |
 | | Memory share | 50% |
 | | Item chance multiplier: monster / miniboss / Pain | 1 / 1.5 / 2 |
 | | Chaos reward: legendary / epic / rare chance | 5% / 15% / 35% |
+| | Chaos reward: legendary / epic / rare growth per wave | 0.2 / 0.3 / 0.1 points |
 | | Per-tier dust and gold | see Loot |
 
 ## Console commands
@@ -456,7 +489,7 @@ With Developer Mode on (F1, then `` ` ``):
 | `src/Arena` | Room override, camp rift, cleared-room prep, arena layout, staging heroes |
 | `src/Waves` | Wave schedule, wave cycle and spawn queue (plain logic), and the director |
 | `src/Combat` | Monster catalog, spawning, per-wave enhancements, hunter zones, tracking enemies, Pain |
-| `src/Loot` | Loot rules and ledger (plain logic), drops and despawn |
+| `src/Loot` | Loot rules, rarity tables and ledger (plain logic), drops |
 | `src/Well` | The Dream Well |
 | `src/Game` | Thin wrappers over game APIs, and game identifiers |
 | `src/Config` | The mod config, its validated snapshot, and internal tuning |

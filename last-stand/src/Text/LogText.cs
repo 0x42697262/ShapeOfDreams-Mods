@@ -13,6 +13,8 @@ internal static class LogText
 	public const string SessionStopped = "session stopped.";
 	public const string NotHosting = "only the host of a Last Stand run can do that.";
 
+	public const string GoalRemoved = "removed the run's Shape of Dreams goal; Last Stand has no destination.";
+
 	public static string PainZoneStarted()
 	{
 		return "pain zone: Aura of Pain environment added to the arena.";
@@ -80,10 +82,10 @@ internal static class LogText
 	}
 
 	public static string Status(bool selected, bool server, string phase, int wave, bool inProgress,
-		double secondsToNext, int occupied, int pending, int loot)
+		double secondsToNext, int occupied, int pending)
 	{
 		return $"mode={selected} server={server} phase={phase} wave={wave} inProgress={inProgress} " +
 		       $"next={secondsToNext:0}s " +
-		       $"alive={occupied} pending={pending} loot={loot}.";
+		       $"alive={occupied} pending={pending}.";
 	}
 }

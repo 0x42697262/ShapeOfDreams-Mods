@@ -148,10 +148,6 @@ internal static class ConfigText
 	public const string MirageChanceDescription =
 		"Chance a regular monster or hunter spawns with one of the unlocked Mirage skins.";
 
-	public const string LootDespawnLabel = "Loot despawn (s)";
-	public const string LootDespawnDescription =
-		"Seconds before an unclaimed memory or essence vanishes. Picked up items are never touched.";
-
 	public const string MobItemsPerPlayerLabel = "Monster items per player per wave";
 	public const string MobItemsPerPlayerDescription =
 		"Most memories and essences regular monsters and hunters can drop in one wave, per player. " +
@@ -191,6 +187,21 @@ internal static class ConfigText
 	public const string ChaosRarityDescription =
 		"Rarity of the chaos reward a miniboss drops on death. The rest of the time it is common. " +
 		"Replaces the game's own roll, which gave a legendary almost every time.";
+
+	public const string RareGrowthLabel = "Rare item chance growth per wave (points)";
+	public const string EpicGrowthLabel = "Epic item chance growth per wave (points)";
+	public const string LegendaryGrowthLabel = "Legendary item chance growth per wave (points)";
+	public const string ItemGrowthDescription =
+		"Percentage points added to this rarity's memory and essence chance every wave after the first. " +
+		"The same amount comes off the common chance until it reaches 0, so drops get better before " +
+		"they get more frequent.";
+
+	public const string ChaosLegendaryGrowthLabel = "Chaos reward: legendary growth per wave (points)";
+	public const string ChaosEpicGrowthLabel = "Chaos reward: epic growth per wave (points)";
+	public const string ChaosRareGrowthLabel = "Chaos reward: rare growth per wave (points)";
+	public const string ChaosGrowthDescription =
+		"Percentage points added to this rarity's chaos reward chance every wave after the first. " +
+		"Common is whatever is left.";
 
 	public const string RegularDreamDustLabel = "Regular: dream dust";
 	public const string RegularGoldLabel = "Regular: bonus gold";

@@ -166,10 +166,6 @@ public class LastStandConfig : ModConfig
 	public float mirageChancePercent = 20f;
 
 	[Header(ConfigText.LootHeader)]
-	[LabelText(ConfigText.LootDespawnLabel)]
-	[Description(ConfigText.LootDespawnDescription)]
-	public float lootDespawnSeconds = 30f;
-
 	[LabelText(ConfigText.MobItemsPerPlayerLabel)]
 	[Description(ConfigText.MobItemsPerPlayerDescription)]
 	public int mobItemsPerPlayerPerWave = 1;
@@ -197,6 +193,18 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.LegendaryDropLabel)]
 	[Description(ConfigText.RarityDropDescription)]
 	public float legendaryDropPercent = 1f;
+
+	[LabelText(ConfigText.RareGrowthLabel)]
+	[Description(ConfigText.ItemGrowthDescription)]
+	public float rareGrowthPerWave = 0.15f;
+
+	[LabelText(ConfigText.EpicGrowthLabel)]
+	[Description(ConfigText.ItemGrowthDescription)]
+	public float epicGrowthPerWave = 0.08f;
+
+	[LabelText(ConfigText.LegendaryGrowthLabel)]
+	[Description(ConfigText.ItemGrowthDescription)]
+	public float legendaryGrowthPerWave = 0.04f;
 
 	[LabelText(ConfigText.MemoryShareLabel)]
 	[Description(ConfigText.MemoryShareDescription)]
@@ -237,6 +245,18 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.ChaosRareLabel)]
 	[Description(ConfigText.ChaosRarityDescription)]
 	public float chaosRarePercent = 35f;
+
+	[LabelText(ConfigText.ChaosLegendaryGrowthLabel)]
+	[Description(ConfigText.ChaosGrowthDescription)]
+	public float chaosLegendaryGrowthPerWave = 0.2f;
+
+	[LabelText(ConfigText.ChaosEpicGrowthLabel)]
+	[Description(ConfigText.ChaosGrowthDescription)]
+	public float chaosEpicGrowthPerWave = 0.3f;
+
+	[LabelText(ConfigText.ChaosRareGrowthLabel)]
+	[Description(ConfigText.ChaosGrowthDescription)]
+	public float chaosRareGrowthPerWave = 0.1f;
 
 	[LabelText(ConfigText.PainDropMultiplierLabel)]
 	[Description(ConfigText.DropMultiplierDescription)]

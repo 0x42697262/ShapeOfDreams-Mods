@@ -244,6 +244,14 @@ These were checked in the decompiled code.
   `OnRoomLoaded`, called on `ClientEvent_OnRoomLoaded` and once at start
   through `GameManager.CallOnReady`. It is client-local, so it can't be changed
   for vanilla clients.
+- **Modifier panel.** `UI_InGame_RoomModDisplay` (Dew.UI,
+  `SingletonBehaviour`) shows the newest main modifier's name and description
+  on `ClientEvent_OnActorAdd`. It is hidden only on
+  `ClientEvent_OnRoomLoadStarted`, so it outlives a removed modifier. It's
+  client-local.
+- **Run goal.** `PlayGameManager.OnStartClient` starts `Quest_ShapeOfDreams` on
+  the server for new runs. `GameMod_Limbo` simply `Destroy()`s it, which is
+  the precedent for removing it. Quests are actors, so destruction syncs.
 - **Zones.** `ZoneManager.LoadNextZoneByContentSettings` lists zones with
   `DewResources.FindAllByNameSubstring<Zone>("Zone_")` and
   `DewBuildProfile.current.content.FilterZones`. `Zone.zoneTier` orders them.
@@ -277,8 +285,9 @@ Each answer still needs to be seen working:
    decorator, the aura hurts and stacks, stops at the last kill, and the
    Corrupted Chaos shrines appear. Check whether the health bonus fills current
    health.
-10. **Loot** drops, despawns after 30 s on the ground, and is never removed once
-   picked up. Check what `tempOwner` means for other players picking it up.
+10. **Loot** drops and stays until picked up. Check what `tempOwner` means for
+   other players picking it up, and that chances visibly improve by late
+   waves.
 11. **Dream Well** upgrades for the host and for a vanilla client, many times
    in a row.
 12. **Per-wave scaling:** the stat bonus shows on monsters, and whether it fills
@@ -298,14 +307,17 @@ Each answer still needs to be seen working:
     one memory and one essence. Minibosses still drop on their own chance.
 18. **Chaos rarity:** miniboss chaos rewards now vary in rarity, and the reward
     choices and color match it on a vanilla client.
-19. **Pain environment:** the Aura of Pain look (fx loop, outer decorations,
+19. **Goal and panel:** the Shape of Dreams goal disappears for the host and a
+    vanilla client, and nothing else breaks without it (rift, game end, save).
+    The "Omen of Pain" and "Hunted" panels hide on the host when they end.
+20. **Pain environment:** the Aura of Pain look (fx loop, outer decorations,
     hidden env particles) shows for the host and a vanilla client while a
     Pain group lives, and goes away when it falls. Check that no extra
     minibosses or Corrupted Chaos shrines come from the stock modifier, and
     that the hunter zone comes back after a Pain group falls mid-zone.
-20. **HUD label:** the host sees the wave and monsters-left label, it survives a
+21. **HUD label:** the host sees the wave and monsters-left label, it survives a
     room load, and the stock label returns when leaving Last Stand.
-21. **Wave tracker:** which existing quest type to use, given that only progress
+22. **Wave tracker:** which existing quest type to use, given that only progress
     and step text sync. Chat notices stand in until then.
 
 ## Conventions
@@ -322,7 +334,7 @@ These are hard rules for all code in this repo.
 - **No magic strings or hard-coded values.** Every number, duration, limit,
   type or prefab name, room name, chat command and chat text lives in exactly
   one named place:
-  - Tunable values (wave length, caps, despawn time, scaling curves) go in
+  - Tunable values (wave length, caps, drop chances, scaling curves) go in
     config (`LastStandConfig`), with defaults set there. Fixed internal
     constants go in `Tuning`.
   - Fixed game identifiers that can't be a `typeof` or `nameof` (private
