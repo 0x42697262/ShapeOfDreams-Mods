@@ -39,4 +39,14 @@ internal static class Tuning
 	public const int FirstWave = 1;
 
 	public const int MinimumAmbientLevel = 1;
+
+	public const int TestBossLevel = 1;
+
+	public const float TestBossHealthShare = 0.05f;
+
+	public const float TestBossDamagePercent = -90f;
+
+	public const float TestBossDistance = 8f;
+
+	public const char ListSeparator = ',';
 }

@@ -6,6 +6,7 @@ internal enum EnemyTier
 	Hunter,
 	MiniBoss,
 	Pain,
+	HeroicBoss,
 }
 
 internal static class EnemyTiers

@@ -14,6 +14,10 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ArenaRoomDescription)]
 	public string arenaRoom = GameNames.DefaultArenaRoom;
 
+	[LabelText(ConfigText.StripRoomModifiersLabel)]
+	[Description(ConfigText.StripRoomModifiersDescription)]
+	public bool stripRoomModifiers = true;
+
 	[LabelText(ConfigText.ShowWaveInHudLabel)]
 	[Description(ConfigText.ShowWaveInHudDescription)]
 	public bool showWaveInHud = true;
@@ -92,6 +96,47 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.MaxMiniBossesLabel)]
 	[Description(ConfigText.MaxMiniBossesDescription)]
 	public int maxMiniBossesPerWave = 4;
+
+	[Header(ConfigText.HeroicBossHeader)]
+	[LabelText(ConfigText.HeroicBossFromWaveLabel)]
+	[Description(ConfigText.HeroicBossFromWaveDescription)]
+	public int heroicBossFromWave = 49;
+
+	[LabelText(ConfigText.HeroicBossIntervalLabel)]
+	[Description(ConfigText.HeroicBossIntervalDescription)]
+	public int heroicBossIntervalWaves = 50;
+
+	[LabelText(ConfigText.HeroicBossStepLabel)]
+	[Description(ConfigText.HeroicBossStepDescription)]
+	public int heroicBossStepWaves = 100;
+
+	[LabelText(ConfigText.MaxHeroicBossesLabel)]
+	[Description(ConfigText.MaxHeroicBossesDescription)]
+	public int maxHeroicBossesPerWave = 10;
+
+	[LabelText(ConfigText.HeroicBossDelayLabel)]
+	[Description(ConfigText.HeroicBossDelayDescription)]
+	public float heroicBossEntranceDelaySeconds = 3f;
+
+	[LabelText(ConfigText.HeroicBossTypesLabel)]
+	[Description(ConfigText.HeroicBossTypesDescription)]
+	public string heroicBossTypes = GameNames.DefaultHeroicBosses;
+
+	[LabelText(ConfigText.HeroicBossChaosLabel)]
+	[Description(ConfigText.HeroicBossChaosDescription)]
+	public int heroicBossChaosRewards = 5;
+
+	[LabelText(ConfigText.HeroicBossDropMultiplierLabel)]
+	[Description(ConfigText.DropMultiplierDescription)]
+	public float heroicBossDropMultiplier = 2f;
+
+	[LabelText(ConfigText.HeroicBossDreamDustLabel)]
+	[Description(ConfigText.DreamDustDescription)]
+	public int heroicBossDreamDust = 300;
+
+	[LabelText(ConfigText.HeroicBossGoldLabel)]
+	[Description(ConfigText.GoldDescription)]
+	public int heroicBossGold = 200;
 
 	[Header(ConfigText.PainHeader)]
 	[LabelText(ConfigText.PainFromWaveLabel)]

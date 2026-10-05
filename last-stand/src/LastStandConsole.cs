@@ -1,4 +1,5 @@
 using LastStand.Diagnostics;
+using LastStand.Game;
 using LastStand.Mode;
 using LastStand.Text;
 
@@ -26,6 +27,22 @@ public class LastStandConsole : ModBehaviour
 		}
 
 		LastStandMod.Current?.Session?.StartNextWaveNow();
+	}
+
+	public void Cmd_TestBoss()
+	{
+		Cmd_TestBoss(GameNames.DefaultTestBoss);
+	}
+
+	public void Cmd_TestBoss(string typeName)
+	{
+		if (!LastStandMode.IsHosting())
+		{
+			Log.Warn(LogText.NotHosting);
+			return;
+		}
+
+		LastStandMod.Current?.Session?.SpawnTestBoss(typeName);
 	}
 
 	[ConsoleCommand(CommandText.SoloDescription, CommandText.Solo)]

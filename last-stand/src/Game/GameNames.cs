@@ -20,6 +20,15 @@ internal static class GameNames
 
 	public const string LocationRoomLoaded = "OnRoomLoaded";
 
+	public const string EntityOnDeath = "OnDeath";
+
+	public const string DefaultTestBoss = "Mon_Forest_BossDemon";
+
+	public const string DefaultHeroicBosses =
+		"Mon_Forest_BossDemon, Mon_DarkCave_BossSeeker, Mon_Despair_BossCrawler, Mon_Despair_BossAzurak, " +
+		"Mon_Sky_BossNyx, Mon_SnowMountain_BossSkoll, Mon_LavaLand_BossInfernus, Mon_Ink_BossDarkMoon, " +
+		"Mon_Ink_BossWhiteNight";
+
 	public const string ActorOnCreate = "OnCreate";
 
 	public const string ActorOnDestroy = "OnDestroyActor";

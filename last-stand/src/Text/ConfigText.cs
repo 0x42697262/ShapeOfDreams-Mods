@@ -7,15 +7,46 @@ internal static class ConfigText
 	public const string ScalingHeader = "Monster scaling";
 	public const string MiniBossHeader = "Minibosses";
 	public const string PainHeader = "Pain minibosses";
+	public const string HeroicBossHeader = "Heroic bosses";
 	public const string ForeignHeader = "Monsters from other worlds";
 	public const string HunterHeader = "Hunters";
 	public const string MirageHeader = "Mirage variants";
 	public const string LootHeader = "Loot";
 
+	public const string StripRoomModifiersLabel = "Plain arena (no room modifiers)";
+	public const string StripRoomModifiersDescription =
+		"Removes the room modifiers the world rolls onto arena nodes and blocks new ones, so no extra " +
+		"shrines, props, rifts or minibosses appear in the arena. Last Stand's own Pain and hunter zone " +
+		"effects and the hero soul used for reviving still work.";
+
 	public const string ShowWaveInHudLabel = "Show wave in HUD";
 	public const string ShowWaveInHudDescription =
 		"Replaces the location readout in the top right with the current wave and how many monsters " +
 		"are left. Only you see it: other players' HUDs are drawn by their own unmodded game.";
+
+	public const string HeroicBossFromWaveLabel = "First heroic boss wave";
+	public const string HeroicBossFromWaveDescription =
+		"Wave of the first heroic boss. The defaults put one right before every 50th wave: 49, 99, 149...";
+	public const string HeroicBossIntervalLabel = "Heroic boss every N waves";
+	public const string HeroicBossIntervalDescription = "Waves between heroic boss waves.";
+	public const string HeroicBossStepLabel = "Waves per extra heroic boss";
+	public const string HeroicBossStepDescription =
+		"Heroic boss waves this many waves after the first bring one more boss: 1 at 49 and 99, 2 at 149 and " +
+		"199, 3 at 249, and so on.";
+	public const string MaxHeroicBossesLabel = "Max heroic bosses per wave";
+	public const string MaxHeroicBossesDescription = "Upper limit on heroic bosses in one wave.";
+	public const string HeroicBossDelayLabel = "Heroic boss entrance delay (s)";
+	public const string HeroicBossDelayDescription =
+		"Seconds after the last monster and miniboss of the wave has spawned before the heroic boss enters.";
+	public const string HeroicBossTypesLabel = "Heroic boss types";
+	public const string HeroicBossTypesDescription =
+		"Comma-separated boss types to pick from at random. Bosses that run their own death logic (such as " +
+		"Mon_Primus_BossPrimusAeron, whose death starts the ending) are skipped. Changes apply on the next arena.";
+	public const string HeroicBossChaosLabel = "Heroic boss legendary chaos rewards";
+	public const string HeroicBossChaosDescription = "Legendary chaos rewards each heroic boss drops when it dies.";
+	public const string HeroicBossDropMultiplierLabel = "Heroic boss item chance multiplier";
+	public const string HeroicBossDreamDustLabel = "Heroic boss dream dust";
+	public const string HeroicBossGoldLabel = "Heroic boss bonus gold";
 
 	public const string ArenaRoomLabel = "Arena room";
 	public const string ArenaRoomDescription =

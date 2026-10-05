@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LastStand.Game;
 using UnityEngine;
 
 namespace LastStand.Combat;
@@ -13,10 +14,12 @@ internal sealed class MonsterSpawner
 
 	private readonly Dictionary<Monster, MonsterSpawnRule> _singleRules = new Dictionary<Monster, MonsterSpawnRule>();
 	private readonly MonsterCatalog _catalog;
+	private readonly HeroicBosses _heroicBosses;
 
-	public MonsterSpawner(MonsterCatalog catalog)
+	public MonsterSpawner(MonsterCatalog catalog, HeroicBosses heroicBosses)
 	{
 		_catalog = catalog;
+		_heroicBosses = heroicBosses;
 	}
 
 	public bool Spawn(EnemyTier tier, int foreignUnlocked, Vector3 position, Action<Entity> onSpawned)
@@ -25,6 +28,19 @@ internal sealed class MonsterSpawner
 		if (room == null || room.monsters == null || !_catalog.IsReady)
 		{
 			return false;
+		}
+
+		if (tier == EnemyTier.HeroicBoss)
+		{
+			BossMonster heroic = _heroicBosses.Spawn(_catalog.RandomHeroicBoss(), position,
+				MonsterStrength.CurrentLevel(), false);
+			if (heroic == null)
+			{
+				return false;
+			}
+
+			onSpawned(heroic);
+			return true;
 		}
 
 		SpawnMonsterSettings settings = new SpawnMonsterSettings

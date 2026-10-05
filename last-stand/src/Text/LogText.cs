@@ -15,6 +15,30 @@ internal static class LogText
 
 	public const string GoalRemoved = "removed the run's Shape of Dreams goal; Last Stand has no destination.";
 
+	public const string TestBossAlreadyAlive = "test boss: one is already alive.";
+	public const string TestBossNoHero = "test boss: no living host hero to spawn near.";
+	public const string TestBossNotInArena = "test boss: only works while fighting in the arena.";
+
+	public static string HeroicBossUnknown(string typeName)
+	{
+		return $"heroic boss: no boss named {typeName}.";
+	}
+
+	public static string HeroicBossUnsupported(string typeName)
+	{
+		return $"heroic boss: {typeName} is hidden or runs its own death logic (it may end the run); skipped.";
+	}
+
+	public static string TestBossSpawned(string typeName, int level)
+	{
+		return $"test boss: spawned {typeName} at level {level}.";
+	}
+
+	public static string HeroicBossDied(int chaosRewards)
+	{
+		return $"heroic boss: died, dropped {chaosRewards} legendary chaos reward(s).";
+	}
+
 	public static string PainZoneStarted()
 	{
 		return "pain zone: Aura of Pain environment added to the arena.";
@@ -49,16 +73,27 @@ internal static class LogText
 	public static string WaveStarted(WavePlan plan)
 	{
 		return $"wave {plan.Number}: regular={plan.RegularCount} hunter={plan.HunterCount} " +
-		       $"miniboss={plan.MiniBossCount} pain={plan.PainCount} ambient={plan.AmbientLevel} " +
+		       $"miniboss={plan.MiniBossCount} pain={plan.PainCount} heroic={plan.HeroicBossCount} " +
+		       $"ambient={plan.AmbientLevel} " +
 		       $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " +
 		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +
 		       $"huntLevel={plan.HuntLevel} cap={plan.MaxAlive}.";
 	}
 
-	public static string CatalogBuilt(int foreignTypes, int mirageSkins, int hunterStartWave)
+	public static string CatalogBuilt(int foreignTypes, int mirageSkins, int hunterStartWave, int heroicBosses)
 	{
-		return $"catalog: {foreignTypes} monster type(s) from other worlds, {mirageSkins} Mirage skin(s); " +
-		       $"hunters start at wave {hunterStartWave}.";
+		return $"catalog: {foreignTypes} monster type(s) from other worlds, {mirageSkins} Mirage skin(s), " +
+		       $"{heroicBosses} heroic boss type(s); hunters start at wave {hunterStartWave}.";
+	}
+
+	public static string ModifiersStripped(int count)
+	{
+		return $"removed {count} room modifier(s) from arena nodes.";
+	}
+
+	public static string ModifierBlocked(string modifierType, int nodeIndex)
+	{
+		return $"blocked room modifier {modifierType} on arena node {nodeIndex}.";
 	}
 
 	public static string WaveCleared(int wave)

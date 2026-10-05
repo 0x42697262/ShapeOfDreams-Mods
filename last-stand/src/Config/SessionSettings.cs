@@ -16,6 +16,8 @@ internal sealed class SessionSettings
 
 	public bool ShowWaveInHud { get; }
 
+	public bool StripRoomModifiers { get; }
+
 	public WaveSettings Waves { get; }
 
 	public PainSettings Pain { get; }
@@ -23,11 +25,12 @@ internal sealed class SessionSettings
 	public LootSettings Loot { get; }
 
 	private SessionSettings(string arenaRoom, double firstWaveDelaySeconds, bool showWaveInHud,
-		WaveSettings waves, PainSettings pain, LootSettings loot)
+		bool stripRoomModifiers, WaveSettings waves, PainSettings pain, LootSettings loot)
 	{
 		ArenaRoom = arenaRoom;
 		FirstWaveDelaySeconds = firstWaveDelaySeconds;
 		ShowWaveInHud = showWaveInHud;
+		StripRoomModifiers = stripRoomModifiers;
 		Waves = waves;
 		Pain = pain;
 		Loot = loot;
@@ -36,7 +39,7 @@ internal sealed class SessionSettings
 	public static SessionSettings From(LastStandConfig config)
 	{
 		return new SessionSettings(config.arenaRoom, Math.Max(0f, config.firstWaveDelaySeconds),
-			config.showWaveInHud, WavesFrom(config), PainFrom(config), LootFrom(config));
+			config.showWaveInHud, config.stripRoomModifiers, WavesFrom(config), PainFrom(config), LootFrom(config));
 	}
 
 	private static WaveSettings WavesFrom(LastStandConfig config)
@@ -65,6 +68,12 @@ internal sealed class SessionSettings
 			Pain = CadenceFrom(config.painFromWave, config.painIntervalWaves),
 			PainOccurrencesPerExtra = Math.Max(MinimumStep, config.painOccurrencesPerExtra),
 			MaxPain = Math.Max(0, config.maxPainPerWave),
+
+			HeroicBosses = CadenceFrom(config.heroicBossFromWave, config.heroicBossIntervalWaves),
+			HeroicBossStepWaves = Math.Max(MinimumStep, config.heroicBossStepWaves),
+			MaxHeroicBosses = Math.Max(0, config.maxHeroicBossesPerWave),
+			HeroicBossEntranceDelaySeconds = Math.Max(0f, config.heroicBossEntranceDelaySeconds),
+			HeroicBossTypes = ListFrom(config.heroicBossTypes),
 
 			ForeignTypes = CadenceFrom(config.foreignTypesFromWave, config.foreignTypesIntervalWaves),
 			ForeignTypesPerUnlock = Math.Max(MinimumStep, config.foreignTypesPerUnlock),
@@ -120,6 +129,8 @@ internal sealed class SessionSettings
 				Math.Max(0f, config.miniBossDropMultiplier), config.miniBossDreamDust, config.miniBossGold),
 			[EnemyTier.Pain] = new TierLoot(
 				Math.Max(0f, config.painDropMultiplier), config.painDreamDust, config.painGold),
+			[EnemyTier.HeroicBoss] = new TierLoot(
+				Math.Max(0f, config.heroicBossDropMultiplier), config.heroicBossDreamDust, config.heroicBossGold),
 		};
 
 		return new LootSettings(
@@ -129,7 +140,28 @@ internal sealed class SessionSettings
 			tiers,
 			mobItemsPerPlayerPerWave: Math.Max(0, config.mobItemsPerPlayerPerWave),
 			growthPerWave: Math.Max(0f, config.rewardGrowthPercentPerWave) / Tuning.PercentScale,
-			guaranteedDropPerWave: config.guaranteedDropPerWave);
+			guaranteedDropPerWave: config.guaranteedDropPerWave,
+			heroicBossChaosRewards: Math.Max(0, config.heroicBossChaosRewards));
+	}
+
+	private static IReadOnlyList<string> ListFrom(string text)
+	{
+		List<string> items = new List<string>();
+		if (string.IsNullOrEmpty(text))
+		{
+			return items;
+		}
+
+		foreach (string part in text.Split(Tuning.ListSeparator))
+		{
+			string item = part.Trim();
+			if (item.Length > 0)
+			{
+				items.Add(item);
+			}
+		}
+
+		return items;
 	}
 
 	private static Cadence CadenceFrom(int firstWave, int intervalWaves)

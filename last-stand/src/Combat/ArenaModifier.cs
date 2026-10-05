@@ -22,7 +22,7 @@ internal sealed class ArenaModifier<T> where T : RoomModifierBase
 		}
 
 		_node = zones.currentNodeIndex;
-		_id = zones.AddModifier<T>(_node, Remember);
+		_id = ModifierGate.AddOwn<T>(zones, _node, Remember);
 		IsActive = true;
 		return true;
 	}
@@ -35,7 +35,7 @@ internal sealed class ArenaModifier<T> where T : RoomModifierBase
 			return;
 		}
 
-		_id = zones.AddModifier<T>(_node, Remember);
+		_id = ModifierGate.AddOwn<T>(zones, _node, Remember);
 	}
 
 	public void Remove()

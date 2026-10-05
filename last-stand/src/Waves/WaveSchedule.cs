@@ -29,6 +29,7 @@ internal static class WaveSchedule
 			MiniBossCount = Scaled(wave, settings.MiniBosses, settings.MiniBossOccurrencesPerExtra,
 				settings.MaxMiniBosses),
 			PainCount = Scaled(wave, settings.Pain, settings.PainOccurrencesPerExtra, settings.MaxPain),
+			HeroicBossCount = content.HeroicBossTypes > 0 ? HeroicBosses(wave, settings) : 0,
 			AmbientLevel = settings.StartingAmbientLevel + wavesSinceFirst / settings.WavesPerAmbientLevel,
 			MaxAlive = settings.MaxAliveBase + settings.MaxAlivePerExtraPlayer * extraPlayers,
 			HealthBonusPercent = settings.HealthBonusPerWave * wavesSinceFirst,
@@ -70,6 +71,17 @@ internal static class WaveSchedule
 	{
 		Cadence hunted = new Cadence(hunterStart + settings.HuntedZoneIntervalWaves, settings.HuntedZoneIntervalWaves);
 		return hunted.IsOn(wave) ? Math.Min(settings.MaxHuntLevel, hunted.OccurrencesSoFar(wave)) : NoHuntLevel;
+	}
+
+	private static int HeroicBosses(int wave, WaveSettings settings)
+	{
+		Cadence bosses = settings.HeroicBosses;
+		if (!bosses.IsOn(wave))
+		{
+			return 0;
+		}
+
+		return Math.Min(settings.MaxHeroicBosses, FirstOfTier + (wave - bosses.FirstWave) / settings.HeroicBossStepWaves);
 	}
 
 	private static int Scaled(int wave, Cadence cadence, int occurrencesPerExtra, int max)

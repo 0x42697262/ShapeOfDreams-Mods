@@ -31,11 +31,11 @@ internal sealed class WaveDirector
 
 	public int PendingSpawns => _queue.PendingCount;
 
-	public WaveDirector(EnemyRegistry enemies, Action<Entity, EnemyTier> onSpawned)
+	public WaveDirector(EnemyRegistry enemies, HeroicBosses heroicBosses, Action<Entity, EnemyTier> onSpawned)
 	{
 		_enemies = enemies;
 		_onSpawned = onSpawned;
-		_spawner = new MonsterSpawner(_catalog);
+		_spawner = new MonsterSpawner(_catalog, heroicBosses);
 	}
 
 	public void Begin(double firstWaveAt)
@@ -109,19 +109,20 @@ internal sealed class WaveDirector
 
 	private bool TryBuildCatalog(WaveSettings settings)
 	{
-		if (!_catalog.TryBuild())
+		if (!_catalog.TryBuild(settings.HeroicBossTypes))
 		{
 			return false;
 		}
 
 		Log.Info(LogText.CatalogBuilt(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
-			WaveSchedule.HunterStartWave(settings, _catalog.ForeignTypeCount)));
+			WaveSchedule.HunterStartWave(settings, _catalog.ForeignTypeCount), _catalog.HeroicBossCount));
 		return true;
 	}
 
 	private void StartWave(WaveSettings settings)
 	{
-		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount);
+		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
+			_catalog.HeroicBossCount);
 		_plan = WaveSchedule.Plan(_cycle.CurrentWave, PlayerRoster.PlayerCount(), settings, content);
 
 		MonsterStrength.SetAmbientLevel(_plan.AmbientLevel);
@@ -155,7 +156,7 @@ internal sealed class WaveDirector
 		}
 
 		foreach (EnemyTier tier in _queue.Release(now, _enemies.Occupied(now), _plan.MaxAlive,
-			         settings.SpawnIntervalSeconds, settings.SpawnsPerInterval))
+			         settings.SpawnIntervalSeconds, settings.SpawnsPerInterval, settings.HeroicBossEntranceDelaySeconds))
 		{
 			Spawn(tier, _plan, now, settings);
 		}
@@ -175,6 +176,10 @@ internal sealed class WaveDirector
 		if (!spawned)
 		{
 			Log.Warn(LogText.SpawnSkipped(tier));
+		}
+		else if (tier == EnemyTier.HeroicBoss)
+		{
+			ChatNotices.Broadcast(Messages.HeroicBossArrives());
 		}
 	}
 

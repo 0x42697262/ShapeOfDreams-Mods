@@ -18,6 +18,9 @@ Dream Well in the middle of the arena turns what you collect into upgrades.
 - Every monster gets **more health and damage every wave**.
 - **Minibosses** come every 10 waves, then several at once. No real bosses
   for now.
+- **Heroic bosses**, the game's real zone bosses, enter right before every
+  50th wave: 49, 99, 149… One more joins every 100 waves. Each drops 5
+  legendary chaos rewards.
 - **Pain minibosses** change the rules while they live: every hero takes
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.
@@ -102,6 +105,24 @@ barriers are open, and its own monsters, props, rewards and boss are skipped.
 The entry trigger (`DewAllHeroesPresentZone`) is switched off and intro
 cutscenes are skipped. The exit rift stays shut, so there is nowhere to travel.
 
+**A plain arena.** World generation rolls room modifiers onto every node, and
+the arena node keeps them. In testing, the arena arrived with
+`RoomMod_SpawnGuidance` (an extra shrine standing in the arena),
+`RoomMod_StrayMemory_StartProp` and `RoomMod_HarderFightBetterReward`. The game
+also adds modifiers later: Corrupted Chaos's Aura of Pain, a miniboss on
+travel (`RoomMod_SpawnMiniBoss`), and the hunters' spread. So, with
+`Plain arena` on (the default):
+
+- after `GenerateWorld_Imp`, every arena node's modifiers are removed with
+  `ZoneManager.RemoveModifier`, which writes the node back so it syncs;
+- a prefix on `ZoneManager.AddModifier` refuses any later modifier on an arena
+  node. Two kinds still get through. One is Last Stand's own Pain environment
+  and hunter zone, which are added through `ModifierGate.AddOwn`. The other is
+  `RoomMod_HeroSoul`, which the game adds when a hero is knocked out and which
+  co-op revives depend on.
+
+The camp keeps its modifiers.
+
 The arena's center is `Room_BossArena` when the room has one, otherwise the
 `pathablePivot` of the largest `RoomSection`. On arrival, players are placed in
 a ring around it and the **Dream Well** is placed at the center. Arrival
@@ -138,6 +159,7 @@ set by how fast the party kills, not by a timer. The score is the wave reached.
 | 10 | Minibosses (1, 1, 2, 2… up to 4) | 10 waves |
 | 20 | Pain minibosses (1, 1, 2, 2… up to 3) | 20 waves |
 | 30 | The next stronger Mirage skin is unlocked | 10 waves |
+| 49 | Heroic boss, last in the wave (1 at 49 and 99, 2 at 149 and 199, 3 at 249…, up to 10) | 50 waves |
 | all types seen + 5 | Hunters, one more each time (up to 10) | 5 waves |
 | first hunter wave + 10 | Hunter zone: falling artillery for the wave (hunt level 1, 2, 3) | 10 waves |
 
@@ -163,7 +185,8 @@ works through these knobs, all using systems the game already syncs:
   in small batches. The host is the server, so if it lags, everyone lags.
 
 Pain minibosses are queued first, then minibosses, then hunters, then regular
-monsters, so the specials always arrive early in their wave.
+monsters, so the specials always arrive early in their wave. Heroic bosses
+come last: see below.
 
 ### Monsters from other worlds
 
@@ -198,6 +221,60 @@ more health and special attacks. The first skin unlocked is Delusion, the one
 the game uses in its early zones. The rest follow by the game's skin `tier`,
 weakest first, one more every 10 waves. A monster that already has a skin,
 for example from the vanilla Mirage Skin modifier, is left alone.
+
+### Heroic bosses
+
+"Heroic boss" is the game's name for a zone boss (`BossMonster`). Last Stand
+brings them in as the last enemy of a wave, right before every 50th wave:
+
+| Wave | 49 | 99 | 149 | 199 | 249 | 349 |
+|---|---|---|---|---|---|---|
+| Heroic bosses | 1 | 1 | 2 | 2 | 3 | 4 |
+
+The count is `1 + (wave − 49) / 100`, capped at 10.
+
+**Entrance.** The boss waits until every monster and miniboss of its wave has
+spawned. Then, after 3 more seconds, it enters with a chat notice and plays its
+own spawn animation (its `Spawn` ability). It spawns at a random spot like any
+monster, heads for the nearest hero, and counts toward clearing the wave.
+
+**Which boss.** A random one from `Heroic boss types`, by default the zone
+bosses Forest, Dark Cave, Despair (both), Sky, Snow Mountain, Lava Land and
+Ink (both). A boss is skipped if it's hidden (`isHiddenBoss`) or if it, or any
+class between it and `BossMonster`, overrides `OnDeath`. Such bosses run their
+own death logic: `Mon_Primus_BossPrimusAeron` starts the game's ending, for
+one. The log says which types were skipped, and the catalog line gives how
+many are left. With none left, there are no heroic boss waves.
+
+**Strength.** It spawns at the current monster level and gets the same
+per-wave health and damage bonus as everything else, on top of the game's own
+boss scaling.
+
+**None of the boss-room machinery.** Boss rooms spawn their boss through the
+entry cutscene (`DewBossRoomEntry`), which the arena never fires. Last Stand
+spawns it directly with `Dew.SpawnEntity`. When it dies, a Harmony prefix on
+`BossMonster.OnDeath` runs only the base `Entity.OnDeath` for bosses Last Stand
+spawned. That skips everything the game does on a boss kill:
+
+- pausing the game timer, which only a room load would undo;
+- killing every other monster, which would end the wave early;
+- locking the rifts, the boss soul shrine (`Shrine_BossSoul`) and the mid-run
+  save;
+- the knocked-out revive.
+
+`skipBossSoulFlow` is set too, and the big kill feedback
+(`playBossKillFeedback`) is turned off on the server. Spawning a boss marks
+the lobby as "fighting a boss", which blocks mid-join. The old value is put
+back right after the spawn. No rift opens, because the arena is loaded
+already cleared.
+
+**Reward.** 5 `Shrine_Chaos` with their rarity set to legendary before they
+are created, so the chaos rarity roll never runs. The boss also drops 300
+dream dust and 200 bonus gold, and rolls the item table at ×2 like a Pain
+miniboss.
+
+Still drawn by every game: the boss health bar, and the kill counting toward
+each player's heroic boss stats.
 
 ### How monsters are spawned
 
@@ -442,6 +519,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Group | Setting | Default |
 |---|---|---|
 | Arena | Arena room | `Room_Primus_Boss_0` |
+| | Plain arena (no room modifiers) | on |
 | | Show wave in HUD | on |
 | Waves | First wave delay | 15 s |
 | | Break between waves | 5 s |
@@ -453,6 +531,10 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Scaling | Health / damage per wave | 10% / 10% |
 | | Starting monster level / waves per level | 1 / 10 |
 | Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 4 |
+| Heroic bosses | First wave / every N waves / waves per extra / max | 49 / 50 / 100 / 10 |
+| | Entrance delay | 3 s |
+| | Types | the 9 zone bosses |
+| | Legendary chaos rewards / dust / gold / item multiplier | 5 / 300 / 200 / 2 |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |
 | | Damage per second per boss | 1% |
 | | Health / damage bonus | 20% / 30% |
@@ -479,7 +561,7 @@ With Developer Mode on (F1, then `` ` ``):
 
 | Command | Does |
 |---|---|
-| `laststand_status` | Logs mode, phase, wave, time to next wave, alive, queued and tracked loot |
+| `laststand_status` | Logs mode, phase, wave, time to next wave, alive and queued |
 | `laststand_next` | Starts the next wave now, even if monsters remain (host only) |
 | `laststand_solo` | Starts a solo Last Stand run |
 
@@ -492,9 +574,9 @@ With Developer Mode on (F1, then `` ` ``):
 | `src/Mode` | Whether Last Stand is selected, and selecting it |
 | `src/UI` | The solo button, the lobby dropdown option, UI cleanup |
 | `src/Session` | The run's phases (camp, arriving, fighting) and arrival |
-| `src/Arena` | Room override, camp rift, cleared-room prep, arena layout, staging heroes |
+| `src/Arena` | Room override, modifier gate, camp rift, cleared-room prep, arena layout, staging heroes |
 | `src/Waves` | Wave schedule, wave cycle and spawn queue (plain logic), and the director |
-| `src/Combat` | Monster catalog, spawning, per-wave enhancements, hunter zones, tracking enemies, Pain |
+| `src/Combat` | Monster catalog, spawning, heroic bosses, per-wave enhancements, hunter zones, tracking enemies, Pain |
 | `src/Loot` | Loot rules, rarity tables and ledger (plain logic), drops |
 | `src/Well` | The Dream Well |
 | `src/Game` | Thin wrappers over game APIs, and game identifiers |

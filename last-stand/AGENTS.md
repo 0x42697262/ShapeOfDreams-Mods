@@ -32,7 +32,16 @@ not reinvented:
 | Config | `src/DreamArenaConfig.cs` |
 
 **Do not copy** Dream Arena's lucid-dream, game-modifier or PvE suppression.
-Last Stand keeps all of those vanilla.
+Last Stand keeps all of those vanilla. The one exception is *room* modifiers
+on arena nodes. Like Dream Arena, Last Stand strips them, and it also blocks
+new ones (`ModifierGate`), because they put shrines, props, rifts and
+minibosses into the arena.
+
+**Hidden test command.** `LastStandConsole.Cmd_TestBoss` (spawns a weak heroic
+boss for testing) is kept but not registered. `DewMod` only registers methods
+that carry `[ConsoleCommand]`, so to use it again, put back
+`[ConsoleCommand(CommandText.TestBossDescription, CommandText.TestBoss)]` on
+both overloads.
 
 ## Hard constraints
 
@@ -252,6 +261,23 @@ These were checked in the decompiled code.
 - **Run goal.** `PlayGameManager.OnStartClient` starts `Quest_ShapeOfDreams` on
   the server for new runs. `GameMod_Limbo` simply `Destroy()`s it, which is
   the precedent for removing it. Quests are actors, so destruction syncs.
+- **Arena node modifiers.** World gen writes modifiers straight into node
+  data. Seen on an arena node: `RoomMod_SpawnGuidance`,
+  `RoomMod_StrayMemory_StartProp`, `RoomMod_HarderFightBetterReward`. Later
+  additions all go through `ZoneManager.AddModifier(int, ModifierData,
+  Action<RoomModifierBase>)`: Corrupted Chaos, `RoomMod_SpawnMiniBoss` on
+  travel, `UpdateModifiersByHunterStatus` on travel, and
+  `Se_HeroKnockedOut` → `RoomMod_HeroSoul`.
+- **Heroic bosses.** "Heroic boss" is the game's name for `BossMonster`
+  (`Mon_*_Boss*` in Dew.Contents). Boss rooms spawn them through the entry
+  cutscene (`DewBossRoomEntry` → `DewCutsceneDirector`). `BossMonster.OnCreate`
+  sets `midJoinWaitType = FightingBoss`. `OnDeath` pauses game time
+  (`isGameTimePausedByGame`, which is only cleared by a room load), kills every
+  non-boss `Monster` that isn't `IDontKillOnBossMonsterDeath`, and starts a
+  reward routine unless `skipBossSoulFlow` is set. That routine locks all rifts
+  and spawns `Shrine_BossSoul`, then a mid-run save. A revive routine also runs.
+  `Monster` doesn't override `OnDeath`, so the base is `Entity.OnDeath`.
+  `Mon_Primus_BossPrimusAeron.OnDeath` calls `Primus_Ending.StartPrimusDeath`.
 - **Zones.** `ZoneManager.LoadNextZoneByContentSettings` lists zones with
   `DewResources.FindAllByNameSubstring<Zone>("Zone_")` and
   `DewBuildProfile.current.content.FilterZones`. `Zone.zoneTier` orders them.
@@ -317,7 +343,16 @@ Each answer still needs to be seen working:
     that the hunter zone comes back after a Pain group falls mid-zone.
 21. **HUD label:** the host sees the wave and monsters-left label, it survives a
     room load, and the stock label returns when leaving Last Stand.
-22. **Wave tracker:** which existing quest type to use, given that only progress
+22. **Heroic bosses:** at wave 49 the boss enters 3 s after the last monster
+    spawns, plays its spawn animation, counts toward the wave, and drops 5
+    legendary chaos rewards. There's no time pause, no rift and no boss soul.
+    The test command confirmed this for the Forest boss in the arena. Check
+    every default type, especially ones that might need their own room
+    (Lava Land's pillars, the Ink pair), and what clients see.
+23. **Plain arena:** no extra shrines or props in the arena. The log shows
+    modifiers stripped at world gen and any blocked later. Co-op knock-out
+    souls still appear.
+24. **Wave tracker:** which existing quest type to use, given that only progress
     and step text sync. Chat notices stand in until then.
 
 ## Conventions

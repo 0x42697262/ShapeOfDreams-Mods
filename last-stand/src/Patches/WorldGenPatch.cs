@@ -1,5 +1,4 @@
 using HarmonyLib;
-using LastStand.Arena;
 using LastStand.Game;
 using LastStand.Mode;
 
@@ -13,7 +12,7 @@ internal static class WorldGenPatch
 	{
 		if (LastStandMode.IsHosting())
 		{
-			ArenaRoomOverride.Apply(LastStandMod.Current?.Session?.Settings.ArenaRoom);
+			LastStandMod.Current?.Session?.ApplyArenaRoom();
 		}
 	}
 }

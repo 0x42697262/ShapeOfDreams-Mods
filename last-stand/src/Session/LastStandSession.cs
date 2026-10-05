@@ -19,6 +19,8 @@ internal sealed class LastStandSession
 	private readonly ArenaArrival _arrival = new ArenaArrival();
 	private readonly CampRift _campRift = new CampRift();
 	private readonly RunGoal _goal = new RunGoal();
+	private readonly HeroicBosses _heroicBosses = new HeroicBosses();
+	private readonly TestBoss _testBoss;
 	private readonly LootService _loot = new LootService();
 	private readonly WaveDirector _waves;
 	private readonly PainService _pain;
@@ -37,7 +39,8 @@ internal sealed class LastStandSession
 	public LastStandSession(SessionSettings settings)
 	{
 		_settings = settings;
-		_waves = new WaveDirector(_enemies, OnEnemySpawned);
+		_testBoss = new TestBoss(_heroicBosses);
+		_waves = new WaveDirector(_enemies, _heroicBosses, OnEnemySpawned);
 		_pain = new PainService(_enemies, _waves.HasPending);
 
 		_waves.WaveStarted += OnWaveStarted;
@@ -93,6 +96,43 @@ internal sealed class LastStandSession
 
 		_waves.Tick(now, _settings.Waves);
 		_pain.Tick(now, _settings.Pain);
+	}
+
+	public void SpawnTestBoss(string typeName)
+	{
+		if (_phase != SessionPhase.Fighting)
+		{
+			Log.Warn(LogText.TestBossNotInArena);
+			return;
+		}
+
+		_testBoss.Spawn(typeName);
+	}
+
+	public bool OwnsHeroicBoss(Entity entity)
+	{
+		return _heroicBosses.Owns(entity);
+	}
+
+	public void OnHeroicBossDied(BossMonster boss)
+	{
+		_heroicBosses.OnDied(boss, _settings.Loot.HeroicBossChaosRewards);
+	}
+
+	public void ApplyArenaRoom()
+	{
+		ArenaRoomOverride.Apply(_settings.ArenaRoom, _settings.StripRoomModifiers);
+	}
+
+	public bool AllowsModifier(ZoneManager zones, int nodeIndex, string modifierType)
+	{
+		if (!_settings.StripRoomModifiers || ModifierGate.Allows(zones, nodeIndex, modifierType))
+		{
+			return true;
+		}
+
+		Log.Info(LogText.ModifierBlocked(modifierType, nodeIndex));
+		return false;
 	}
 
 	public void RerollChaos(Shrine_Chaos shrine)
@@ -175,6 +215,8 @@ internal sealed class LastStandSession
 		_loot.Reset();
 		_enemies.Clear();
 		_arrival.Reset();
+		_testBoss.Forget();
+		_heroicBosses.Clear();
 		Well.Forget();
 		_arenaNode = ArenaLocator.NoNode;
 	}

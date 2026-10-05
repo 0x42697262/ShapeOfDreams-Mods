@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LastStand.Diagnostics;
 using LastStand.Game;
+using LastStand.Text;
 
 namespace LastStand.Combat;
 
@@ -12,6 +14,7 @@ internal sealed class MonsterCatalog
 	private readonly List<Monster> _miniBossChoices = new List<Monster>();
 	private readonly List<MiniBossEffect> _miniBossEffects = new List<MiniBossEffect>();
 	private readonly List<MirageSkinEffect> _mirageSkins = new List<MirageSkinEffect>();
+	private readonly List<BossMonster> _heroicBosses = new List<BossMonster>();
 	private IEnumerator<Monster> _zoneRegulars;
 	private int _zoneTypeCount;
 
@@ -21,7 +24,9 @@ internal sealed class MonsterCatalog
 
 	public int MirageSkinCount => _mirageSkins.Count;
 
-	public bool TryBuild()
+	public int HeroicBossCount => _heroicBosses.Count;
+
+	public bool TryBuild(IReadOnlyList<string> heroicBossTypes)
 	{
 		Zone current = CurrentZone();
 		if (current == null || current.defaultMonsters == null || current.defaultMonsters.pool == null)
@@ -56,8 +61,31 @@ internal sealed class MonsterCatalog
 			.OrderBy(skin => skin is Se_MirageSkin_Delusion ? int.MinValue : skin.tier)
 			.ThenBy(skin => skin.GetType().Name, StringComparer.Ordinal));
 
+		_heroicBosses.Clear();
+		foreach (string typeName in heroicBossTypes)
+		{
+			BossMonster boss = HeroicBosses.Find(typeName);
+			if (boss == null)
+			{
+				Log.Warn(LogText.HeroicBossUnknown(typeName));
+			}
+			else if (!HeroicBosses.IsSupported(boss))
+			{
+				Log.Warn(LogText.HeroicBossUnsupported(typeName));
+			}
+			else if (!_heroicBosses.Contains(boss))
+			{
+				_heroicBosses.Add(boss);
+			}
+		}
+
 		_zoneRegulars = pool.GetMonsters(int.MaxValue, DewRandom.instance);
 		return true;
+	}
+
+	public BossMonster RandomHeroicBoss()
+	{
+		return _heroicBosses.Count == 0 ? null : _heroicBosses[UnityEngine.Random.Range(0, _heroicBosses.Count)];
 	}
 
 	public Monster NextRegular(int foreignUnlocked)
@@ -105,6 +133,7 @@ internal sealed class MonsterCatalog
 		_miniBossChoices.Clear();
 		_miniBossEffects.Clear();
 		_mirageSkins.Clear();
+		_heroicBosses.Clear();
 		_zoneRegulars = null;
 		_zoneTypeCount = 0;
 	}

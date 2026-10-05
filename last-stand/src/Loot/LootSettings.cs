@@ -19,9 +19,11 @@ internal sealed class LootSettings
 
 	public bool GuaranteedDropPerWave { get; }
 
+	public int HeroicBossChaosRewards { get; }
+
 	public LootSettings(RarityTable items, double memoryShare, RarityTable chaos,
 		IReadOnlyDictionary<EnemyTier, TierLoot> tiers, int mobItemsPerPlayerPerWave, double growthPerWave,
-		bool guaranteedDropPerWave)
+		bool guaranteedDropPerWave, int heroicBossChaosRewards)
 	{
 		Items = items;
 		MemoryShare = memoryShare;
@@ -30,6 +32,7 @@ internal sealed class LootSettings
 		MobItemsPerPlayerPerWave = mobItemsPerPlayerPerWave;
 		GrowthPerWave = growthPerWave;
 		GuaranteedDropPerWave = guaranteedDropPerWave;
+		HeroicBossChaosRewards = heroicBossChaosRewards;
 	}
 
 	public TierLoot For(EnemyTier tier)

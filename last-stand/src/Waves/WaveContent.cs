@@ -6,9 +6,12 @@ internal readonly struct WaveContent
 
 	public int MirageSkins { get; }
 
-	public WaveContent(int foreignTypes, int mirageSkins)
+	public int HeroicBossTypes { get; }
+
+	public WaveContent(int foreignTypes, int mirageSkins, int heroicBossTypes)
 	{
 		ForeignTypes = foreignTypes;
 		MirageSkins = mirageSkins;
+		HeroicBossTypes = heroicBossTypes;
 	}
 }

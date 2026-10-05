@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace LastStand.Waves;
 
 internal sealed class WaveSettings
@@ -24,6 +26,12 @@ internal sealed class WaveSettings
 	public Cadence Pain { get; set; }
 	public int PainOccurrencesPerExtra { get; set; }
 	public int MaxPain { get; set; }
+
+	public Cadence HeroicBosses { get; set; }
+	public int HeroicBossStepWaves { get; set; }
+	public int MaxHeroicBosses { get; set; }
+	public double HeroicBossEntranceDelaySeconds { get; set; }
+	public IReadOnlyList<string> HeroicBossTypes { get; set; }
 
 	public Cadence ForeignTypes { get; set; }
 	public int ForeignTypesPerUnlock { get; set; }

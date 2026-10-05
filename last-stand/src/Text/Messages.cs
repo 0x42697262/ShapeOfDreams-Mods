@@ -13,6 +13,16 @@ internal static class Messages
 		"are scarce and fade if nobody claims them, and a Dream Well at the center turns " +
 		"dream dust into upgrades. Only the host needs this mod.";
 
+	public static string HeroicBossArrives()
+	{
+		return Notice("A heroic boss enters the arena!");
+	}
+
+	public static string HeroicBossDefeated(int chaosRewards)
+	{
+		return Notice($"The heroic boss falls! {chaosRewards} legendary chaos rewards dropped.");
+	}
+
 	public const string ModeTooltip = "Endless waves in a single arena";
 
 	private const string NoticeColor = "#e8a33d";
@@ -43,6 +53,11 @@ internal static class Messages
 		if (plan.PainCount > 0)
 		{
 			text += $", {plan.PainCount} Pain miniboss(es)";
+		}
+
+		if (plan.HeroicBossCount > 0)
+		{
+			text += $", and then {plan.HeroicBossCount} heroic boss(es)";
 		}
 
 		text += ".";
