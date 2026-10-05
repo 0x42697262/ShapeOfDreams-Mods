@@ -239,6 +239,11 @@ These were checked in the decompiled code.
   bonus, shrines). Its damage tick stops on `room.didClearRoom`.
   `HandleRuntimeAddition` passes `beforePrepare` into `Dew.CreateActor`, so it
   runs before `OnCreate`. `HandleRuntimeRemoval` of an unknown id only logs.
+- **Location label.** `UI_InGame_Location` (Dew.UI) sets its `TextMeshProUGUI`
+  to `"{currentZoneIndex + 1}. {localized zone name}"` in the private
+  `OnRoomLoaded`, called on `ClientEvent_OnRoomLoaded` and once at start
+  through `GameManager.CallOnReady`. It is client-local, so it can't be changed
+  for vanilla clients.
 - **Zones.** `ZoneManager.LoadNextZoneByContentSettings` lists zones with
   `DewResources.FindAllByNameSubstring<Zone>("Zone_")` and
   `DewBuildProfile.current.content.FilterZones`. `Zone.zoneTier` orders them.
@@ -298,7 +303,9 @@ Each answer still needs to be seen working:
     Pain group lives, and goes away when it falls. Check that no extra
     minibosses or Corrupted Chaos shrines come from the stock modifier, and
     that the hunter zone comes back after a Pain group falls mid-zone.
-20. **Wave tracker:** which existing quest type to use, given that only progress
+20. **HUD label:** the host sees the wave and monsters-left label, it survives a
+    room load, and the stock label returns when leaving Last Stand.
+21. **Wave tracker:** which existing quest type to use, given that only progress
     and step text sync. Chat notices stand in until then.
 
 ## Conventions
@@ -322,9 +329,9 @@ These are hard rules for all code in this repo.
     method names, room names, modifier names) go in `GameNames`. Prefer
     `typeof`, `nameof` and generic APIs such as `Dew.CreateActor<T>` when
     the member is public.
-  - Text goes in `src/Text`: `Messages` for players, `ConfigText` for the
-    config screen, `LogText` for the log and `CommandText` for console
-    commands.
+  - Text goes in `src/Text`: `Messages` for chat, `HudText` for the host's
+    HUD label, `ConfigText` for the config screen, `LogText` for the log and
+    `CommandText` for console commands.
   - Plain `0`, `1`, `null` and `string.Empty` are fine where their meaning is
     obvious.
 - **Separation of concerns.** Each type has one job. Keep these apart:

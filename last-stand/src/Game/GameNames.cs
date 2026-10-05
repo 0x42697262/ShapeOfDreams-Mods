@@ -18,6 +18,8 @@ internal static class GameNames
 
 	public const string GenerateWorld = "GenerateWorld_Imp";
 
+	public const string LocationRoomLoaded = "OnRoomLoaded";
+
 	public const string ActorOnCreate = "OnCreate";
 
 	public const string ActorOnDestroy = "OnDestroyActor";

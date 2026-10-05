@@ -7,10 +7,11 @@ internal static class Messages
 	public const string ModeName = "Last Stand";
 
 	public const string ModeDescription =
-		"Hold a boss arena against endless waves that grow every minute. Minibosses join " +
-		"from mid waves, and Pain minibosses hurt everyone until they fall. Kills drop " +
-		"memories and essences that fade if nobody claims them, and a Dream Well at the " +
-		"center turns dream dust into upgrades. Only the host needs this mod.";
+		"Hold a boss arena against endless waves that grow stronger every wave. Minibosses " +
+		"come every 10 waves, monsters from other worlds join over time, then hunters and " +
+		"Mirage skins. Pain minibosses hurt everyone until they fall. Memories and essences " +
+		"are scarce and fade if nobody claims them, and a Dream Well at the center turns " +
+		"dream dust into upgrades. Only the host needs this mod.";
 
 	public const string ModeTooltip = "Endless waves in a single arena";
 

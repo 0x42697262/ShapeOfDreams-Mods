@@ -263,6 +263,30 @@ falls, the hunter zone is added back if its wave is still running.
 dispatched damage event, the decorator is a status effect, and the shrine is a
 spawned actor. All of it reaches clients through the game's own syncing.
 
+## HUD label
+
+The top-right location readout, normally `3. Forest of Turbulence`, shows the
+fight instead, the same way Dream Arena shows `PVP: Free For All`:
+
+| When | Label |
+|---|---|
+| In camp | `Last Stand: Camp` |
+| Arriving in the arena | `Last Stand` |
+| Waiting for a wave | `Wave 13 in 5s` |
+| During a wave | `Wave 12: 34 monsters left` |
+
+"Monsters left" counts the ones alive, the ones being spawned, and the ones
+still queued for the wave, so it only goes down as monsters die and hits 0 when
+the wave clears.
+
+**Only the host sees it.** The label is `UI_InGame_Location`, which each game
+fills in for itself from the zone index and the localized zone name, and only
+when a room loads. Nothing about it is synced, so a vanilla client keeps the
+stock text. On the host, a postfix on `UI_InGame_Location.OnRoomLoaded` grabs
+the text component and the stock text. The label then refreshes 4 times a
+second, writing only when the text has changed, and the stock text comes back
+whenever the mode isn't running. It can be turned off with `Show wave in HUD`.
+
 ## Loot
 
 **Items are scarce.** Every kill rolls once for a memory or essence. Each
@@ -382,6 +406,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Group | Setting | Default |
 |---|---|---|
 | Arena | Arena room | `Room_Primus_Boss_0` |
+| | Show wave in HUD | on |
 | Waves | First wave delay | 15 s |
 | | Break between waves | 5 s |
 | | Monsters in wave 1 / extra per wave | 6 / 2 |

@@ -101,6 +101,31 @@ internal sealed class LastStandSession
 		}
 	}
 
+	public string HudLabel(double now)
+	{
+		if (!_settings.ShowWaveInHud)
+		{
+			return null;
+		}
+
+		switch (_phase)
+		{
+			case SessionPhase.Inactive:
+				return null;
+			case SessionPhase.Camp:
+				return HudText.Camp;
+			case SessionPhase.Arriving:
+				return HudText.Arriving;
+		}
+
+		if (_waves.WaveInProgress)
+		{
+			return HudText.WaveRunning(_waves.CurrentWave, _enemies.Occupied(now) + _waves.PendingSpawns);
+		}
+
+		return HudText.NextWave(_waves.CurrentWave + 1, (int)Math.Ceiling(_waves.SecondsUntilNextWave(now)));
+	}
+
 	public string Describe()
 	{
 		return LogText.Status(LastStandMode.IsSelected(), NetworkServer.active, _phase.ToString(),

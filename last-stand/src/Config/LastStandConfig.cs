@@ -14,6 +14,10 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ArenaRoomDescription)]
 	public string arenaRoom = GameNames.DefaultArenaRoom;
 
+	[LabelText(ConfigText.ShowWaveInHudLabel)]
+	[Description(ConfigText.ShowWaveInHudDescription)]
+	public bool showWaveInHud = true;
+
 	[Header(ConfigText.WavesHeader)]
 	[LabelText(ConfigText.FirstWaveDelayLabel)]
 	[Description(ConfigText.FirstWaveDelayDescription)]
@@ -37,7 +41,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.MaxAliveBaseLabel)]
 	[Description(ConfigText.MaxAliveBaseDescription)]
-	public int maxAliveBase = 100;
+	public int maxAliveBase = 200;
 
 	[LabelText(ConfigText.MaxAlivePerPlayerLabel)]
 	[Description(ConfigText.MaxAlivePerPlayerDescription)]

@@ -17,6 +17,10 @@ public class LastStandMod : ModBehaviour
 
 	internal LastStandSession Session { get; private set; }
 
+	internal LocationLabel Hud { get; } = new LocationLabel();
+
+	private Func<double, string> _hudLabel;
+
 	private void Awake()
 	{
 		Current = this;
@@ -26,6 +30,7 @@ public class LastStandMod : ModBehaviour
 	{
 		instance.isAlteringGameplay = true;
 		Session = new LastStandSession(SessionSettings.From(config));
+		_hudLabel = Session.HudLabel;
 		harmony.PatchAll();
 		CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
 		Log.Info(LogText.Loaded(mod.metadata.name, mod.metadata.modVer));
@@ -47,11 +52,22 @@ public class LastStandMod : ModBehaviour
 			Log.Error(LogText.TickFailed, e);
 			Session.Reset();
 		}
+
+		try
+		{
+			Hud.Tick(Time.time, _hudLabel);
+		}
+		catch (Exception e)
+		{
+			Log.Error(LogText.HudFailed, e);
+			Hud.Show(null);
+		}
 	}
 
 	private void OnDestroy()
 	{
 		Session?.Reset();
+		Hud.Show(null);
 		InjectedUi.RemoveAll();
 		harmony.UnpatchAll(harmony.Id);
 

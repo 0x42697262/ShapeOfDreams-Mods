@@ -12,6 +12,11 @@ internal static class ConfigText
 	public const string MirageHeader = "Mirage variants";
 	public const string LootHeader = "Loot";
 
+	public const string ShowWaveInHudLabel = "Show wave in HUD";
+	public const string ShowWaveInHudDescription =
+		"Replaces the location readout in the top right with the current wave and how many monsters " +
+		"are left. Only you see it: other players' HUDs are drawn by their own unmodded game.";
+
 	public const string ArenaRoomLabel = "Arena room";
 	public const string ArenaRoomDescription =
 		"Boss room every combat node loads as. Others: Room_Ink_Boss_0, Room_Despair_Boss_0, " +

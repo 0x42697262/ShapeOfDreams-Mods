@@ -8,6 +8,8 @@ internal static class Tuning
 
 	public const float LootExpiryCheckSeconds = 1f;
 
+	public const float HudRefreshSeconds = 0.25f;
+
 	public const float SpawnReservationSeconds = 5f;
 
 	public const float FallbackArenaRadius = 10f;

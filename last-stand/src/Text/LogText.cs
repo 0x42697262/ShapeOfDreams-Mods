@@ -9,6 +9,7 @@ internal static class LogText
 	public const string ModeOptionFailed = "could not add the Last Stand game mode option.";
 	public const string SoloButtonFailed = "could not add the Last Stand solo button.";
 	public const string TickFailed = "session tick failed; the session was stopped.";
+	public const string HudFailed = "HUD label update failed; the stock label was restored.";
 	public const string SessionStopped = "session stopped.";
 	public const string NotHosting = "only the host of a Last Stand run can do that.";
 

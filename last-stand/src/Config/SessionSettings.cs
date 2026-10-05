@@ -14,17 +14,20 @@ internal sealed class SessionSettings
 
 	public double FirstWaveDelaySeconds { get; }
 
+	public bool ShowWaveInHud { get; }
+
 	public WaveSettings Waves { get; }
 
 	public PainSettings Pain { get; }
 
 	public LootSettings Loot { get; }
 
-	private SessionSettings(string arenaRoom, double firstWaveDelaySeconds, WaveSettings waves,
-		PainSettings pain, LootSettings loot)
+	private SessionSettings(string arenaRoom, double firstWaveDelaySeconds, bool showWaveInHud,
+		WaveSettings waves, PainSettings pain, LootSettings loot)
 	{
 		ArenaRoom = arenaRoom;
 		FirstWaveDelaySeconds = firstWaveDelaySeconds;
+		ShowWaveInHud = showWaveInHud;
 		Waves = waves;
 		Pain = pain;
 		Loot = loot;
@@ -33,7 +36,7 @@ internal sealed class SessionSettings
 	public static SessionSettings From(LastStandConfig config)
 	{
 		return new SessionSettings(config.arenaRoom, Math.Max(0f, config.firstWaveDelaySeconds),
-			WavesFrom(config), PainFrom(config), LootFrom(config));
+			config.showWaveInHud, WavesFrom(config), PainFrom(config), LootFrom(config));
 	}
 
 	private static WaveSettings WavesFrom(LastStandConfig config)
