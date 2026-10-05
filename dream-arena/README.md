@@ -56,8 +56,11 @@ every change is written to both sides.
 | No lucid dreams | PvE progression layer stripped | blocked `AddLucidDream`, cleared available list |
 | No game modifiers | Obliviax, Mirage Skin, Golden Lizard… | cleared `addedGameMods`, swept `GameModifierBase` |
 | Direct rift | camp exits straight into the arena | `Rift_RoomExit.nextNodeIndex` |
+| Chat restart | `-restart` calls a vote; if it passes, everyone goes back to camp with builds wiped and remnants restocked | chat command postfix, the stock travel vote, cleared room saves, `TravelToNode` |
+| Skip travel vote | no world-map vote when someone takes a rift | prefix forcing `ZoneManager.ShouldVoteOnTravel()` false |
 | Auto revive | knocked-out players get back up | `Se_HeroKnockedOut.Revive(mult)` |
 | Camp remnants | ten free pick-anything remnants | spawned `ChoiceShrine`s, offering overwritten |
+| Training dummy | a monster in camp that never moves, attacks or dies | AI off, a death interrupt, displacements canceled |
 | Max player level | everyone at the cap in camp | `Hero.maxLevel` |
 | Starting memory level | every equipped memory, identity included, at least level 10 | `SkillTrigger.level`, as the Upgrade Well sets it |
 | Hero health multiplier | every hero's max health x100 by default | a `finalStatsProcessors` entry, applied after all bonuses |
@@ -207,6 +210,16 @@ The prompt text itself is swapped for a PvP-themed one by intercepting the
 far less invasive than reimplementing the rift's interaction, and it leaves
 every other string alone. It is a SyncVar, so the host setting it is enough.
 A connected non-camp node is preferred, with any non-camp node as a fallback.
+
+**No travel vote.** With more than one hero alive, the confirmed travel still
+went to a vote: `CmdTravelToNode` calls `StartVoteNextNode`, which opens the
+world map for everyone with a 6-second countdown. The command runs on the host
+and its only test is `ZoneManager.ShouldVoteOnTravel()`, so a prefix returning
+false (config `skipTravelVote`, default on) makes it call `TravelToNode`
+directly, and vanilla clients travel with it. The synced
+`GameSettingsManager.enableVotes` is left alone on purpose: the lobby saves it
+as the host's preference when a game starts, so clearing it would carry into
+normal runs.
 
 ### Plain arena
 
@@ -457,6 +470,84 @@ the multiplier changes, when arena mode is turned off, or when the mod unloads.
 recalculation, so the change scales current health with the maximum instead of
 leaving someone at a sliver or overfull.
 
+### Training dummy
+
+A monster stands in camp beside the remnant ring (config `trainingDummy`,
+default on; `dummyMonster` picks it, a Treant by default) for trying out
+memories and essences. The game has no dummy, so this is an ordinary monster
+made harmless on the host. Clients see a normal monster with a health bar and
+damage numbers.
+
+- **No AI.** `EntityAI.disableAI`. The AI only runs on the server, so it never
+  walks, turns or attacks.
+- **Never dies.** A `DeathInterruptEffect`, carried by the stock
+  `Se_GenericEffectContainer` (`Actor.CreateBasicEffect`), the same mechanism
+  that knocks heroes out instead of killing them. A killing blow sets it back
+  to full. Damage that ignores death interrupts still kills it, and a new one
+  appears within a second.
+- **Never moves.** Knockbacks and pulls are displacements, which a prefix on
+  `EntityControl.StartDisplacement` cancels the way the game cancels them on
+  crowd-control-immune entities. The unstoppable effect would do this too, but
+  it also strips stuns, slows and roots, which are worth testing. Anything else
+  that shifts it is undone by teleporting it home.
+- **Resets.** It heals to full a few seconds after the last hit.
+
+It stands 10 to 14 m from the rift, about 40° to one side of the ring's opening,
+so it never blocks the way in. Leaving camp destroys it with the room.
+
+### Restart
+
+Any player can type `-restart` in chat during a fight (config `chatRestart`,
+default on). That calls a vote, and if it passes everyone goes back to camp and
+starts over. The host's `arena_restart` console command skips the vote.
+
+**The vote** is the game's own travel vote, so vanilla clients get the usual
+panel, countdown and keys. The requester counts as agreeing. Tab agrees, any
+player pressing Esc cancels, everyone agreeing passes it early, and the
+countdown running out passes it. A lone hero restarts at once. It is started as
+a next-zone vote (`StartVoteNextZone`) because the next-node panel draws the
+mini world map with every unused node on it; the next-zone panel has no map.
+While a restart vote is open, three patches read a pending flag:
+
+- A passed next-zone vote calls `GameManager.LoadNextZone`. A prefix runs the
+  restart instead and skips the zone change. `PlayGameManager` overrides that
+  method, so every `GameManager` type declaring it is patched.
+- `ZoneManager.ClearVoteState` runs on cancel and after completion, and clears
+  the flag.
+- `ZoneManager.GetCannotTravelReason` is waived. It holds a vote until nobody
+  carries an item and nothing is left on the floor, both of which the restart
+  clears anyway.
+
+When it passes:
+
+- Knocked-out heroes are revived. A room travel does not revive anyone.
+- Every equipped essence and the Q, W, E and R memories are destroyed, along
+  with whatever a hero was carrying and anything lying on the arena floor.
+  Identity and movement cannot be removed, so only their essences go.
+- The starting Q and R memories are recreated from the hero's loadout, the
+  same way the game equips them at the start of a run. `HeroLeveller` then
+  raises them to the configured level.
+- The remnants' taken-item lists are cleared and the camp builds them again,
+  so every item is back in stock.
+
+**Chat.** Every chat line, the host's included, reaches the server through
+`ChatManager.CmdSendChatMessage`. A postfix on its body matches `-restart`, so
+vanilla clients only have to type it. The line still shows in chat, followed by
+a plain-text notice (`MessageType.Raw`) that vanilla clients render as-is. A
+refusal, such as typing it in camp or during another vote, is sent only to the
+player who asked.
+
+**Room saves.** Leaving a room saves its state into
+`ZoneManager.visitedNodesSaveData`, and revisiting restores it. Without
+clearing it, the camp would come back with its old, half-picked remnants. Every
+entry is cleared before the trip. The room being left is serialized during the
+trip itself, which is why loose items are destroyed rather than just dropped:
+anything still on the arena floor would be saved again.
+
+**Travel.** `ZoneManager.TravelToNode` is the server-side call, and unlike the
+client's `CmdTravelToNode` it does not require the nodes to be connected. The
+arena has no link back to camp.
+
 ## Configuring it
 
 Host only, three ways, all the same settings:
@@ -468,13 +559,21 @@ Host only, three ways, all the same settings:
 - **Console** (Developer Mode, F1): `arena`, `arena_on`, `arena_off`,
   `arena_mode <FreeForAll|TwoTeams|Peaceful>`, `arena_room <Room_...>`,
   `arena_revive <seconds>`, `arena_start`, `arena_purge`, `arena_scan`,
-  `arena_status`.
+  `arena_status`, `arena_restart`.
 - **Mod manager** — the Config button, for persisted defaults.
 
 The in-lobby window generates its widgets from `DreamArenaConfig` via
 `DewGUI.CreateWidgetsForObject` — the same call the mod manager uses. Adding a
 field to that class adds a widget in both places automatically; bools become
 toggles and the enum becomes a dropdown with no custom UI code.
+
+The window is wide rather than tall. The widgets are generated into one column,
+measured at the real column width, then dealt out across three columns by
+section (the `[Header]` groups in the config), choosing the split with the
+shortest tallest column. They sit in a fixed-height `ScrollRect`, as on the
+game's own mod config screen. Without one, the window grows to fit its
+content, the game caps it at the screen height, and the layout squashes the
+rows on top of each other.
 
 Settings persist to
 `<persistentDataPath>/QuickSave/Mods/com.0x42697262.dreamarena/DreamArenaMod.config.json`.
@@ -496,6 +595,9 @@ src/
   ReviveController.cs     auto-revive timers for knocked-out players
   HeroLeveller.cs         hero level cap and memory level floor
   HeroHealth.cs           max-health multiplier for every hero
+  MatchRestart.cs         back to camp with builds wiped and remnants restocked
+  TrainingDummy.cs        the unkillable, unmoving monster in camp
+  RestartVote.cs          puts -restart to a vote through the stock travel vote
   ArenaConfigWindow.cs    host's in-lobby settings window
   InjectedUi.cs           teardown for live reload
   ModIdentity.cs          names stamped on created objects
@@ -506,6 +608,10 @@ src/
     HudPatches.cs         PvP rift prompt, hides objectives
     WorldGenPatch.cs      applies the arena room once the world exists
     PlainArenaPatch.cs    loads the arena in its cleared, lit state
+    SkipTravelVotePatch.cs  travels through a rift without a vote
+    ChatRestartPatch.cs   the -restart chat command
+    RestartVotePatches.cs runs the restart when its vote passes
+    TrainingDummyDisplacementPatch.cs  cancels knockbacks on the dummy
     GameEndPatch.cs       blocks WrapUpAndShowResult
     LobbySettingsPatch.cs injects the lobby button
 ```

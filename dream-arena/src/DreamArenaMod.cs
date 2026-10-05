@@ -71,6 +71,7 @@ public class DreamArenaMod : ModBehaviour
 			RelationController.ClearAll();
 			ArenaRules.Restore();
 			HeroHealth.RemoveAll();
+			TrainingDummy.Reset();
 		}
 
 		InjectedUi.CleanupAll();
@@ -107,6 +108,8 @@ public class DreamArenaMod : ModBehaviour
 		CampRift.Reset();
 		HeroLeveller.Reset();
 		HeroHealth.Reset();
+		RestartVote.Reset();
+		TrainingDummy.Reset();
 		ApplyNow();
 
 		// Deferred: the world is not generated yet on the frame the manager starts.
@@ -122,6 +125,7 @@ public class DreamArenaMod : ModBehaviour
 		ArenaStage.Tick(config, _phase.Current);
 		PveSuppressor.Tick(dt, config, _phase.Current);
 		CampShops.Tick(config, _phase.Current);
+		TrainingDummy.Tick(config, _phase.Current);
 		HeroLeveller.Tick(dt, config);
 		HeroHealth.Tick(dt, config);
 		CampRift.Tick(dt, config, _phase.Current);
@@ -237,6 +241,15 @@ public class DreamArenaMod : ModBehaviour
 	public void Cmd_ArenaStart()
 	{
 		ArenaStage.StartFight(config);
+	}
+
+	[ConsoleCommand("Restart at once, skipping the vote: back to camp, builds wiped", "arena_restart")]
+	public void Cmd_ArenaRestart()
+	{
+		if (!MatchRestart.TryRestart(DewPlayer.local, out string reason))
+		{
+			Debug.Log($"{ModIdentity.LogPrefix}restart refused: {reason}");
+		}
 	}
 
 	[ConsoleCommand("List everything in this room a hero could attack", "arena_scan")]

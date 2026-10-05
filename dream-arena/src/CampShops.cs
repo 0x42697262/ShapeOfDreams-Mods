@@ -190,6 +190,36 @@ internal static class CampShops
 		}
 	}
 
+	/// <summary>
+	/// The camp's layout: the rift on the ground, and the direction the ring
+	/// opens toward, which faces the open camp. False when there is no rift yet.
+	/// </summary>
+	public static bool TryGetCampLayout(out Vector3 center, out Vector3 openingDir)
+	{
+		center = default;
+		openingDir = Vector3.forward;
+
+		Rift_RoomExit rift = Rift_RoomExit.softInstance;
+		if (rift.IsNullOrInactive())
+		{
+			return false;
+		}
+
+		center = Dew.GetPositionOnGround(rift.transform.position);
+
+		if (TryGetCampAnchor(out Vector3 anchor))
+		{
+			Vector3 toCamp = anchor - center;
+			toCamp.y = 0f;
+			if (toCamp.sqrMagnitude > 0.01f)
+			{
+				openingDir = toCamp.normalized;
+			}
+		}
+
+		return true;
+	}
+
 	private static bool Build()
 	{
 		Shrine_Retrospection memoryPrefab =
@@ -206,25 +236,10 @@ internal static class CampShops
 		}
 
 		// The ring is built around the rift, so there must be one.
-		Rift_RoomExit rift = Rift_RoomExit.softInstance;
-		if (rift.IsNullOrInactive())
+		if (!TryGetCampLayout(out Vector3 center, out Vector3 openingDir))
 		{
 			Debug.LogWarning($"{ModIdentity.LogPrefix}no camp rift to ring; skipping camp remnants.");
 			return false;
-		}
-
-		Vector3 center = Dew.GetPositionOnGround(rift.transform.position);
-
-		// The opening faces the open camp, so players walk in from there to the rift.
-		Vector3 openingDir = Vector3.forward;
-		if (TryGetCampAnchor(out Vector3 anchor))
-		{
-			Vector3 toCamp = anchor - center;
-			toCamp.y = 0f;
-			if (toCamp.sqrMagnitude > 0.01f)
-			{
-				openingDir = toCamp.normalized;
-			}
 		}
 
 		int rarities = ShopCatalog.StockedRarities.Length;
@@ -346,7 +361,7 @@ internal static class CampShops
 	/// <summary>
 	/// Takes a slot's height from the ground, refusing to move it sideways.
 	/// </summary>
-	private static bool TryGroundSlot(Vector3 target, out Vector3 slot)
+	internal static bool TryGroundSlot(Vector3 target, out Vector3 slot)
 	{
 		slot = Dew.GetPositionOnGround(target);
 

@@ -14,6 +14,7 @@ namespace DreamArena;
 /// </remarks>
 public class DreamArenaConfig : ModConfig
 {
+	[UnityEngine.Header("Mode")]
 	[LabelText("PvP mode")]
 	[Description("Normally chosen as 'PvP Arena' in the Create Lobby game mode dropdown, " +
 	             "next to Shape of Dreams and Limbo. Shown here as a fallback.")]
@@ -34,6 +35,7 @@ public class DreamArenaConfig : ModConfig
 	             "This is also what keeps the boss from showing up.")]
 	public bool suppressMonsters = true;
 
+	[UnityEngine.Header("Arena")]
 	[LabelText("Force arena room")]
 	[Description("Redirects every room you travel to into the arena room below.")]
 	public bool forceArenaRoom = true;
@@ -51,11 +53,24 @@ public class DreamArenaConfig : ModConfig
 	             "own synced revisit state, so players without the mod see it the same way.")]
 	public bool plainArena = true;
 
+	[LabelText("Skip travel vote")]
+	[Description("Travels as soon as anyone confirms a rift, instead of opening the world " +
+	             "map for a 6-second vote. The vote is decided on the host, so this applies " +
+	             "to everyone.")]
+	public bool skipTravelVote = true;
+
+	[LabelText("Chat -restart")]
+	[Description("Any player can type -restart in chat during a fight to call a vote " +
+	             "(Tab to agree, Esc to cancel). If it passes, everyone goes back to camp: " +
+	             "memories and essences wiped, starting loadout restored, remnants restocked.")]
+	public bool chatRestart = true;
+
 	[LabelText("Remove the boss")]
 	[Description("Despawns the boss room's boss so the arena stays empty. " +
 	             "Despawn, not kill, so no rewards drop and no exit rift opens.")]
 	public bool removeBoss = true;
 
+	[UnityEngine.Header("Rules and HUD")]
 	[LabelText("Show mode in HUD")]
 	[Description("Replaces the location readout with the match type, so the rules in " +
 	             "force are always on screen.")]
@@ -97,10 +112,10 @@ public class DreamArenaConfig : ModConfig
 	             "so nobody opens the round already in attack range.")]
 	public bool spreadSpawns = true;
 
-
+	[UnityEngine.Header("Camp")]
 	[LabelText("Camp remnants")]
-	[Description("Builds ten free remnants in camp: memories down one side, essences down " +
-	             "the other, one per rarity, so any build can be assembled by hand.")]
+	[Description("Builds ten free remnants in a ring around the camp rift, one memory and " +
+	             "one essence remnant per rarity, so any build can be assembled by hand.")]
 	public bool campShops = true;
 
 	[LabelText("Remnant memory level")]
@@ -118,6 +133,17 @@ public class DreamArenaConfig : ModConfig
 	             "at full strength rather than raced for.")]
 	public bool maxPlayerLevel = true;
 
+	[LabelText("Training dummy")]
+	[Description("A monster beside the remnant ring that stands still, never fights back " +
+	             "and never dies, for trying out memories and essences. Heals to full a few " +
+	             "seconds after the last hit.")]
+	public bool trainingDummy = true;
+
+	[LabelText("Dummy monster")]
+	[Description("Monster used as the dummy, e.g. Mon_Forest_Treant or Mon_Forest_SpiderWarrior.")]
+	public string dummyMonster = "Mon_Forest_Treant";
+
+	[UnityEngine.Header("Heroes")]
 	[LabelText("Starting memory level")]
 	[Description("Raises every player's equipped memories, identity included, to at least " +
 	             "this level. Never lowers one. 1 or less disables it.")]
@@ -157,6 +183,10 @@ public class DreamArenaConfig : ModConfig
 		other.forceArenaRoom = forceArenaRoom;
 		other.arenaRoom = arenaRoom;
 		other.plainArena = plainArena;
+		other.skipTravelVote = skipTravelVote;
+		other.chatRestart = chatRestart;
+		other.trainingDummy = trainingDummy;
+		other.dummyMonster = dummyMonster;
 		other.removeBoss = removeBoss;
 		other.autoReviveSeconds = autoReviveSeconds;
 		other.reviveHealthPercent = reviveHealthPercent;
