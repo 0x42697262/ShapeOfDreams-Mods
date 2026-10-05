@@ -1,0 +1,7 @@
+Host-only wave survival for solo and co-op.
+
+Hold a boss arena against endless waves that grow every minute. Minibosses join from mid waves, and Pain minibosses hurt the whole party until they fall. Kills drop memories and essences that fade if nobody claims them, and a Dream Well at the center of the arena turns dream dust into upgrades.
+
+Pick "Last Stand" as the game mode: in Solo after choosing to play, or in the Game Mode dropdown when creating a lobby.
+
+Only the host needs this mod. Friends can join on a fully vanilla client.

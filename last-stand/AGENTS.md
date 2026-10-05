@@ -1,0 +1,364 @@
+# AGENTS.md: Last Stand
+
+Working notes for anyone, human or agent, building this mod. Read
+[`README.md`](README.md) first for the design.
+
+## Status
+
+First build. The whole loop is in code and builds clean, but **nothing has
+been tested in-game yet**. Work through "Needs an in-game check" below before
+building more on top. The git repo has no commits yet.
+
+`about/icon.png` and `about/preview.png` are Dream Arena's images, copied as
+placeholders. Replace them before uploading to the Workshop.
+
+## Sister project
+
+[Dream Arena](../dream-arena) is a host-only PvP mode for the same game, built
+the same way. Much of Last Stand's plumbing exists there and should be adapted,
+not reinvented:
+
+| Need | Dream Arena source |
+|---|---|
+| One boss room for every node | `src/ArenaRules.cs`, `src/Patches/WorldGenPatch.cs` |
+| Room loads cleared, lit, no entry trigger | `src/Patches/PlainArenaPatch.cs` |
+| Boss removal, moving players into the arena | `src/ArenaStage.cs` |
+| Arena center (`pathablePivot` of the biggest section) | `src/ArenaSpawn.cs` |
+| Skipping intro cutscenes | `src/Patches/RoundStartPatch.cs` |
+| Spawning memories and essences | `src/CampShops.cs`, `src/ShopCatalog.cs` |
+| Fixing unsynced shrine limits | `src/Patches/CampRemnantPatch.cs` |
+| Chat notices and chat commands | `src/MatchRestart.cs`, `src/Patches/ChatRestartPatch.cs` |
+| Lobby settings window | `src/ArenaConfigWindow.cs` |
+| Config | `src/DreamArenaConfig.cs` |
+
+**Do not copy** Dream Arena's lucid-dream, game-modifier or PvE suppression.
+Last Stand keeps all of those vanilla.
+
+## Hard constraints
+
+- **Host-only.** Clients run the unmodded game. Only server-side logic and synced
+  state reach them. Anything drawn per client, such as HUD text, lighting, fog
+  or post-processing, cannot be changed for them.
+- **Check whether a field is synced before relying on it.** Setting a plain
+  field on the host does nothing for clients. Known traps:
+  - `Shrine.maxUseCountPerPlayer` and `Shrine.useCooldown` are not synced.
+    Reset the synced use count and `_lastUseTime` after each use instead.
+  - `DewQuest` titles and descriptions are not synced. `currentProgress` and
+    `step` are.
+- **Use `.softInstance`, never `.instance`, in per-frame code.**
+  `NetworkedManagerBase<T>.instance` runs `FindObjectOfType` twice when the
+  manager is missing. That caused full scene scans every frame and host lag in
+  Dream Arena.
+- **Throttle retries.** Anything that waits for a room to settle retries on a
+  timer with a cap, never every frame.
+- **Mark it as gameplay-altering** (`instance.isAlteringGameplay = true`), as
+  the official modding rules require.
+- **Don't bypass the game's cross-play block** for modded lobbies.
+
+## Environment
+
+- The game and .NET SDK live in the incus container **`chen`**. Run commands
+  with `incus exec chen -- su chicken -s /bin/bash -c '...'`.
+- Game dir in `chen`: `~/.local/share/Steam/steamapps/common/Shape of Dreams`.
+  Mods go in `Mods/<Name>`.
+- Dream Arena is bind-mounted into `Mods/DreamArena` as incus device
+  `dreamarena`. Last Stand is bind-mounted into `Mods/LastStand` as incus
+  device `laststand`.
+- Build with `./build.sh` (Debug) or `./build.sh Release`. It runs
+  `dotnet build` inside `chen`, in the mounted directory.
+  `about/metadata.json` points at the Debug DLL.
+- `./watch-log.sh` follows the game log filtered to this mod, Harmony and
+  errors. `./watch-log.sh all` shows everything.
+- There is no C# language server here. A clean build (0 warnings, 0 errors)
+  is the check.
+- Game log: `~/.local/share/Steam/steamapps/compatdata/2444750/pfx/drive_c/users/steamuser/AppData/LocalLow/Lizard Smoothie/Shape of Dreams/Player.log`
+  (in `chen`).
+
+## Reading the game's code
+
+- Decompiled `Dew.Core` and friends: `~/sod-modding/decomp-new/` in `chen`.
+- `Dew.Contents.dll` (monsters, room modifiers, skills, gems) won't export
+  in full. Decompile one type at a time:
+  ```sh
+  export DOTNET_ROLL_FORWARD=Major PATH=$PATH:~/.dotnet/tools
+  M="$HOME/.local/share/Steam/steamapps/common/Shape of Dreams/Shape of Dreams_Data/Managed"
+  ilspycmd -r "$M" -t RoomMod_CorruptedChaos_AuraOfPain "$M/Dew.Contents.dll"
+  ```
+  Results go in `~/sod-modding/decomp-new/types/`. To find a type name, run
+  `strings "$M/Dew.Contents.dll" | grep -i <word>`.
+- Scene inspection: UnityPy venv at `~/sod-modding/venv`, with scripts
+  `scan_scene.py` and `roomscripts.py`.
+
+## Official modding docs
+
+From the developer, Lizard Smoothie. The docs are early and brief, so the
+decompiled code stays the source of truth.
+
+| Resource | Link |
+|---|---|
+| Mod docs and starter guide | https://github.com/LizardSmoothie/ShapeOfDreamsModDocs |
+| API reference (`Dew.Core`) | https://lizardsmoothie.com/sod/moddoc/api/Global.html |
+| Modding Terms of Service | https://shape-of-dreams.gitbook.io/shape-of-dreams-modding-terms-of-service/ |
+| Official example mods (with source) | https://steamcommunity.com/id/lizardsmoothie/myworkshopfiles/?appid=2444750 |
+| Official server-side cheat console mod | https://steamcommunity.com/sharedfiles/filedetails/?id=3618192903 |
+| JSON overrides example (SUPER LACERTA) | https://steamcommunity.com/sharedfiles/filedetails/?id=3618193300 |
+| Shape of Dreams Workshop | https://steamcommunity.com/app/2444750/workshop/ |
+
+What the docs say that matters here:
+
+- **Code of conduct.** Mods may heavily alter gameplay, but must not hurt
+  others' experience without consent, and must not grant server-generated
+  exclusive items (anything bought with stardust). Every server-side mod that
+  alters gameplay must set `instance.isAlteringGameplay = true`. This shows the
+  MOD icon on the lobby and a notice to joining clients.
+- **Loading.** The DLLs listed under `"assemblies"` in the mod's
+  `metadata.json` are injected. Every `ModBehaviour` in the assembly is attached
+  to one container GameObject per mod instance. `ModBehaviour` is the entry
+  point and owns the lifecycle.
+- **Unloading.** Mods can be loaded and unloaded at runtime, so clean up
+  everything in `OnDestroy`. Loading or unloading mid-run can cause bugs.
+- **Harmony** is built in. Use the `harmony` property of a `ModBehaviour`, and
+  unpatch in `OnDestroy`.
+- **Project template:** `<GameFolder>/Mods/ModTemplate`. Create the project in
+  `Mods` with "Place solution and project in the same folder" so it references
+  the game's assemblies.
+- **Developer Mode** (gameplay settings) enables the debug console. **F1**
+  cycles the log viewer mode, and **`` ` ``** opens the console. Mods can add
+  console commands through a `ModBehaviour`. The console also has
+  "Manage Mods", which opens the built-in mod manager anywhere.
+- **JSON overrides** (`<GameFolder>/RawData/!ModResources/overrides`) change
+  static parameters such as stats, damage and cooldowns. They sync from host to
+  clients automatically and set `isAlteringGameplay` on their own. They cannot
+  react to settings or game state, so they suit fixed tuning only.
+- **Workshop upload** is in the mod manager with Developer Mode on. The first
+  upload creates the item, later uploads update it. Every upload sets the item
+  to Hidden until it is made Public again.
+
+## Confirmed API facts
+
+These were checked in the decompiled code.
+
+- `RoomMod_CorruptedChaos_AuraOfPain`: 2 minibosses with
+  `Se_LimboBossDecorator`, +20% health and +30% damage. Every 0.1 s it deals
+  `PureDamage` (DamageOverTime and IgnoreArmor) of 1%/s of max health +
+  shield, never below 1 HP. The damage stops on `room.didClearRoom`. When both
+  minibosses die it spawns `Shrine_CorruptedChaos`, plus one per player on
+  `doubleChaosChance`, which uses `playersOverride`.
+- `PickupManager.DropDreamDust(isGivenByOtherPlayer, amount, position, target)`
+  and `DropGold(isKillGold, isGivenByOtherPlayer, amount, position, target)`.
+  Both are server-only.
+- `Dew.CreateSkillTrigger(prefab, pos, level, tempOwner)` and
+  `Dew.CreateGem(prefab, pos, quality, tempOwner)`.
+- `Shrine_UpgradeWell : EditSkillShrine : Shrine`.
+- `EntityAI` attacks any entity whose relation is `Enemy`, and
+  `AI.Aggro(Entity)` forces a target.
+- `GameManager.SetAmbientLevel(int)` is how the game scales monster strength
+  over a run.
+- Room state is saved into `ZoneManager.visitedNodesSaveData` on leaving and
+  restored on revisit.
+- Chat reaches the server through
+  `ChatManager.UserCode_CmdSendChatMessage__String__NetworkConnectionToClient`.
+  `MessageType.Raw` notices render as-is for vanilla clients.
+- **Mode selection.** Solo: `UI_Title_TitleView.EnterSingleplayerOptions`
+  shows the `GameMode` state (a `VerticalLayoutGroup` with "Shape of Dreams",
+  "Limbo", "Go Back" buttons in scene `level2`) only when
+  `Dew.IsGameModifierIncludedInGame("GameMod_Limbo")`. Otherwise it calls
+  `TitleManager.EnterSingleplayerShapeOfDreams`. The Limbo button's label is
+  `limboModeText`, set by code, with no `DewLocalizedText`. Its tooltip child
+  has one. Multiplayer: `UI_Title_CreateLobbyView` rebuilds its dropdown in
+  `OnShow`, and its private `_state` (`DewNetworkStartSettings`) is what
+  `PlayGame` receives.
+- **`customGameSettingsSaveKey`** goes from the start settings into
+  `GameSettingsManager.gameSettingsSaveKey` (a SyncVar) on `Awake`, and
+  `DewNetworkManager.RestartAsync` copies it back. Last Stand uses it as the
+  mode flag.
+- **Spawning.** `RoomMonsters.SpawnMonsters(SpawnMonsterSettings)` runs a
+  coroutine. `spawnPosGetter` picks the point, and `afterSpawn` gets the
+  entity. A rule with `isBossSpawn` forces one wave, one spawn, no hunter
+  buff and no population wait. `RoomMonsters.SpawnMiniBoss(settings, ent, se)`
+  sets `Monster.type = MiniBoss`, calls the `ISpawnableAsMiniBoss` hooks, adds
+  the `MiniBossEffect` and drops `RoomRewards.DropChaosReward` on death unless
+  `disableMiniBossRewards`. Monsters spawn at `GameManager.ambientLevel`.
+- **Spawn points.** `RoomSection.monsters` is a `Section_Monsters`.
+  `GetSpawnPositionInSection(Func<Vector3, bool> evaluator, random)` tries 30
+  random points in the section. It applies the evaluator to the first 10, and
+  takes the first that passes `RoomMonsters.FilterSpawnPosition` (on the
+  navmesh and reachable from the section's `pathablePivot`). `SpawnMonsterImp`
+  sends each new monster toward the nearest hero.
+- **Loot.** `LootManager.SelectSkillRarity(isHigh)`,
+  `SelectSkillAndLevel(rarity, out skill, out level)`,
+  `SelectGemRarity(isHigh)` and `SelectGemAndQuality(rarity, out gem, out quality)`
+  use the run's pools. Items on the ground have `owner == null` and
+  `handOwner == null`.
+- **Mod config files.** `DewMod` calls `ModBehaviour.LoadConfigsToDisk()` (virtual)
+  once on load. It reads `GetModConfigFilePath(field)`
+  (`persistentDataPath/QuickSave/Mods/<id>/<Type>.<field>.json`), or writes
+  defaults if the file is missing, using Newtonsoft through
+  `DewPersistence.FromJson`. Missing keys keep their initializer value. The
+  config screen (`DewGUI.CreateWidgetsForObject`) skips fields marked
+  `[HideInInspector]`.
+- **Shrines.** `Shrine.maxTotalUseCount` is a SyncVar. Every successful use ends
+  in `Shrine.DoPostUseRoutines`, including `EditSkillShrine` edits.
+  `Shrine_UpgradeWell` charges `GameManager.GetSkillUpgradeDreamDustCost` and
+  `GetGemUpgradeDreamDustCost` in dream dust.
+- **Camp rift.** `Rift_RoomExit.nextNodeIndex` is a SyncVar. When it is set, the
+  rift's interaction confirms and calls `CmdTravelToNode` instead of opening
+  the world map. `ZoneManager.ShouldVoteOnTravel()` is the host's only test for
+  turning a travel into a world-map vote.
+- **Hunters.** `Se_HunterBuff` sets `Monster.isHunter`, doubles population
+  cost, adds speed, attack speed and haste, enables shadow walk and turns off
+  gold and exp drops. `RoomMonsters` gives it to normal spawns by
+  `addedHunterChance`, but not to `isBossSpawn` rules.
+- **Hunter zone.** `RoomMod_Hunted` (Dew.Core) is the hunted-room modifier. On
+  `OnStartServer` it reads `ZoneManager.currentHuntLevel` (a public, synced
+  property) to scale its formulas, adds hunter and Mirage chance to the room,
+  buffs `Se_HunterBuff` spawns and runs the small and big artillery coroutines
+  (`Ai_HunterArtillery_Small` and `_Big`). `ZoneManager.AddModifier<T>(node)`
+  on the current node calls `RoomModifiers.HandleRuntimeAddition`, so it goes
+  live mid-room. It returns the modifier id, and `RemoveModifier(node, id)`
+  takes it back out. If the added modifier `isMain`, `AddModifier` first
+  removes the node's other main modifier.
+- **Mirage skins.** `MirageSkinEffect` subclasses (`Se_MirageSkin_Delusion`,
+  `_Armor`, `_Oblivion`, `_Oppression`, `_Pulverization`, `_Sanctification`)
+  carry a `tier`. `GameMod_MirageSkin.RefreshPool` gives early zones Delusion
+  only, then adds by tier. It skips bosses, `Lesser` monsters and monsters that
+  already have a skin.
+- **Chaos reward rarity.** `Shrine_Chaos.SetRandomRarity(isHighQuality, random)`
+  sets the synced `rarity` from the prefab's `chance` or `highChance` table,
+  with everything past common, rare and epic going to legendary. It runs in
+  `CreateActor`'s `beforePrepare`, before `OnLateStartServer` builds `rewards`
+  from `poolByRarity.Get(rarity)`. In play, miniboss chaos was legendary nearly
+  every time. `Shrine_CorruptedChaos` is a separate `EditSkillShrine` with no
+  rarity.
+- **Zones.** `ZoneManager.LoadNextZoneByContentSettings` lists zones with
+  `DewResources.FindAllByNameSubstring<Zone>("Zone_")` and
+  `DewBuildProfile.current.content.FilterZones`. `Zone.zoneTier` orders them.
+- `ZoneManager` sets the ambient level to `currentZoneIndex + 1` on zone
+  change, and `GameManager` sets it to 1 at the start of a run.
+
+## Needs an in-game check
+
+The first build answered the old open questions from the decompiled code.
+Each answer still needs to be seen working:
+
+1. **Camp rift:** one prompt, no world map, solo and in a lobby with a vanilla
+   client. No travel vote in multiplayer.
+2. **Wave clearing:** the next wave starts only once every monster is dead.
+   Watch for a monster stuck out of reach, which would hold the wave open
+   forever (`laststand_next` forces the next wave). If it happens, add a stall
+   rule.
+3. **Solo button:** appears under Limbo, reads "Last Stand", starts a solo run,
+   and gamepad focus reaches it.
+4. **Lobby option:** "Last Stand" in the dropdown shows its description, and the
+   run starts in Last Stand (`laststand_status` reports `mode=True`).
+5. **Restart** after game over stays in Last Stand.
+6. **Arena:** loads lit and cleared with no boss, players land in a ring at the
+   center, and the well is there.
+7. **Spawn points:** monsters appear across the whole room, never on top of a
+   hero, never inside walls or off the floor, and the ones far away walk in.
+   With 100 alive, check the host's frame rate and the network load on clients.
+8. **One-monster rule:** each regular spawn makes exactly one monster, at the
+   current ambient level.
+9. **Minibosses** spawn and drop the chaos reward. **Pain** bosses show the
+   decorator, the aura hurts and stacks, stops at the last kill, and the
+   Corrupted Chaos shrines appear. Check whether the health bonus fills current
+   health.
+10. **Loot** drops, despawns after 30 s on the ground, and is never removed once
+   picked up. Check what `tempOwner` means for other players picking it up.
+11. **Dream Well** upgrades for the host and for a vanilla client, many times
+   in a row.
+12. **Per-wave scaling:** the stat bonus shows on monsters, and whether it fills
+    current health or only raises max health.
+13. **Other worlds:** the `catalog:` log line's type count, and that monsters
+    from other zones spawn and behave (abilities prewarmed, no missing assets)
+    in a different zone's arena.
+14. **Hunters:** the buff applies to our one-monster spawns, they shadow-walk,
+    and they count toward clearing the wave.
+15. **Hunter zone:** `AddModifier<RoomMod_Hunted>` goes live in a cleared
+    (revisit) room, artillery falls, vanilla clients see it, removal stops it,
+    and whether `RoomMod_Hunted.isMain` strips another main modifier (such as
+    Corrupted Chaos's) from the arena node. Also check the hunt-level HUD.
+16. **Mirage:** skins apply and show on vanilla clients, in Delusion-first
+    order.
+17. **Monster item cap:** solo gets at most one item a wave. Two players get
+    one memory and one essence. Minibosses still drop on their own chance.
+18. **Chaos rarity:** miniboss chaos rewards now vary in rarity, and the reward
+    choices and color match it on a vanilla client.
+19. **Wave tracker:** which existing quest type to use, given that only progress
+    and step text sync. Chat notices stand in until then.
+
+## Conventions
+
+### Code rules
+
+These are hard rules for all code in this repo.
+
+- **No comments.** No `//`, `/* */` or XML doc comments in the codebase. Code
+  explains itself through names, small types and small methods. The *why*
+  (which game system a choice relies on, why it reaches clients) goes in the
+  README or this file instead. Dream Arena's code is commented. Strip its
+  comments when adapting it.
+- **No magic strings or hard-coded values.** Every number, duration, limit,
+  type or prefab name, room name, chat command and chat text lives in exactly
+  one named place:
+  - Tunable values (wave length, caps, despawn time, scaling curves) go in
+    config (`LastStandConfig`), with defaults set there. Fixed internal
+    constants go in `Tuning`.
+  - Fixed game identifiers that can't be a `typeof` or `nameof` (private
+    method names, room names, modifier names) go in `GameNames`. Prefer
+    `typeof`, `nameof` and generic APIs such as `Dew.CreateActor<T>` when
+    the member is public.
+  - Text goes in `src/Text`: `Messages` for players, `ConfigText` for the
+    config screen, `LogText` for the log and `CommandText` for console
+    commands.
+  - Plain `0`, `1`, `null` and `string.Empty` are fine where their meaning is
+    obvious.
+- **Separation of concerns.** Each type has one job. Keep these apart:
+  - **Harmony patches** are thin. They hook the game and hand off to a
+    service. They hold no rules or state.
+  - **Game rules** (wave schedule, scaling, loot rolls, pain stacking) are
+    plain logic that doesn't touch Unity or networking, so they can be read and
+    tested alone.
+  - **Game adapters** wrap the game's API (spawning, pickups, shrines, quests,
+    chat). Rules call adapters and never the game directly.
+  - **Config, lifecycle and UI** each have their own types. The `ModBehaviour`
+    only wires things together and tears them down.
+- **DDIA design.** Follow the principles of *Designing Data-Intensive
+  Applications*:
+  - **Reliability.** The host is the server, so a fault there breaks the run
+    for everyone. Fail safe: if a room isn't ready or a lookup fails, retry on a
+    throttled timer or skip, and never throw from per-frame code or a patch.
+    Every effect is undone on unload.
+  - **Scalability.** Bound per-frame work. Cap enemies and pickups alive, use
+    `.softInstance`, cache lookups, and scale load by player count.
+  - **Maintainability**, the main focus:
+    - *Operability:* clear, throttled log lines with a fixed prefix, so a
+      problem can be found in `Player.log`.
+    - *Simplicity:* the smallest design that works. No speculative
+      abstraction.
+    - *Evolvability:* new waves, enemy tiers, drops or settings are added
+      through config and data, not by editing control flow.
+  - **One source of truth** for state. The server's synced state is the record.
+    Don't keep a second copy that can drift from it.
+
+### Working rules
+
+- **American English** in code and docs.
+- **Don't commit** unless the user asks.
+- **Check changed C# files** with a clean build before reporting done, and
+  with LSP diagnostics if a C# language server is ever set up. Also check that
+  the diff has no comments and no new literals outside `src/Config`,
+  `src/Text`, `src/Identity` and `src/Game/GameNames.cs`. For example:
+  `grep -rn "//\|/\*" src` should print nothing.
+- **Bump `ConfigSchema.Current`** whenever a config default changes or a field
+  is renamed or removed. The game loads the saved JSON over the defaults, so
+  without a bump, players keep the old values. This happened once already:
+  the first build's file kept minibosses at wave 4, Pain every 3 waves and the
+  24-monster cap through several later changes.
+- **Where things go:** new tunables go in `LastStandConfig` and are validated in
+  `SessionSettings.From`. Internal constants go in `Tuning`. Game identifiers
+  go in `GameNames`. Every string goes in `src/Text`. Patches only check
+  `LastStandMode` and call into the session.
+- **Keep the README in step** with the code. With no comments in the code, the
+  README is where the design and its reasons live. It describes how things
+  actually work, not just what they do.
