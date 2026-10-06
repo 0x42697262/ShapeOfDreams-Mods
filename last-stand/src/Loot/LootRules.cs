@@ -7,30 +7,68 @@ namespace LastStand.Loot;
 internal static class LootRules
 {
 	private const int SoloPlayers = 1;
+	private const double Whole = 1;
+
+	private static double[] _shares = new double[0];
 
 	public static LootDecision Decide(TierLoot tier, LootSettings settings, int wave, double itemRoll)
 	{
 		double growth = 1 + settings.GrowthPerWave * Math.Max(0, wave - Tuning.FirstWave);
 
 		return new LootDecision(
-			itemRarity: RollRarity(settings.Items.At(wave), tier.DropMultiplier, itemRoll),
+			itemRarity: RollRarity(settings.Items.At(wave), tier.DropMultiplier, settings.ItemRarityFloor, itemRoll),
 			dreamDust: tier.DreamDust,
 			gold: (int)Math.Round(tier.Gold * growth));
 	}
 
-	public static Rarity? RollRarity(IReadOnlyList<RarityChance> rarestFirst, double multiplier, double roll)
+	public static Rarity? RollRarity(IReadOnlyList<RarityChance> rarestFirst, double multiplier, double floor,
+		double roll)
 	{
+		double[] shares = Shares(rarestFirst, multiplier, floor);
 		double threshold = 0;
-		foreach (RarityChance entry in rarestFirst)
+		for (int i = 0; i < rarestFirst.Count; i++)
 		{
-			threshold += entry.Chance * multiplier;
+			threshold += shares[i];
 			if (roll < threshold)
 			{
-				return entry.Rarity;
+				return rarestFirst[i].Rarity;
 			}
 		}
 
 		return null;
+	}
+
+	public static double[] Shares(IReadOnlyList<RarityChance> rarestFirst, double multiplier, double floor)
+	{
+		int count = rarestFirst.Count;
+		if (_shares.Length < count)
+		{
+			_shares = new double[count];
+		}
+
+		double total = 0;
+		for (int i = 0; i < count; i++)
+		{
+			_shares[i] = Math.Max(0, rarestFirst[i].Chance * multiplier);
+			total += _shares[i];
+		}
+
+		double overflow = total - Whole;
+		for (int i = count - 1; i >= 0 && overflow > 0; i--)
+		{
+			double cut = Math.Min(overflow, Math.Max(0, _shares[i] - floor));
+			_shares[i] -= cut;
+			overflow -= cut;
+		}
+
+		for (int i = count - 1; i >= 0 && overflow > 0; i--)
+		{
+			double cut = Math.Min(overflow, _shares[i]);
+			_shares[i] -= cut;
+			overflow -= cut;
+		}
+
+		return _shares;
 	}
 
 	public static Rarity? HighestAvailable(Rarity rolled, Func<Rarity, bool> hasItems)

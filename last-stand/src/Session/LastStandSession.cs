@@ -155,6 +155,20 @@ internal sealed class LastStandSession
 		}
 	}
 
+	public void JumpToWave(int wave)
+	{
+		if (_phase != SessionPhase.Fighting || wave < Tuning.FirstWave)
+		{
+			Log.Warn(LogText.JumpNotPossible);
+			return;
+		}
+
+		int previous = wave - 1;
+		_waves.Resume(previous, false, _now);
+		ProgressStore.Save(_arenaNode, previous, false);
+		Log.Info(LogText.JumpedToWave(wave));
+	}
+
 	public string HudLabel(double now)
 	{
 		if (!_settings.ShowWaveInHud)
@@ -208,7 +222,22 @@ internal sealed class LastStandSession
 		_arenaNode = node;
 		_phase = SessionPhase.Fighting;
 
+		int hidden = WorldMapNodes.HideAllBut(NetworkedManagerBase<ZoneManager>.softInstance, node);
+		if (hidden > 0)
+		{
+			Log.Info(LogText.MapNodesHidden(hidden, node));
+		}
+
 		Well.Place(arena.Center);
+
+		if (ProgressStore.TryLoad(node, out int wave, out bool inProgress))
+		{
+			int adopted = inProgress ? EnemyAdoption.AdoptSurvivors(_enemies) : 0;
+			_waves.Resume(wave, inProgress, now + _settings.Waves.IntermissionSeconds);
+			Log.Info(LogText.ProgressRestored(wave, inProgress, adopted));
+			return;
+		}
+
 		_waves.Begin(now + _settings.FirstWaveDelaySeconds);
 
 		Log.Info(LogText.ArenaReady(_arrival.StagedHeroes, arena.Center));
@@ -239,12 +268,21 @@ internal sealed class LastStandSession
 
 	private void OnWaveStarted(WavePlan plan)
 	{
+		ProgressStore.Save(_arenaNode, plan.Number, true);
 		_loot.OnWaveStarted();
 	}
 
 	private void OnWaveCleared(int wave)
 	{
+		ProgressStore.Save(_arenaNode, wave, false);
 		_loot.OnWaveCleared(wave, _settings.Loot);
+
+		int revived = HeroSouls.ReviveKnockedOut();
+		if (revived > 0)
+		{
+			Log.Info(LogText.HeroesRevived(wave, revived));
+			ChatNotices.Broadcast(Messages.HeroesRevived(revived));
+		}
 	}
 
 	private void OnEnemyDied(EnemyDeath death)

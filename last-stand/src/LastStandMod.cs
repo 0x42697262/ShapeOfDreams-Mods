@@ -21,6 +21,8 @@ public class LastStandMod : ModBehaviour
 
 	private Func<double, string> _hudLabel;
 
+	private readonly ErrorThrottle _tickErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
+
 	private void Awake()
 	{
 		Current = this;
@@ -50,8 +52,7 @@ public class LastStandMod : ModBehaviour
 		}
 		catch (Exception e)
 		{
-			Log.Error(LogText.TickFailed, e);
-			Session.Reset();
+			_tickErrors.Report(Time.time, LogText.TickFailed, e);
 		}
 
 		try

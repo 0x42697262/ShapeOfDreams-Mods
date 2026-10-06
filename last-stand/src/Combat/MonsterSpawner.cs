@@ -71,7 +71,16 @@ internal sealed class MonsterSpawner
 			return false;
 		}
 
-		room.monsters.SpawnMiniBoss(settings, boss, effect);
+		MiniBossPick.Set(boss, effect);
+		try
+		{
+			room.monsters.SpawnMiniBoss(settings, boss, effect);
+		}
+		finally
+		{
+			MiniBossPick.Clear();
+		}
+
 		return true;
 	}
 

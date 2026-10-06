@@ -18,9 +18,14 @@ internal static class Messages
 		return Notice("A heroic boss enters the arena!");
 	}
 
+	public static string HeroesRevived(int count)
+	{
+		return Notice(count == 1 ? "The wave is over. A fallen hero rises!" : $"The wave is over. {count} fallen heroes rise!");
+	}
+
 	public static string HeroicBossDefeated(int chaosRewards)
 	{
-		return Notice($"The heroic boss falls! {chaosRewards} legendary chaos rewards dropped.");
+		return Notice($"The heroic boss falls! {chaosRewards} Corrupted Chaos rewards dropped.");
 	}
 
 	public const string ModeTooltip = "Endless waves in a single arena";

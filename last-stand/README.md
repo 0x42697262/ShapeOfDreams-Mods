@@ -19,8 +19,8 @@ Dream Well in the middle of the arena turns what you collect into upgrades.
 - **Minibosses** come every 10 waves, then several at once. No real bosses
   for now.
 - **Heroic bosses**, the game's real zone bosses, enter right before every
-  50th wave: 49, 99, 149… One more joins every 100 waves. Each drops 5
-  legendary chaos rewards.
+  50th wave: 49, 99, 149… One more joins every 100 waves. Each drops 3
+  Corrupted Chaos rewards, the kind Pain minibosses leave.
 - **Pain minibosses** change the rules while they live: every hero takes
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.
@@ -123,20 +123,27 @@ travel (`RoomMod_SpawnMiniBoss`), and the hunters' spread. So, with
 
 The camp keeps its modifiers.
 
-**Knocked-out players are revived in the room they fell in.** When a hero is
-knocked out, the game (`Se_HeroKnockedOut.CheckAndAddHeroSoul`) puts their
-soul, `RoomMod_HeroSoul`, on another node a few steps away
-(`lostSoulDistance`), and the others revive them by traveling there and using
-the soul shrine. In Last Stand the rift is shut, so that node can't be
-reached, and on an `ExitBoss` node the game adds no soul at all. A prefix on
-`CheckAndAddHeroSoul` puts the soul on the current node instead. The modifier
-is added while the room is active, so its `Shrine_HeroSoul` appears in the
-arena at once, at a spot the room's props system picks. The game calls the
-same method again on every room load, and any soul of that hero on another
-node is moved to the current one, so a soul from before this fix (or from
-camp) follows the team. The modifier, the shrine and the "lost soul" quest
-are all the game's own and synced, so clients see and use them normally. The
-game removes the soul when the hero is revived.
+**Knocked-out players come back when the wave is cleared.** In the stock game a
+knocked-out hero's soul, `RoomMod_HeroSoul`, goes on another node a few steps
+away (`lostSoulDistance`), and the others revive them by traveling there. The
+arena's rift is shut, so Last Stand has no souls at all. A prefix on
+`Se_HeroKnockedOut.CheckAndAddHeroSoul` (which runs on the knock-out and on
+every room load) skips the game's placement, sets the knock-out's
+`disableQuest` so no "lost soul" quest starts, and removes any soul of that
+hero left on any node. When a wave is cleared, every knocked-out hero is
+revived through the game's own `Se_HeroKnockedOut.Revive` (half health, the
+game's default), as long as at least one hero is still standing, so they
+have the break to get ready for the next wave. If everyone
+is down, the game's own game over follows as usual. Chat announces the revive.
+
+**The world map shows only the camp and the arena.** The map (M) draws every
+node except sidetrack nodes, and `WorldNodeData.IsSidetrackNode` is just
+`position.x < 0`. So once the camp rift has its arena node, and again on
+arrival, every other node's map position is mirrored to a negative x
+(`-1 - x`) and written back to the synced `ZoneManager.nodes`. Clients' maps
+then skip those nodes. Nothing else needs them: the arena never travels on,
+and the game only uses the sidetrack test for hunter progress and for picking
+quest nodes.
 
 **Random boss music (host only).** Each time the arena loads, the host hears a
 random zone boss fight track: Forest, Dark Cave, Despair, Sky, Snow Mountain,
@@ -191,7 +198,7 @@ set by how fast the party kills, not by a timer. The score is the wave reached.
 | 5 | Surge: twice the regular monsters, hunters and alive cap | 5 waves |
 | 2 | +10% health and +10% damage on every monster, stacking | wave |
 | 10 | A monster type from another world joins the pool | 10 waves |
-| 10 | Minibosses (1, 1, 2, 2… up to 4) | 10 waves |
+| 10 | Minibosses (1, 1, 2, 2… up to 10) | 10 waves |
 | 20 | Pain minibosses (1, 1, 2, 2… up to 3) | 20 waves |
 | 30 | The next stronger Mirage skin is unlocked | 10 waves |
 | 49 | Heroic boss, last in the wave (1 at 49 and 99, 2 at 149 and 199, 3 at 249…, up to 10) | 50 waves |
@@ -312,6 +319,15 @@ rolling pillars, Infernus's pillars, Nyx's phases. None of the default bosses
 needs objects from its own boss room. The entrance plays the boss's own spawn
 ability, which for some bosses also sets up its first skills.
 
+**Rewards never depend on chance.** Each boss drops 3 Corrupted Chaos
+shrines, the same `Shrine_CorruptedChaos` Pain minibosses leave. They have no
+rarity, so the chaos reroll never touches them. A heroic boss is recognized even after the mod reloads mid-fight (auto-reload
+in developer mode): any supported `BossMonster` standing in the arena counts
+as Last Stand's, because a plain arena never spawns its own boss. In testing a
+reload during the wave 49 fight lost the record of the boss, and it died
+through the game's own boss flow with no rewards. A boss spawned by another
+boss (Erebos) still drops nothing.
+
 **Its helpers die with it.** In the stock game the boss's death kills every
 other monster, and that's what clears away its pillars and hallucinations.
 Last Stand skips that kill-all so the wave isn't wiped. Instead, when a heroic
@@ -338,10 +354,11 @@ the lobby as "fighting a boss", which blocks mid-join. The old value is put
 back right after the spawn. No rift opens, because the arena is loaded
 already cleared.
 
-**Reward.** 5 `Shrine_Chaos` with their rarity set to legendary before they
-are created, so the chaos rarity roll never runs. The boss also drops 300
-dream dust and 200 bonus gold, and rolls the item table at ×2 like a Pain
-miniboss.
+**Reward.** 3 `Shrine_CorruptedChaos` (`Heroic boss Corrupted Chaos
+rewards`). Each is one shrine that every player picks from separately, as with
+Pain. An earlier version dropped 5 legendary `Shrine_Chaos` instead. The boss
+also drops 1000 dream dust and 200 bonus gold, and rolls the item table at ×2
+like a Pain miniboss.
 
 Still drawn by every game: the boss health bar, and the kill counting toward
 each player's heroic boss stats.
@@ -359,7 +376,12 @@ modifier and the like.
 - **Miniboss:** `RoomMonsters.SpawnMiniBoss`, with the monster picked from the
   unlocked `ISpawnableAsMiniBoss` types and a random `MiniBossEffect`. This is
   the game's own promotion: bigger, tougher, unstoppable, and it drops the
-  stock miniboss chaos reward on death.
+  stock miniboss chaos reward on death. On top of that, one frame after it
+  spawns, its health and its attack and ability damage are multiplied by 2.5
+  (`Miniboss health multiplier` and `Miniboss damage multiplier`), the same
+  true ×N as heroic bosses: `(N − 1) × (100% + the bonus it already has)`. The
+  game's stock miniboss scaling and the wave bonus alone left them weak, and
+  5× was too strong. Pain minibosses don't get this multiplier.
 
 ## Pain minibosses
 
@@ -446,36 +468,56 @@ the text component and the stock text. The label then refreshes 4 times a
 second, writing only when the text has changed, and the stock text comes back
 whenever the mode isn't running. It can be turned off with `Show wave in HUD`.
 
+A mod reload happens without a room load, and the old instance puts the stock
+text back as it unloads. So whenever there's a label to show but no text
+component yet, the label looks for the existing `UI_InGame_Location`
+(`FindAnyObjectByType`, at most once a second) and takes it over. The label
+is back within a second of a reload.
+
 ## Loot
 
-**Items are scarce.** Every kill rolls once for a memory or essence. Each
-rarity has its own chance, lower the rarer it is:
+**Items are scarce per wave, not per kill.** Every kill rolls once for a
+memory or essence, and most rolls succeed. The per-wave cap below is what
+keeps items scarce. Each rarity has its own chance, lower the rarer it is:
 
-| Rarity | Monster or hunter | Miniboss (×1.5) | Pain miniboss (×2) |
+| Rarity | Monster or hunter | Miniboss (×1.5) | Pain miniboss or heroic boss (×2) |
 |---|---|---|---|
-| Common | 25% | 37.5% | 50% |
-| Rare | 10% | 15% | 20% |
-| Epic | 4% | 6% | 8% |
-| Legendary | 1% | 1.5% | 2% |
-| **Nothing** | **60%** | **40%** | **20%** |
+| Common | 50% | 55% | 40% |
+| Rare | 20% | 30% | 40% |
+| Epic | 8% | 12% | 16% |
+| Legendary | 2% | 3% | 4% |
+| **Nothing** | **20%** | **0%** | **0%** |
 
-These are the wave 1 chances. **They improve every wave** in a straight line
-up to a target at wave 100, then stay there. Common falls to 0, the rest rise,
-and at wave 100 they add up to 100%: every kill rolls an item, and the per-wave
-cap is what keeps items scarce.
+These are the wave 1 chances. A boosted roll past 100% is cut back as
+described below, which is why the miniboss and ×2 columns aren't plain
+multiples. **The chances improve every wave** in a straight line up to a target at
+wave 100, then stay there. Common falls from 50% to 25%, and the rest rise
+until all four even out at 25% at wave 100. Together that's 100%: every kill
+rolls an item.
 
 | Monster or hunter | Common | Rare | Epic | Legendary | Any item |
 |---|---|---|---|---|---|
-| Wave 1 | 25% | 10% | 4% | 1% | 40% |
-| Wave 25 | 18.9% | 19.6% | 11.6% | 4.4% | 54.5% |
-| Wave 50 | 12.6% | 29.7% | 19.4% | 7.9% | 69.7% |
-| Wave 75 | 6.3% | 39.7% | 27.3% | 11.5% | 84.8% |
-| Wave 100 on | 0% | 49.8% | 35.2% | 15% | 100% |
+| Wave 1 | 50% | 20% | 8% | 2% | 80% |
+| Wave 25 | 43.9% | 21.2% | 12.1% | 7.6% | 84.8% |
+| Wave 50 | 37.6% | 22.5% | 16.4% | 13.4% | 89.9% |
+| Wave 75 | 31.3% | 23.7% | 20.7% | 19.2% | 94.9% |
+| Wave 100 on | 25% | 25% | 25% | 25% | 100% |
 
-The tier multiplier applies on top. Past 100%, the roll is cut from the
-commonest end, so late minibosses lean epic and legendary. At wave 100 a
-miniboss (×1.5) rolls 22.5% legendary, 52.8% epic and 24.7% rare, and a Pain
-miniboss (×2) 30% legendary and 70% epic.
+The tier multiplier applies on top. Past 100%, the excess is cut from the
+commonest end, but a rarity is never cut below 25% (`Rarity floor with item
+multipliers`). Once it reaches the floor, the cut moves up to the next rarity.
+So no rarity ever falls under 25%, and a boosted roll evens out at 25% each
+sooner. The floor only limits cuts and never raises a rarity, so a custom
+table with a target under 25% still reaches it. Chaos rarity has no floor.
+
+| Even at 25% each from | Wave |
+|---|---|
+| Monster or hunter (×1) | 100 |
+| Miniboss (×1.5) | 65 |
+| Pain miniboss or heroic boss (×2) | 47 |
+
+Before that, a boosted roll still leans toward the low end: at wave 25 a ×2
+drop is 25% common, 35.6% rare, 24.2% epic and 15.2% legendary.
 
 **Monsters and hunters are capped per wave**, however many die: at most one
 item per player (config `Monster items per player per wave`).
@@ -578,6 +620,35 @@ and `DewQuest.step` are synced, but quest titles and descriptions are not, so
 this needs an existing quest type with a sensible localized title. Not built
 yet. The host's [HUD label](#hud-label) shows the wave meanwhile.
 
+### The wave count never resets
+
+Two things used to send a run back to wave 1, and both are fixed:
+
+- **Errors.** Any exception in the session tick used to stop the whole
+  session, and the next tick started over at wave 1. Now a failed tick is
+  logged (at most once every 5 s) and the session carries on with its state.
+  A failed spawn skips just that monster.
+- **Mod reloads.** With developer mode's auto-reload, any file change in the
+  mod folder reloads the mod mid-run, and a fresh session started at wave 1.
+  Now the session saves the run (a key from the `GameManager` instance and the
+  world seed), the arena node, the wave and whether it's being fought, every
+  time a wave starts or is cleared. It saves to
+  `AppDomain.CurrentDomain.SetData`, which outlives the old assembly because
+  Mono never unloads it. On arrival, a matching save resumes the run. If the
+  wave was being fought, the monsters already on the field (creep-owned
+  `Monster`s not spawned by another monster) are taken over by tier, and the
+  wave ends when they're dead, with no new spawns. Otherwise the next wave
+  follows the usual break. Pain minibosses come back as plain minibosses,
+  because their Pain state lived in the old session. The Dream Well already
+  standing is reused rather than doubled.
+
+The crash behind the reset at wave 10 came from the game's
+`RoomMonsters.SpawnMiniBoss`, which always calls `SelectMiniBoss` first. That
+picks from the *room's* own monster pool and throws when the pool has no
+miniboss-capable monster, as some boss rooms don't, even though Last Stand
+passes its own pick. A prefix on `SelectMiniBoss` hands back Last Stand's pick
+while one is pending, so the room's pool is never read.
+
 ## Settings
 
 The host can change them in two places: the **Last Stand** button in the
@@ -625,13 +696,14 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Spawn interval / spawns per batch | 0.5 s / 6 |
 | Scaling | Health / damage per wave | 10% / 10% |
 | | Starting monster level / waves per level | 1 / 10 |
-| Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 4 |
+| Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 10 |
+| | Health / damage multiplier | 2.5 / 2.5 |
 | Heroic bosses | First wave / every N waves / waves per extra / max | 49 / 50 / 100 / 10 |
 | | Entrance delay | 3 s |
 | | Health / damage multiplier | 10 / 3 |
 | | Ability haste | +200 |
 | | Types | 6 zone bosses (checkboxes) |
-| | Legendary chaos rewards / dust / gold / item multiplier | 5 / 1000 / 200 / 2 |
+| | Corrupted Chaos rewards / dust / gold / item multiplier | 3 / 1000 / 200 / 2 |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |
 | | Damage per second per boss | 1% |
 | | Health / damage bonus | 20% / 30% |
@@ -641,10 +713,11 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Mirage | First wave / waves per new skin / chance | 30 / 10 / 20% |
 | Item drops | Monster items per player per wave | 1 |
 | | Guaranteed drop per wave | off |
-| | Common / rare / epic / legendary chance | 25% / 10% / 4% / 1% |
+| | Common / rare / epic / legendary chance | 50% / 20% / 8% / 2% |
 | | Item chances reach target at wave | 100 |
-| | Common / rare / epic / legendary at target | 0% / 49.8% / 35.2% / 15% |
+| | Common / rare / epic / legendary at target | 25% / 25% / 25% / 25% |
 | | Memory share | 50% |
+| | Rarity floor with item multipliers | 25% |
 | Enemy rewards | Gold growth per wave | 10% |
 | | Item chance multiplier: monster / miniboss / Pain | 1 / 1.5 / 2 |
 | | Per-tier dust and gold | see Loot |
@@ -660,6 +733,7 @@ With Developer Mode on (F1, then `` ` ``):
 |---|---|
 | `laststand_status` | Logs mode, phase, wave, time to next wave, alive, queued, and items dropped per rarity |
 | `laststand_next` | Starts the next wave now, even if monsters remain (host only) |
+| `laststand_wave <n>` | Starts wave n now, e.g. after testing (host only). Monsters already out stay |
 | `laststand_config` | Opens the Last Stand settings window |
 | `laststand_solo` | Starts a solo Last Stand run |
 

@@ -30,6 +30,18 @@ public class LastStandConsole : ModBehaviour
 		LastStandMod.Current?.Session?.StartNextWaveNow();
 	}
 
+	[ConsoleCommand(CommandText.WaveDescription, CommandText.Wave)]
+	public void Cmd_Wave(int wave)
+	{
+		if (!LastStandMode.IsHosting())
+		{
+			Log.Warn(LogText.NotHosting);
+			return;
+		}
+
+		LastStandMod.Current?.Session?.JumpToWave(wave);
+	}
+
 	public void Cmd_TestBoss()
 	{
 		Cmd_TestBoss(GameNames.DefaultTestBoss);

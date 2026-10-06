@@ -1,6 +1,7 @@
 using System;
 using LastStand.Arena;
 using LastStand.Combat;
+using LastStand.Config;
 using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
@@ -14,6 +15,7 @@ internal sealed class WaveDirector
 	private readonly MonsterCatalog _catalog = new MonsterCatalog();
 	private readonly HuntedZone _huntedZone = new HuntedZone();
 	private readonly SpawnPoints _spawnPoints = new SpawnPoints();
+	private readonly ErrorThrottle _spawnErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
 	private readonly MonsterSpawner _spawner;
 	private readonly EnemyRegistry _enemies;
 	private readonly Action<Entity, EnemyTier> _onSpawned;
@@ -41,6 +43,13 @@ internal sealed class WaveDirector
 	public void Begin(double firstWaveAt)
 	{
 		_cycle = new WaveCycle(firstWaveAt);
+		_plan = null;
+		_queue.Clear();
+	}
+
+	public void Resume(int wave, bool inProgress, double nextWaveAt)
+	{
+		_cycle = WaveCycle.Resume(wave, inProgress, nextWaveAt);
 		_plan = null;
 		_queue.Clear();
 	}
@@ -75,6 +84,11 @@ internal sealed class WaveDirector
 		if (!_spawnPoints.IsReady && !_spawnPoints.TryPrepare())
 		{
 			return;
+		}
+
+		if (_cycle.InProgress && _plan == null)
+		{
+			ResumePlan(settings);
 		}
 
 		if (_cycle.TryStartWave(now))
@@ -121,6 +135,22 @@ internal sealed class WaveDirector
 
 	private void StartWave(WaveSettings settings)
 	{
+		ApplyPlan(settings);
+		_queue.Enqueue(_plan);
+
+		Log.Info(LogText.WaveStarted(_plan));
+		ChatNotices.Broadcast(Messages.WaveStarted(_plan));
+		WaveStarted?.Invoke(_plan);
+	}
+
+	private void ResumePlan(WaveSettings settings)
+	{
+		ApplyPlan(settings);
+		Log.Info(LogText.WaveResumed(_plan.Number));
+	}
+
+	private void ApplyPlan(WaveSettings settings)
+	{
 		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
 			_catalog.HeroicBossCount);
 		_plan = WaveSchedule.Plan(_cycle.CurrentWave, PlayerRoster.PlayerCount(), settings, content);
@@ -130,12 +160,6 @@ internal sealed class WaveDirector
 		{
 			_huntedZone.Begin(_plan.HuntLevel);
 		}
-
-		_queue.Enqueue(_plan);
-
-		Log.Info(LogText.WaveStarted(_plan));
-		ChatNotices.Broadcast(Messages.WaveStarted(_plan));
-		WaveStarted?.Invoke(_plan);
 	}
 
 	private void FinishWave(WaveSettings settings)
@@ -167,11 +191,20 @@ internal sealed class WaveDirector
 		Vector3 position = _spawnPoints.Next(settings.MinSpawnDistanceFromHeroes);
 
 		_enemies.Reserve(now);
-		bool spawned = _spawner.Spawn(tier, plan.ForeignTypesUnlocked, position, entity =>
+		bool spawned;
+		try
 		{
-			Enhance(entity, tier, plan, settings);
-			_onSpawned(entity, tier);
-		});
+			spawned = _spawner.Spawn(tier, plan.ForeignTypesUnlocked, position, entity =>
+			{
+				Enhance(entity, tier, plan, settings);
+				_onSpawned(entity, tier);
+			});
+		}
+		catch (Exception e)
+		{
+			_spawnErrors.Report(now, LogText.SpawnFailed(tier), e);
+			spawned = false;
+		}
 
 		if (!spawned)
 		{
@@ -195,6 +228,13 @@ internal sealed class WaveDirector
 		if (tier == EnemyTier.Hunter)
 		{
 			MonsterEnhancer.MakeHunter(entity);
+		}
+
+		if (tier == EnemyTier.MiniBoss)
+		{
+			double health = settings.MiniBossHealthMultiplier;
+			double damage = settings.MiniBossDamageMultiplier;
+			Dew.CallDelayed(() => MonsterEnhancer.MultiplyStats(entity, health, damage));
 		}
 
 		if (tier == EnemyTier.HeroicBoss)

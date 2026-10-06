@@ -31,6 +31,11 @@ internal sealed class EnemyRegistry
 			_reservations.RemoveAt(0);
 		}
 
+		Adopt(entity, tier);
+	}
+
+	public void Adopt(Entity entity, EnemyTier tier)
+	{
 		if (entity == null || _alive.ContainsKey(entity))
 		{
 			return;

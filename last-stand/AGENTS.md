@@ -278,6 +278,24 @@ These were checked in the decompiled code.
   entity-add event. Ability cooldowns use the owner's `Status.abilityHaste`
   when the config's `canReceiveCooldownReduction` is set: multiplier
   `lerp(ges.cooldownFloorRatioByAbilityHaste, 1, 1 / (1 + haste / 100))`.
+- **World map.** `UI_InGame_WorldMap.RefreshNodes` skips nodes where
+  `WorldNodeData.IsSidetrackNode()` (`position.x < 0`). Other uses of that
+  test: `ZoneManager.GetHunterProgress` and the scoring in
+  `TryGetNodeIndexForNextGoal`. Map items are indexed by node index with null
+  gaps (`InGameUIManager.fullWorldMapNodeItems`), so hiding middle nodes is
+  safe.
+- **Mod reloads.** With developer mode and `enableAutoReloadMods` (in
+  `QuickSave/r_platform.json`), any file change under `Mods/` reloads the mod
+  mid-run (`DewMod` watcher; it waits for the window to have focus). `DewMod`
+  loads the DLL from bytes (`Assembly.Load(byte[])`), so the old assembly stays
+  in the AppDomain and `AppDomain.SetData` survives. Event handlers the old
+  assembly attached to entities still fire into the old, reset session.
+  Ownership that matters at death (heroic bosses) must not rely on in-memory
+  sets alone.
+- **Minibosses.** `RoomMonsters.SpawnMiniBoss(settings, ent, se)` always calls
+  `SelectMiniBoss` first, which indexes the room's `defaultRule.pool` entries
+  that are `ISpawnableAsMiniBoss` and throws `ArgumentOutOfRangeException`
+  when there are none, even when `ent` and `se` are given.
 - **Music.** `MusicManager` is a plain local `ManagerBase`. `Room.OnLateStart`
   plays `Room.music`, or the zone's `defaultMusicRef` when that's null and the
   node isn't `ExitBoss`. Boss tracks are played by scene `FxChangeMusic`
@@ -298,7 +316,12 @@ These were checked in the decompiled code.
   Action<RoomModifierBase>)`: Corrupted Chaos, `RoomMod_SpawnMiniBoss` on
   travel, `UpdateModifiersByHunterStatus` on travel, and
   `Se_HeroKnockedOut` → `RoomMod_HeroSoul`.
-- **Knock-outs.** `Se_HeroKnockedOut.CheckAndAddHeroSoul` (public, server) runs
+- **Knock-outs.** `Se_HeroKnockedOut.disableQuest` (public, NonSerialized)
+  stops both the soul and `Quest_LostSoul` (started after 1 s in
+  `ActiveLogicUpdate`). `Se_HeroKnockedOut.Revive(mult = -1)` sets health
+  (default `reviveHealthMultiplier` 0.5) and destroys the effect, whose
+  `OnDestroyActor` clears `isKnockedOut` and removes the soul.
+  `Se_HeroKnockedOut.CheckAndAddHeroSoul` (public, server) runs
   on knock-out and on every room load. It skips `ExitBoss` nodes, then adds
   `RoomMod_HeroSoul` (clientData = owner guid) to the node from
   `TryGetNodeIndexForNextGoal(lostSoulDistance)`. `RoomMod_HeroSoul.OnStartServer`
@@ -382,8 +405,8 @@ Each answer still needs to be seen working:
 21. **HUD label:** the host sees the wave and monsters-left label, it survives a
     room load, and the stock label returns when leaving Last Stand.
 22. **Heroic bosses:** at wave 49 the boss enters 3 s after the last monster
-    spawns, plays its spawn animation, counts toward the wave, and drops 5
-    legendary chaos rewards. There's no time pause, no rift and no boss soul.
+    spawns, plays its spawn animation, counts toward the wave, and drops 3
+    Corrupted Chaos rewards (the Pain kind). There's no time pause, no rift and no boss soul.
     Its health bar shows about 10× the health, its hits land about 5× as
     hard, it uses its skills about twice as often, and every default boss uses its patterns and helpers. Pillars and
     hallucinations vanish when it dies. Nyx with The Consort of Night (Erebos)
@@ -402,11 +425,28 @@ Each answer still needs to be seen working:
 26. **Random boss music:** the host hears a different boss track each time
     the arena loads. The log shows `boss music: playing mus...`. Camp music is
     unchanged.
-27. **Revive in the arena:** a knocked-out hero's soul shrine appears in the
-    arena (log: `hero soul: placed in the current room`), others can revive
-    them there, and the soul leaves when they're revived. Check that adding it
-    doesn't remove the Pain or hunter-zone modifier (that would mean
-    `RoomMod_HeroSoul` is a main modifier).
+27. **Revive after the wave:** no soul shrine or "lost soul" quest appears
+    when a hero is knocked out. They're revived when the wave is cleared
+    (log: `revive: N knocked-out hero(es) revived after wave W was cleared`),
+    only if someone is still alive.
+28. **World map:** M shows only the camp and the arena node, on clients too.
+29. **Heroic boss after a reload:** a heroic boss alive during a mod reload
+    still drops its 3 Corrupted Chaos rewards when killed, and the game's
+    boss-kill flow (`Rev_KillHeroicBosses`, timer pause) doesn't run.
+30. **Wave count survives:** reload the mod mid-wave (touch a file). The log
+    shows `progress restored: wave N ...` and the wave count carries on.
+    `laststand_wave 10` jumps to wave 10.
+31. **Minibosses in any arena room:** wave 10 spawns its miniboss with no
+    `SelectMiniBoss` exception, also in rooms whose pool has no miniboss type.
+32. **HUD label after a reload:** within a second of a mod reload, the
+    top-right label shows the wave again instead of the room name.
+33. **Stronger minibosses:** a 10th-wave miniboss has about 2.5× the health
+    and hits about 2.5× as hard as before; Pain minibosses are unchanged.
+34. **Heroic boss rewards:** a heroic boss leaves 3 Corrupted Chaos shrines
+    (the Pain kind), and every player can pick from each one.
+35. **Rarity floor:** no rarity falls under 25% of drops. By wave 100 the
+    `loot:` log lines show common, rare, epic and legendary about equally,
+    and Pain minibosses and heroic bosses get there by wave 47.
 
 ## Conventions
 

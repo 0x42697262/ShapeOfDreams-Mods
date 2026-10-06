@@ -52,8 +52,13 @@ internal static class ConfigText
 	public const string HeroicBossTypesLabel = "Heroic boss types";
 	public const string HeroicBossTypesDescription =
 		"Bosses to pick from at random. None checked means no heroic bosses. Changes apply on the next arena.";
-	public const string HeroicBossChaosLabel = "Heroic boss legendary chaos rewards";
-	public const string HeroicBossChaosDescription = "Legendary chaos rewards each heroic boss drops when it dies.";
+	public const string HeroicBossChaosLabel = "Heroic boss Corrupted Chaos rewards";
+	public const string HeroicBossChaosDescription =
+		"Corrupted Chaos shrines (the kind Pain minibosses leave) each heroic boss drops when it dies.";
+	public const string ItemRarityFloorLabel = "Rarity floor with item multipliers";
+	public const string ItemRarityFloorDescription =
+		"When a miniboss's or boss's item multiplier pushes the chances past 100%, the excess is taken from the " +
+		"lowest rarities first, but never below this, then from the next rarity up. Only cuts, never raises.";
 	public const string HeroicBossDropMultiplierLabel = "Heroic boss item chance multiplier";
 	public const string HeroicBossDreamDustLabel = "Heroic boss dream dust";
 	public const string HeroicBossGoldLabel = "Heroic boss bonus gold";
@@ -161,6 +166,11 @@ internal static class ConfigText
 		"After this many of these waves, each one brings one more. 2 means 1, 1, 2, 2, 3...";
 
 	public const string MaxMiniBossesLabel = "Max minibosses per wave";
+	public const string MiniBossHealthMultiplierLabel = "Miniboss health multiplier";
+	public const string MiniBossDamageMultiplierLabel = "Miniboss damage multiplier";
+	public const string MiniBossStatMultiplierDescription =
+		"Multiplies the miniboss's final value, after the game's miniboss scaling and the per-wave bonus. " +
+		"Pain minibosses are not affected. 1 is off.";
 	public const string MaxMiniBossesDescription = "Upper limit on regular minibosses in one wave.";
 
 	public const string PainFromWaveLabel = "First Pain wave";

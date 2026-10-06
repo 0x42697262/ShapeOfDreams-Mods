@@ -10,6 +10,8 @@ internal static class Tuning
 
 	public const float HudRefreshSeconds = 0.25f;
 
+	public const float HudFindRetrySeconds = 1f;
+
 	public const float SpawnReservationSeconds = 5f;
 
 	public const float FallbackArenaRadius = 10f;
@@ -53,4 +55,8 @@ internal static class Tuning
 	public const string ListJoiner = ", ";
 
 	public const float MinimumStatMultiplier = 0.1f;
+
+	public const double ErrorLogIntervalSeconds = 5;
+
+	public const float WellAdoptRadius = 3f;
 }

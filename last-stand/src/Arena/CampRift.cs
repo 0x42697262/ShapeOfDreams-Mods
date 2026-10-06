@@ -25,6 +25,12 @@ internal sealed class CampRift
 			return;
 		}
 
+		int hidden = WorldMapNodes.HideAllBut(zones, target);
+		if (hidden > 0)
+		{
+			Log.Info(LogText.MapNodesHidden(hidden, target));
+		}
+
 		if (rift.nextNodeIndex == target && _target == target)
 		{
 			return;

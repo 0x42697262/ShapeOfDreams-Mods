@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using LastStand.Arena;
 using LastStand.Config;
 using LastStand.Diagnostics;
 using LastStand.Game;
@@ -72,7 +73,7 @@ internal sealed class HeroicBosses
 			}
 		}
 
-		return false;
+		return entity is BossMonster unclaimed && IsSupported(unclaimed) && ArenaLocator.IsInArenaNode();
 	}
 
 	public BossMonster Spawn(BossMonster prefab, Vector3 position, int level, bool skipEntrance)
@@ -121,7 +122,7 @@ internal sealed class HeroicBosses
 	public void OnDied(BossMonster boss, int chaosRewards)
 	{
 		KillLeftovers(boss);
-		if (!_spawned.Contains(boss) || !_rewarded.Add(boss))
+		if (HasBossAncestor(boss) || !_rewarded.Add(boss))
 		{
 			return;
 		}
@@ -130,8 +131,7 @@ internal sealed class HeroicBosses
 
 		for (int i = 0; i < chaosRewards; i++)
 		{
-			Dew.CreateActor<Shrine_Chaos>(Dew.GetGoodRewardPosition(position, Tuning.RewardScatter), null, null,
-				chaos => chaos.Networkrarity = Rarity.Legendary);
+			Dew.CreateActor<Shrine_CorruptedChaos>(Dew.GetGoodRewardPosition(position, Tuning.RewardScatter), null);
 		}
 
 		Log.Info(LogText.HeroicBossDied(chaosRewards));
@@ -143,6 +143,19 @@ internal sealed class HeroicBosses
 		_spawned.Clear();
 		_rewarded.Clear();
 		_leftovers.Clear();
+	}
+
+	private static bool HasBossAncestor(Actor actor)
+	{
+		for (Actor parent = actor.parentActor; parent != null; parent = parent.parentActor)
+		{
+			if (parent is BossMonster)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void KillLeftovers(BossMonster boss)

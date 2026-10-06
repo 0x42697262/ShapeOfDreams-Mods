@@ -15,6 +15,11 @@ internal sealed class WaveCycle
 		_nextWaveAt = firstWaveAt;
 	}
 
+	public static WaveCycle Resume(int wave, bool inProgress, double nextWaveAt)
+	{
+		return new WaveCycle(nextWaveAt) { CurrentWave = wave, InProgress = inProgress };
+	}
+
 	public bool TryStartWave(double now)
 	{
 		if (InProgress || now < _nextWaveAt)

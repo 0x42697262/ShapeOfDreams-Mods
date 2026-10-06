@@ -24,6 +24,8 @@ internal sealed class WaveSettings
 	public Cadence MiniBosses { get; set; }
 	public int MiniBossOccurrencesPerExtra { get; set; }
 	public int MaxMiniBosses { get; set; }
+	public double MiniBossHealthMultiplier { get; set; }
+	public double MiniBossDamageMultiplier { get; set; }
 
 	public Cadence Pain { get; set; }
 	public int PainOccurrencesPerExtra { get; set; }

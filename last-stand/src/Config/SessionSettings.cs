@@ -69,6 +69,8 @@ internal sealed class SessionSettings
 			MiniBosses = CadenceFrom(config.miniBossFromWave, config.miniBossIntervalWaves),
 			MiniBossOccurrencesPerExtra = Math.Max(MinimumStep, config.miniBossOccurrencesPerExtra),
 			MaxMiniBosses = Math.Max(0, config.maxMiniBossesPerWave),
+			MiniBossHealthMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.miniBossHealthMultiplier),
+			MiniBossDamageMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.miniBossDamageMultiplier),
 
 			Pain = CadenceFrom(config.painFromWave, config.painIntervalWaves),
 			PainOccurrencesPerExtra = Math.Max(MinimumStep, config.painOccurrencesPerExtra),
@@ -149,7 +151,8 @@ internal sealed class SessionSettings
 			mobItemsPerPlayerPerWave: Math.Max(0, config.mobItemsPerPlayerPerWave),
 			growthPerWave: Math.Max(0f, config.rewardGrowthPercentPerWave) / Tuning.PercentScale,
 			guaranteedDropPerWave: config.guaranteedDropPerWave,
-			heroicBossChaosRewards: Math.Max(0, config.heroicBossChaosRewards));
+			heroicBossChaosRewards: Math.Max(0, config.heroicBossChaosRewards),
+			itemRarityFloor: ToChance(Math.Max(0f, config.itemRarityFloorPercent)));
 	}
 
 	private static IReadOnlyList<string> ListFrom(string text)

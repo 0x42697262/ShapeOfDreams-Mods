@@ -108,7 +108,15 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.MaxMiniBossesLabel)]
 	[Description(ConfigText.MaxMiniBossesDescription)]
-	public int maxMiniBossesPerWave = 4;
+	public int maxMiniBossesPerWave = 10;
+
+	[LabelText(ConfigText.MiniBossHealthMultiplierLabel)]
+	[Description(ConfigText.MiniBossStatMultiplierDescription)]
+	public float miniBossHealthMultiplier = 2.5f;
+
+	[LabelText(ConfigText.MiniBossDamageMultiplierLabel)]
+	[Description(ConfigText.MiniBossStatMultiplierDescription)]
+	public float miniBossDamageMultiplier = 2.5f;
 
 	[Header(ConfigText.HeroicBossHeader)]
 	[LabelText(ConfigText.HeroicBossFromWaveLabel)]
@@ -133,7 +141,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicBossHealthMultiplierLabel)]
 	[Description(ConfigText.HeroicBossStatMultiplierDescription)]
-	public float heroicBossHealthMultiplier = 10f;
+	public float heroicBossHealthMultiplier = 3f;
 
 	[LabelText(ConfigText.HeroicBossDamageMultiplierLabel)]
 	[Description(ConfigText.HeroicBossStatMultiplierDescription)]
@@ -150,7 +158,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicBossChaosLabel)]
 	[Description(ConfigText.HeroicBossChaosDescription)]
-	public int heroicBossChaosRewards = 5;
+	public int heroicBossChaosRewards = 3;
 
 	[LabelText(ConfigText.HeroicBossDropMultiplierLabel)]
 	[Description(ConfigText.DropMultiplierDescription)]
@@ -247,19 +255,19 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.CommonDropLabel)]
 	[Description(ConfigText.RarityDropDescription)]
-	public float commonDropPercent = 25f;
+	public float commonDropPercent = 50f;
 
 	[LabelText(ConfigText.RareDropLabel)]
 	[Description(ConfigText.RarityDropDescription)]
-	public float rareDropPercent = 10f;
+	public float rareDropPercent = 20f;
 
 	[LabelText(ConfigText.EpicDropLabel)]
 	[Description(ConfigText.RarityDropDescription)]
-	public float epicDropPercent = 4f;
+	public float epicDropPercent = 8f;
 
 	[LabelText(ConfigText.LegendaryDropLabel)]
 	[Description(ConfigText.RarityDropDescription)]
-	public float legendaryDropPercent = 1f;
+	public float legendaryDropPercent = 2f;
 
 	[LabelText(ConfigText.ItemTargetWaveLabel)]
 	[Description(ConfigText.ItemTargetWaveDescription)]
@@ -267,23 +275,27 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.CommonAtTargetLabel)]
 	[Description(ConfigText.ItemAtTargetDescription)]
-	public float commonDropPercentAtTarget = 0f;
+	public float commonDropPercentAtTarget = 25f;
 
 	[LabelText(ConfigText.RareAtTargetLabel)]
 	[Description(ConfigText.ItemAtTargetDescription)]
-	public float rareDropPercentAtTarget = 49.8f;
+	public float rareDropPercentAtTarget = 25f;
 
 	[LabelText(ConfigText.EpicAtTargetLabel)]
 	[Description(ConfigText.ItemAtTargetDescription)]
-	public float epicDropPercentAtTarget = 35.2f;
+	public float epicDropPercentAtTarget = 25f;
 
 	[LabelText(ConfigText.LegendaryAtTargetLabel)]
 	[Description(ConfigText.ItemAtTargetDescription)]
-	public float legendaryDropPercentAtTarget = 15f;
+	public float legendaryDropPercentAtTarget = 25f;
 
 	[LabelText(ConfigText.MemoryShareLabel)]
 	[Description(ConfigText.MemoryShareDescription)]
 	public float memorySharePercent = 50f;
+
+	[LabelText(ConfigText.ItemRarityFloorLabel)]
+	[Description(ConfigText.ItemRarityFloorDescription)]
+	public float itemRarityFloorPercent = 25f;
 
 	[Header(ConfigText.EnemyRewardsHeader)]
 	[LabelText(ConfigText.RewardGrowthLabel)]

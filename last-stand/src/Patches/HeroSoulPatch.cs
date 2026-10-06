@@ -20,12 +20,13 @@ internal static class HeroSoulPatch
 
 		try
 		{
-			return !HeroSouls.PlaceInCurrentRoom(__instance);
+			HeroSouls.Suppress(__instance);
 		}
 		catch (Exception e)
 		{
 			Log.Error(LogText.HeroSoulFailed, e);
-			return true;
 		}
+
+		return false;
 	}
 }

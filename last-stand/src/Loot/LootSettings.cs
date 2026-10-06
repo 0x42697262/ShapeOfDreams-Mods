@@ -21,10 +21,13 @@ internal sealed class LootSettings
 
 	public int HeroicBossChaosRewards { get; }
 
+	public double ItemRarityFloor { get; }
+
 	public LootSettings(RarityTable items, double memoryShare, RarityTable chaos,
 		IReadOnlyDictionary<EnemyTier, TierLoot> tiers, int mobItemsPerPlayerPerWave, double growthPerWave,
-		bool guaranteedDropPerWave, int heroicBossChaosRewards)
+		bool guaranteedDropPerWave, int heroicBossChaosRewards, double itemRarityFloor)
 	{
+		ItemRarityFloor = itemRarityFloor;
 		Items = items;
 		MemoryShare = memoryShare;
 		Chaos = chaos;

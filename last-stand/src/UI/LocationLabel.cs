@@ -11,6 +11,7 @@ internal sealed class LocationLabel
 	private string _wanted;
 	private string _shown;
 	private double _nextRefreshAt;
+	private double _nextFindAt;
 
 	public void Capture(UI_InGame_Location location)
 	{
@@ -28,7 +29,14 @@ internal sealed class LocationLabel
 		}
 
 		_nextRefreshAt = now + Tuning.HudRefreshSeconds;
-		Show(label(now));
+		string wanted = label(now);
+		if (wanted != null && _text == null && now >= _nextFindAt)
+		{
+			_nextFindAt = now + Tuning.HudFindRetrySeconds;
+			Capture(UnityEngine.Object.FindAnyObjectByType<UI_InGame_Location>());
+		}
+
+		Show(wanted);
 	}
 
 	public void Show(string label)

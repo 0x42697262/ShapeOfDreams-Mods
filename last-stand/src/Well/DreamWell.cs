@@ -1,3 +1,4 @@
+using LastStand.Config;
 using LastStand.Diagnostics;
 using LastStand.Text;
 using UnityEngine;
@@ -15,6 +16,16 @@ internal sealed class DreamWell
 	{
 		if (_well != null)
 		{
+			return;
+		}
+
+		_well = FindExisting(position);
+		if (_well != null)
+		{
+			_well.maxUseCountPerPlayer = Unlimited;
+			_well.NetworkmaxTotalUseCount = Unlimited;
+			_well.useCooldown = NoCooldown;
+			Log.Info(LogText.WellReused(position));
 			return;
 		}
 
@@ -37,6 +48,20 @@ internal sealed class DreamWell
 	public void Forget()
 	{
 		_well = null;
+	}
+
+	private static Shrine_UpgradeWell FindExisting(Vector3 position)
+	{
+		foreach (Shrine_UpgradeWell well in Object.FindObjectsByType<Shrine_UpgradeWell>(FindObjectsSortMode.None))
+		{
+			if (!well.IsNullOrInactive()
+			    && Vector3.Distance(well.transform.position, position) <= Tuning.WellAdoptRadius)
+			{
+				return well;
+			}
+		}
+
+		return null;
 	}
 
 	private static void Configure(Shrine_UpgradeWell well)

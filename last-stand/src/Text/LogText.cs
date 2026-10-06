@@ -12,23 +12,62 @@ internal static class LogText
 	public const string ConfigSaveFailed = "could not save the Last Stand config.";
 	public const string ConfigApplied = "config applied and saved.";
 	public const string BossMusicMissing = "boss music: none of the boss tracks could be found; the room's music plays.";
-	public const string HeroSoulFailed = "hero soul: could not place it in the current room; the game's own placement was used.";
+	public const string HeroSoulFailed = "hero soul: could not clear a knocked-out hero's soul.";
 
-	public static string HeroSoulPlaced(int node)
+	public static string HeroSoulRemoved(int node)
 	{
-		return $"hero soul: placed in the current room (node {node}) so the knocked-out hero can be revived here.";
+		return $"hero soul: removed one from node {node}; knocked-out heroes are revived at the next wave instead.";
 	}
 
-	public static string HeroSoulMoved(int from, int to)
+	public static string HeroesRevived(int wave, int count)
 	{
-		return $"hero soul: moved from node {from} to the current room (node {to}).";
+		return $"revive: {count} knocked-out hero(es) revived after wave {wave} was cleared.";
+	}
+
+	public static string MapNodesHidden(int count, int kept)
+	{
+		return $"world map: hid {count} node(s); only the camp and the arena (node {kept}) are shown.";
 	}
 
 	public static string BossMusicPlaying(string track)
 	{
 		return $"boss music: playing {track} (host only).";
 	}
-	public const string TickFailed = "session tick failed; the session was stopped.";
+	public const string TickFailed = "session tick failed; the session keeps its wave and carries on.";
+
+	public static string Suppressed(int count)
+	{
+		return $"({count} more like it were not logged.)";
+	}
+
+	public static string SpawnFailed(Combat.EnemyTier tier)
+	{
+		return $"spawning a {tier} failed; that spawn was skipped and the wave carries on.";
+	}
+
+	public const string JumpNotPossible = "laststand_wave: only works in the arena, with a wave of 1 or more.";
+
+	public static string JumpedToWave(int wave)
+	{
+		return $"jumping to wave {wave}; it starts now.";
+	}
+
+	public static string WaveResumed(int wave)
+	{
+		return $"wave {wave} resumed after a reload; no new monsters are added to it.";
+	}
+
+	public static string ProgressRestored(int wave, bool inProgress, int adopted)
+	{
+		return inProgress
+			? $"progress restored: wave {wave} is still being fought, {adopted} monster(s) on the field taken over."
+			: $"progress restored: wave {wave} was cleared; wave {wave + 1} comes next.";
+	}
+
+	public static string WellReused(UnityEngine.Vector3 position)
+	{
+		return $"Dream Well already standing at {position}; reusing it.";
+	}
 	public const string HudFailed = "HUD label update failed; the stock label was restored.";
 	public const string SessionStopped = "session stopped.";
 	public const string NotHosting = "only the host of a Last Stand run can do that.";
@@ -56,7 +95,7 @@ internal static class LogText
 
 	public static string HeroicBossDied(int chaosRewards)
 	{
-		return $"heroic boss: died, dropped {chaosRewards} legendary chaos reward(s).";
+		return $"heroic boss: died, dropped {chaosRewards} Corrupted Chaos reward(s).";
 	}
 
 	public static string PainZoneStarted()

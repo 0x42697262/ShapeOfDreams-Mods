@@ -7,45 +7,62 @@ namespace LastStand.Combat;
 
 internal static class HeroSouls
 {
-	public static bool PlaceInCurrentRoom(Se_HeroKnockedOut knockedOut)
+	public static void Suppress(Se_HeroKnockedOut knockedOut)
 	{
-		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
-		DewPlayer owner = knockedOut != null && knockedOut.victim != null ? knockedOut.victim.owner : null;
-		if (zones == null || owner == null || knockedOut.disableQuest)
+		if (knockedOut == null)
 		{
-			return false;
+			return;
 		}
 
-		int current = zones.currentNodeIndex;
-		bool alreadyHere = false;
+		knockedOut.disableQuest = true;
+
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
+		DewPlayer owner = knockedOut.victim != null ? knockedOut.victim.owner : null;
+		if (zones == null || owner == null)
+		{
+			return;
+		}
+
 		for (int node = 0; node < zones.nodes.Count; node++)
 		{
 			foreach (ModifierData modifier in zones.nodes[node].modifiers.ToArray())
 			{
-				if (!IsSoulOf(modifier, owner))
-				{
-					continue;
-				}
-
-				if (node == current)
-				{
-					alreadyHere = true;
-				}
-				else
+				if (IsSoulOf(modifier, owner))
 				{
 					zones.RemoveModifier(node, modifier.id);
-					Log.Info(LogText.HeroSoulMoved(node, current));
+					Log.Info(LogText.HeroSoulRemoved(node));
 				}
 			}
 		}
+	}
 
-		if (!alreadyHere && Dew.GetAliveHeroCount() != 0)
+	public static int ReviveKnockedOut()
+	{
+		if (Dew.GetAliveHeroCount() == 0)
 		{
-			zones.AddModifier<RoomMod_HeroSoul>(current, owner.guid);
-			Log.Info(LogText.HeroSoulPlaced(current));
+			return 0;
 		}
 
-		return true;
+		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
+		if (actors == null)
+		{
+			return 0;
+		}
+
+		int revived = 0;
+		foreach (Hero hero in actors.allHeroes.ToArray())
+		{
+			if (hero == null || !hero.isActive || !hero.isKnockedOut
+			    || !hero.Status.TryGetStatusEffect(out Se_HeroKnockedOut knockedOut))
+			{
+				continue;
+			}
+
+			knockedOut.Revive();
+			revived++;
+		}
+
+		return revived;
 	}
 
 	private static bool IsSoulOf(ModifierData modifier, DewPlayer owner)
