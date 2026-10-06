@@ -212,20 +212,24 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.ForeignIntervalLabel)]
 	[Description(ConfigText.ForeignIntervalDescription)]
-	public int foreignTypesIntervalWaves = 10;
+	public int foreignTypesIntervalWaves = 5;
 
 	[LabelText(ConfigText.ForeignPerUnlockLabel)]
 	[Description(ConfigText.ForeignPerUnlockDescription)]
-	public int foreignTypesPerUnlock = 1;
+	public int foreignTypesPerUnlock = 3;
 
 	[Header(ConfigText.HunterHeader)]
+	[LabelText(ConfigText.HunterFromWaveLabel)]
+	[Description(ConfigText.HunterFromWaveDescription)]
+	public int hunterFromWave = 101;
+
 	[LabelText(ConfigText.HunterIntervalLabel)]
 	[Description(ConfigText.HunterIntervalDescription)]
 	public int hunterIntervalWaves = 5;
 
 	[LabelText(ConfigText.MaxHuntersLabel)]
 	[Description(ConfigText.MaxHuntersDescription)]
-	public int maxHuntersPerWave = 10;
+	public int maxHuntersPerWave = 0;
 
 	[LabelText(ConfigText.HuntedZoneIntervalLabel)]
 	[Description(ConfigText.HuntedZoneIntervalDescription)]

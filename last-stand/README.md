@@ -24,9 +24,9 @@ Dream Well in the middle of the arena turns what you collect into upgrades.
 - **Pain minibosses** change the rules while they live: every hero takes
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.
-- **Monsters from other worlds** join every 10 waves, one type at a time,
-  weakest worlds first. Once all have joined, **hunters** start coming, and
-  later the arena becomes a **hunter zone** with falling artillery.
+- **Monsters from other worlds** join every 5 waves, three types at a time,
+  weakest worlds first. From wave 101, **hunters** come every wave, and every
+  10 waves the arena becomes a **hunter zone** with falling artillery.
 - **Mirage skins** appear from wave 30, weakest first, a stronger one every
   10 waves.
 - **Loot is scarce but improves.** Monsters drop at most one memory or
@@ -197,19 +197,20 @@ set by how fast the party kills, not by a timer. The score is the wave reached.
 | 1 | Regular monsters, 6 growing by 2 a wave | wave |
 | 5 | Surge: twice the regular monsters, hunters and alive cap | 5 waves |
 | 2 | +10% health and +10% damage on every monster, stacking | wave |
-| 10 | A monster type from another world joins the pool | 10 waves |
+| 10 | 3 monster types from other worlds join the pool | 5 waves |
 | 10 | Minibosses (1, 1, 2, 2… up to 10) | 10 waves |
 | 20 | Pain minibosses (1, 1, 2, 2… up to 3) | 20 waves |
 | 30 | The next stronger Mirage skin is unlocked | 10 waves |
 | 49 | Heroic boss, last in the wave (1 at 49 and 99, 2 at 149 and 199, 3 at 249…, up to 10) | 50 waves |
-| all types seen + 5 | Hunters, one more each time (up to 10) | 5 waves |
-| first hunter wave + 10 | Hunter zone: falling artillery for the wave (hunt level 1, 2, 3) | 10 waves |
+| 101 | Hunters, one more each time, no limit | 5 waves |
+| 101 | Hunter zone: falling artillery for the wave (hunt level 1, 2… up to 6) | 10 waves |
 
-The waves for hunters depend on how many monster types the other worlds add,
-which is only known at runtime. The log reports it when the arena is ready:
-`catalog: N monster type(s) from other worlds, M Mirage skin(s); hunters start
-at wave W`. With 5 new types, the last joins at wave 50, hunters start at
-wave 55 and hunter zones come at 65, 75 and 85.
+How many monster types the other worlds add is only known at runtime. The log
+reports it when the arena is ready: `catalog: N monster type(s) from other
+worlds, M Mirage skin(s), …; hunters start at wave W`. With the 29 types seen
+in testing, the last three join at wave 55. Hunters used to wait until every
+type had joined, which put them at wave 295 with one type every 10 waves, so
+now they have their own start wave.
 
 Each wave is planned by `WaveSchedule`, plain logic with no game calls. It
 works through these knobs, all using systems the game already syncs:
@@ -237,8 +238,8 @@ come last: see below.
 
 ### Monsters from other worlds
 
-The pool starts as the run's current zone (`Zone.defaultMonsters`). Every 10
-waves, one more monster type from another zone joins. The other zones are the
+The pool starts as the run's current zone (`Zone.defaultMonsters`). From wave
+10 and every 5 waves after, three more monster types from other zones join. The other zones are the
 game's own list (`Zone_` assets, filtered by the build's content settings, as
 `ZoneManager` does) ordered by `zoneTier`, so weaker worlds come first. Each new
 type is a fair share of the pool: with 8 local types and 2 new ones, a regular
@@ -249,16 +250,25 @@ the game marks `ISpawnableAsMiniBoss`.
 
 - **Hunters** are monsters with the game's `Se_HunterBuff`, the same buff the
   game's own hunter spawns get: faster, shadow-walking, no gold or exp. They
-  start 5 waves after the last new monster type joins. The first hunter wave
-  has 1, and one more joins every 5 waves after that, up to 10.
-- **Hunter zones** start 10 waves after the first hunter wave and repeat every
-  10 waves. For that wave, the arena gets the game's `RoomMod_Hunted` modifier
+  start at wave 101 (`First hunter wave`) with 1, and one more joins every 5
+  waves after that with no limit (`Max hunters per wave` 0): 10 by wave 146,
+  20 by wave 196. Surges double them like everything else.
+- **Hunter zones** start on the first hunter wave and repeat every 10 waves:
+  101, 111, 121… For that wave, the arena gets the game's `RoomMod_Hunted` modifier
   through `ZoneManager.AddModifier`, which adds it to the live room and syncs it
   to clients. Its artillery, small and big meteors aimed at the heroes, comes
   from the modifier itself, not from any skill, memory or essence. It also
   makes hunters tougher. The hunt level (`ZoneManager.currentHuntLevel`) is set
-  to 1, 2 and then 3 for successive zones, which scales the artillery. When the
-  wave is cleared the modifier is removed and the old hunt level is restored.
+  to 1, 2, 3… for successive zones, up to 6, which scales the artillery. The
+  game's own top is 5: its HUD shows at most 5 stars. When the wave is cleared
+  the modifier is removed and the old hunt level is restored.
+- **No kidnapping at a high hunt level.** In a normal run, at hunt level 5 or
+  more, `GameMod_Obliviax` can start `Quest_HuntedByObliviax`, which ends in
+  `Ge_Obliviax_InterruptTravelAndKidnap`. Both only react to a room load while
+  traveling. Last Stand raises the hunt level inside the arena, after the
+  only travel, and restores it when the zone ends, so neither ever fires. The
+  threat level (the game's ambient level, `GameManager.SetAmbientLevel`) has no
+  maximum and nothing in the game reacts to its value.
 
 ### Mirage skins
 
@@ -710,8 +720,8 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |
 | | Damage per second per boss | 1% |
 | | Health / damage bonus | 20% / 30% |
-| Other worlds | First wave / every N waves / types per step | 10 / 10 / 1 |
-| Hunters | Waves per extra hunter / max per wave | 5 / 10 |
+| Other worlds | First wave / every N waves / types per step | 10 / 5 / 3 |
+| Hunters | First wave / waves per extra hunter / max per wave | 101 / 5 / no limit (0) |
 | | Waves between hunter zones / max hunt level | 10 / 6 |
 | Mirage | First wave / waves per new skin / chance | 30 / 10 / 20% |
 | Item drops | Monster items per player per wave | 1 |

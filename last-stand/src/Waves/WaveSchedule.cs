@@ -1,4 +1,5 @@
 using System;
+using LastStand.Config;
 
 namespace LastStand.Waves;
 
@@ -20,7 +21,7 @@ internal static class WaveSchedule
 
 		int foreign = ForeignTypesUnlocked(wave, settings, content.ForeignTypes);
 		int mirage = MirageSkinsUnlocked(wave, settings, content.MirageSkins);
-		int hunterStart = HunterStartWave(settings, content.ForeignTypes);
+		int hunterStart = settings.HunterFromWave;
 		bool surge = settings.Surges.IsOn(wave);
 		double surgeScale = surge ? settings.SurgeMultiplier : NoSurge;
 
@@ -50,13 +51,6 @@ internal static class WaveSchedule
 		};
 	}
 
-	public static int HunterStartWave(WaveSettings settings, int foreignTypes)
-	{
-		int unlocksNeeded = (foreignTypes + settings.ForeignTypesPerUnlock - FirstOfTier) / settings.ForeignTypesPerUnlock;
-		int lastUnlock = Math.Max(0, unlocksNeeded - FirstOfTier);
-		return settings.ForeignTypes.WaveOfOccurrence(lastUnlock) + settings.HunterIntervalWaves;
-	}
-
 	private static int ForeignTypesUnlocked(int wave, WaveSettings settings, int total)
 	{
 		int unlocks = settings.ForeignTypes.OccurrencesSoFar(wave);
@@ -71,12 +65,13 @@ internal static class WaveSchedule
 	private static int Hunters(int wave, int hunterStart, WaveSettings settings)
 	{
 		Cadence hunters = new Cadence(hunterStart, settings.HunterIntervalWaves);
-		return Math.Min(settings.MaxHunters, hunters.OccurrencesSoFar(wave));
+		int count = hunters.OccurrencesSoFar(wave);
+		return settings.MaxHunters == Tuning.NoHunterCap ? count : Math.Min(settings.MaxHunters, count);
 	}
 
 	private static int HuntLevel(int wave, int hunterStart, WaveSettings settings)
 	{
-		Cadence hunted = new Cadence(hunterStart + settings.HuntedZoneIntervalWaves, settings.HuntedZoneIntervalWaves);
+		Cadence hunted = new Cadence(hunterStart, settings.HuntedZoneIntervalWaves);
 		return hunted.IsOn(wave) ? Math.Min(settings.MaxHuntLevel, hunted.OccurrencesSoFar(wave)) : NoHuntLevel;
 	}
 

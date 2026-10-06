@@ -89,6 +89,7 @@ internal sealed class SessionSettings
 			ForeignTypes = CadenceFrom(config.foreignTypesFromWave, config.foreignTypesIntervalWaves),
 			ForeignTypesPerUnlock = Math.Max(MinimumStep, config.foreignTypesPerUnlock),
 
+			HunterFromWave = Math.Max(Tuning.FirstWave, config.hunterFromWave),
 			HunterIntervalWaves = Math.Max(MinimumStep, config.hunterIntervalWaves),
 			MaxHunters = Math.Max(0, config.maxHuntersPerWave),
 			HuntedZoneIntervalWaves = Math.Max(MinimumStep, config.huntedZoneIntervalWaves),

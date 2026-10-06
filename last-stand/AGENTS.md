@@ -233,6 +233,14 @@ These were checked in the decompiled code.
   live mid-room. It returns the modifier id, and `RemoveModifier(node, id)`
   takes it back out. If the added modifier `isMain`, `AddModifier` first
   removes the node's other main modifier.
+- **Hunt level and threat level.** `ZoneManager.currentHuntLevel` only rises by
+  itself on travel into a hunted node. At 5 or more, `GameMod_Obliviax` starts
+  `Quest_HuntedByObliviax` on a traveling room load, and the quest ends in
+  `Ge_Obliviax_InterruptTravelAndKidnap`. Both check `isTraveling`, so raising
+  the level inside the arena never triggers them. The HUD and the room-mod
+  label clamp the level to 5. The "threat level" HUD
+  (`UI_InGame_AmbientLevel`) is `GameManager.ambientLevel`, which has a
+  minimum of 1, no maximum, and nothing reacting to its value.
 - **Mirage skins.** `MirageSkinEffect` subclasses (`Se_MirageSkin_Delusion`,
   `_Armor`, `_Oblivion`, `_Oppression`, `_Pulverization`, `_Sanctification`)
   carry a `tier`. `GameMod_MirageSkin.RefreshPool` gives early zones Delusion
@@ -450,6 +458,8 @@ Each answer still needs to be seen working:
 36. **Heroic boss haste grows:** the `wave N:` log line shows `heroicHaste=200`
     at wave 49, 250 at 99 and 300 at 149, and later bosses use their skills
     visibly more often.
+37. **Hunters from wave 101:** the catalog log line says `hunters start at
+    wave 101`, and wave 101 has 1 hunter and a hunter zone at hunt level 1.
 
 ## Conventions
 

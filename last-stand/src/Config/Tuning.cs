@@ -40,6 +40,8 @@ internal static class Tuning
 
 	public const int FirstWave = 1;
 
+	public const int NoHunterCap = 0;
+
 	public const int MinimumAmbientLevel = 1;
 
 	public const int TestBossLevel = 1;

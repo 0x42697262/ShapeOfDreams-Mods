@@ -30,9 +30,4 @@ internal readonly struct Cadence
 	{
 		return Occurrence(wave) + 1;
 	}
-
-	public int WaveOfOccurrence(int occurrence)
-	{
-		return FirstWave + occurrence * IntervalWaves;
-	}
 }

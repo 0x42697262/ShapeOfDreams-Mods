@@ -44,6 +44,7 @@ internal sealed class WaveSettings
 	public Cadence ForeignTypes { get; set; }
 	public int ForeignTypesPerUnlock { get; set; }
 
+	public int HunterFromWave { get; set; }
 	public int HunterIntervalWaves { get; set; }
 	public int MaxHunters { get; set; }
 	public int HuntedZoneIntervalWaves { get; set; }

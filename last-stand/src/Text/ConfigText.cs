@@ -207,19 +207,22 @@ internal static class ConfigText
 
 	public const string ForeignPerUnlockLabel = "New monster types per step";
 	public const string ForeignPerUnlockDescription =
-		"Monster types added each step. Hunters start once every type has been added.";
+		"Monster types added each step.";
+
+	public const string HunterFromWaveLabel = "First hunter wave";
+	public const string HunterFromWaveDescription =
+		"Wave from which hunters join every wave, one at first. The first hunter zone comes with them.";
 
 	public const string HunterIntervalLabel = "Waves per extra hunter";
 	public const string HunterIntervalDescription =
-		"Hunters start this many waves after the last new monster type, one per wave, and one more " +
-		"joins every this many waves.";
+		"Once hunters have started, one more joins every this many waves.";
 
 	public const string MaxHuntersLabel = "Max hunters per wave";
-	public const string MaxHuntersDescription = "Upper limit on hunters in one wave.";
+	public const string MaxHuntersDescription = "Upper limit on hunters in one wave, before surges. 0 means no limit.";
 
 	public const string HuntedZoneIntervalLabel = "Waves between hunter zones";
 	public const string HuntedZoneIntervalDescription =
-		"Once hunters have started, every this many waves the arena becomes a hunter zone for the " +
+		"Starting with the first hunter wave, every this many waves the arena becomes a hunter zone for the " +
 		"wave: the game's falling artillery strikes around the heroes until the wave is cleared.";
 
 	public const string MaxHuntLevelLabel = "Max hunt level";

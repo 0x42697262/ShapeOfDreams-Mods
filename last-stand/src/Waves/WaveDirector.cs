@@ -129,7 +129,7 @@ internal sealed class WaveDirector
 		}
 
 		Log.Info(LogText.CatalogBuilt(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
-			WaveSchedule.HunterStartWave(settings, _catalog.ForeignTypeCount), _catalog.HeroicBossCount));
+			settings.HunterFromWave, _catalog.HeroicBossCount));
 		return true;
 	}
 
