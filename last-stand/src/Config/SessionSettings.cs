@@ -50,6 +50,8 @@ internal sealed class SessionSettings
 			RegularBase = Math.Max(0, config.regularBase),
 			RegularGrowthPerWave = Math.Max(0, config.regularGrowthPerWave),
 			ExtraPlayerShare = Math.Max(0f, config.extraPlayerShare),
+			Surges = CadenceFrom(config.surgeIntervalWaves, config.surgeIntervalWaves),
+			SurgeMultiplier = Math.Max(0f, config.surgeMonsterMultiplier),
 			MaxAliveBase = Math.Max(MinimumStep, config.maxAliveBase),
 			MaxAlivePerExtraPlayer = Math.Max(0, config.maxAlivePerExtraPlayer),
 			SpawnIntervalSeconds = Math.Max(0f, config.spawnIntervalSeconds),
@@ -73,6 +75,9 @@ internal sealed class SessionSettings
 			HeroicBossStepWaves = Math.Max(MinimumStep, config.heroicBossStepWaves),
 			MaxHeroicBosses = Math.Max(0, config.maxHeroicBossesPerWave),
 			HeroicBossEntranceDelaySeconds = Math.Max(0f, config.heroicBossEntranceDelaySeconds),
+			HeroicBossHealthMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.heroicBossHealthMultiplier),
+			HeroicBossDamageMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.heroicBossDamageMultiplier),
+			HeroicBossAbilityHaste = Math.Max(0f, config.heroicBossAbilityHaste),
 			HeroicBossTypes = ListFrom(config.heroicBossTypes),
 
 			ForeignTypes = CadenceFrom(config.foreignTypesFromWave, config.foreignTypesIntervalWaves),

@@ -33,6 +33,19 @@ internal static class LootRules
 		return null;
 	}
 
+	public static Rarity? HighestAvailable(Rarity rolled, Func<Rarity, bool> hasItems)
+	{
+		for (int rarity = (int)rolled; rarity >= (int)Rarity.Common; rarity--)
+		{
+			if (hasItems((Rarity)rarity))
+			{
+				return (Rarity)rarity;
+			}
+		}
+
+		return null;
+	}
+
 	public static bool ChooseMemory(bool balanceKinds, int players, int memories, int essences,
 		double memoryShare, double roll)
 	{

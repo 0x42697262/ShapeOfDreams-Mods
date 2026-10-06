@@ -13,7 +13,9 @@ internal sealed class HeroicBosses
 {
 	private const BindingFlags OwnMethod = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
-	private readonly HashSet<Entity> _owned = new HashSet<Entity>();
+	private readonly HashSet<Entity> _spawned = new HashSet<Entity>();
+	private readonly HashSet<Entity> _rewarded = new HashSet<Entity>();
+	private readonly List<Entity> _leftovers = new List<Entity>();
 
 	public static BossMonster Find(string typeName)
 	{
@@ -52,7 +54,25 @@ internal sealed class HeroicBosses
 
 	public bool Owns(Entity entity)
 	{
-		return entity != null && _owned.Contains(entity);
+		if (entity == null)
+		{
+			return false;
+		}
+
+		if (_spawned.Contains(entity))
+		{
+			return true;
+		}
+
+		foreach (Entity boss in _spawned)
+		{
+			if (boss != null && entity.IsDescendantOf(boss))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public BossMonster Spawn(BossMonster prefab, Vector3 position, int level, bool skipEntrance)
@@ -87,7 +107,7 @@ internal sealed class HeroicBosses
 			return null;
 		}
 
-		_owned.Add(boss);
+		_spawned.Add(boss);
 
 		Hero target = Dew.GetClosestAliveHero(position);
 		if (target != null)
@@ -100,7 +120,12 @@ internal sealed class HeroicBosses
 
 	public void OnDied(BossMonster boss, int chaosRewards)
 	{
-		_owned.Remove(boss);
+		KillLeftovers(boss);
+		if (!_spawned.Contains(boss) || !_rewarded.Add(boss))
+		{
+			return;
+		}
+
 		Vector3 position = boss.agentPosition;
 
 		for (int i = 0; i < chaosRewards; i++)
@@ -115,6 +140,34 @@ internal sealed class HeroicBosses
 
 	public void Clear()
 	{
-		_owned.Clear();
+		_spawned.Clear();
+		_rewarded.Clear();
+		_leftovers.Clear();
+	}
+
+	private void KillLeftovers(BossMonster boss)
+	{
+		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
+		if (actors == null)
+		{
+			return;
+		}
+
+		_leftovers.Clear();
+		foreach (Entity entity in actors.allEntities)
+		{
+			if (entity != boss && entity is Monster && !entity.IsNullInactiveDeadOrKnockedOut()
+			    && entity.IsDescendantOf(boss))
+			{
+				_leftovers.Add(entity);
+			}
+		}
+
+		foreach (Entity leftover in _leftovers)
+		{
+			leftover.Kill();
+		}
+
+		_leftovers.Clear();
 	}
 }

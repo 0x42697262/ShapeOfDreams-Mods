@@ -4,6 +4,7 @@ internal sealed class WavePlan
 {
 	public int Number { get; set; }
 	public int RegularCount { get; set; }
+	public bool IsSurge { get; set; }
 	public int HunterCount { get; set; }
 	public int MiniBossCount { get; set; }
 	public int PainCount { get; set; }

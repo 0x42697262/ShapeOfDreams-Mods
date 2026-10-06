@@ -8,6 +8,8 @@ internal static class WaveSchedule
 
 	private const int FirstOfTier = 1;
 
+	private const double NoSurge = 1;
+
 	private const int NoHuntLevel = 0;
 
 	public static WavePlan Plan(int wave, int players, WaveSettings settings, WaveContent content)
@@ -19,19 +21,23 @@ internal static class WaveSchedule
 		int foreign = ForeignTypesUnlocked(wave, settings, content.ForeignTypes);
 		int mirage = MirageSkinsUnlocked(wave, settings, content.MirageSkins);
 		int hunterStart = HunterStartWave(settings, content.ForeignTypes);
+		bool surge = settings.Surges.IsOn(wave);
+		double surgeScale = surge ? settings.SurgeMultiplier : NoSurge;
 
 		return new WavePlan
 		{
 			Number = wave,
 			RegularCount = (int)Math.Round(
-				(settings.RegularBase + settings.RegularGrowthPerWave * wavesSinceFirst) * playerScale),
-			HunterCount = Hunters(wave, hunterStart, settings),
+				(settings.RegularBase + settings.RegularGrowthPerWave * wavesSinceFirst) * playerScale * surgeScale),
+			IsSurge = surge,
+			HunterCount = (int)Math.Round(Hunters(wave, hunterStart, settings) * surgeScale),
 			MiniBossCount = Scaled(wave, settings.MiniBosses, settings.MiniBossOccurrencesPerExtra,
 				settings.MaxMiniBosses),
 			PainCount = Scaled(wave, settings.Pain, settings.PainOccurrencesPerExtra, settings.MaxPain),
 			HeroicBossCount = content.HeroicBossTypes > 0 ? HeroicBosses(wave, settings) : 0,
 			AmbientLevel = settings.StartingAmbientLevel + wavesSinceFirst / settings.WavesPerAmbientLevel,
-			MaxAlive = settings.MaxAliveBase + settings.MaxAlivePerExtraPlayer * extraPlayers,
+			MaxAlive = (int)Math.Round(
+				(settings.MaxAliveBase + settings.MaxAlivePerExtraPlayer * extraPlayers) * Math.Max(NoSurge, surgeScale)),
 			HealthBonusPercent = settings.HealthBonusPerWave * wavesSinceFirst,
 			DamageBonusPercent = settings.DamageBonusPerWave * wavesSinceFirst,
 			ForeignTypesUnlocked = foreign,

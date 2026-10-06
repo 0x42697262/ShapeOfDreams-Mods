@@ -177,7 +177,7 @@ internal sealed class LastStandSession
 	{
 		return LogText.Status(LastStandMode.IsSelected(), NetworkServer.active, _phase.ToString(),
 			_waves.CurrentWave, _waves.WaveInProgress, _waves.SecondsUntilNextWave(_now), _enemies.Occupied(_now),
-			_waves.PendingSpawns);
+			_waves.PendingSpawns, _loot.DescribeTally());
 	}
 
 	public void Reset()
@@ -237,7 +237,7 @@ internal sealed class LastStandSession
 
 	private void OnWaveCleared(int wave)
 	{
-		_loot.OnWaveCleared(_settings.Loot);
+		_loot.OnWaveCleared(wave, _settings.Loot);
 	}
 
 	private void OnEnemyDied(EnemyDeath death)

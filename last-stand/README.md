@@ -154,6 +154,7 @@ set by how fast the party kills, not by a timer. The score is the wave reached.
 | From wave | What changes | Every |
 |---|---|---|
 | 1 | Regular monsters, 6 growing by 2 a wave | wave |
+| 5 | Surge: twice the regular monsters, hunters and alive cap | 5 waves |
 | 2 | +10% health and +10% damage on every monster, stacking | wave |
 | 10 | A monster type from another world joins the pool | 10 waves |
 | 10 | Minibosses (1, 1, 2, 2… up to 4) | 10 waves |
@@ -173,7 +174,12 @@ Each wave is planned by `WaveSchedule`, plain logic with no game calls. It
 works through these knobs, all using systems the game already syncs:
 
 - **Count:** regular monsters start at 6 and grow by 2 a wave. Each player past
-  the first adds half a wave again. Specials are added on top.
+  the first adds half a wave again. Every 5th wave is a **surge** that doubles
+  the regular count (wave 5: 28 instead of 14) and the hunter count, and
+  doubles the alive cap for that wave only, so the extra monsters are on the
+  field together instead of queuing. Minibosses, Pain minibosses and heroic
+  bosses are added on top and are not doubled. A multiplier below 1 shrinks
+  the counts but never the cap.
 - **Strength, per wave:** every spawned monster gets a stat bonus of +10% max
   health and +10% attack and ability damage for each wave after the first. So
   wave 11 is +100% health and +100% damage. This is a server-side
@@ -239,16 +245,46 @@ own spawn animation (its `Spawn` ability). It spawns at a random spot like any
 monster, heads for the nearest hero, and counts toward clearing the wave.
 
 **Which boss.** A random one from `Heroic boss types`, by default the zone
-bosses Forest, Dark Cave, Despair (both), Sky, Snow Mountain, Lava Land and
-Ink (both). A boss is skipped if it's hidden (`isHiddenBoss`) or if it, or any
+bosses of Forest, Dark Cave, Despair (Azurak), Sky, Snow Mountain and Lava
+Land. The Ink bosses are left out. They're a paired fight: White Night spawns
+Dark Moon itself, and Dark Moon runs its own death logic. `Mon_Despair_BossCrawler`
+doesn't exist as a boss type. A boss is skipped if it's hidden (`isHiddenBoss`) or if it, or any
 class between it and `BossMonster`, overrides `OnDeath`. Such bosses run their
 own death logic: `Mon_Primus_BossPrimusAeron` starts the game's ending, for
 one. The log says which types were skipped, and the catalog line gives how
 many are left. With none left, there are no heroic boss waves.
 
-**Strength.** It spawns at the current monster level and gets the same
-per-wave health and damage bonus as everything else, on top of the game's own
-boss scaling.
+**Strength: 10× health, 5× damage, faster skills.** It spawns at the current
+monster level and gets the game's own boss scaling and the same per-wave bonus
+as everything else. Then its health is multiplied by 10 and its attack and
+ability damage by 5 (settings `Heroic boss health multiplier` and
+`Heroic boss damage multiplier`). Stat bonuses in the game add up rather than
+multiply, so a true ×N adds `(N − 1) × (100% + the bonus it already has)`.
+It also gets +100 ability haste (`Heroic boss ability haste`), so it uses its
+patterns about twice as often. The game turns haste into cooldown
+(`AbilityTrigger.GetCooldownTimeMultiplierByAbilityHaste`) as
+`1 / (1 + haste / 100)`, down to its own floor. This applies to every boss
+ability that allows cooldown reduction. Haste is a normal synced stat. That's applied one frame after the
+spawn, once the game's difficulty bonus is in, and it keeps the boss at full
+health. 50× was tried first: a wave 49 boss had about 23 million health and
+lost only a quarter of it in five minutes of nonstop fighting. 10× damage was
+also too much.
+
+**Full kit.** It's the real `BossMonster` with its own AI: the boss AI always
+targets the nearest hero, picks its ability pool (the hard pool where the zone
+says so), and runs its patterns, combos, phase changes at health thresholds,
+and the helpers it spawns itself: Dark Cave's hallucinations, Azurak's
+rolling pillars, Infernus's pillars, Nyx's phases. None of the default bosses
+needs objects from its own boss room. The entrance plays the boss's own spawn
+ability, which for some bosses also sets up its first skills.
+
+**Its helpers die with it.** In the stock game the boss's death kills every
+other monster, and that's what clears away its pillars and hallucinations.
+Last Stand skips that kill-all so the wave isn't wiped. Instead, when a heroic
+boss dies, every monster descended from it (`Actor.IsDescendantOf`) is killed.
+A boss that a heroic boss spawns, such as Erebos from Nyx under The Consort of
+Night, counts as Last Stand's too. Its death skips the vanilla boss-kill flow,
+and it drops no extra reward.
 
 **None of the boss-room machinery.** Boss rooms spawn their boss through the
 entry cutscene (`DewBossRoomEntry`), which the arena never fires. Last Stand
@@ -425,8 +461,14 @@ player with the fewest items this wave.
   multiplier pushes the total past 100%, the common chance is what gets cut.
 - The item itself, and its level or quality, come from the game's `LootManager`
   (`SelectSkillAndLevel`, `SelectGemAndQuality`) for the rolled rarity, so
-  drops follow the run's own pools and bans. If the pool has nothing of that
-  rarity, nothing drops.
+  drops follow the run's own pools and bans. If the pool has nothing of the
+  rolled rarity, the next rarity down that has something is used, never one
+  up. Without this, an empty pool meant no drop and no use of the player's
+  cap, so the next kill rolled again, which skewed drops toward the rarities
+  that do have items.
+- **Every item is logged** (`loot: wave 12 Regular dropped a Rare memory.`),
+  and `laststand_status` shows the run's count per rarity, so drop rates can
+  be checked against the tables.
 - **Who gets a monster item:** a player who hasn't had one this wave, with the
   killer first. The item is created with that player as `tempOwner`.
 - The rules are plain logic (`LootRules`, `DropLedger`). The ledger is cleared
@@ -525,6 +567,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Break between waves | 5 s |
 | | Monsters in wave 1 / extra per wave | 6 / 2 |
 | | Extra player share | 0.5 |
+| | Surge every N waves / monster multiplier | 5 / 2 |
 | | Max monsters alive / per extra player | 100 / 0 |
 | | Min spawn distance from heroes | 8 m |
 | | Spawn interval / spawns per batch | 0.5 s / 2 |
@@ -533,7 +576,9 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 4 |
 | Heroic bosses | First wave / every N waves / waves per extra / max | 49 / 50 / 100 / 10 |
 | | Entrance delay | 3 s |
-| | Types | the 9 zone bosses |
+| | Health / damage multiplier | 10 / 5 |
+| | Ability haste | +100 |
+| | Types | 6 zone bosses |
 | | Legendary chaos rewards / dust / gold / item multiplier | 5 / 300 / 200 / 2 |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |
 | | Damage per second per boss | 1% |
@@ -561,7 +606,7 @@ With Developer Mode on (F1, then `` ` ``):
 
 | Command | Does |
 |---|---|
-| `laststand_status` | Logs mode, phase, wave, time to next wave, alive and queued |
+| `laststand_status` | Logs mode, phase, wave, time to next wave, alive, queued, and items dropped per rarity |
 | `laststand_next` | Starts the next wave now, even if monsters remain (host only) |
 | `laststand_solo` | Starts a solo Last Stand run |
 

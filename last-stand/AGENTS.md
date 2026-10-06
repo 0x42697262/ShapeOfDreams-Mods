@@ -261,6 +261,17 @@ These were checked in the decompiled code.
 - **Run goal.** `PlayGameManager.OnStartClient` starts `Quest_ShapeOfDreams` on
   the server for new runs. `GameMod_Limbo` simply `Destroy()`s it, which is
   the precedent for removing it. Quests are actors, so destruction syncs.
+- **Boss kits.** Checked in Dew.Contents: Seeker spawns
+  `Mon_DarkCave_SeekerHallucination`, Azurak `Mon_Despair_AzurakRollPillar`,
+  Infernus `Mon_LavaLand_InfernusPillar` (all plain `Monster`s, spawned with the
+  boss as parent). Nyx has phases and may spawn Erebos (`Ge_TheConsortOfNight`).
+  `Mon_Ink_BossWhiteNight` spawns `Mon_Ink_BossDarkMoon`, which overrides
+  `OnDeath`. `Mon_Despair_BossCrawler` does not exist. `EntityStatus.AddStatBonus`
+  recalculates at once (`CalculateStats`) and keeps the health ratio.
+  `DewDifficultySettings.ApplyDifficultyModifiers` runs from `ActorManager`'s
+  entity-add event. Ability cooldowns use the owner's `Status.abilityHaste`
+  when the config's `canReceiveCooldownReduction` is set: multiplier
+  `lerp(ges.cooldownFloorRatioByAbilityHaste, 1, 1 / (1 + haste / 100))`.
 - **Arena node modifiers.** World gen writes modifiers straight into node
   data. Seen on an arena node: `RoomMod_SpawnGuidance`,
   `RoomMod_StrayMemory_StartProp`, `RoomMod_HarderFightBetterReward`. Later
@@ -346,9 +357,10 @@ Each answer still needs to be seen working:
 22. **Heroic bosses:** at wave 49 the boss enters 3 s after the last monster
     spawns, plays its spawn animation, counts toward the wave, and drops 5
     legendary chaos rewards. There's no time pause, no rift and no boss soul.
-    The test command confirmed this for the Forest boss in the arena. Check
-    every default type, especially ones that might need their own room
-    (Lava Land's pillars, the Ink pair), and what clients see.
+    Its health bar shows about 10× the health, its hits land about 5× as
+    hard, it uses its skills about twice as often, and every default boss uses its patterns and helpers. Pillars and
+    hallucinations vanish when it dies. Nyx with The Consort of Night (Erebos)
+    causes no boss-kill flow. Check what clients see.
 23. **Plain arena:** no extra shrines or props in the arena. The log shows
     modifiers stripped at world gen and any blocked later. Co-op knock-out
     souls still appear.

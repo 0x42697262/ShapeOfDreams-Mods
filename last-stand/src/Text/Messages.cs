@@ -39,7 +39,9 @@ internal static class Messages
 
 	public static string WaveStarted(WavePlan plan)
 	{
-		string text = $"Wave {plan.Number}: {plan.RegularCount} monsters";
+		string text = plan.IsSurge
+			? $"Surge! Wave {plan.Number}: {plan.RegularCount} monsters"
+			: $"Wave {plan.Number}: {plan.RegularCount} monsters";
 		if (plan.HunterCount > 0)
 		{
 			text += $", {plan.HunterCount} hunter(s)";

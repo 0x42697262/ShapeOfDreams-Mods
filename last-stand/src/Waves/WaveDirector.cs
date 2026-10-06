@@ -169,7 +169,7 @@ internal sealed class WaveDirector
 		_enemies.Reserve(now);
 		bool spawned = _spawner.Spawn(tier, plan.ForeignTypesUnlocked, position, entity =>
 		{
-			Enhance(entity, tier, plan);
+			Enhance(entity, tier, plan, settings);
 			_onSpawned(entity, tier);
 		});
 
@@ -183,7 +183,7 @@ internal sealed class WaveDirector
 		}
 	}
 
-	private void Enhance(Entity entity, EnemyTier tier, WavePlan plan)
+	private void Enhance(Entity entity, EnemyTier tier, WavePlan plan, WaveSettings settings)
 	{
 		if (entity == null)
 		{
@@ -195,6 +195,18 @@ internal sealed class WaveDirector
 		if (tier == EnemyTier.Hunter)
 		{
 			MonsterEnhancer.MakeHunter(entity);
+		}
+
+		if (tier == EnemyTier.HeroicBoss)
+		{
+			double health = settings.HeroicBossHealthMultiplier;
+			double damage = settings.HeroicBossDamageMultiplier;
+			double haste = settings.HeroicBossAbilityHaste;
+			Dew.CallDelayed(() =>
+			{
+				MonsterEnhancer.MultiplyStats(entity, health, damage);
+				MonsterEnhancer.AddAbilityHaste(entity, haste);
+			});
 		}
 
 		if (tier.IsMob() && UnityEngine.Random.value < plan.MirageChance)

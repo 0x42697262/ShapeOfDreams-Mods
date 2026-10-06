@@ -43,6 +43,14 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ExtraPlayerShareDescription)]
 	public float extraPlayerShare = 0.5f;
 
+	[LabelText(ConfigText.SurgeIntervalLabel)]
+	[Description(ConfigText.SurgeIntervalDescription)]
+	public int surgeIntervalWaves = 5;
+
+	[LabelText(ConfigText.SurgeMultiplierLabel)]
+	[Description(ConfigText.SurgeMultiplierDescription)]
+	public float surgeMonsterMultiplier = 2f;
+
 	[LabelText(ConfigText.MaxAliveBaseLabel)]
 	[Description(ConfigText.MaxAliveBaseDescription)]
 	public int maxAliveBase = 200;
@@ -117,6 +125,18 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.HeroicBossDelayLabel)]
 	[Description(ConfigText.HeroicBossDelayDescription)]
 	public float heroicBossEntranceDelaySeconds = 3f;
+
+	[LabelText(ConfigText.HeroicBossHealthMultiplierLabel)]
+	[Description(ConfigText.HeroicBossStatMultiplierDescription)]
+	public float heroicBossHealthMultiplier = 10f;
+
+	[LabelText(ConfigText.HeroicBossDamageMultiplierLabel)]
+	[Description(ConfigText.HeroicBossStatMultiplierDescription)]
+	public float heroicBossDamageMultiplier = 5f;
+
+	[LabelText(ConfigText.HeroicBossAbilityHasteLabel)]
+	[Description(ConfigText.HeroicBossAbilityHasteDescription)]
+	public float heroicBossAbilityHaste = 100f;
 
 	[LabelText(ConfigText.HeroicBossTypesLabel)]
 	[Description(ConfigText.HeroicBossTypesDescription)]

@@ -72,7 +72,7 @@ internal static class LogText
 
 	public static string WaveStarted(WavePlan plan)
 	{
-		return $"wave {plan.Number}: regular={plan.RegularCount} hunter={plan.HunterCount} " +
+		return $"wave {plan.Number}: regular={plan.RegularCount} surge={plan.IsSurge} hunter={plan.HunterCount} " +
 		       $"miniboss={plan.MiniBossCount} pain={plan.PainCount} heroic={plan.HeroicBossCount} " +
 		       $"ambient={plan.AmbientLevel} " +
 		       $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " +
@@ -117,10 +117,25 @@ internal static class LogText
 	}
 
 	public static string Status(bool selected, bool server, string phase, int wave, bool inProgress,
-		double secondsToNext, int occupied, int pending)
+		double secondsToNext, int occupied, int pending, string items)
 	{
 		return $"mode={selected} server={server} phase={phase} wave={wave} inProgress={inProgress} " +
 		       $"next={secondsToNext:0}s " +
-		       $"alive={occupied} pending={pending}.";
+		       $"alive={occupied} pending={pending} {items}.";
+	}
+
+	public const string GuaranteedDropSource = "WaveClear";
+
+	public static string ItemDropped(int wave, string source, Rarity? rolled, Rarity dropped, bool memory)
+	{
+		string kind = memory ? "memory" : "essence";
+		string rolledText = rolled.HasValue ? rolled.Value.ToString() : "game";
+		string fallback = rolled.HasValue && rolled.Value != dropped ? $" (rolled {rolledText}, none in pool)" : string.Empty;
+		return $"loot: wave {wave} {source} dropped a {dropped} {kind}{fallback}.";
+	}
+
+	public static string ItemTally(int common, int rare, int epic, int legendary)
+	{
+		return $"items=common:{common} rare:{rare} epic:{epic} legendary:{legendary}";
 	}
 }

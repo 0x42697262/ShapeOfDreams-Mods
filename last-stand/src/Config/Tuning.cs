@@ -49,4 +49,6 @@ internal static class Tuning
 	public const float TestBossDistance = 8f;
 
 	public const char ListSeparator = ',';
+
+	public const float MinimumStatMultiplier = 0.1f;
 }

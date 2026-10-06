@@ -6,39 +6,45 @@ namespace LastStand.Loot;
 
 internal static class LootDropper
 {
-	public static Actor DropMemory(Vector3 position, DewPlayer recipient, Rarity? rarity)
+	public static Actor DropMemory(Vector3 position, DewPlayer recipient, Rarity? rarity, out Rarity dropped)
 	{
+		dropped = Rarity.Common;
 		LootManager loot = NetworkedManagerBase<LootManager>.softInstance;
 		if (loot == null)
 		{
 			return null;
 		}
 
-		Rarity chosen = rarity ?? loot.SelectSkillRarity();
-		if (!HasItems(loot.poolSkillsByRarity, chosen))
+		Rarity? chosen = LootRules.HighestAvailable(rarity ?? loot.SelectSkillRarity(),
+			candidate => HasItems(loot.poolSkillsByRarity, candidate));
+		if (!chosen.HasValue)
 		{
 			return null;
 		}
 
-		loot.SelectSkillAndLevel(chosen, out SkillTrigger skill, out int level);
+		dropped = chosen.Value;
+		loot.SelectSkillAndLevel(dropped, out SkillTrigger skill, out int level);
 		return skill == null ? null : Dew.CreateSkillTrigger(skill, RewardPosition(position), level, recipient);
 	}
 
-	public static Actor DropEssence(Vector3 position, DewPlayer recipient, Rarity? rarity)
+	public static Actor DropEssence(Vector3 position, DewPlayer recipient, Rarity? rarity, out Rarity dropped)
 	{
+		dropped = Rarity.Common;
 		LootManager loot = NetworkedManagerBase<LootManager>.softInstance;
 		if (loot == null)
 		{
 			return null;
 		}
 
-		Rarity chosen = rarity ?? loot.SelectGemRarity();
-		if (!HasItems(loot.poolGemsByRarity, chosen))
+		Rarity? chosen = LootRules.HighestAvailable(rarity ?? loot.SelectGemRarity(),
+			candidate => HasItems(loot.poolGemsByRarity, candidate));
+		if (!chosen.HasValue)
 		{
 			return null;
 		}
 
-		loot.SelectGemAndQuality(chosen, out Gem gem, out int quality);
+		dropped = chosen.Value;
+		loot.SelectGemAndQuality(dropped, out Gem gem, out int quality);
 		return gem == null ? null : Dew.CreateGem(gem, RewardPosition(position), quality, recipient);
 	}
 

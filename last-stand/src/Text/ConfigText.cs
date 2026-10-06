@@ -38,6 +38,15 @@ internal static class ConfigText
 	public const string HeroicBossDelayLabel = "Heroic boss entrance delay (s)";
 	public const string HeroicBossDelayDescription =
 		"Seconds after the last monster and miniboss of the wave has spawned before the heroic boss enters.";
+	public const string HeroicBossHealthMultiplierLabel = "Heroic boss health multiplier";
+	public const string HeroicBossDamageMultiplierLabel = "Heroic boss damage multiplier";
+	public const string HeroicBossStatMultiplierDescription =
+		"Multiplies the heroic boss's final value, after the game's boss scaling and the per-wave bonus. " +
+		"10 means 10 times as much.";
+	public const string HeroicBossAbilityHasteLabel = "Heroic boss ability haste";
+	public const string HeroicBossAbilityHasteDescription =
+		"Extra ability haste for heroic bosses, so they use their skills more often. Cooldowns scale by " +
+		"1 / (1 + haste / 100), down to the game's own floor: 100 is about twice as often, 0 is off.";
 	public const string HeroicBossTypesLabel = "Heroic boss types";
 	public const string HeroicBossTypesDescription =
 		"Comma-separated boss types to pick from at random. Bosses that run their own death logic (such as " +
@@ -66,6 +75,13 @@ internal static class ConfigText
 
 	public const string RegularGrowthLabel = "Extra monsters per wave";
 	public const string RegularGrowthDescription = "Regular monsters added with every wave after the first.";
+
+	public const string SurgeIntervalLabel = "Surge every N waves";
+	public const string SurgeIntervalDescription =
+		"Every Nth wave is a surge: regular monsters, hunters and the alive cap are multiplied for that wave. " +
+		"Minibosses, Pain minibosses and heroic bosses are not affected.";
+	public const string SurgeMultiplierLabel = "Surge monster multiplier";
+	public const string SurgeMultiplierDescription = "Regular monsters, hunters and the alive cap on a surge wave are multiplied by this. 1 turns surges off.";
 
 	public const string ExtraPlayerShareLabel = "Extra player share";
 	public const string ExtraPlayerShareDescription =

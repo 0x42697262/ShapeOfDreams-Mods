@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using LastStand.Combat;
+using LastStand.Diagnostics;
 using LastStand.Game;
+using LastStand.Text;
 using UnityEngine;
 
 namespace LastStand.Loot;
@@ -8,6 +10,7 @@ namespace LastStand.Loot;
 internal sealed class LootService
 {
 	private readonly DropLedger _ledger = new DropLedger();
+	private readonly DropTally _tally = new DropTally();
 	private readonly List<DewPlayer> _players = new List<DewPlayer>();
 	private readonly List<string> _guids = new List<string>();
 
@@ -36,7 +39,7 @@ internal sealed class LootService
 		bool memory = LootRules.ChooseMemory(fromMob, PlayerRoster.PlayerCount(), _ledger.MobMemories,
 			_ledger.MobEssences, settings.MemoryShare, Random.value);
 
-		DropItem(death.Position, recipient, memory, decision.ItemRarity, fromMob);
+		DropItem(death.Position, recipient, memory, decision.ItemRarity, fromMob, wave, death.Tier.ToString());
 	}
 
 	public void OnWaveStarted()
@@ -44,20 +47,27 @@ internal sealed class LootService
 		_ledger.StartWave();
 	}
 
-	public void OnWaveCleared(LootSettings settings)
+	public void OnWaveCleared(int wave, LootSettings settings)
 	{
 		if (settings.GuaranteedDropPerWave)
 		{
-			GrantMissedDrops(settings);
+			GrantMissedDrops(wave, settings);
 		}
+	}
+
+	public string DescribeTally()
+	{
+		return LogText.ItemTally(_tally.Of(Rarity.Common), _tally.Of(Rarity.Rare), _tally.Of(Rarity.Epic),
+			_tally.Of(Rarity.Legendary));
 	}
 
 	public void Reset()
 	{
 		_ledger.StartWave();
+		_tally.Clear();
 	}
 
-	private void GrantMissedDrops(LootSettings settings)
+	private void GrantMissedDrops(int wave, LootSettings settings)
 	{
 		PlayerRoster.FillPlayersWithLiveHeroes(_players);
 		foreach (DewPlayer player in _players)
@@ -69,7 +79,7 @@ internal sealed class LootService
 
 			bool memory = LootRules.ChooseMemory(false, PlayerRoster.PlayerCount(), 0, 0, settings.MemoryShare,
 				Random.value);
-			DropItem(player.hero.agentPosition, player, memory, null, false);
+			DropItem(player.hero.agentPosition, player, memory, null, false, wave, LogText.GuaranteedDropSource);
 		}
 	}
 
@@ -118,16 +128,20 @@ internal sealed class LootService
 		return player != null ? player.guid : null;
 	}
 
-	private void DropItem(Vector3 position, DewPlayer recipient, bool memory, Rarity? rarity, bool fromMob)
+	private void DropItem(Vector3 position, DewPlayer recipient, bool memory, Rarity? rarity, bool fromMob,
+		int wave, string source)
 	{
 		Actor item = memory
-			? LootDropper.DropMemory(position, recipient, rarity)
-			: LootDropper.DropEssence(position, recipient, rarity);
+			? LootDropper.DropMemory(position, recipient, rarity, out Rarity dropped)
+			: LootDropper.DropEssence(position, recipient, rarity, out dropped);
 
 		if (item == null)
 		{
 			return;
 		}
+
+		_tally.Add(dropped);
+		Log.Info(LogText.ItemDropped(wave, source, rarity, dropped, memory));
 
 		if (recipient != null)
 		{

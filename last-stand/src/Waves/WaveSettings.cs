@@ -8,6 +8,8 @@ internal sealed class WaveSettings
 	public int RegularBase { get; set; }
 	public int RegularGrowthPerWave { get; set; }
 	public double ExtraPlayerShare { get; set; }
+	public Cadence Surges { get; set; }
+	public double SurgeMultiplier { get; set; }
 	public int MaxAliveBase { get; set; }
 	public int MaxAlivePerExtraPlayer { get; set; }
 	public double SpawnIntervalSeconds { get; set; }
@@ -31,6 +33,9 @@ internal sealed class WaveSettings
 	public int HeroicBossStepWaves { get; set; }
 	public int MaxHeroicBosses { get; set; }
 	public double HeroicBossEntranceDelaySeconds { get; set; }
+	public double HeroicBossHealthMultiplier { get; set; }
+	public double HeroicBossDamageMultiplier { get; set; }
+	public double HeroicBossAbilityHaste { get; set; }
 	public IReadOnlyList<string> HeroicBossTypes { get; set; }
 
 	public Cadence ForeignTypes { get; set; }
