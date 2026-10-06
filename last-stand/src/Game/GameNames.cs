@@ -34,6 +34,21 @@ internal static class GameNames
 
 	public const string LocalizedNameSuffix = "_Name";
 
+	public static readonly string[] BossMusicTrackGuids =
+	{
+		"44b4082316a67a34aa42c158823ffd18",
+		"fdbb42f02a7667d4ebb445250c947bd3",
+		"11dd0ca2f5eb7224bb06418696194032",
+		"ec9380823cabf9d4e9de7843488f768f",
+		"b9c1464d58f50954c8f3fd5c1fd704c3",
+		"39aeb947b3bd006458ac51da21af0536",
+		"add7fcbb30744e740bd82fc26d4974b7",
+		"5c6e5c46604e8f8408d039c951f4cbb0",
+		"b7df9f9f9b461e847aa4f227109da88b",
+	};
+
+	public const string HeroSoulModifier = "RoomMod_HeroSoul";
+
 	public const string LobbySettingsStart = "Start";
 
 	public const string LobbySettingsEnable = "OnEnable";

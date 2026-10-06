@@ -123,6 +123,40 @@ travel (`RoomMod_SpawnMiniBoss`), and the hunters' spread. So, with
 
 The camp keeps its modifiers.
 
+**Knocked-out players are revived in the room they fell in.** When a hero is
+knocked out, the game (`Se_HeroKnockedOut.CheckAndAddHeroSoul`) puts their
+soul, `RoomMod_HeroSoul`, on another node a few steps away
+(`lostSoulDistance`), and the others revive them by traveling there and using
+the soul shrine. In Last Stand the rift is shut, so that node can't be
+reached, and on an `ExitBoss` node the game adds no soul at all. A prefix on
+`CheckAndAddHeroSoul` puts the soul on the current node instead. The modifier
+is added while the room is active, so its `Shrine_HeroSoul` appears in the
+arena at once, at a spot the room's props system picks. The game calls the
+same method again on every room load, and any soul of that hero on another
+node is moved to the current one, so a soul from before this fix (or from
+camp) follows the team. The modifier, the shrine and the "lost soul" quest
+are all the game's own and synced, so clients see and use them normally. The
+game removes the soul when the hero is revived.
+
+**Random boss music (host only).** Each time the arena loads, the host hears a
+random zone boss fight track: Forest, Dark Cave, Despair, Sky, Snow Mountain,
+Lava Land, both Ink tracks, or Primus. It never repeats the previous pick.
+Normally a boss room's `BossMusicStart` effect (an `FxChangeMusic` in the
+scene) plays the track when the boss section's combat starts. The arena loads
+cleared, so that never happens, and the room plays its zone's normal music
+from `Room.OnLateStart`. A postfix there switches the host's `MusicManager` to
+the chosen track. Music items are linked by GUID only and aren't in the
+resource database's name maps (a lookup by name found nothing in testing). So
+`GameNames` lists the nine tracks' GUIDs, read from the boss room scenes, and
+`DewResources.GetByGuid` loads them through Addressables, where all nine are
+in the catalog.
+
+Other players hear their usual music. Music is local to each game: every
+client picks its own in `Room.OnLateStart` from the room and zone, and no
+synced state or networked effect can name a track. The only networked music
+effects are scene objects (`BossMusicStart`) that exist only in their own boss
+room, and Mora's Domain's shrine. Setting: `Random boss music`, default on.
+
 The arena's center is `Room_BossArena` when the room has one, otherwise the
 `pathablePivot` of the largest `RoomSection`. On arrival, players are placed in
 a ring around it and the **Dream Well** is placed at the center. Arrival
@@ -580,6 +614,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Arena | Arena room | Primus (dropdown) |
 | | Plain arena (no room modifiers) | on |
 | | Show wave in HUD | on |
+| | Random boss music (host only) | on |
 | Waves | First wave delay | 10 s |
 | | Break between waves | 5 s |
 | | Monsters in wave 1 / extra per wave | 6 / 2 |

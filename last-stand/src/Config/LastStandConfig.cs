@@ -23,6 +23,10 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ShowWaveInHudDescription)]
 	public bool showWaveInHud = true;
 
+	[LabelText(ConfigText.RandomBossMusicLabel)]
+	[Description(ConfigText.RandomBossMusicDescription)]
+	public bool randomBossMusic = true;
+
 	[Header(ConfigText.WavesHeader)]
 	[LabelText(ConfigText.FirstWaveDelayLabel)]
 	[Description(ConfigText.FirstWaveDelayDescription)]

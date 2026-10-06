@@ -32,6 +32,8 @@ internal sealed class LastStandSession
 
 	public PlainArena PlainArena { get; } = new PlainArena();
 
+	private readonly ArenaMusic _music = new ArenaMusic();
+
 	public DreamWell Well { get; } = new DreamWell();
 
 	public SessionSettings Settings => _settings;
@@ -57,6 +59,11 @@ internal sealed class LastStandSession
 	public void UseSettings(SessionSettings settings)
 	{
 		_settings = settings;
+	}
+
+	public void OnRoomMusicStarted(Room room)
+	{
+		_music.OnRoomStarted(room, _settings.RandomBossMusic);
 	}
 
 	public void Tick(double now)

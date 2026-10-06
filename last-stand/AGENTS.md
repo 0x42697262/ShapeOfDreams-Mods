@@ -278,6 +278,19 @@ These were checked in the decompiled code.
   entity-add event. Ability cooldowns use the owner's `Status.abilityHaste`
   when the config's `canReceiveCooldownReduction` is set: multiplier
   `lerp(ges.cooldownFloorRatioByAbilityHaste, 1, 1 / (1 + haste / 100))`.
+- **Music.** `MusicManager` is a plain local `ManagerBase`. `Room.OnLateStart`
+  plays `Room.music`, or the zone's `defaultMusicRef` when that's null and the
+  node isn't `ExitBoss`. Boss tracks are played by scene `FxChangeMusic`
+  objects (`BossMusicStart`) from `Section_Monsters.onStartCombatArea`. Their
+  `DewMusicItem`s, read from the scenes with UnityPy: `musBossForestDemon`,
+  `musBossSeeker`, `musDespairBoss`, `musBossNyx`, `musBossSkoll`,
+  `musBossInfernus`, `musInkBoss`, `musInkBossSecond`, `musBossPrimus`.
+  `DewMusicItem` is `[DewResourceLink(Guid)]`, so `GetByName` doesn't apply,
+  and the database's `nameToGuid`/`guidToName` don't list them (checked in
+  game). Their `resourceId` GUIDs (read with UnityPy from the scenes'
+  sharedassets) are all in the Addressables `catalog.bin`.
+  Clients can't be given a track: networked effects are addressed by path
+  under a `NetworkIdentity` that already holds them.
 - **Arena node modifiers.** World gen writes modifiers straight into node
   data. Seen on an arena node: `RoomMod_SpawnGuidance`,
   `RoomMod_StrayMemory_StartProp`, `RoomMod_HarderFightBetterReward`. Later
@@ -285,6 +298,14 @@ These were checked in the decompiled code.
   Action<RoomModifierBase>)`: Corrupted Chaos, `RoomMod_SpawnMiniBoss` on
   travel, `UpdateModifiersByHunterStatus` on travel, and
   `Se_HeroKnockedOut` → `RoomMod_HeroSoul`.
+- **Knock-outs.** `Se_HeroKnockedOut.CheckAndAddHeroSoul` (public, server) runs
+  on knock-out and on every room load. It skips `ExitBoss` nodes, then adds
+  `RoomMod_HeroSoul` (clientData = owner guid) to the node from
+  `TryGetNodeIndexForNextGoal(lostSoulDistance)`. `RoomMod_HeroSoul.OnStartServer`
+  spawns `Shrine_HeroSoul` at `props.TryGetGoodNodePosition`. `AddModifier`
+  on the current node with an active room creates the modifier at once
+  (`HandleRuntimeAddition`). The knock-out's `OnDestroyActor` removes the soul
+  from every node.
 - **Heroic bosses.** "Heroic boss" is the game's name for `BossMonster`
   (`Mon_*_Boss*` in Dew.Contents). Boss rooms spawn them through the entry
   cutscene (`DewBossRoomEntry` → `DewCutsceneDirector`). `BossMonster.OnCreate`
@@ -378,6 +399,14 @@ Each answer still needs to be seen working:
     manager's screen. Apply saves the file, Cancel and Escape drop the edits,
     and the dropdown list isn't clipped by the scroll area. Same dropdowns for
     Dream Arena's `Arena room` and `Dummy monster`.
+26. **Random boss music:** the host hears a different boss track each time
+    the arena loads. The log shows `boss music: playing mus...`. Camp music is
+    unchanged.
+27. **Revive in the arena:** a knocked-out hero's soul shrine appears in the
+    arena (log: `hero soul: placed in the current room`), others can revive
+    them there, and the soul leaves when they're revived. Check that adding it
+    doesn't remove the Pain or hunter-zone modifier (that would mean
+    `RoomMod_HeroSoul` is a main modifier).
 
 ## Conventions
 

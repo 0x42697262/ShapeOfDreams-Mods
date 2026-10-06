@@ -11,6 +11,23 @@ internal static class LogText
 	public const string LobbyButtonFailed = "could not add the Last Stand settings button to the lobby; use the laststand_config console command.";
 	public const string ConfigSaveFailed = "could not save the Last Stand config.";
 	public const string ConfigApplied = "config applied and saved.";
+	public const string BossMusicMissing = "boss music: none of the boss tracks could be found; the room's music plays.";
+	public const string HeroSoulFailed = "hero soul: could not place it in the current room; the game's own placement was used.";
+
+	public static string HeroSoulPlaced(int node)
+	{
+		return $"hero soul: placed in the current room (node {node}) so the knocked-out hero can be revived here.";
+	}
+
+	public static string HeroSoulMoved(int from, int to)
+	{
+		return $"hero soul: moved from node {from} to the current room (node {to}).";
+	}
+
+	public static string BossMusicPlaying(string track)
+	{
+		return $"boss music: playing {track} (host only).";
+	}
 	public const string TickFailed = "session tick failed; the session was stopped.";
 	public const string HudFailed = "HUD label update failed; the stock label was restored.";
 	public const string SessionStopped = "session stopped.";

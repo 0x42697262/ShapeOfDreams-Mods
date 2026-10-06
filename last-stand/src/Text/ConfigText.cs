@@ -58,6 +58,11 @@ internal static class ConfigText
 	public const string HeroicBossDreamDustLabel = "Heroic boss dream dust";
 	public const string HeroicBossGoldLabel = "Heroic boss bonus gold";
 
+	public const string RandomBossMusicLabel = "Random boss music";
+	public const string RandomBossMusicDescription =
+		"Each time the arena loads, plays a random zone boss fight track. Music is played by each " +
+		"player's own game, so only the host hears it; other players hear the usual music.";
+
 	public const string ArenaRoomLabel = "Arena room";
 	public const string ArenaRoomDescription =
 		"Boss room every combat node loads as. Takes effect on the next run.";
