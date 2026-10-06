@@ -27,6 +27,10 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.RandomBossMusicDescription)]
 	public bool randomBossMusic = true;
 
+	[LabelText(ConfigText.AltarOfCleansingLabel)]
+	[Description(ConfigText.AltarOfCleansingDescription)]
+	public bool altarOfCleansing = false;
+
 	[Header(ConfigText.WavesHeader)]
 	[LabelText(ConfigText.FirstWaveDelayLabel)]
 	[Description(ConfigText.FirstWaveDelayDescription)]

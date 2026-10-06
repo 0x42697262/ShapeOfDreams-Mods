@@ -67,6 +67,10 @@ internal static class ConfigText
 	public const string HeroicBossDreamDustLabel = "Heroic boss dream dust";
 	public const string HeroicBossGoldLabel = "Heroic boss bonus gold";
 
+	public const string AltarOfCleansingLabel = "Altar of Cleansing";
+	public const string AltarOfCleansingDescription =
+		"Places the game's Altar of Cleansing next to the Dream Well, usable any number of times. It resets a " +
+		"memory or essence to its lowest level or quality for gold and gives back the dream dust spent on it.";
 	public const string RandomBossMusicLabel = "Random boss music";
 	public const string RandomBossMusicDescription =
 		"Each time the arena loads, plays a random zone boss fight track. Music is played by each " +

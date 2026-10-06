@@ -4,14 +4,14 @@ using LastStand.Mode;
 namespace LastStand.Patches;
 
 [HarmonyPatch(typeof(Shrine), nameof(Shrine.DoPostUseRoutines))]
-internal static class DreamWellUsePatch
+internal static class ArenaShrineUsePatch
 {
 	[HarmonyPostfix]
 	private static void Postfix(Shrine __instance)
 	{
 		if (LastStandMode.IsHosting())
 		{
-			LastStandMod.Current?.Session?.Well.OnUsed(__instance);
+			LastStandMod.Current?.Session?.Shrines.OnUsed(__instance);
 		}
 	}
 }

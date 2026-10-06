@@ -18,6 +18,8 @@ internal sealed class SessionSettings
 
 	public bool RandomBossMusic { get; }
 
+	public bool AltarOfCleansing { get; }
+
 	public bool StripRoomModifiers { get; }
 
 	public WaveSettings Waves { get; }
@@ -27,8 +29,10 @@ internal sealed class SessionSettings
 	public LootSettings Loot { get; }
 
 	private SessionSettings(string arenaRoom, double firstWaveDelaySeconds, bool showWaveInHud,
-		bool randomBossMusic, bool stripRoomModifiers, WaveSettings waves, PainSettings pain, LootSettings loot)
+		bool randomBossMusic, bool altarOfCleansing, bool stripRoomModifiers, WaveSettings waves, PainSettings pain,
+		LootSettings loot)
 	{
+		AltarOfCleansing = altarOfCleansing;
 		RandomBossMusic = randomBossMusic;
 		ArenaRoom = arenaRoom;
 		FirstWaveDelaySeconds = firstWaveDelaySeconds;
@@ -42,7 +46,7 @@ internal sealed class SessionSettings
 	public static SessionSettings From(LastStandConfig config)
 	{
 		return new SessionSettings(config.arenaRoom, Math.Max(0f, config.firstWaveDelaySeconds),
-			config.showWaveInHud, config.randomBossMusic, config.stripRoomModifiers, WavesFrom(config), PainFrom(config), LootFrom(config));
+			config.showWaveInHud, config.randomBossMusic, config.altarOfCleansing, config.stripRoomModifiers, WavesFrom(config), PainFrom(config), LootFrom(config));
 	}
 
 	private static WaveSettings WavesFrom(LastStandConfig config)

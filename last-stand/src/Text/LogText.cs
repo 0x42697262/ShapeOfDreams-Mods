@@ -64,9 +64,12 @@ internal static class LogText
 			: $"progress restored: wave {wave} was cleared; wave {wave + 1} comes next.";
 	}
 
-	public static string WellReused(UnityEngine.Vector3 position)
+	public const string DreamWellName = "Dream Well";
+	public const string AltarOfCleansingName = "Altar of Cleansing";
+
+	public static string ShrineReused(string name, UnityEngine.Vector3 position)
 	{
-		return $"Dream Well already standing at {position}; reusing it.";
+		return $"{name} already standing at {position}; reusing it.";
 	}
 	public const string HudFailed = "HUD label update failed; the stock label was restored.";
 	public const string SessionStopped = "session stopped.";
@@ -171,9 +174,9 @@ internal static class LogText
 		return $"could not spawn a {tier}; skipped.";
 	}
 
-	public static string WellPlaced(UnityEngine.Vector3 position)
+	public static string ShrinePlaced(string name, UnityEngine.Vector3 position)
 	{
-		return $"Dream Well placed at {position}.";
+		return $"{name} placed at {position}.";
 	}
 
 	public static string Status(bool selected, bool server, string phase, int wave, bool inProgress,

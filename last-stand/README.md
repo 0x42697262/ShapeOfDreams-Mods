@@ -35,7 +35,8 @@ Dream Well in the middle of the arena turns what you collect into upgrades.
   included, reaching no commons at all by wave 100 (wave 50 for chaos).
 - **No goal.** The run's "Shape of Dreams" goal is removed, since there is
   nowhere to go.
-- **One Dream Well**, unlimited uses, at the center of the arena.
+- **One Dream Well**, unlimited uses, at the center of the arena, and an
+  **Altar of Cleansing** beside it, also unlimited, so gold has a use.
 - **The lobby stays vanilla.** Lucid dreams, Corrupted Chaos and every other
   game modifier can be picked as normal, unlike Dream Arena, which strips them.
 - **Host only.** Friends join with an unmodded game.
@@ -166,7 +167,8 @@ room, and Mora's Domain's shrine. Setting: `Random boss music`, default on.
 
 The arena's center is `Room_BossArena` when the room has one, otherwise the
 `pathablePivot` of the largest `RoomSection`. On arrival, players are placed in
-a ring around it and the **Dream Well** is placed at the center. Arrival
+a ring around it, the **Dream Well** is placed at the center and the **Altar
+of Cleansing** 4 m to one side. Arrival
 retries on a timer until the room and heroes are ready.
 
 **Enemies spawn at random spots across the whole room**, antechamber included,
@@ -616,6 +618,27 @@ and are left alone.
   reset and the well is made available again, and each client's check keeps
   passing.
 
+## Altar of Cleansing
+
+Gold has no other use in Last Stand, since there are no merchants. Players
+aren't meant to buy items. So the host also places the game's
+`Shrine_AltarOfCleansing`, 4 m from the well (the nearest walkable point
+along that line, `Dew.GetValidAgentDestination_LinearSweep`).
+
+- **What it does:** for gold, it resets a memory to its lowest level or an
+  essence to its lowest quality, and drops the dream dust that was spent
+  upgrading it. That dust can go into another item at the well, so upgrades
+  can be moved between items. It doesn't remove the item.
+- **Price:** the game's own (`GameManager.GetCleanseGoldCost`, by memory level
+  or essence quality), so it rises as items get upgraded. Every game works it
+  out the same way, so vanilla clients see the price they're charged. A price
+  that also rises with each use isn't possible that way, because none of the
+  synced price settings affect it.
+- **Unlimited uses:** the same reset as the well, through the same patch, so
+  vanilla clients can use it again and again.
+- Setting: `Altar of Cleansing`, default on. After a mod reload, the altar
+  already standing is reused, like the well.
+
 ## Wave tracker
 
 Waves are announced in chat as plain-text `MessageType.Raw` notices, which
@@ -652,8 +675,8 @@ Two things used to send a run back to wave 1, and both are fixed:
   `Monster`s not spawned by another monster) are taken over by tier, and the
   wave ends when they're dead, with no new spawns. Otherwise the next wave
   follows the usual break. Pain minibosses come back as plain minibosses,
-  because their Pain state lived in the old session. The Dream Well already
-  standing is reused rather than doubled.
+  because their Pain state lived in the old session. The Dream Well and the
+  Altar of Cleansing already standing are reused rather than doubled.
 
 The crash behind the reset at wave 10 came from the game's
 `RoomMonsters.SpawnMiniBoss`, which always calls `SelectMiniBoss` first. That
@@ -699,6 +722,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Plain arena (no room modifiers) | on |
 | | Show wave in HUD | on |
 | | Random boss music (host only) | on |
+| | Altar of Cleansing | on |
 | Waves | First wave delay | 10 s |
 | | Break between waves | 5 s |
 | | Monsters in wave 1 / extra per wave | 6 / 2 |
@@ -763,7 +787,7 @@ With Developer Mode on (F1, then `` ` ``):
 | `src/Waves` | Wave schedule, wave cycle and spawn queue (plain logic), and the director |
 | `src/Combat` | Monster catalog, spawning, heroic bosses, per-wave enhancements, hunter zones, tracking enemies, Pain |
 | `src/Loot` | Loot rules, rarity tables and ledger (plain logic), drops |
-| `src/Well` | The Dream Well |
+| `src/Well` | The Dream Well and the Altar of Cleansing, kept at unlimited uses |
 | `src/Game` | Thin wrappers over game APIs, and game identifiers |
 | `src/Config` | The mod config, its validated snapshot, and internal tuning |
 | `src/Text` | Every player-facing, config, log and command string |

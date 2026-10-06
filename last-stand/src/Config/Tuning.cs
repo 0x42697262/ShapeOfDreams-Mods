@@ -60,5 +60,7 @@ internal static class Tuning
 
 	public const double ErrorLogIntervalSeconds = 5;
 
-	public const float WellAdoptRadius = 3f;
+	public const float ShrineAdoptRadius = 3f;
+
+	public const float AltarDistanceFromWell = 4f;
 }

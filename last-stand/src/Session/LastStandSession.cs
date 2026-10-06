@@ -34,7 +34,7 @@ internal sealed class LastStandSession
 
 	private readonly ArenaMusic _music = new ArenaMusic();
 
-	public DreamWell Well { get; } = new DreamWell();
+	public ArenaShrines Shrines { get; } = new ArenaShrines();
 
 	public SessionSettings Settings => _settings;
 
@@ -228,7 +228,7 @@ internal sealed class LastStandSession
 			Log.Info(LogText.MapNodesHidden(hidden, node));
 		}
 
-		Well.Place(arena.Center);
+		Shrines.Place(arena, _settings.AltarOfCleansing);
 
 		if (ProgressStore.TryLoad(node, out int wave, out bool inProgress))
 		{
@@ -253,7 +253,7 @@ internal sealed class LastStandSession
 		_arrival.Reset();
 		_testBoss.Forget();
 		_heroicBosses.Clear();
-		Well.Forget();
+		Shrines.Forget();
 		_arenaNode = ArenaLocator.NoNode;
 	}
 

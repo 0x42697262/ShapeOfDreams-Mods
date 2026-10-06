@@ -159,6 +159,13 @@ These were checked in the decompiled code.
 - `Dew.CreateSkillTrigger(prefab, pos, level, tempOwner)` and
   `Dew.CreateGem(prefab, pos, quality, tempOwner)`.
 - `Shrine_UpgradeWell : EditSkillShrine : Shrine`.
+- `Shrine_AltarOfCleansing : EditSkillShrine`. Cleansing doesn't remove the
+  item: it sets the memory's level to `GetCleanseSkillMinLevel` or the
+  essence's quality to `GetCleanseGemMinQuality`, and drops the refund from
+  `GetCleanseReturnedDreamDust`. The gold price, `GetCleanseGoldCost`, comes
+  from `ges` curves times `GetAdjustedGoldAmount` (zone index only). It
+  doesn't use the synced `goldCostMultiplier`, so it can't be raised in a way
+  clients see.
 - `EntityAI` attacks any entity whose relation is `Enemy`, and
   `AI.Aggro(Entity)` forces a target.
 - `GameManager.SetAmbientLevel(int)` is how the game scales monster strength
@@ -460,6 +467,9 @@ Each answer still needs to be seen working:
     visibly more often.
 37. **Hunters from wave 101:** the catalog log line says `hunters start at
     wave 101`, and wave 101 has 1 hunter and a hunter zone at hunt level 1.
+38. **Altar of Cleansing:** it stands beside the Dream Well. A vanilla client
+    can cleanse several items in a row, pays the shown gold price and gets the
+    dream dust back. After a mod reload there's still just one altar.
 
 ## Conventions
 
