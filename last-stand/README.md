@@ -295,14 +295,17 @@ own death logic: `Mon_Primus_BossPrimusAeron` starts the game's ending, for
 one. The log says which types were skipped, and the catalog line gives how
 many are left. With none left, there are no heroic boss waves.
 
-**Strength: 10× health, 5× damage, faster skills.** It spawns at the current
+**Strength: 10× health, 3× damage, faster skills.** It spawns at the current
 monster level and gets the game's own boss scaling and the same per-wave bonus
 as everything else. Then its health is multiplied by 10 and its attack and
-ability damage by 5 (settings `Heroic boss health multiplier` and
+ability damage by 3 (settings `Heroic boss health multiplier` and
 `Heroic boss damage multiplier`). Stat bonuses in the game add up rather than
 multiply, so a true ×N adds `(N − 1) × (100% + the bonus it already has)`.
-It also gets +100 ability haste (`Heroic boss ability haste`), so it uses its
-patterns about twice as often. The game turns haste into cooldown
+It also gets ability haste, so it uses its patterns more often: +200 at
+wave 49 (`Heroic boss ability haste`), then +50 more on each later boss wave
+(`Heroic boss haste per later boss wave`): 250 at 99, 300 at 149, 350 at 199.
+The wave's haste is worked out with the rest of the wave plan and shows in the
+log as `heroicHaste=`. The game turns haste into cooldown
 (`AbilityTrigger.GetCooldownTimeMultiplierByAbilityHaste`) as
 `1 / (1 + haste / 100)`, down to its own floor. This applies to every boss
 ability that allows cooldown reduction. Haste is a normal synced stat. That's applied one frame after the
@@ -701,7 +704,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Heroic bosses | First wave / every N waves / waves per extra / max | 49 / 50 / 100 / 10 |
 | | Entrance delay | 3 s |
 | | Health / damage multiplier | 10 / 3 |
-| | Ability haste | +200 |
+| | Ability haste / more per later boss wave | +200 / +50 |
 | | Types | 6 zone bosses (checkboxes) |
 | | Corrupted Chaos rewards / dust / gold / item multiplier | 3 / 1000 / 200 / 2 |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |

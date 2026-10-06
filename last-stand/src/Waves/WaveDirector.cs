@@ -241,7 +241,7 @@ internal sealed class WaveDirector
 		{
 			double health = settings.HeroicBossHealthMultiplier;
 			double damage = settings.HeroicBossDamageMultiplier;
-			double haste = settings.HeroicBossAbilityHaste;
+			double haste = plan.HeroicBossHaste;
 			Dew.CallDelayed(() =>
 			{
 				MonsterEnhancer.MultiplyStats(entity, health, damage);

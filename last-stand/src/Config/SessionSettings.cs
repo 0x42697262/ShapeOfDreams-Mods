@@ -83,6 +83,7 @@ internal sealed class SessionSettings
 			HeroicBossHealthMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.heroicBossHealthMultiplier),
 			HeroicBossDamageMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.heroicBossDamageMultiplier),
 			HeroicBossAbilityHaste = Math.Max(0f, config.heroicBossAbilityHaste),
+			HeroicBossHastePerBossWave = Math.Max(0f, config.heroicBossAbilityHastePerBossWave),
 			HeroicBossTypes = ListFrom(config.heroicBossTypes),
 
 			ForeignTypes = CadenceFrom(config.foreignTypesFromWave, config.foreignTypesIntervalWaves),

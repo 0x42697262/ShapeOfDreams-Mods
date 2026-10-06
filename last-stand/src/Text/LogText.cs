@@ -133,6 +133,7 @@ internal static class LogText
 	{
 		return $"wave {plan.Number}: regular={plan.RegularCount} surge={plan.IsSurge} hunter={plan.HunterCount} " +
 		       $"miniboss={plan.MiniBossCount} pain={plan.PainCount} heroic={plan.HeroicBossCount} " +
+		       $"heroicHaste={plan.HeroicBossHaste:0} " +
 		       $"ambient={plan.AmbientLevel} " +
 		       $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " +
 		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +

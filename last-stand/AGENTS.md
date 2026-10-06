@@ -407,8 +407,8 @@ Each answer still needs to be seen working:
 22. **Heroic bosses:** at wave 49 the boss enters 3 s after the last monster
     spawns, plays its spawn animation, counts toward the wave, and drops 3
     Corrupted Chaos rewards (the Pain kind). There's no time pause, no rift and no boss soul.
-    Its health bar shows about 10× the health, its hits land about 5× as
-    hard, it uses its skills about twice as often, and every default boss uses its patterns and helpers. Pillars and
+    Its health bar shows about 10× the health, its hits land about 3× as
+    hard, it uses its skills about three times as often, and every default boss uses its patterns and helpers. Pillars and
     hallucinations vanish when it dies. Nyx with The Consort of Night (Erebos)
     causes no boss-kill flow. Check what clients see.
 23. **Plain arena:** no extra shrines or props in the arena. The log shows
@@ -447,6 +447,9 @@ Each answer still needs to be seen working:
 35. **Rarity floor:** no rarity falls under 25% of drops. By wave 100 the
     `loot:` log lines show common, rare, epic and legendary about equally,
     and Pain minibosses and heroic bosses get there by wave 47.
+36. **Heroic boss haste grows:** the `wave N:` log line shows `heroicHaste=200`
+    at wave 49, 250 at 99 and 300 at 149, and later bosses use their skills
+    visibly more often.
 
 ## Conventions
 

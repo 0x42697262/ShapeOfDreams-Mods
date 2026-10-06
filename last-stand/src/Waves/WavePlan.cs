@@ -9,6 +9,7 @@ internal sealed class WavePlan
 	public int MiniBossCount { get; set; }
 	public int PainCount { get; set; }
 	public int HeroicBossCount { get; set; }
+	public double HeroicBossHaste { get; set; }
 	public int AmbientLevel { get; set; }
 	public int MaxAlive { get; set; }
 	public double HealthBonusPercent { get; set; }

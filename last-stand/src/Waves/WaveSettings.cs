@@ -38,6 +38,7 @@ internal sealed class WaveSettings
 	public double HeroicBossHealthMultiplier { get; set; }
 	public double HeroicBossDamageMultiplier { get; set; }
 	public double HeroicBossAbilityHaste { get; set; }
+	public double HeroicBossHastePerBossWave { get; set; }
 	public IReadOnlyList<string> HeroicBossTypes { get; set; }
 
 	public Cadence ForeignTypes { get; set; }

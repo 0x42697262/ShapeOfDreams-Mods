@@ -49,6 +49,10 @@ internal static class ConfigText
 	public const string HeroicBossAbilityHasteDescription =
 		"Extra ability haste for heroic bosses, so they use their skills more often. Cooldowns scale by " +
 		"1 / (1 + haste / 100), down to the game's own floor: 100 is about twice as often, 0 is off.";
+	public const string HeroicBossHasteGrowthLabel = "Heroic boss haste per later boss wave";
+	public const string HeroicBossHasteGrowthDescription =
+		"Ability haste added on each heroic boss wave after the first: with 200 and 50, the bosses at wave 49 " +
+		"get 200, at 99 get 250, at 149 get 300. 0 keeps it flat.";
 	public const string HeroicBossTypesLabel = "Heroic boss types";
 	public const string HeroicBossTypesDescription =
 		"Bosses to pick from at random. None checked means no heroic bosses. Changes apply on the next arena.";

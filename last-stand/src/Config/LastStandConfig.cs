@@ -151,6 +151,10 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HeroicBossAbilityHasteDescription)]
 	public float heroicBossAbilityHaste = 200f;
 
+	[LabelText(ConfigText.HeroicBossHasteGrowthLabel)]
+	[Description(ConfigText.HeroicBossHasteGrowthDescription)]
+	public float heroicBossAbilityHastePerBossWave = 50f;
+
 	[PickMany(ChoiceSet.HeroicBosses)]
 	[LabelText(ConfigText.HeroicBossTypesLabel)]
 	[Description(ConfigText.HeroicBossTypesDescription)]
