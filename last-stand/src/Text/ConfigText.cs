@@ -11,7 +11,9 @@ internal static class ConfigText
 	public const string ForeignHeader = "Monsters from other worlds";
 	public const string HunterHeader = "Hunters";
 	public const string MirageHeader = "Mirage variants";
-	public const string LootHeader = "Loot";
+	public const string ItemDropsHeader = "Item drops";
+	public const string EnemyRewardsHeader = "Enemy rewards";
+	public const string ChaosRarityHeader = "Chaos rarity";
 
 	public const string StripRoomModifiersLabel = "Plain arena (no room modifiers)";
 	public const string StripRoomModifiersDescription =
@@ -49,8 +51,7 @@ internal static class ConfigText
 		"1 / (1 + haste / 100), down to the game's own floor: 100 is about twice as often, 0 is off.";
 	public const string HeroicBossTypesLabel = "Heroic boss types";
 	public const string HeroicBossTypesDescription =
-		"Comma-separated boss types to pick from at random. Bosses that run their own death logic (such as " +
-		"Mon_Primus_BossPrimusAeron, whose death starts the ending) are skipped. Changes apply on the next arena.";
+		"Bosses to pick from at random. None checked means no heroic bosses. Changes apply on the next arena.";
 	public const string HeroicBossChaosLabel = "Heroic boss legendary chaos rewards";
 	public const string HeroicBossChaosDescription = "Legendary chaos rewards each heroic boss drops when it dies.";
 	public const string HeroicBossDropMultiplierLabel = "Heroic boss item chance multiplier";
@@ -59,9 +60,32 @@ internal static class ConfigText
 
 	public const string ArenaRoomLabel = "Arena room";
 	public const string ArenaRoomDescription =
-		"Boss room every combat node loads as. Others: Room_Ink_Boss_0, Room_Despair_Boss_0, " +
-		"Room_Sky_Boss_0, Room_Forest_Boss_0, Room_LavaLand_Boss_0, Room_DarkCave_Boss_0, " +
-		"Room_SnowMountain_Boss_0.";
+		"Boss room every combat node loads as. Takes effect on the next run.";
+
+	public const string PrimusWorld = "Primus";
+	public const string ForestWorld = "Forest";
+	public const string DarkCaveWorld = "Dark Cave";
+	public const string DespairWorld = "Despair";
+	public const string SkyWorld = "Sky";
+	public const string SnowMountainWorld = "Snow Mountain";
+	public const string LavaLandWorld = "Lava Land";
+	public const string InkWorld = "Ink";
+
+	public const string WindowTitle = "Last Stand";
+	public const string WindowNote = "Host only. Other players do not need this mod.";
+	public const string ApplyButton = "Apply";
+	public const string CancelButton = "Cancel";
+	public const string LobbyButton = "Last Stand";
+
+	public static string ChoiceLabel(string name, string world)
+	{
+		return name == null ? world : $"{name} ({world})";
+	}
+
+	public static string UnknownChoiceLabel(string value)
+	{
+		return $"{value} (not in the list)";
+	}
 
 	public const string FirstWaveDelayLabel = "First wave delay (s)";
 	public const string FirstWaveDelayDescription = "Seconds between arriving in the arena and the first wave.";

@@ -50,5 +50,7 @@ internal static class Tuning
 
 	public const char ListSeparator = ',';
 
+	public const string ListJoiner = ", ";
+
 	public const float MinimumStatMultiplier = 0.1f;
 }

@@ -16,6 +16,10 @@ internal static class ModIdentity
 
 	public const string SoloButtonName = "Last Stand Button" + OwnedSuffix;
 
+	public const string LobbyButtonName = "Last Stand Settings Button" + OwnedSuffix;
+
+	public const string ConfigWindowName = "Last Stand Config" + OwnedSuffix;
+
 	public static bool IsOurs(string objectName)
 	{
 		return objectName != null && objectName.EndsWith(OwnedSuffix, StringComparison.Ordinal);

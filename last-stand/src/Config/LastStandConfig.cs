@@ -10,6 +10,7 @@ public class LastStandConfig : ModConfig
 	public int schemaVersion = ConfigSchema.Current;
 
 	[Header(ConfigText.ArenaHeader)]
+	[PickOne(ChoiceSet.ArenaRooms)]
 	[LabelText(ConfigText.ArenaRoomLabel)]
 	[Description(ConfigText.ArenaRoomDescription)]
 	public string arenaRoom = GameNames.DefaultArenaRoom;
@@ -138,6 +139,7 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HeroicBossAbilityHasteDescription)]
 	public float heroicBossAbilityHaste = 200f;
 
+	[PickMany(ChoiceSet.HeroicBosses)]
 	[LabelText(ConfigText.HeroicBossTypesLabel)]
 	[Description(ConfigText.HeroicBossTypesDescription)]
 	public string heroicBossTypes = GameNames.DefaultHeroicBosses;
@@ -230,7 +232,7 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.MirageChanceDescription)]
 	public float mirageChancePercent = 20f;
 
-	[Header(ConfigText.LootHeader)]
+	[Header(ConfigText.ItemDropsHeader)]
 	[LabelText(ConfigText.MobItemsPerPlayerLabel)]
 	[Description(ConfigText.MobItemsPerPlayerDescription)]
 	public int mobItemsPerPlayerPerWave = 1;
@@ -238,10 +240,6 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.GuaranteedDropLabel)]
 	[Description(ConfigText.GuaranteedDropDescription)]
 	public bool guaranteedDropPerWave = false;
-
-	[LabelText(ConfigText.RewardGrowthLabel)]
-	[Description(ConfigText.RewardGrowthDescription)]
-	public float rewardGrowthPercentPerWave = 10f;
 
 	[LabelText(ConfigText.CommonDropLabel)]
 	[Description(ConfigText.RarityDropDescription)]
@@ -283,6 +281,11 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.MemoryShareDescription)]
 	public float memorySharePercent = 50f;
 
+	[Header(ConfigText.EnemyRewardsHeader)]
+	[LabelText(ConfigText.RewardGrowthLabel)]
+	[Description(ConfigText.RewardGrowthDescription)]
+	public float rewardGrowthPercentPerWave = 10f;
+
 	[LabelText(ConfigText.RegularDropMultiplierLabel)]
 	[Description(ConfigText.DropMultiplierDescription)]
 	public float regularDropMultiplier = 1f;
@@ -307,6 +310,20 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.GoldDescription)]
 	public int miniBossGold = 40;
 
+	[LabelText(ConfigText.PainDropMultiplierLabel)]
+	[Description(ConfigText.DropMultiplierDescription)]
+	public float painDropMultiplier = 2f;
+
+	[LabelText(ConfigText.PainDreamDustLabel)]
+	[Description(ConfigText.DreamDustDescription)]
+	public int painDreamDust = 150;
+
+	[LabelText(ConfigText.PainGoldLabel)]
+	[Description(ConfigText.GoldDescription)]
+	public int painGold = 100;
+
+
+	[Header(ConfigText.ChaosRarityHeader)]
 	[LabelText(ConfigText.ChaosLegendaryLabel)]
 	[Description(ConfigText.ChaosRarityDescription)]
 	public float chaosLegendaryPercent = 5f;
@@ -334,16 +351,4 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.ChaosRareAtTargetLabel)]
 	[Description(ConfigText.ChaosAtTargetDescription)]
 	public float chaosRarePercentAtTarget = 47.3f;
-
-	[LabelText(ConfigText.PainDropMultiplierLabel)]
-	[Description(ConfigText.DropMultiplierDescription)]
-	public float painDropMultiplier = 2f;
-
-	[LabelText(ConfigText.PainDreamDustLabel)]
-	[Description(ConfigText.DreamDustDescription)]
-	public int painDreamDust = 150;
-
-	[LabelText(ConfigText.PainGoldLabel)]
-	[Description(ConfigText.GoldDescription)]
-	public int painGold = 100;
 }

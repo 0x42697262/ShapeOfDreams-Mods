@@ -546,7 +546,24 @@ yet. The host's [HUD label](#hud-label) shows the wave meanwhile.
 
 ## Settings
 
-All in the mod manager's config screen, applied live.
+The host can change them in two places: the **Last Stand** button in the
+lobby's settings panel (or the `laststand_config` console command), and the
+mod manager's config screen. The lobby window edits a copy, and **Apply**
+saves it and applies it live; **Cancel** or Escape drops the edits. Its
+sections are spread over three columns in a scrolling area, as in Dream
+Arena. Only the host has the mod, so only the host sees the button.
+
+**Nothing has to be typed except numbers.** `Arena room` is a dropdown of the
+8 boss rooms, and `Heroic boss types` is a list of checkboxes, one per
+supported boss (none checked means no heroic bosses). Both are still saved as
+plain asset names, so old config files keep working. A saved name that isn't
+in the list shows as an extra dropdown option, or is kept as-is behind the
+checkboxes, so opening the window never changes it by itself. This works by
+putting two entries at the front of the game's `DewGUI.fieldBuilders` list,
+which `CreateWidgetsForObject` asks in order for each field. They claim only
+fields marked `[PickOne]` or `[PickMany]`, so both config screens get them and
+every other field keeps its stock widget. Labels use the game's own name for a
+boss (`<type>_Name`) where it has one, plus the world.
 
 **Saved settings and new versions.** The game saves the config as JSON
 (`QuickSave/Mods/com.0x42697262.laststand/LastStandMod.config.json` under the
@@ -560,45 +577,45 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 
 | Group | Setting | Default |
 |---|---|---|
-| Arena | Arena room | `Room_Primus_Boss_0` |
+| Arena | Arena room | Primus (dropdown) |
 | | Plain arena (no room modifiers) | on |
 | | Show wave in HUD | on |
-| Waves | First wave delay | 15 s |
+| Waves | First wave delay | 10 s |
 | | Break between waves | 5 s |
 | | Monsters in wave 1 / extra per wave | 6 / 2 |
 | | Extra player share | 0.5 |
 | | Surge every N waves / monster multiplier | 5 / 2 |
-| | Max monsters alive / per extra player | 100 / 0 |
+| | Max monsters alive / per extra player | 200 / 0 |
 | | Min spawn distance from heroes | 8 m |
-| | Spawn interval / spawns per batch | 0.5 s / 2 |
+| | Spawn interval / spawns per batch | 0.5 s / 6 |
 | Scaling | Health / damage per wave | 10% / 10% |
 | | Starting monster level / waves per level | 1 / 10 |
 | Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 4 |
 | Heroic bosses | First wave / every N waves / waves per extra / max | 49 / 50 / 100 / 10 |
 | | Entrance delay | 3 s |
-| | Health / damage multiplier | 10 / 5 |
-| | Ability haste | +100 |
-| | Types | 6 zone bosses |
-| | Legendary chaos rewards / dust / gold / item multiplier | 5 / 300 / 200 / 2 |
+| | Health / damage multiplier | 10 / 3 |
+| | Ability haste | +200 |
+| | Types | 6 zone bosses (checkboxes) |
+| | Legendary chaos rewards / dust / gold / item multiplier | 5 / 1000 / 200 / 2 |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |
 | | Damage per second per boss | 1% |
 | | Health / damage bonus | 20% / 30% |
 | Other worlds | First wave / every N waves / types per step | 10 / 10 / 1 |
 | Hunters | Waves per extra hunter / max per wave | 5 / 10 |
-| | Waves between hunter zones / max hunt level | 10 / 3 |
+| | Waves between hunter zones / max hunt level | 10 / 6 |
 | Mirage | First wave / waves per new skin / chance | 30 / 10 / 20% |
-| Loot | Monster items per player per wave | 1 |
+| Item drops | Monster items per player per wave | 1 |
 | | Guaranteed drop per wave | off |
-| | Gold growth per wave | 10% |
 | | Common / rare / epic / legendary chance | 25% / 10% / 4% / 1% |
 | | Item chances reach target at wave | 100 |
 | | Common / rare / epic / legendary at target | 0% / 49.8% / 35.2% / 15% |
 | | Memory share | 50% |
+| Enemy rewards | Gold growth per wave | 10% |
 | | Item chance multiplier: monster / miniboss / Pain | 1 / 1.5 / 2 |
-| | Chaos reward: legendary / epic / rare chance | 5% / 15% / 35% |
+| | Per-tier dust and gold | see Loot |
+| Chaos rarity | Chaos reward: legendary / epic / rare chance | 5% / 15% / 35% |
 | | Chaos chances reach target at wave | 50 |
 | | Chaos reward: legendary / epic / rare at target | 17.5% / 35.2% / 47.3% |
-| | Per-tier dust and gold | see Loot |
 
 ## Console commands
 
@@ -608,6 +625,7 @@ With Developer Mode on (F1, then `` ` ``):
 |---|---|
 | `laststand_status` | Logs mode, phase, wave, time to next wave, alive, queued, and items dropped per rarity |
 | `laststand_next` | Starts the next wave now, even if monsters remain (host only) |
+| `laststand_config` | Opens the Last Stand settings window |
 | `laststand_solo` | Starts a solo Last Stand run |
 
 ## Code layout
@@ -617,7 +635,7 @@ With Developer Mode on (F1, then `` ` ``):
 | `src/LastStandMod.cs` | Entry point. Wires the session, Harmony and lifecycle |
 | `src/LastStandConsole.cs` | Console commands |
 | `src/Mode` | Whether Last Stand is selected, and selecting it |
-| `src/UI` | The solo button, the lobby dropdown option, UI cleanup |
+| `src/UI` | The solo button, the lobby dropdown option, the settings window and its lobby button, the dropdown and checkbox fields, UI cleanup |
 | `src/Session` | The run's phases (camp, arriving, fighting) and arrival |
 | `src/Arena` | Room override, modifier gate, camp rift, cleared-room prep, arena layout, staging heroes |
 | `src/Waves` | Wave schedule, wave cycle and spawn queue (plain logic), and the director |

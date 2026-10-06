@@ -205,7 +205,13 @@ These were checked in the decompiled code.
   defaults if the file is missing, using Newtonsoft through
   `DewPersistence.FromJson`. Missing keys keep their initializer value. The
   config screen (`DewGUI.CreateWidgetsForObject`) skips fields marked
-  `[HideInInspector]`.
+  `[HideInInspector]`. For every other field it uses the first entry of the
+  public `DewGUI.fieldBuilders` list (condition on type and `FieldInfo`, then a
+  builder returning `FieldBuildResult`) that accepts it. Inserting at index 0
+  overrides the stock widget. The list is cleared only at
+  `SubsystemRegistration`, before mods load. `ModConfig.Clone()` and
+  `CopyTo()` copy every field by reflection. `UI_Toggle.isChecked` raises
+  `onIsCheckedChanged` even when set from code.
 - **Shrines.** `Shrine.maxTotalUseCount` is a SyncVar. Every successful use ends
   in `Shrine.DoPostUseRoutines`, including `EditSkillShrine` edits.
   `Shrine_UpgradeWell` charges `GameManager.GetSkillUpgradeDreamDustCost` and
@@ -366,6 +372,12 @@ Each answer still needs to be seen working:
     souls still appear.
 24. **Wave tracker:** which existing quest type to use, given that only progress
     and step text sync. Chat notices stand in until then.
+25. **Settings window:** the lobby's settings panel has a **Last Stand** button
+    that opens a three-column window. `Arena room` is a dropdown and
+    `Heroic boss types` is a checkbox list, in both that window and the mod
+    manager's screen. Apply saves the file, Cancel and Escape drop the edits,
+    and the dropdown list isn't clipped by the scroll area. Same dropdowns for
+    Dream Arena's `Arena room` and `Dummy monster`.
 
 ## Conventions
 

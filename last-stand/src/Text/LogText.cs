@@ -8,6 +8,9 @@ internal static class LogText
 	public const string Unloaded = "unloaded.";
 	public const string ModeOptionFailed = "could not add the Last Stand game mode option.";
 	public const string SoloButtonFailed = "could not add the Last Stand solo button.";
+	public const string LobbyButtonFailed = "could not add the Last Stand settings button to the lobby; use the laststand_config console command.";
+	public const string ConfigSaveFailed = "could not save the Last Stand config.";
+	public const string ConfigApplied = "config applied and saved.";
 	public const string TickFailed = "session tick failed; the session was stopped.";
 	public const string HudFailed = "HUD label update failed; the stock label was restored.";
 	public const string SessionStopped = "session stopped.";

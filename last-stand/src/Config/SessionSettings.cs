@@ -151,22 +151,7 @@ internal sealed class SessionSettings
 
 	private static IReadOnlyList<string> ListFrom(string text)
 	{
-		List<string> items = new List<string>();
-		if (string.IsNullOrEmpty(text))
-		{
-			return items;
-		}
-
-		foreach (string part in text.Split(Tuning.ListSeparator))
-		{
-			string item = part.Trim();
-			if (item.Length > 0)
-			{
-				items.Add(item);
-			}
-		}
-
-		return items;
+		return ChoiceList.Split(text);
 	}
 
 	private static Cadence CadenceFrom(int firstWave, int intervalWaves)

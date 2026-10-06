@@ -31,6 +31,7 @@ public class LastStandMod : ModBehaviour
 		instance.isAlteringGameplay = true;
 		Session = new LastStandSession(SessionSettings.From(config));
 		_hudLabel = Session.HudLabel;
+		ChoiceFields.Register();
 		harmony.PatchAll();
 		CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
 		Log.Info(LogText.Loaded(mod.metadata.name, mod.metadata.modVer));
@@ -68,7 +69,9 @@ public class LastStandMod : ModBehaviour
 	{
 		Session?.Reset();
 		Hud.Show(null);
+		ConfigWindow.Close();
 		InjectedUi.RemoveAll();
+		ChoiceFields.Unregister();
 		harmony.UnpatchAll(harmony.Id);
 
 		if (Current == this)
@@ -87,6 +90,22 @@ public class LastStandMod : ModBehaviour
 		}
 
 		base.LoadConfigsToDisk();
+	}
+
+	internal void ApplyConfig(LastStandConfig edited)
+	{
+		edited.CopyTo(config);
+		try
+		{
+			SaveConfigsToDisk();
+			Log.Info(LogText.ConfigApplied);
+		}
+		catch (Exception e)
+		{
+			Log.Error(LogText.ConfigSaveFailed, e);
+		}
+
+		OnConfigChanged();
 	}
 
 	public override void OnConfigChanged()

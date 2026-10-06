@@ -2,6 +2,7 @@ using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Mode;
 using LastStand.Text;
+using LastStand.UI;
 
 namespace LastStand;
 
@@ -43,6 +44,12 @@ public class LastStandConsole : ModBehaviour
 		}
 
 		LastStandMod.Current?.Session?.SpawnTestBoss(typeName);
+	}
+
+	[ConsoleCommand(CommandText.ConfigDescription, CommandText.Config)]
+	public void Cmd_Config()
+	{
+		ConfigWindow.Open();
 	}
 
 	[ConsoleCommand(CommandText.SoloDescription, CommandText.Solo)]
