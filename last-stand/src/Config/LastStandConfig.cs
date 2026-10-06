@@ -25,7 +25,7 @@ public class LastStandConfig : ModConfig
 	[Header(ConfigText.WavesHeader)]
 	[LabelText(ConfigText.FirstWaveDelayLabel)]
 	[Description(ConfigText.FirstWaveDelayDescription)]
-	public float firstWaveDelaySeconds = 15f;
+	public float firstWaveDelaySeconds = 10f;
 
 	[LabelText(ConfigText.IntermissionLabel)]
 	[Description(ConfigText.IntermissionDescription)]
@@ -65,7 +65,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.SpawnsPerIntervalLabel)]
 	[Description(ConfigText.SpawnsPerIntervalDescription)]
-	public int spawnsPerInterval = 2;
+	public int spawnsPerInterval = 6;
 
 	[LabelText(ConfigText.MinSpawnDistanceLabel)]
 	[Description(ConfigText.MinSpawnDistanceDescription)]
@@ -132,11 +132,11 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicBossDamageMultiplierLabel)]
 	[Description(ConfigText.HeroicBossStatMultiplierDescription)]
-	public float heroicBossDamageMultiplier = 5f;
+	public float heroicBossDamageMultiplier = 3f;
 
 	[LabelText(ConfigText.HeroicBossAbilityHasteLabel)]
 	[Description(ConfigText.HeroicBossAbilityHasteDescription)]
-	public float heroicBossAbilityHaste = 100f;
+	public float heroicBossAbilityHaste = 200f;
 
 	[LabelText(ConfigText.HeroicBossTypesLabel)]
 	[Description(ConfigText.HeroicBossTypesDescription)]
@@ -152,7 +152,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicBossDreamDustLabel)]
 	[Description(ConfigText.DreamDustDescription)]
-	public int heroicBossDreamDust = 300;
+	public int heroicBossDreamDust = 1000;
 
 	[LabelText(ConfigText.HeroicBossGoldLabel)]
 	[Description(ConfigText.GoldDescription)]
@@ -215,7 +215,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.MaxHuntLevelLabel)]
 	[Description(ConfigText.MaxHuntLevelDescription)]
-	public int maxHuntLevel = 3;
+	public int maxHuntLevel = 6;
 
 	[Header(ConfigText.MirageHeader)]
 	[LabelText(ConfigText.MirageFromWaveLabel)]
