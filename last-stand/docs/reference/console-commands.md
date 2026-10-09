@@ -15,5 +15,5 @@ With Developer Mode on (F1, then `` ` ``):
 | `laststand_secondwind <charges> [seconds]` | Cheat: gives every hero the Second Wind star's effect (`Se_FatalHitProtection_Interrupt`, what `Se_Star_L_FatalHitProtection` grants) with that many charges. Each charge cancels a fatal hit, sets health to 25% and makes the hero invulnerable for `seconds` (default 3.5, the old global star's value). Running it again replaces the charges; 0 removes it |
 | `laststand_skip [n]` | Cheat: ends the current wave now (its monsters and remaining spawns removed, no drops, Pain zone lifted) and starts the next wave at once, at that wave's own difficulty. Each skipped wave still counts as cleared (shrine resets, revives, progress save). With n, repeats n times, one wave per frame. In a break, skips the break |
 | `laststand_testboss [type]` | Cheat: spawns a weak level 1 heroic boss (host, in the arena; needs `Allow cheat commands`) |
-| `laststand_config` | Opens the Last Stand settings window |
+| `laststand_config` | Opens the Last Stand settings window. Refused while connected to someone else's lobby or run (`NetworkClient.active` without `NetworkServer.active`): only the host's settings apply. Works on the title screen and when hosting |
 | `laststand_solo` | Starts a solo Last Stand run |

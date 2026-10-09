@@ -21,6 +21,10 @@ internal static class LogText
 
 	public const string ConfigApplied = "config applied and saved.";
 
+	public const string ConfigHostOnly =
+		"laststand_config: you joined someone else's lobby, and only the host's settings apply. " +
+		"The window opens on the title screen or when you host.";
+
 	public const string HeroSoulFailed = "hero soul: could not clear a knocked-out hero's soul.";
 
 	public const string TickFailed = "session tick failed; the session keeps its wave and carries on.";

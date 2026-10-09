@@ -944,6 +944,10 @@ Each answer still needs to be seen working:
     has the **Last Stand** button. A friend with the mod loaded joins: their
     settings panel has no Last Stand button, and nothing else of the mod
     shows or runs on their side.
+80. **Config command host-only:** the friend from check 79 runs
+    `laststand_config` in the lobby and in the run: no window opens, and
+    their log shows `only the host's settings apply`. On the title screen
+    and as host it opens the window as before.
 
 ## Conventions
 

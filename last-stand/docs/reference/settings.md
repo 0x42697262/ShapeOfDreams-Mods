@@ -6,7 +6,10 @@ mod manager's config screen. The lobby window edits a copy, and **Apply**
 saves it and applies it live; **Cancel** or Escape drops the edits. The
 button shows only for the host (`NetworkServer.active`, checked each time the
 panel opens): a client who also has the mod loaded doesn't get it, since its
-settings would only edit their own file and never reach the host's run.
+settings would only edit their own file and never reach the host's run. For
+the same reason `laststand_config` refuses on a connected client and logs
+`only the host's settings apply`. The mod manager's own config screen
+belongs to the game and can't be hidden; it only edits that player's file.
 
 **Layout.** Both places show the same panel, laid out like a system settings
 app: a sidebar of pages on the left (General, Shrines, Waves, Monsters,

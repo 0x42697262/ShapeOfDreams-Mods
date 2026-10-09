@@ -4,6 +4,7 @@ using LastStand.Game;
 using LastStand.Mode;
 using LastStand.Text;
 using LastStand.UI;
+using Mirror;
 
 namespace LastStand;
 
@@ -175,6 +176,12 @@ public class LastStandConsole : ModBehaviour
 	[ConsoleCommand(CommandText.ConfigDescription, CommandText.Config)]
 	public void Cmd_Config()
 	{
+		if (NetworkClient.active && !NetworkServer.active)
+		{
+			Log.Warn(LogText.ConfigHostOnly);
+			return;
+		}
+
 		ConfigWindow.Open();
 	}
 
