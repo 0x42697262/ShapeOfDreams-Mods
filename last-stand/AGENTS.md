@@ -11,7 +11,11 @@ seen working; the newest ones (the highest numbers) are still untested.
 
 `about/icon.png` (512×512) and `about/preview.png` (1024×576, under Steam's
 1 MB limit) are Last Stand's own. `about/description.txt` is the Workshop
-description (BBCode).
+description (BBCode). Their sources are in `art/`: `art/build.sh` runs
+`art/icon/icon.py` and `art/preview/preview.py` (SVG from code, with the
+cropped screenshots beside it) and renders both into `about/` with
+`rsvg-convert` and ImageMagick. The output matches the shipped files pixel
+for pixel.
 
 **Workshop upload.** The game's mod manager uploads the whole mod folder
 (`SteamUGC.SetItemContent(item.path)`), so never upload from the repo: it
