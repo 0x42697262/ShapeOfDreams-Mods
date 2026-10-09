@@ -85,7 +85,8 @@ button in the lobby's settings panel, or in the mod manager.
 ## Docs
 
 The design docs are in [`docs/`](docs/README.md), one topic per file, with a
-table of contents.
+table of contents. A general guide to modding Shape of Dreams, with this mod as the
+worked example, is in [`modding/`](modding/README.md).
 
 ## Build
 
