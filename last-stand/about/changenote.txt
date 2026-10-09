@@ -1,10 +1,13 @@
-[b]Fixed: friends couldn't join after a heroic boss[/b]
-After the first heroic boss (wave 49), players joining mid-run were stuck on "The expedition is preparing to move after fighting a Heroic Boss" for the rest of the run. They can now join during waves again, and anyone already waiting gets in.
+[b]New: merged waves[/b]
+From wave 48, a wave has at most 100 monsters and hunters, whatever the player count, and they carry the strength of the whole wave. Wave 131 solo would have 266 monsters, so its 100 have x2.66 health and damage each. Bonus gold and dream dust per kill grow the same way. The monster count no longer stops growing at wave 110, so merged waves keep getting stronger.
 
-[b]Changed: fast clear now looks for instant kills[/b]
-Fast clear used to count kills within 10 seconds of a wave's start. Big waves can't even spawn that fast, so it rarely triggered. Now a monster counts as killed instantly when it dies within 0.5 seconds of the first hit it takes. From wave 30, if 80% of a wave is killed instantly, every later wave gets double health and damage, stacking as before. Heroic bosses still take half the stacks.
+[b]Changed: surge waves[/b]
+Once waves merge, a surge (every 5th wave) doubles the monsters' strength instead of their number, and brings 2 extra minibosses and 2 extra Pain minibosses.
 
-[b]Settings reset[/b]
-This update resets Last Stand's settings to the new defaults. Your old settings file is kept next to the new one with a .old extension.
+[b]New: boss health floor[/b]
+Once waves merge, minibosses and Pain minibosses have at least 5 times the health of the toughest monster in the wave, and heroic bosses at least 20 times.
+
+[b]Changed: fewer monsters at once[/b]
+At most 35 monsters are alive at a time (70 on surge waves), down from 200, so the host lags less. The rest of the wave arrives as monsters die.
 
 Only the host needs this update.
