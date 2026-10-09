@@ -105,6 +105,69 @@ it in the overlay) and check the visibility before announcing a release.
 - Any "the button does X" claim in a doc: find the platform call and read
   its arguments.
 
+### Worked example: the missing change note
+
+Reading the arguments in step 3 shows one that's always empty:
+
+```csharp
+SteamAPICall_t hAPICall = SteamUGC.SubmitItemUpdate(handle, null);
+```
+
+The second parameter of `SubmitItemUpdate` is the change note, the text
+on the item's Change Notes page. The game never sends one, so every
+update shows up with no notes unless you paste them on the page by hand.
+Your mod is loaded while the mod manager uploads it, so it can patch the
+uploader:
+
+1. **Find a hook that knows which mod is uploading.** `SubmitItemUpdate`
+   only gets a handle. `DewMod.UpdateItem(PublishedFileId_t id, ModItem
+   item, bool isNew)` gets the `ModItem`, with `item.path` (the folder
+   being uploaded) and `item.metadata.id`.
+2. **Check the timing.** `UpdateItem` is `async`, but everything up to its
+   first `await` runs inside the call, and `SubmitItemUpdate` comes before
+   it. So a prefix on `UpdateItem` can store the note, a prefix on
+   `SubmitItemUpdate` can swap it in for the `null`, and a finalizer on
+   `UpdateItem` clears it, all within one call.
+3. **Only touch your own mod.** Compare `item.metadata.id` with
+   `ModBehaviour.mod.metadata.id`. Without that check, your patch would
+   attach your note to someone else's upload.
+4. **Read the note from the uploaded folder.** Last Stand reads
+   `about/changenote.txt` from `item.path`, so the pack script copies it
+   into the pack. Steam renders BBCode in change notes.
+
+```csharp
+[HarmonyPatch(typeof(DewMod), nameof(DewMod.UpdateItem))]
+internal static class WorkshopUploadPatch
+{
+	[HarmonyPrefix]
+	private static void Prefix(ModItem item)
+	{
+		WorkshopChangeNote.Begin(item);
+	}
+
+	[HarmonyFinalizer]
+	private static void Finalizer()
+	{
+		WorkshopChangeNote.End();
+	}
+}
+
+[HarmonyPatch(typeof(SteamUGC), nameof(SteamUGC.SubmitItemUpdate))]
+internal static class WorkshopSubmitPatch
+{
+	[HarmonyPrefix]
+	private static void Prefix(ref string pchChangeNote)
+	{
+		WorkshopChangeNote.Apply(ref pchChangeNote);
+	}
+}
+```
+
+`SteamUGC` lives in `com.rlabrecque.steamworks.net.dll` (Steamworks.NET)
+in the `Managed` folder; reference it with `Private` set to `False`, like
+the game's other assemblies. These patches must not check your game
+mode: uploads happen from the title screen.
+
 ---
 
 ## 2. Build a clean pack
@@ -314,8 +377,8 @@ settings. Changing the id loses both, so pick it once.
    check that the details pane shows the expected id and that no entry
    shows a conflict.
 6. Click Upload and confirm. The overlay opens the item page.
-7. On the item page: check visibility, set Public when ready, add a change
-   note.
+7. On the item page: check visibility and set Public when ready. Add a
+   change note by hand unless your mod attaches one (section 1).
 8. If this was the first upload, copy
    `Mods/<Name>/about/publishedfileid.txt` back to the source's `about/`
    (or copy the folder back to `dist/` and rerun the pack script) and
@@ -518,8 +581,9 @@ Notes:
 
 **Upload**
 
-11. Upload from the pack. Check visibility on the item page, add the change
-    note, set Public when ready.
+11. Write the change note (`about/changenote.txt` for Last Stand) before
+    packing, or add it on the item page after the upload. Check
+    visibility, set Public when ready.
 12. First upload only: copy `publishedfileid.txt` back and commit it.
 13. Restore the dev folder.
 14. Optional: zip the pack for manual installs.

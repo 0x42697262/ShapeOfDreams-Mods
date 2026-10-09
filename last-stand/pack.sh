@@ -6,6 +6,7 @@ name="LastStand"
 dll="$root/bin/Release/netstandard2.1/$name.dll"
 out="$root/dist/$name"
 id_file="about/publishedfileid.txt"
+note_file="about/changenote.txt"
 
 if [ ! -f "$dll" ]; then
   echo "Missing $dll. Build Release first: dotnet build -c Release" >&2
@@ -24,6 +25,11 @@ cp "$root/about/icon.png" "$root/about/preview.png" "$root/about/description.txt
 if [ -f "$root/$id_file" ]; then
   cp "$root/$id_file" "$out/$id_file"
 fi
+if [ -s "$root/$note_file" ]; then
+  cp "$root/$note_file" "$out/$note_file"
+else
+  echo "No $note_file: the next upload goes up without a change note." >&2
+fi
 
 sed -E 's|"assemblies": *\[[^]]*\]|"assemblies": [ "'"$name"'.dll" ]|' \
   "$root/about/metadata.json" > "$out/about/metadata.json"
@@ -34,3 +40,7 @@ fi
 
 echo "Packed $out:"
 (cd "$out" && find . -type f | sort | sed 's|^\./|  |')
+if [ -f "$out/$note_file" ]; then
+  echo "Change note for the next upload ($note_file):"
+  sed 's|^|  |' "$out/$note_file"
+fi

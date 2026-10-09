@@ -88,6 +88,19 @@ internal static class LogText
 		return $"hero soul: removed one from node {node}; knocked-out heroes are revived at the next wave instead.";
 	}
 
+	public const string ChangeNoteMissing =
+		"workshop: no about/changenote.txt in the uploaded folder; the update goes up without a change note.";
+
+	public static string ChangeNoteFailed(string error)
+	{
+		return $"workshop: could not read about/changenote.txt ({error}); the update goes up without a change note.";
+	}
+
+	public static string ChangeNoteAttached(int length)
+	{
+		return $"workshop: attached about/changenote.txt ({length} characters) as the update's change note.";
+	}
+
 	public static string MidJoinOpened(MidJoinWaitType previous)
 	{
 		return $"mid-join: cleared the game's {previous} wait so players can join during waves.";

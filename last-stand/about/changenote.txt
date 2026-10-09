@@ -1,0 +1,10 @@
+[b]Fixed: friends couldn't join after a heroic boss[/b]
+After the first heroic boss (wave 49), players joining mid-run were stuck on "The expedition is preparing to move after fighting a Heroic Boss" for the rest of the run. They can now join during waves again, and anyone already waiting gets in.
+
+[b]Changed: fast clear now looks for instant kills[/b]
+Fast clear used to count kills within 10 seconds of a wave's start. Big waves can't even spawn that fast, so it rarely triggered. Now a monster counts as killed instantly when it dies within 0.5 seconds of the first hit it takes. From wave 30, if 80% of a wave is killed instantly, every later wave gets double health and damage, stacking as before. Heroic bosses still take half the stacks.
+
+[b]Settings reset[/b]
+This update resets Last Stand's settings to the new defaults. Your old settings file is kept next to the new one with a .old extension.
+
+Only the host needs this update.

@@ -6,6 +6,8 @@ internal static class GameNames
 {
 	public const string CurseOnCreate = "OnCreate";
 
+	public const string ModAboutFolder = "about";
+
 	public const string HatredDoCurse = "DoCurse";
 
 	public const string ArenaPanelModifier = nameof(RoomMod_FragmentOfRadiance_MysteriousPlace);

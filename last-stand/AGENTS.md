@@ -30,6 +30,20 @@ it) and into every new pack. Only one folder with the mod's id may be in
 at `dist/LastStand` for the upload and back at the repo afterwards. A new
 item is created Private.
 
+**Change notes.** The game submits every upload with no change note
+(`SteamUGC.SubmitItemUpdate(handle, null)` in `DewMod.UpdateItem`). Last
+Stand fills it in: a prefix on `DewMod.UpdateItem` reads
+`about/changenote.txt` from the uploaded folder when the item is Last
+Stand's own (same id as the loaded mod), and a prefix on
+`SteamUGC.SubmitItemUpdate` puts it in place of the `null`
+(`WorkshopChangeNotePatches`, `WorkshopChangeNote`). `SubmitItemUpdate`
+runs before the method's first `await`, so it happens inside the same
+call; a finalizer clears the note afterwards. These patches work outside
+Last Stand mode, since uploads happen from the title screen. `pack.sh`
+copies the file into the pack and prints it. Write the next update's note
+in `about/changenote.txt` (Steam BBCode) before packing, and commit it. It
+appears on the item's Change Notes page.
+
 ## Sister project
 
 [Dream Arena](../dream-arena) is a host-only PvP mode for the same game, built
@@ -966,6 +980,12 @@ Each answer still needs to be seen working:
     within 0.5 s of the first hit; X needed`. Old config files are moved
     to `.old` (schema 41, `Fast clear: within (s)` replaced by `Fast clear:
     instant within (s)`).
+83. **Workshop change note:** with `about/changenote.txt` written,
+    `./pack.sh` prints it. Upload the pack: the log shows `workshop:
+    attached about/changenote.txt (N characters)`, and the item's Change
+    Notes page shows the note with its formatting. Without the file the
+    log says the update goes up without a change note, and uploading
+    another mod attaches nothing.
 
 ## Conventions
 

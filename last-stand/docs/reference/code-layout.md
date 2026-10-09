@@ -13,6 +13,7 @@
 | `src/Loot` | Loot rules, rarity tables and ledger (plain logic), drops |
 | `src/Well` | The Dream Well and Altar of Cleansing (kept at unlimited uses), the Shrine of Ascension (opens after wave 10, uses back every 10th wave), the Maw of Doom at a fixed use count, the Shrine of Destiny (2 claims per player each wave), and the Hatred Remnant (once per player each wave) |
 | `src/Game` | Thin wrappers over game APIs, and game identifiers |
+| `src/Workshop` | Attaching `about/changenote.txt` as the change note when the mod manager uploads Last Stand |
 | `src/Config` | The mod config, its validated snapshot, and internal tuning |
 | `src/Text` | Every player-facing, config, log and command string |
 | `src/Patches` | Harmony hooks. Each one only hands off to the code above |

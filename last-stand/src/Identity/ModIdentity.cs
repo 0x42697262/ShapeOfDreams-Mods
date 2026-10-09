@@ -8,6 +8,8 @@ internal static class ModIdentity
 
 	public const string SaveKey = "laststand";
 
+	public const string ChangeNoteFile = "changenote.txt";
+
 	public const string LobbyModeValue = "LastStand_Mode";
 
 	public const string LogPrefix = "[" + Tag + "] ";
