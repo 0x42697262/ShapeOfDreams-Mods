@@ -313,19 +313,33 @@ internal static class ConfigText
 
 	public const string RegularGrowthDescription = "Regular monsters added per wave.";
 
-	public const string RegularGrowthUntilWaveLabel = "Monster count stops growing at wave";
-
-	public const string RegularGrowthUntilWaveDescription =
-		"Monster count stops growing here (224 solo by default). Surges still double it.";
-
 	public const string SurgeIntervalLabel = "Surge every N waves";
 
 	public const string SurgeIntervalDescription =
-		"Every Nth wave multiplies regular monsters, hunters and the alive cap. Bosses unaffected.";
+		"Every Nth wave multiplies regular monsters, hunters and the alive cap. Once waves merge, the count " +
+		"makes them stronger instead. Bosses unaffected.";
 
 	public const string SurgeMultiplierLabel = "Surge monster multiplier";
 
 	public const string SurgeMultiplierDescription = "Surge multiplier. 1 = no surges.";
+
+	public const string MergedWaveSizeLabel = "Merged wave size";
+
+	public const string MergedWaveSizeDescription =
+		"From the wave where wave 1's monsters plus the growth reach this (wave 48 by default), every wave " +
+		"spawns at most this many monsters and hunters, whatever the player count, and they carry the rest's " +
+		"strength: every monster's health and damage, and mob bonus gold and dream dust, x count / size. " +
+		"0 = off.";
+
+	public const string MergedSurgeMiniBossesLabel = "Merged surges: extra minibosses";
+
+	public const string MergedSurgeMiniBossesDescription =
+		"Minibosses added to every surge wave once waves merge, on top of any scheduled ones.";
+
+	public const string MergedSurgePainLabel = "Merged surges: extra Pain minibosses";
+
+	public const string MergedSurgePainDescription =
+		"Pain minibosses added to every surge wave once waves merge, on top of any scheduled ones.";
 
 	public const string ExtraPlayerShareLabel = "Extra player share";
 

@@ -20,7 +20,6 @@ internal static class WaveSchedule
 	{
 		int extraPlayers = Math.Max(0, players - SoloPlayers);
 		int wavesSinceFirst = wave - FirstOfTier;
-		int growingWaves = Math.Min(wave, settings.RegularGrowthUntilWave) - FirstOfTier;
 		double playerScale = SoloPlayers + settings.ExtraPlayerShare * extraPlayers;
 
 		int foreign = ForeignTypesUnlocked(wave, settings, content.ForeignTypes);
@@ -29,9 +28,12 @@ internal static class WaveSchedule
 		bool surge = settings.Surges.IsOn(wave);
 		double surgeScale = surge ? settings.SurgeMultiplier : NoSurge;
 		int monsters = (int)Math.Round(
-			(settings.RegularBase + settings.RegularGrowthPerWave * growingWaves) * playerScale * surgeScale);
-		int hunters = (int)Math.Round(monsters * HunterShare(wave, settings));
-		int pain = Scaled(wave, settings.Pain, settings.PainOccurrencesPerExtra, settings.MaxPain);
+			(settings.RegularBase + settings.RegularGrowthPerWave * wavesSinceFirst) * playerScale * surgeScale);
+		MergeRule merge = settings.Merge;
+		int mobs = merge.Mobs(wave, monsters);
+		int hunters = (int)Math.Round(mobs * HunterShare(wave, settings));
+		int pain = Scaled(wave, settings.Pain, settings.PainOccurrencesPerExtra, settings.MaxPain)
+		           + merge.ExtraPain(wave, surge);
 		bool environment = HasEnvironment(wave, settings, pain);
 		int huntLevel = environment ? NoHuntLevel : HuntLevel(wave, hunterStart, settings);
 		int heroic = content.HeroicBossTypes > 0 ? HeroicBosses(wave, settings) : 0;
@@ -39,11 +41,13 @@ internal static class WaveSchedule
 		return new WavePlan
 		{
 			Number = wave,
-			RegularCount = monsters - hunters,
+			RegularCount = mobs - hunters,
 			IsSurge = surge,
 			HunterCount = hunters,
+			UnmergedMobCount = monsters,
+			MergeMultiplier = merge.StrengthFor(wave, monsters),
 			MiniBossCount = Scaled(wave, settings.MiniBosses, settings.MiniBossOccurrencesPerExtra,
-				settings.MaxMiniBosses),
+				settings.MaxMiniBosses) + merge.ExtraMiniBosses(wave, surge),
 			PainCount = pain,
 			HeroicBossCount = heroic,
 			HeroicBossHaste = HeroicBossHaste(wave, settings),

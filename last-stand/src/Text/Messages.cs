@@ -88,6 +88,11 @@ internal static class Messages
 
 		text += ".";
 
+		if (plan.IsMerged)
+		{
+			text += $" They fight with the strength of {plan.UnmergedMobCount}: x{plan.MergeMultiplier:0.##} health and damage for every monster.";
+		}
+
 		if (plan.NewForeignTypes)
 		{
 			text += " Monsters from another world join the hunt.";

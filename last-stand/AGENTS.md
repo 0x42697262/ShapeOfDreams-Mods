@@ -813,10 +813,10 @@ Each answer still needs to be seen working:
     change, and wave 10's miniboss still spawns after one. Unstable Rat Swarm
     rats don't hold the wave open.
 
-61. **Monster count stops at wave 110:** solo, the `wave N:` log line shows
-    222 regular monsters (hunters included) at wave 109, then 224 at 111,
-    112, 150 and 300, and 448 on surge waves (110, 115…). Wave 110 totals
-    454 with its 6 minibosses.
+61. **Monster count keeps growing** (schema 42, the stop at wave 110 is
+    gone): solo, the `wave N:` log line shows 222 regular monsters (hunters
+    included) at wave 109, 224 at 111 and 264 at 130 (a surge: 528), and
+    wave 110 totals 454 with its 6 minibosses.
 
 62. **Dark urge:** in co-op from wave 176, about 1 in 5 waves without a
     heroic boss log `dark urge: wave N curses every player with Potent Dark
@@ -986,6 +986,23 @@ Each answer still needs to be seen working:
     Notes page shows the note with its formatting. Without the file the
     log says the update goes up without a change note, and uploading
     another mod attaches nothing.
+84. **Merged waves** (schema 42): arriving logs `merge: from wave 48,
+    waves hold at 100 monsters and hunters`. Solo, `laststand_wave 47`
+    logs `merged=98/x1`, wave 48 `merged=100/x1`, and `laststand_wave 50`
+    `merged=208/x2.08` with 2 more minibosses than usual and `pain=2`; the
+    Pain aura shows and the break is 40 s. `laststand_wave 131` logs
+    `merged=266/x2.66` with `hunter=100 regular=0`, chat says `They fight
+    with the strength of 266: x2.66 health and damage for every monster.`,
+    and only 100 monsters spawn, each taking about 2.66× the hits, with
+    2.66× bigger bonus gold and dream dust orbs. Minibosses and heroic
+    bosses there have about 2.66× their unmerged health (the `heroic boss:`
+    maxHealth line at a merged boss wave). Set `Monsters in wave 1` to 20:
+    the merge line says wave 41. `Merged wave size` 0: nothing merges.
+85. **Alive cap 35** (schema 42): on a big wave (`laststand_wave 101`)
+    never more than 35 monsters are alive at once (`cap=35` in the `wave
+    N:` line), 70 on a surge wave (`laststand_wave 100`, `cap=70`), new
+    ones arrive as others die, and the host's frame rate is higher than
+    with the old cap of 200.
 
 ## Conventions
 

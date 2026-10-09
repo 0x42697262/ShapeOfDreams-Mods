@@ -12,6 +12,10 @@ internal sealed class WavePlan
 
 	public int HunterCount { get; set; }
 
+	public int UnmergedMobCount { get; set; }
+
+	public double MergeMultiplier { get; set; } = MergeRule.NoChange;
+
 	public int MiniBossCount { get; set; }
 
 	public int PainCount { get; set; }
@@ -49,6 +53,8 @@ internal sealed class WavePlan
 	public double FriendlyFireChance { get; set; }
 
 	public bool IsHunted => HuntLevel > 0;
+
+	public bool IsMerged => MergeMultiplier != MergeRule.NoChange;
 
 	public int TotalMonsters => RegularCount + HunterCount + MiniBossCount + PainCount + HeroicBossCount;
 

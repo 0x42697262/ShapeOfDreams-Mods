@@ -3,6 +3,7 @@ using LastStand.Combat;
 using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
+using LastStand.Waves;
 using UnityEngine;
 
 namespace LastStand.Loot;
@@ -17,9 +18,10 @@ internal sealed class LootService
 
 	private readonly List<string> _guids = new List<string>();
 
-	public void OnEnemyDied(EnemyDeath death, int wave, LootSettings settings)
+	public void OnEnemyDied(EnemyDeath death, int wave, double mergeMultiplier, LootSettings settings)
 	{
-		LootDecision decision = LootRules.Decide(settings.For(death.Tier), settings, wave, Random.value);
+		double currency = death.Tier.IsMob() ? mergeMultiplier : MergeRule.NoChange;
+		LootDecision decision = LootRules.Decide(settings.For(death.Tier), settings, wave, Random.value, currency);
 
 		LootDropper.DropDreamDust(death.Position, decision.DreamDust);
 		LootDropper.DropGold(death.Position, decision.Gold);

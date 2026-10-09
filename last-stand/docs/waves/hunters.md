@@ -7,7 +7,9 @@
   starts at wave 101 (`First hunter wave`) and grows evenly each wave until
   wave 130 (`Every monster a hunter from wave`), where every regular monster is
   a hunter, and stays there: 1/30 at 101 (10 of 309), half at 115, 29/30 at
-  129. Surges double the wave, so they double the hunters too.
+  129. Surges double the wave, so they double the hunters too. Once waves merge
+  (wave 48 by default) the share applies to the merged 100 (see
+  [Waves](waves.md)).
 - **What all-hunter waves mean.** Hunters drop no kill gold and no exp, so from
   wave 130 the only gold is the bonus gold from minibosses, Pain groups and
   heroic bosses, and heroes stop gaining exp from kills. Items still drop

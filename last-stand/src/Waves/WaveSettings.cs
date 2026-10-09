@@ -16,13 +16,14 @@ internal sealed class WaveSettings
 
 	public int RegularGrowthPerWave { get; set; }
 
-	public int RegularGrowthUntilWave { get; set; }
 
 	public double ExtraPlayerShare { get; set; }
 
 	public Cadence Surges { get; set; }
 
 	public double SurgeMultiplier { get; set; }
+
+	public MergeRule Merge { get; set; }
 
 	public int MaxAliveBase { get; set; }
 

@@ -73,10 +73,11 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Waves | First wave delay | 10 s |
 | | Break between waves / after a boss wave | 20 s / 40 s |
 | | Curse to start each wave / delay ([Curse to start](../waves/curse-to-start.md)) | off / 3 s |
-| | Monsters in wave 1 / extra per wave / stops growing at wave | 6 / 2 / 110 |
+| | Monsters in wave 1 / extra per wave | 6 / 2 |
 | | Extra player share | 0.5 |
 | | Surge every N waves / monster multiplier | 5 / 2 |
-| | Max monsters alive / per extra player | 200 / 0 |
+| | Merged wave size (merging starts where one player's count reaches it) / merged surges: extra minibosses / extra Pain minibosses | 100 (wave 48) / 2 / 2 |
+| | Max monsters alive / per extra player | 35 / 0 |
 | | Min spawn distance from heroes | 8 m |
 | | Spawn interval / spawns per batch | 0.5 s / 6 |
 | Scaling | Health / damage per wave | 10% / 10% |

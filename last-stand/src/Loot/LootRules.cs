@@ -11,14 +11,15 @@ internal static class LootRules
 
 	private static double[] _shares = new double[0];
 
-	public static LootDecision Decide(TierLoot tier, LootSettings settings, int wave, double itemRoll)
+	public static LootDecision Decide(TierLoot tier, LootSettings settings, int wave, double itemRoll,
+		double currencyMultiplier)
 	{
 		double growth = 1 + settings.GrowthPerWave * Math.Max(0, wave - Tuning.FirstWave);
 
 		return new LootDecision(
 			itemRarity: RollRarity(settings.Items.At(wave), tier.DropMultiplier, settings.ItemRarityFloor, itemRoll),
-			dreamDust: tier.DreamDust,
-			gold: (int)Math.Round(tier.Gold * growth));
+			dreamDust: (int)Math.Round(tier.DreamDust * currencyMultiplier),
+			gold: (int)Math.Round(tier.Gold * growth * currencyMultiplier));
 	}
 
 	public static Rarity? RollRarity(IReadOnlyList<RarityChance> rarestFirst, double multiplier, double floor,

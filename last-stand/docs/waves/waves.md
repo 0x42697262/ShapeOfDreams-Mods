@@ -10,8 +10,9 @@ normal break is used, because the cleared wave's plan didn't survive. The score 
 
 | From wave | What changes | Every |
 |---|---|---|
-| 1 | Regular monsters, 6 growing by 2 a wave, flat at 224 from wave 110 | wave |
+| 1 | Regular monsters, 6 growing by 2 a wave | wave |
 | 5 | Surge: twice the regular monsters (hunters included) and alive cap | 5 waves |
+| 48 | Merged waves: at most 100 monsters and hunters, carrying the whole wave's strength; surges add 2 minibosses and 2 Pain minibosses | wave |
 | 2 | +10% health and +10% damage on every monster, stacking | wave |
 | 150 | The stacking step becomes +50% health and +50% damage | wave |
 | 10 | 3 monster types from other worlds join the pool | 5 waves |
@@ -33,16 +34,49 @@ now they have their own start wave.
 Each wave is planned by `WaveSchedule`, plain logic with no game calls. It
 works through these knobs, all using systems the game already syncs:
 
-- **Count:** regular monsters start at 6 and grow by 2 a wave, up to wave 110
-  (`Monster count stops growing at wave`): 224 for one player there, and the
-  same 224 every wave after it. Each player past the first adds half a wave
-  again (336 for two, 448 for three). Every 5th wave is a **surge** that doubles
-  the regular count (wave 5: 28 instead of 14) and the hunter count, and
-  doubles the alive cap for that wave only, so the extra monsters are on the
-  field together instead of queuing. Minibosses, Pain minibosses and heroic
+- **Count:** regular monsters start at 6 and grow by 2 a wave with no end
+  (`2 × wave + 4` for one player: 224 at wave 110, 264 at 130). Each player
+  past the first adds half a wave again (×1.5 for two, ×2 for three). Every
+  5th wave is a **surge** that doubles the regular count (wave 5: 28 instead
+  of 14) and the hunter count, and doubles the alive cap for that wave
+  only, so the extra monsters are on the field together instead of
+  queuing. Minibosses, Pain minibosses and heroic
   bosses are added on top and are not doubled. Wave 110 itself is a surge
-  with 6 minibosses: 454 monsters for one player (448 + 6), 678 for two. A multiplier below 1 shrinks
-  the counts but never the cap.
+  with 6 minibosses: 454 monsters for one player (448 + 6), 678 for two.
+  An earlier version stopped the growth at wave 110 (`Monster count stops
+  growing at wave`); merged waves replaced that, and the setting is gone.
+- **Merged waves:** merging starts at the wave where one player's normal
+  count reaches 100 (`Merged wave size`): `6 + 2 × (wave − 1) ≥ 100`, wave
+  48 with the defaults. Change the wave 1 count or the growth and the start
+  wave moves with them (`MergeRule.StartWave`; the log says `merge: from
+  wave N, waves hold at 100 …` when the arena is ready). From then on a
+  wave with more than 100 regular monsters and hunters spawns only 100,
+  whatever the player count, and they carry the strength of the whole
+  count: health and damage × count / 100, on top of the per-wave bonus and
+  fast clear (multiplied, through `FastClearRule.Raise`, so the game's
+  additive stat bonuses don't dilute it). Wave 48 solo is exactly 100 (×1),
+  for two players 150 → ×1.5; wave 50 solo is a surge of 208 → ×2.08; wave
+  131 solo is 266 → ×2.66; wave 135 for two players is a surge of 822 →
+  ×8.22. Before the start wave nothing merges, even when co-op or a surge
+  goes past 100. The hunter share applies to the 100. Bonus gold and dream
+  dust per kill of these monsters are multiplied the same way
+  (`LootService`), so a merged wave pays what the full count would have;
+  vanilla kill gold isn't. Minibosses, Pain minibosses and heroic bosses
+  aren't merged, but they get the same strength multiplier, so they keep
+  the health ratio to regular monsters they had before merging (a merged
+  wave of ×4 regular monsters with ×1 bosses would leave bosses weaker
+  than the mobs around them). Their rewards don't change. A surge still
+  doubles the count, so it
+  doubles the merged strength, and it also brings 2 extra minibosses
+  (`Merged surges: extra minibosses`) and 2 extra Pain minibosses (`Merged
+  surges: extra Pain minibosses`), added after the usual caps. The Pain
+  group puts the Pain zone in place of that wave's hunter zone while it
+  lives, and the wave's break is the 40 s boss break. Fast clear's instant
+  kill share and curse kill goals count the merged wave. The chat line for
+  the wave says `They fight with the strength of N: xM health and damage
+  each.` and the `wave N:` log line shows `merged=N/xM` (`merged=N/x1` when
+  nothing merged). The rule is `MergeRule`, plain logic used by
+  `WaveSchedule`.
 - **Strength, per wave:** every spawned monster gets a stat bonus of +10% max
   health and +10% attack and ability damage for each wave after the first. So
   wave 11 is +100% health and +100% damage. From wave 150 (`Steeper scaling
@@ -95,9 +129,13 @@ works through these knobs, all using systems the game already syncs:
 - **Strength, slowly:** the game's ambient level, `GameManager.SetAmbientLevel`,
   sets the level monsters spawn at. It rises by one every 4 waves
   (`Waves per monster level`).
-- **Cap:** at most 200 monsters alive at once, whatever the player count. Spawns
-  that would go over wait in a queue for the next opening, and are released
-  in small batches. The host is the server, so if it lags, everyone lags.
+- **Cap:** at most 35 monsters alive at once (`Max monsters alive`),
+  whatever the player count. Spawns that would go over wait in a queue for
+  the next opening, and are released in small batches (6 every 0.5 s). The
+  host is the server, so if it lags, everyone lags. Every monster alive
+  costs AI, pathing and network updates each frame, roughly in proportion,
+  so the cap is the main lag control. It was 200. A surge doubles it for
+  its wave (70).
 
 Pain minibosses are queued first, then minibosses, so the specials always
 arrive early in their wave. Hunters are spread evenly through the regular

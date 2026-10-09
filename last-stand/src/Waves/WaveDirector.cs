@@ -45,6 +45,8 @@ internal sealed class WaveDirector
 
 	public int FastClearStacks => _fastClear.Stacks;
 
+	public double MergeMultiplier => _plan != null ? _plan.MergeMultiplier : MergeRule.NoChange;
+
 	public int CurrentWave => _cycle?.CurrentWave ?? 0;
 
 	public bool WaveInProgress => _cycle?.InProgress ?? false;
@@ -214,6 +216,11 @@ internal sealed class WaveDirector
 
 		Log.Info(LogText.CatalogBuilt(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
 			settings.HunterFromWave, settings.AllHuntersFromWave, _catalog.HeroicBossCount));
+		if (settings.Merge.IsOn)
+		{
+			Log.Info(LogText.MergeStarts(settings.Merge.FromWave, settings.Merge.Cap));
+		}
+
 		return true;
 	}
 
@@ -416,6 +423,8 @@ internal sealed class WaveDirector
 		}
 
 		double multiplier = tier == EnemyTier.HeroicBoss ? plan.HeroicFastClearMultiplier : plan.FastClearMultiplier;
+		multiplier *= plan.MergeMultiplier;
+
 		MonsterEnhancer.ApplyWaveScaling(entity, FastClearRule.Raise(plan.HealthBonusPercent, multiplier),
 			FastClearRule.Raise(plan.DamageBonusPercent, multiplier));
 

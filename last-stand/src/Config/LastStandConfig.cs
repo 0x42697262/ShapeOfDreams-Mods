@@ -149,10 +149,6 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.RegularGrowthDescription)]
 	public int regularGrowthPerWave = 2;
 
-	[LabelText(ConfigText.RegularGrowthUntilWaveLabel)]
-	[Description(ConfigText.RegularGrowthUntilWaveDescription)]
-	public int regularGrowthUntilWave = 110;
-
 	[LabelText(ConfigText.ExtraPlayerShareLabel)]
 	[Description(ConfigText.ExtraPlayerShareDescription)]
 	public float extraPlayerShare = 0.5f;
@@ -165,10 +161,22 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.SurgeMultiplierDescription)]
 	public float surgeMonsterMultiplier = 2f;
 
+	[LabelText(ConfigText.MergedWaveSizeLabel)]
+	[Description(ConfigText.MergedWaveSizeDescription)]
+	public int mergedWaveSize = 100;
+
+	[LabelText(ConfigText.MergedSurgeMiniBossesLabel)]
+	[Description(ConfigText.MergedSurgeMiniBossesDescription)]
+	public int mergedSurgeMiniBosses = 2;
+
+	[LabelText(ConfigText.MergedSurgePainLabel)]
+	[Description(ConfigText.MergedSurgePainDescription)]
+	public int mergedSurgePain = 2;
+
 	[Header(ConfigText.SpawningHeader)]
 	[LabelText(ConfigText.MaxAliveBaseLabel)]
 	[Description(ConfigText.MaxAliveBaseDescription)]
-	public int maxAliveBase = 200;
+	public int maxAliveBase = 35;
 
 	[LabelText(ConfigText.MaxAlivePerPlayerLabel)]
 	[Description(ConfigText.MaxAlivePerPlayerDescription)]

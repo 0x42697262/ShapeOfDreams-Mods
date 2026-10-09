@@ -531,7 +531,7 @@ internal sealed class LastStandSession
 
 	private void OnEnemyDied(EnemyDeath death)
 	{
-		_loot.OnEnemyDied(death, _waves.CurrentWave, _settings.Loot);
+		_loot.OnEnemyDied(death, _waves.CurrentWave, _waves.MergeMultiplier, _settings.Loot);
 		_pain.OnEnemyDied(death);
 	}
 }

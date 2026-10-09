@@ -393,6 +393,7 @@ internal static class LogText
 	public static string WaveStarted(WavePlan plan)
 	{
 		return $"wave {plan.Number}: regular={plan.RegularCount} surge={plan.IsSurge} hunter={plan.HunterCount} " +
+		       $"merged={plan.UnmergedMobCount}/x{plan.MergeMultiplier:0.##} " +
 		       $"miniboss={plan.MiniBossCount} pain={plan.PainCount} heroic={plan.HeroicBossCount} " +
 		       $"heroicHaste={plan.HeroicBossHaste:0} " +
 		       $"ambient={plan.AmbientLevel} " +
@@ -401,6 +402,11 @@ internal static class LogText
 		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +
 		       $"mirageChance={plan.MirageChance * Tuning.PercentScale:0}% " +
 		       $"huntLevel={plan.HuntLevel} cap={plan.MaxAlive}.";
+	}
+
+	public static string MergeStarts(int wave, int cap)
+	{
+		return $"merge: from wave {wave}, waves hold at {cap} monsters and hunters and carry the rest's strength.";
 	}
 
 	public static string CatalogBuilt(int foreignTypes, int mirageSkins, int hunterStartWave, int allHuntersWave,
