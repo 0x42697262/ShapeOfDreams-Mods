@@ -118,10 +118,21 @@ spawned. That skips everything the game does on a boss kill:
 - the knocked-out revive.
 
 `skipBossSoulFlow` is set too, and the big kill feedback
-(`playBossKillFeedback`) is turned off on the server. Spawning a boss marks
-the lobby as "fighting a boss", which blocks mid-join. The old value is put
-back right after the spawn. No rift opens, because the arena is loaded
-already cleared.
+(`playBossKillFeedback`) is turned off on the server. No rift opens, because
+the arena is loaded already cleared.
+
+**Mid-join.** `BossMonster.OnCreate` sets the synced
+`GameSettingsManager.midJoinWaitType` to `FightingBoss`, and
+`OnDestroyActor` of the last boss sets `AfterBossFight`. While it isn't
+`None`, `DewPlayer.LogicUpdate_MidJoin` holds a joining player on "The
+expedition is preparing to move after fighting a Heroic Boss". Only travel
+to a non-boss node sets it back to `None`, and the arena never travels, so
+after the first heroic boss nobody could join for the rest of the run.
+Writing the old value back after `Dew.SpawnEntity` didn't help: on the host,
+`OnCreate` runs later, in Mirror's spawn flow. `MidJoinGate` checks the flag
+once a second during the fight and clears the three boss values
+(`BeforeBossFight` to `AfterBossFight`), leaving `HostLoadingGame` alone. A
+player already waiting is let in on the next `LogicUpdate_MidJoin`.
 
 **Reward.** 3 `Shrine_CorruptedChaos` (`Heroic boss Corrupted Chaos
 rewards`). Each is one shrine that every player picks from separately, as with

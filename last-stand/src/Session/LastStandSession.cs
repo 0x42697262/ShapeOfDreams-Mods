@@ -23,6 +23,8 @@ internal sealed class LastStandSession
 
 	private readonly RunGoal _goal = new RunGoal();
 
+	private readonly MidJoinGate _midJoin = new MidJoinGate();
+
 	private readonly WaveTracker _tracker = new WaveTracker();
 
 	private readonly StartingWorld _world = new StartingWorld();
@@ -126,6 +128,7 @@ internal sealed class LastStandSession
 		}
 
 		_waves.Tick(now, _settings.Waves);
+		_midJoin.Tick(now);
 		TickCurseStart(now);
 		_pain.Tick(now, _settings.Pain);
 		_panel.Tick(_waves.HasArenaModifier || _pain.ZoneActive);
@@ -359,6 +362,7 @@ internal sealed class LastStandSession
 		PlainArena.Reset();
 		_campRift.Reset();
 		_goal.Reset();
+		_midJoin.Reset();
 		_tracker.Remove();
 		_world.Reset();
 		_phase = SessionPhase.Inactive;

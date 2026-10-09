@@ -88,6 +88,11 @@ internal static class LogText
 		return $"hero soul: removed one from node {node}; knocked-out heroes are revived at the next wave instead.";
 	}
 
+	public static string MidJoinOpened(MidJoinWaitType previous)
+	{
+		return $"mid-join: cleared the game's {previous} wait so players can join during waves.";
+	}
+
 	public static string HeroesRevived(int wave, int count)
 	{
 		return $"revive: {count} knocked-out hero(es) revived after wave {wave} was cleared.";

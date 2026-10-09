@@ -949,6 +949,12 @@ Each answer still needs to be seen working:
     `laststand_config` in the lobby and in the run: no window opens, and
     their log shows `only the host's settings apply`. On the title screen
     and as host it opens the window as before.
+81. **Mid-join after a heroic boss:** `laststand_wave 49`, kill the boss,
+    then have a friend join mid-run. The log shows `mid-join: cleared the
+    game's AfterBossFight wait` (and `FightingBoss` while it lived), and
+    the friend joins within a few seconds instead of waiting on "The
+    expedition is preparing to move after fighting a Heroic Boss". A
+    friend who joins while the boss is alive gets in too.
 
 ## Conventions
 

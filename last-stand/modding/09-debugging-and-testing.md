@@ -951,8 +951,9 @@ re-sends the tracker's title keys and logs `wave tracker: title sent to N
 ready connection(s).` The test:
 
 1. Host starts a run and reaches a wave.
-2. Second account joins mid-run (mid-join is blocked while a heroic boss is
-   alive: `BossMonster.OnCreate` sets `midJoinWaitType = FightingBoss`).
+2. Second account joins mid-run. Also try after a heroic boss: the game
+   blocks mid-join through `midJoinWaitType` (`BossMonster.OnCreate`), and
+   only travel clears it, so a mode without travel must clear it itself.
 3. Compare the joiner's tracker title, shrine counts and prices to a player
    who was there from the start; look for the `title sent to` line in the
    host's log.

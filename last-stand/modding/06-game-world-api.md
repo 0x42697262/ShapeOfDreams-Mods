@@ -830,12 +830,16 @@ The prefab comes from `DewResources.GetByShortTypeName<BossMonster>(typeName)`.
 - `BossMonster.OnCreate` (server part) sets
   `GameSettingsManager.midJoinWaitType = FightingBoss` when it was `None` or
   `BeforeBossFight`. That changes how mid-run joiners are handled, and the
-  boss's removal sets it to `AfterBossFight`. Last Stand reads the value
-  before `SpawnEntity` and writes it back right after the call returns. By
-  the host timing in Section 2.1, `OnCreate` runs later than that write, so
-  check in `Player.log` or the console which value actually holds during the
-  fight. A write-back deferred with `Dew.CallDelayed` would run after
-  `OnCreate`.
+  boss's removal sets it to `AfterBossFight`. Only travel to a non-boss node
+  resets it, so in a mode that never travels, nobody can join for the rest
+  of the run (the joiner waits on "The expedition is preparing to move after
+  fighting a Heroic Boss"). Last Stand first read the value before
+  `SpawnEntity` and wrote it back right after the call returned. That failed
+  in play: by the host timing in Section 2.1, `OnCreate` runs later than the
+  write. The fix is a once-a-second check during the fight that sets the
+  three boss values back to `None` (`MidJoinGate`). The lesson: a value the
+  game sets in `OnCreate` can't be undone right after `CreateActor` returns
+  on the host. Undo it later, or watch for it.
 - `BossMonster.OnDeath` (server part) pauses game time when no other boss
   lives (`isGameTimePausedByGame = true`, cleared only by a room load), kills
   every non-boss `Monster`, starts `RewardRoutine` unless `skipBossSoulFlow`,

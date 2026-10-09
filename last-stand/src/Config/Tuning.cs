@@ -10,6 +10,8 @@ internal static class Tuning
 
 	public const float GoalCheckSeconds = 1f;
 
+	public const float MidJoinCheckSeconds = 1f;
+
 	public const float TrackerRefreshSeconds = 1f;
 
 	public const int MinStartingWorld = 1;

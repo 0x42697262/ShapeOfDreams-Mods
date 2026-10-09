@@ -84,9 +84,6 @@ internal sealed class HeroicBosses
 			return null;
 		}
 
-		GameSettingsManager settings = NetworkedManagerBase<GameSettingsManager>.softInstance;
-		MidJoinWaitType midJoin = settings != null ? settings.midJoinWaitType : default(MidJoinWaitType);
-
 		BossMonster boss = Dew.SpawnEntity(prefab, position, null, actors.serverActor, DewPlayer.creep, level,
 			spawned =>
 			{
@@ -97,11 +94,6 @@ internal sealed class HeroicBosses
 					spawned.Visual.NetworkskipSpawning = true;
 				}
 			});
-
-		if (settings != null)
-		{
-			settings.midJoinWaitType = midJoin;
-		}
 
 		if (boss == null)
 		{
