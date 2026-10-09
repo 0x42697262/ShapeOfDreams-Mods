@@ -2,6 +2,6 @@ bin/
 obj/
 *.user
 
-build.sh
-watch-log.sh
+/build.sh
+/watch-log.sh
 dist/
