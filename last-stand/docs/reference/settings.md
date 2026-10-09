@@ -54,7 +54,6 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Arena | Arena room | Primus (dropdown) |
 | | Plain arena (no room modifiers) | on |
 | | Show wave in quest tracker | on |
-| | Random boss music (host only) | on |
 | | Dream Well | on |
 | | Altar of Cleansing | on |
 | | Shrine of Ascension / opens and uses come back every N waves | on / 1 |
@@ -64,12 +63,12 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Reminiscence of Luck | on |
 | | Curse length in waves of kills: Mild / Potent / Powerful | 1 / 1.25 / 1.75 |
 | | Free gold shrines | off |
-| | Gold price growth / every N waves | 5% / 1 |
+| | Gold price growth / every N waves / stops at wave | 5% / 1 / 100 |
 | | Starting gold | 100 |
 | | Starting dream dust (× 2^starting world) | 10 |
 | | Allow cheat commands | off |
 | Waves | First wave delay | 10 s |
-| | Break between waves / after a boss wave | 7 s / 15 s |
+| | Break between waves / after a boss wave | 20 s / 40 s |
 | | Curse to start each wave / delay ([Curse to start](../waves/curse-to-start.md)) | off / 3 s |
 | | Monsters in wave 1 / extra per wave / stops growing at wave | 6 / 2 / 110 |
 | | Extra player share | 0.5 |
@@ -79,15 +78,16 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Spawn interval / spawns per batch | 0.5 s / 6 |
 | Scaling | Health / damage per wave | 10% / 10% |
 | | Steeper scaling from wave / late health / late damage per wave | 150 / 50% / 50% |
-| | Fast clear: kills / within / next wave stats | 80% / 10 s / ×2 |
-| | Fast clear: kills / within / stats from next wave (stacking) | 80% / 10 s / ×2 |
-| | Starting monster level / waves per level | 1 / 10 |
+| | Fast clear: kills / within / stats from next wave (stacking) / from wave | 80% / 10 s / ×2 / 30 |
+| | Fast clear: heroic bosses too / heroic boss share | on / 50% |
+| | Starting monster level / waves per level | 1 / 4 |
 | | Starting world (vanilla world scaling) | 1 |
 | Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 10 |
 | Heroic bosses | First wave / every N waves / waves per extra / max | 49 / 50 / 50 / 10 |
 | | More often from wave / every N waves after that | 100 / 25 |
 | | Entrance delay | 3 s |
 | | Ability haste / more per later boss wave | +200 / +50 |
+| | Health / damage multiplier | ×5 / ×8 |
 | | Types | 6 zone bosses (checkboxes; none checked means all) |
 | | Corrupted Chaos rewards / dust / gold / item multiplier | 3 / 1000 / 200 / 2 |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |
@@ -111,7 +111,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Memory share | 50% |
 | | Rarity floor with item multipliers | 25% |
 | Enemy rewards | Max kill gold per player (0 = no cap) | 0 |
-| | Gold growth per wave | 10% |
+| | Gold growth per wave | 1% |
 | | Item chance multiplier: monster / miniboss / Pain | 1 / 1.5 / 2 |
 | | Per-tier dust and gold | see Loot |
 | Chaos rarity | Chaos reward: legendary / epic / rare chance | 5% / 15% / 35% |

@@ -6,31 +6,36 @@ value minus 1) once in camp, once the first world has loaded and before the
 arena loads. Last Stand never travels to another world, so it stays there for
 the run.
 
-**World 10 is the standard difficulty** (`Tuning.BaselineWorld`, the
-default). Monster strength there matches Last Stand's tuning as it was before
-this setting existed, when the run stayed at world 1. Lower is easier, down to
-world 1, higher is harder, following the game's own world curves:
+**The default is world 1**, the same as vanilla's first world (Forest of
+Turbulence). The game adds its own world bonus to every monster in
+`DewDifficultySettings.ApplyDifficultyModifiers`, with a curve per kind
+(regular, miniboss, boss); Last Stand doesn't touch it. The only multiplier
+Last Stand adds is the per-wave bonus, and stat bonuses add up, so a monster
+at world `N`, wave `W` has the game's world `N` bonus plus the wave bonus.
+
+Raising the world makes monsters stronger by the game's curves (at
+difficulty factor 1):
 
 | World | Regular health | Regular damage | Heroic boss health |
 |---|---|---|---|
-| 1 | ×0.022 | ×0.021 | ×0.016 |
-| 5 | ×0.21 | ×0.23 | ×0.15 |
-| 10 | ×1 | ×1 | ×1 |
-| 20 | ×5 | ×3 | ×7.5 |
+| 1 | ×1 | ×0.9 | ×1 |
+| 2 | ×1.7 | ×1.7 | ×1.7 |
+| 3 | ×3.3 | ×3.4 | ×3.1 |
+| 5 | ×9.5 | ×10 | ×9.6 |
+| 10 | ×45 | ×44 | ×63 |
 
-(Relative to world 10, at difficulty factor 1; minibosses use the game's
-miniboss curve.)
+**Where the waves sit.** At world 1, the per-wave bonus alone (+10% a wave,
++50% from wave 150) makes a wave as tough as these vanilla worlds:
 
-How it works: the game adds its world bonus to every monster in
-`DewDifficultySettings.ApplyDifficultyModifiers`, from `ActorManager`'s
-entity-add event, with a curve per kind (regular, miniboss, boss). A postfix
-on that method (`WorldScalingPatch` → `WorldScaling.Rebase`) takes the
-monster back to its world 1 stats and multiplies the result by
-`curve(world) / curve(10)` for its kind. Last Stand's per-wave bonus is
-multiplied by the same ratio when it's added, and the miniboss and heroic
-boss multipliers multiply the whole thing, so every wave keeps its shape and
-the world only scales it. Bosses' helpers (pillars, hallucinations, Erebos)
-go through the same postfix.
+| Wave | Monster health and damage | Like vanilla world |
+|---|---|---|
+| 10 | ×1.9 | 2 |
+| 30 | ×3.9 | 3 |
+| 50 | ×5.9 | 4 |
+| 100 | ×10.9 | 5 |
+| 150 | ×15.9 | 6 |
+| 200 | ×40.9 | 9 to 10 |
+| 300 | ×90.9 | 14 |
 
 The index also moves everything else the game ties to the world number:
 - **Boss skills:** `ZoneManager` rolls some zone indexes for hard boss ability

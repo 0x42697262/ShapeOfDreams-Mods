@@ -11,9 +11,5 @@ modifier and the like.
 - **Miniboss:** `RoomMonsters.SpawnMiniBoss`, with the monster picked from the
   unlocked `ISpawnableAsMiniBoss` types and a random `MiniBossEffect`. This is
   the game's own promotion: bigger, tougher, unstoppable, and it drops the
-  stock miniboss chaos reward on death. On top of that, one frame after it
-  spawns, its health is multiplied by 1.5 and its attack and ability damage
-  by 3 (`Tuning.BaselineMiniBossHealthMultiplier` and `...DamageMultiplier`,
-  no longer settings), the same true ×N as heroic bosses:
-  `(N − 1) × (100% + the bonus it already has)`. Pain minibosses don't get
-  this multiplier.
+  stock miniboss chaos reward on death. It gets the game's miniboss scaling
+  and the per-wave bonus, with no extra multiplier.

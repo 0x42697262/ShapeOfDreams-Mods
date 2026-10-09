@@ -25,8 +25,8 @@ at 131× after wave 100.
 | Multiplier | 1.05× | 1.6× | 11.5× | 39× | 131× |
 | Maw of Doom (before the zone curve) | 21 | 33 | 229 | 777 | 2,630 |
 
-Until wave 100 this outgrows gold income on purpose: bonus gold grows 10% of
-its base a wave in a straight line (10.9× at wave 100), vanilla kill gold
+Until wave 100 this outgrows gold income on purpose: bonus gold grows 1% of
+its base a wave in a straight line (about 2× at wave 100), vanilla kill gold
 follows the world, not the wave, and Hatred Shard gold is flat. After wave
 100 prices hold while bonus gold keeps growing, so shrines slowly get
 affordable again. Without the stop, wave 200 would be 17,293× (a 345,852

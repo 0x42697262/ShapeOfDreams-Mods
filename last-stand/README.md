@@ -22,11 +22,11 @@ essences and turns what you collect into upgrades.
 - **Clear too fast and it hits back:** from wave 30, kill 80% of a wave within 10 s and
   every later wave's monsters get double health and damage, stacking with
   each fast clear (heroic bosses take half the stacks).
-- **Minibosses** come every 10 waves, then several at once. No real bosses
-  for now.
-- **Heroic bosses**, the game's real zone bosses, enter right before every
-  50th wave: 49, 99, 149… One more joins every 100 waves. Each drops 3
-  Corrupted Chaos rewards, the kind Pain minibosses leave.
+- **Minibosses** come every 10 waves, then several at once.
+- **Heroic bosses**, the game's real zone bosses, enter at waves 49 and 99,
+  then every 25 waves (124, 149, 174…). One more joins every 50 waves: two
+  at 99 and 124, three at 149 and 174, four at 199. Each drops 3 Corrupted
+  Chaos rewards, the kind Pain minibosses leave.
 - **Pain minibosses** change the rules while they live: every hero takes
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.

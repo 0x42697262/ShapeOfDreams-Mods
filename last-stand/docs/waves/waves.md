@@ -1,7 +1,7 @@
 # Waves
 
 The first wave starts 10 s after arrival. A wave is **cleared** when everything
-in it has spawned and died. The next wave starts 7 s after that, or 15 s after
+in it has spawned and died. The next wave starts 20 s after that, or 40 s after
 a wave that had a miniboss, a Pain miniboss or a heroic boss (10, 20, 30, 40,
 49, 50, 60…), so the party can use the well and pick up rewards. The pace is
 set by how fast the party kills, not by a timer. The chat notice for a cleared
@@ -81,8 +81,9 @@ works through these knobs, all using systems the game already syncs:
   count, so the first possible doubling is wave 31. Stacks already earned
   stay when it's raised mid-run.
 - **Strength, slowly:** the game's ambient level, `GameManager.SetAmbientLevel`,
-  sets the level monsters spawn at. It rises by one every 10 waves.
-- **Cap:** at most 100 monsters alive at once, whatever the player count. Spawns
+  sets the level monsters spawn at. It rises by one every 4 waves
+  (`Waves per monster level`).
+- **Cap:** at most 200 monsters alive at once, whatever the player count. Spawns
   that would go over wait in a queue for the next opening, and are released
   in small batches. The host is the server, so if it lags, everyone lags.
 

@@ -32,14 +32,39 @@ many are left. There is always at least one: if no box is checked, or none
 of the checked types can be used, the boss is picked from the whole list of
 six, and the log says so.
 
-**Strength: 2× health, 2× damage, faster skills.** It spawns at the current
-monster level and gets the game's own boss scaling (rebased to the
-[starting world](../start/starting-world.md)) and the same per-wave bonus as everything
-else. Then its health and its attack and ability damage are multiplied by 2
-(`Tuning.BaselineHeroicBossHealthMultiplier` and `...DamageMultiplier`; these
-are no longer settings, `Starting world` is the knob). Stat bonuses in the
-game add up rather than multiply, so a true ×N adds `(N − 1) × (100% + the
-bonus it already has)`.
+**Strength: vanilla boss scaling times a multiplier, faster skills.** It
+spawns at the current monster level and gets the game's own boss scaling for
+the [starting world](../start/starting-world.md), difficulty and player count, the same
+per-wave bonus as everything else, and then ×5 health (`Heroic boss health
+multiplier`) and ×8 attack damage and ability power (`Heroic boss damage
+multiplier`). The game multiplies stat bonuses together
+(`DewMath.MultiplyPercentageBonuses`), so a `+(M − 1) × 100%` bonus is
+exactly ×M whatever else the boss has.
+
+Health is `base × world × difficulty × (1 + 0.85 × (players − 1)) × wave ×
+multiplier`. Base health (prefabs; bosses gain nothing per level): Belphomet
+8,000, Seeker 8,800, Skoll 9,200, Infernus 9,600, Nyx 10,400, Azurak
+13,200. World 4 is ×3.96 health on Normal, ×6.19 on Hard and ×7.04 on
+Nightmare (difficulty's world factor and its flat health bonus), and wave 49
+is ×5.8. So wave 49, Nightmare, world 4, solo, with the default ×5: Belphomet
+1.63M, Infernus 1.96M, Azurak 2.70M, about 2M on average. Each extra player
+adds 85% of that (the game's `bossBonusHealthPercentagePerPlayer`): Infernus
+3.6M with 2, 5.3M with 3, 7.0M with 4. The wave factor is the same per-wave
+bonus as every monster's, +10% a wave and +50% from wave 150: ×10.8 at 99,
+×13.3 at 124, ×15.8 at 149, ×16.3 at 150, ×28.3 at 174, ×40.8 at 199.
+Measured at wave 124: Skoll 4,306,783 and Nyx 4,868,537, both exactly
+468.13 × base, as the formula gives.
+
+Damage is the ability's AD/AP ratio × the boss's attack damage or ability
+power. Players add only the game's +11% per extra player. Nightmare world 4
+at wave 49 is ×43.9 on that (×5.74 world, +32% Nightmare, ×5.8 wave), times
+the multiplier. Reading the prefab ratios undercounts: at wave 124 with ×8,
+Skoll's `AuraBlade` hit for 302k (8.3 × its ability power) and Nyx's
+`PillarOfStars` for 161k (4.3 ×), about 132k and 70k at wave 49.
+
+The log measures both: `heroic boss: wave N <type> maxHealth=… attackDamage=…`
+when the multiplier is applied, and `biggest hit on a hero …` (after armor,
+shields included) with the ability's type when the boss dies.
 It also gets ability haste, so it uses its patterns more often: +200 at
 wave 49 (`Heroic boss ability haste`), then +50 more on each later boss wave
 (`Heroic boss haste per later boss wave`): 250 at 99, 300 at 124, 350 at

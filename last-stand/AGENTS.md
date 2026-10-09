@@ -676,7 +676,7 @@ Each answer still needs to be seen working:
 38. **Altar of Cleansing:** on by default, on the edge ring. A vanilla client
     can cleanse several items in a row, pays the shown gold price and gets the
     dream dust back. After a mod reload there's still just one altar.
-39. **Breaks:** "wave N cleared" says 7 s after a normal wave and 15 s after
+39. **Breaks:** "wave N cleared" says 20 s after a normal wave and 40 s after
     waves 10, 20, 49, 50 and so on.
 40. **Leftover items:** in co-op, let an item reserved for someone else lie
     until the wave is cleared. It becomes visible and can be picked up by
@@ -720,7 +720,7 @@ Each answer still needs to be seen working:
     default 0, kills drop vanilla kill gold. Old config files are moved to
     `.old` (schema 33).
     Regular bonus gold (schema 34): solo, a wave 1 kill drops vanilla kill
-    gold (about 3) plus a 3 gold bonus orb, a wave 100 kill about 33 bonus,
+    gold (about 3) plus a 3 gold bonus orb, a wave 100 kill about 6 bonus,
     and a hunter's kill only the bonus.
 48. **Steeper scaling from wave 150:** the `wave N:` log line shows
     `health=+1480% damage=+1480%` at wave 149, `+1530%` at 150 and `+1580%`
@@ -885,23 +885,6 @@ Each answer still needs to be seen working:
     price, and a Luck pray its vanilla price, rising with each pray. Old
     config files are moved to `.old` (schema 29).
 
-71. **Gold prices grow:** `laststand_wave 10` logs `gold prices: multiplier
-    set to 1.2 at wave 10`, `laststand_wave 50` 2.49, `laststand_wave 100`
-    6.19. On the host and a vanilla client the Maw shows 24 gold at wave 10
-    (20 × 1.2, times the zone curve) and the Ascension and Luck prays rise
-    the same way; the Altar of Cleansing doesn't. Game over or a mod unload
-    logs `multiplier restored to 1`. Old config files are moved to `.old`
-    (schema 30).
-
-72. **Fast clear:** clear wave 1 (6 monsters) within 10 s. Chat says `Too
-    fast! Wave 2 hits back with x2 health and damage.`, the log shows
-    `fast clear: wave 1 lost 5 of 6 monster(s)` and, at wave 2, `fast
-    clear: wave 2 raised to health=+120% damage=+120%` (vanilla +10% →
-    ×2), and wave 2 monsters visibly take twice the hits. Wave 3 is back to
-    normal unless wave 2 was also fast. A slow wave never triggers it, and
-    `laststand_skip` doesn't. Old config files are moved to `.old` (schema
-    31).
-
 71. **Gold prices grow 5% a wave:** `laststand_wave 10` logs `gold
     prices: multiplier set to 1.63 at wave 10`, `laststand_wave 50` 11.47,
     `laststand_wave 100` 131.5. On the host and a vanilla client the Maw
@@ -909,8 +892,6 @@ Each answer still needs to be seen working:
     Ascension and Luck prays rise the same way; the Altar of Cleansing
     doesn't. Game over or a mod unload logs `multiplier restored to 1`.
     Old config files are moved to `.old` (schema 32). From schema 35
-    growth stops at wave 100: `laststand_wave 150` logs 131.5, the same
-    as wave 100. From schema 35
     growth stops at wave 100: `laststand_wave 150` from an early wave logs
     131.5, the same
     as wave 100.

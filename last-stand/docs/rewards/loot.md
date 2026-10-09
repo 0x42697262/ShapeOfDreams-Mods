@@ -100,12 +100,13 @@ player with the fewest items this wave.
 | Other drops | Monster or hunter | Miniboss | Pain miniboss |
 |---|---|---|---|
 | Dream dust | 2 | 50 | 150 |
-| Bonus gold | 0 | 40 | 100 |
+| Bonus gold | 3 | 40 | 100 |
 
 - Dream dust is flat: 2 per monster or hunter, 50 per miniboss, 150 per Pain
   miniboss, every wave.
-  Bonus gold grows 10% a wave in a straight line and isn't capped: a regular
-  monster or hunter drops 3 at wave 1, about 33 at wave 100, on top of
+  Bonus gold grows 1% a wave in a straight line (`Gold growth per wave`) and
+  isn't capped: a regular monster or hunter drops 3 at wave 1, about 6 at
+  wave 100, on top of
   vanilla kill gold (hunters drop no kill gold, only this). It's one
   untargeted orb, so in co-op it's split between the players like kill gold.
 - **Kill gold: vanilla by default, with an optional cap.** Vanilla kill gold

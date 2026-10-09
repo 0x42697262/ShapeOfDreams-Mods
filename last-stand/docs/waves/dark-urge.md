@@ -1,7 +1,7 @@
 # Dark urge
 
 From wave 176 (`First dark urge wave`), every wave without a heroic boss has
-a 50% chance (`Dark urge chance`) to give **every player the game's Dark Urge
+a 20% chance (`Dark urge chance`) to give **every player the game's Dark Urge
 curse** (`Se_Curse_DarkUrge`) until it's cleared, so players can hurt each
 other. It never happens solo.
 

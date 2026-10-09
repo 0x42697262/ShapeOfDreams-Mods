@@ -73,24 +73,10 @@ then skip those nodes. Nothing else needs them: the arena never travels on,
 and the game only uses the sidetrack test for hunter progress and for picking
 quest nodes.
 
-**Random boss music (host only).** Each time the arena loads, the host hears a
-random zone boss fight track: Forest, Dark Cave, Despair, Sky, Snow Mountain,
-Lava Land, both Ink tracks, or Primus. It never repeats the previous pick.
-Normally a boss room's `BossMusicStart` effect (an `FxChangeMusic` in the
-scene) plays the track when the boss section's combat starts. The arena loads
-cleared, so that never happens, and the room plays its zone's normal music
-from `Room.OnLateStart`. A postfix there switches the host's `MusicManager` to
-the chosen track. Music items are linked by GUID only and aren't in the
-resource database's name maps (a lookup by name found nothing in testing). So
-`GameNames` lists the nine tracks' GUIDs, read from the boss room scenes, and
-`DewResources.GetByGuid` loads them through Addressables, where all nine are
-in the catalog.
-
-Other players hear their usual music. Music is local to each game: every
-client picks its own in `Room.OnLateStart` from the room and zone, and no
-synced state or networked effect can name a track. The only networked music
-effects are scene objects (`BossMusicStart`) that exist only in their own boss
-room, and Mora's Domain's shrine. Setting: `Random boss music`, default on.
+**Music.** The room plays its zone's normal music. A random boss track for
+the host was tried and removed: music is local to each game, every client
+picks its own in `Room.OnLateStart`, and no synced state or networked effect
+can name a track, so only the host ever heard it.
 
 The arena's center is `Room_BossArena` when the room has one, otherwise the
 `pathablePivot` of the largest `RoomSection`. On arrival, players are placed in
