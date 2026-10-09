@@ -95,6 +95,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Health / damage multiplier | ×5 / ×8 |
 | | Types | 6 zone bosses (checkboxes; none checked means all) |
 | | Corrupted Chaos rewards / dust / gold / item multiplier | 3 / 1000 / 200 / 2 |
+| | Heroic boss stardust (vanilla boss-kill amount) | on |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |
 | | Damage per second per boss | 1% |
 | | Health / damage bonus | 20% / 30% |

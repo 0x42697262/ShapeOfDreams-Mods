@@ -508,9 +508,10 @@ From the official Code of Conduct and the Modding Terms of Service:
 1. Mods may heavily alter gameplay, and may even cheat progress.
 2. A mod must not hurt other players' experience without their consent.
    For server-side mods the consent mechanism is the gameplay flag above.
-3. A mod must not grant exclusive, server-generated items: "things you
-   cannot buy in-game using stardusts." Unlocks bought with stardust stay
-   off-limits.
+3. A mod must not grant illicit access to exclusive, server-generated
+   items: "things you cannot buy in-game using stardusts." Stardust itself
+   isn't such an item, but keep it at the rates the game gives
+   (`06-game-world-api.md`).
 4. Mods must be non-commercial: no selling, no donation prompts, no forced
    paid content.
 5. No malicious code, no unauthorized communication with external servers

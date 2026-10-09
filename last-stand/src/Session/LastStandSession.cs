@@ -272,7 +272,7 @@ internal sealed class LastStandSession
 
 	public void OnHeroicBossDied(BossMonster boss)
 	{
-		_heroicBosses.OnDied(boss, _settings.Loot.HeroicBossChaosRewards);
+		_heroicBosses.OnDied(boss, _settings.Loot.HeroicBossChaosRewards, _settings.Loot.HeroicBossStardust);
 	}
 
 	public void ApplyArenaRoom()

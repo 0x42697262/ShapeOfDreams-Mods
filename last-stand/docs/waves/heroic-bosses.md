@@ -145,5 +145,23 @@ Pain. An earlier version dropped 5 legendary `Shrine_Chaos` instead. The boss
 also drops 1000 dream dust and 200 bonus gold, and rolls the item table at ×2
 like a Pain miniboss.
 
+**Stardust** (`Heroic boss stardust`, on). A vanilla boss kill gives stardust
+from the boss soul (`Shrine_BossSoul`): `ges.stardustBossSoulAmount` (16 in
+the asset) plus `difficulty.bossKillBonusStardust` (Easy 0, Normal 2, Hard 4,
+Nightmare 7) plus 3 per evil lucid dream in play. Last Stand skips the boss
+soul flow, so its heroic bosses gave none (the game's per-kill stardust
+chance is 0 for the `Boss` monster type). Now `BossStardust` drops the same
+amount at the boss with `PickupManager.DropStarDust`, the game's own call:
+orbs of `Shrine_Stardust`, and each orb's `OnUse` gives its amount to every
+player through `DewPlayer.GiveStardust` (a `ClientRpc` into each client's
+own profile), so a vanilla client gets it too. A heroic boss comes every 25
+to 50 waves, far less often than one per zone in a normal run, so this stays
+under the vanilla rate. The modding rules forbid granting exclusive items,
+the ones you can't buy with stardust; stardust itself isn't one, and keeping
+it at the game's own boss-kill amount keeps to the reason the rule gives.
+Regular monsters and minibosses keep the game's tiny per-kill chance (0.1%
+and 0.2% for 5 stardust; hunters drop none). The log line reads `heroic
+boss: died, dropped 3 Corrupted Chaos reward(s) and N stardust.`
+
 Still drawn by every game: the boss health bar, and the kill counting toward
 each player's heroic boss stats.

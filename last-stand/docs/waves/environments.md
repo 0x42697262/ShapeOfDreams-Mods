@@ -50,8 +50,8 @@ effects, hazards and visuals. Removing it destroys the actor, whose
 **Off by default:** Lingering Aura of Guidance (health regen) and Star
 Eater's Dream (cookies), because they place shrines in the arena that stay
 after the wave. **Never in the list:** Ambush (it spawns Ambush Orb towers),
-Dream of the Star Seeker (it hands out stardust, which the modding rules
-forbid), and the modifiers that need a normal room to work: Distant Memories
+Dream of the Star Seeker (it hands out stardust far faster than normal play;
+Last Stand gives stardust only at the vanilla boss-kill rate), and the modifiers that need a normal room to work: Distant Memories
 (clears every monster and opens the rift), Challenging Fight and Fallen Star
 (tied to the exit rift and room rewards).
 

@@ -26,9 +26,11 @@ internal static class Messages
 		return Notice(count == 1 ? "The wave is over. A fallen hero rises!" : $"The wave is over. {count} fallen heroes rise!");
 	}
 
-	public static string HeroicBossDefeated(int chaosRewards)
+	public static string HeroicBossDefeated(int chaosRewards, int stardust)
 	{
-		return Notice($"The heroic boss falls! {chaosRewards} Corrupted Chaos rewards dropped.");
+		return stardust > 0
+			? Notice($"The heroic boss falls! {chaosRewards} Corrupted Chaos rewards and {stardust} stardust dropped.")
+			: Notice($"The heroic boss falls! {chaosRewards} Corrupted Chaos rewards dropped.");
 	}
 
 	public static string LobbyName(int startingWorld)

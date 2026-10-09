@@ -7,6 +7,9 @@ Once waves merge, a surge (every 5th wave) doubles the monsters' strength instea
 [b]New: boss health floor[/b]
 Once waves merge, minibosses and Pain minibosses have at least 5 times the health of the toughest monster in the wave, and heroic bosses at least 20 times.
 
+[b]New: heroic bosses drop stardust[/b]
+Heroic bosses now drop the stardust a boss kill gives in a normal run: 16, plus 2 on Normal, 4 on Hard or 7 on Nightmare, plus 3 per evil lucid dream. Every player gets it.
+
 [b]Changed: fewer monsters at once[/b]
 At most 35 monsters are alive at a time (70 on surge waves), down from 200, so the host lags less. The rest of the wave arrives as monsters die.
 

@@ -1089,7 +1089,7 @@ ModifyEntities(...);
 shrines outlive the modifier. They are kept in the list but off by
 default. Others are left out of the list entirely, each for a reason
 found by reading it: Ambush spawns tower actors; Dream of the Star Seeker
-hands out stardust, which the modding rules forbid; Distant Memories,
+hands out stardust far faster than normal play; Distant Memories,
 Challenging Fight and Fallen Star depend on the exit rift and room
 rewards that the arena doesn't have.
 
@@ -1309,7 +1309,7 @@ is explained, and the trap that usually bites first.
 | You want to add… | Search first | Technique chapter | Usual trap |
 |---|---|---|---|
 | Monster behavior or strength | `Monster`, `EntityAI`, `RoomMonsters`, `StatBonus` | 06 | percentage bonuses compound through an overloaded `+` |
-| A reward or drop | `PickupManager`, `LootManager`, `Dew.Create*` | 06 | server-only APIs; forbidden stardust |
+| A reward or drop | `PickupManager`, `LootManager`, `Dew.Create*` | 06 | server-only APIs; exclusive items; stardust only at vanilla rates |
 | A shrine or interactable | `Shrine_*`, `RoomMod_Spawn*`, `EditSkillShrine` | 04, 05, 06 | per-player limit isn't synced |
 | HUD information | `DewQuest`, `UI_InGame_*` | 04, 08 | most UI is built locally by each client |
 | A chat feature | `ChatManager` | 08 | client chat reaches the server through a Mirror command, not a public method |
@@ -1346,8 +1346,8 @@ is explained, and the trap that usually bites first.
   multiplied, `Shrine_Hatred_Reward.OnUse` for a weighted reward roll.
 - **Traps:** all server-only. `tempOwner` reserves the item and hides it
   from everyone else's camera; a leaving player's reserved items are
-  destroyed. Never grant stardust-bought items or stardust (modding
-  terms). Gold orbs split by player count, so "give N" needs the math.
+  destroyed. Never grant exclusive items that can't be bought with
+  stardust (modding terms), and keep stardust at vanilla rates. Gold orbs split by player count, so "give N" needs the math.
 
 ### New shrine or interactable
 

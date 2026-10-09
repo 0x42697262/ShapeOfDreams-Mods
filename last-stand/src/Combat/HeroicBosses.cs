@@ -111,7 +111,7 @@ internal sealed class HeroicBosses
 		return boss;
 	}
 
-	public void OnDied(BossMonster boss, int chaosRewards)
+	public void OnDied(BossMonster boss, int chaosRewards, bool dropStardust)
 	{
 		KillLeftovers(boss);
 		if (HasBossAncestor(boss) || !_rewarded.Add(boss))
@@ -126,8 +126,9 @@ internal sealed class HeroicBosses
 			Dew.CreateActor<Shrine_CorruptedChaos>(Dew.GetGoodRewardPosition(position, Tuning.RewardScatter), null);
 		}
 
-		Log.Info(LogText.HeroicBossDied(chaosRewards));
-		ChatNotices.Broadcast(Messages.HeroicBossDefeated(chaosRewards));
+		int stardust = dropStardust ? BossStardust.Drop(position) : 0;
+		Log.Info(LogText.HeroicBossDied(chaosRewards, stardust));
+		ChatNotices.Broadcast(Messages.HeroicBossDefeated(chaosRewards, stardust));
 	}
 
 	public void Clear()

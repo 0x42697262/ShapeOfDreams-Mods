@@ -408,6 +408,10 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HeroicBossChaosDescription)]
 	public int heroicBossChaosRewards = 3;
 
+	[LabelText(ConfigText.HeroicBossStardustLabel)]
+	[Description(ConfigText.HeroicBossStardustDescription)]
+	public bool heroicBossStardust = true;
+
 	[LabelText(ConfigText.HeroicBossDropMultiplierLabel)]
 	[Description(ConfigText.DropMultiplierDescription)]
 	public float heroicBossDropMultiplier = 2f;

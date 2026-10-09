@@ -354,9 +354,9 @@ internal static class LogText
 			: $"heroic boss: wave {wave} {boss} biggest hit on a hero {hit:0} (after armor, shields included) from {source}.";
 	}
 
-	public static string HeroicBossDied(int chaosRewards)
+	public static string HeroicBossDied(int chaosRewards, int stardust)
 	{
-		return $"heroic boss: died, dropped {chaosRewards} Corrupted Chaos reward(s).";
+		return $"heroic boss: died, dropped {chaosRewards} Corrupted Chaos reward(s) and {stardust} stardust.";
 	}
 
 	public static string PainZoneStarted()

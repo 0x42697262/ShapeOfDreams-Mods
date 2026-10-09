@@ -1083,8 +1083,8 @@ The official docs' code of conduct has two requirements that touch code:
 
 1. Every server-side mod that alters gameplay must set
    `instance.isAlteringGameplay = true`.
-2. A mod must not grant exclusive, server-generated items (anything bought
-   with stardust).
+2. A mod must not grant illicit access to exclusive, server-generated items
+   ("things you cannot buy in-game using stardusts").
 
 Plus the Modding Terms of Service
 (https://shape-of-dreams.gitbook.io/shape-of-dreams-modding-terms-of-service/).
@@ -1132,12 +1132,16 @@ and `UI_ModManager.Apply` does the same when activating mods (with the
 `Mods_CrossPlayDisabled` message). Don't patch around it: modded lobbies
 stay off cross-play by design.
 
-### 8.3 Stardust-exclusive items
+### 8.3 Exclusive items
 
 There is no code check for this rule. It applies to what your mod spawns or
-grants: cosmetics and anything else bought with stardust are off limits,
-even in a mod that freely grants gold, dream dust, memories or essences (Last
-Stand's cheat commands, off by default, do the latter).
+grants: items players can't get with stardust (event and promotion rewards,
+for example) are off limits. Read the wording closely: the exclusive items
+are the ones you *can't* buy with stardust, so stardust itself isn't one of
+them. Handing it out freely still undermines the game's long-term
+progression, which is the reason the rule gives, so Last Stand gives it
+only where the game would (a heroic boss drops the vanilla boss-kill amount,
+through the game's own `PickupManager.DropStarDust`).
 
 ---
 

@@ -430,9 +430,15 @@ items and off banned room nodes.
 | `PickupManager.DropDreamDust(bool isGivenByOtherPlayer, int amount, Vector3 position, Hero target = null)` | `[Server]`. Splits into orbs of `max(amount / dreamDustMaxCount, dreamDustMinAmount)`. |
 | `DewPlayer.EarnGold(int)` / `EarnDreamDust(int)` | Straight to the wallet, no pickup. |
 
-`target` is a `Hero`, not a `DewPlayer`. `PickupManager.DropStarDust` also
-exists. Don't hand out stardust: the modding terms forbid granting anything
-bought with it.
+`target` is a `Hero`, not a `DewPlayer`. `PickupManager.DropStarDust(int
+amount, Vector3 position)` also exists: it spawns `Shrine_Stardust` orbs,
+and each orb's `OnUse` calls `DewPlayer.GiveStardust` for every game player
+(a `ClientRpc` that adds to each client's own profile). The vanilla boss soul
+drops `ges.stardustBossSoulAmount` (16 in the asset) plus
+`difficulty.bossKillBonusStardust` (Normal 2, Hard 4, Nightmare 7) plus 3
+per evil lucid dream. Last Stand's heroic bosses drop exactly that
+(`BossStardust`), because the boss soul flow is skipped. Keep stardust at
+rates the game itself gives (see `01-project-setup.md`, section 8.3).
 
 ### 2.5 Monsters through the room's spawner
 

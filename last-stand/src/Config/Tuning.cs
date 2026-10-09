@@ -14,6 +14,8 @@ internal static class Tuning
 
 	public const float BossHealthFloorCheckSeconds = 0.5f;
 
+	public const int EvilLucidDreamBossStardust = 3;
+
 	public const float TrackerRefreshSeconds = 1f;
 
 	public const int MinStartingWorld = 1;

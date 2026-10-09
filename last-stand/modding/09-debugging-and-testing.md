@@ -872,7 +872,8 @@ private static bool CheatsAllowed()
 mod loaded could otherwise run one against nothing, or against its own
 idea of the session. Gate cheats on a **setting** so a public lobby can't be
 handed free gold by accident. The official code of conduct also rules out
-handing out stardust-bought items (`10-shipping.md`).
+granting exclusive items that can't be bought with stardust
+(`10-shipping.md`).
 
 ### Registration facts that affect testing
 

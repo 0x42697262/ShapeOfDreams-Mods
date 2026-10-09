@@ -152,8 +152,10 @@ decompiled code stays the source of truth.
 What the docs say that matters here:
 
 - **Code of conduct.** Mods may heavily alter gameplay, but must not hurt
-  others' experience without consent, and must not grant server-generated
-  exclusive items (anything bought with stardust). Every server-side mod that
+  others' experience without consent, and must not grant illicit access to
+  exclusive, server-generated items ("things you cannot buy in-game using
+  stardusts"). Stardust itself isn't one; Last Stand gives it only at the
+  vanilla boss-kill rate (heroic bosses). Every server-side mod that
   alters gameplay must set `instance.isAlteringGameplay = true`. This shows the
   MOD icon on the lobby and a notice to joining clients.
 - **Loading.** The DLLs listed under `"assemblies"` in the mod's
@@ -1006,6 +1008,12 @@ Each answer still needs to be seen working:
     N:` line), 70 on a surge wave (`laststand_wave 100`, `cap=70`), new
     ones arrive as others die, and the host's frame rate is higher than
     with the old cap of 200.
+86. **Heroic boss stardust:** kill a heroic boss (`laststand_wave 49`) on
+    Nightmare: stardust orbs pop out at the boss, the log says `heroic
+    boss: died, dropped 3 Corrupted Chaos reward(s) and 23 stardust.` (16
+    + 7; 18 on Normal), chat says so, and the host and a vanilla client
+    each gain that much stardust (title screen total). With `Heroic boss
+    stardust` off: `0 stardust` and no orbs.
 
 ## Conventions
 

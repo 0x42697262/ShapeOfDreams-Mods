@@ -123,6 +123,12 @@ internal static class ConfigText
 	public const string HeroicBossChaosDescription =
 		"Corrupted Chaos shrines (Pain kind) per heroic boss kill.";
 
+	public const string HeroicBossStardustLabel = "Heroic boss stardust";
+
+	public const string HeroicBossStardustDescription =
+		"A heroic boss drops the stardust a boss kill gives in a normal run: 16, plus 2 / 4 / 7 on Normal / " +
+		"Hard / Nightmare, plus 3 per evil lucid dream. Every player gets it.";
+
 	public const string ItemRarityFloorLabel = "Rarity floor with item multipliers";
 
 	public const string ItemRarityFloorDescription =

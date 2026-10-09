@@ -262,6 +262,7 @@ internal sealed class SessionSettings
 			growthPerWave: Math.Max(0f, config.rewardGrowthPercentPerWave) / Tuning.PercentScale,
 			guaranteedDropPerWave: config.guaranteedDropPerWave,
 			heroicBossChaosRewards: Math.Max(0, config.heroicBossChaosRewards),
+			heroicBossStardust: config.heroicBossStardust,
 			itemRarityFloor: ToChance(Math.Max(0f, config.itemRarityFloorPercent)),
 			freeLeftoverItems: config.freeLeftoverItemsAtWaveEnd,
 			itemDrops: config.monsterItemDrops);
