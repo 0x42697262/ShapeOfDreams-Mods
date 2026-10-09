@@ -149,9 +149,6 @@ internal static class ChoiceFields
 
 	private static string Label(Choice choice)
 	{
-		string name = DewLocalization.TryGetUIValue(choice.Value + GameNames.LocalizedNameSuffix, out string localized)
-			? localized
-			: null;
-		return ConfigText.ChoiceLabel(name, choice.World);
+		return ConfigText.ChoiceLabel(LocalizedNames.Find(choice.Value), choice.Detail);
 	}
 }

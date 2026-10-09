@@ -10,6 +10,8 @@ internal sealed class WaveCycle
 
 	public bool InProgress { get; private set; }
 
+	public bool IsHeld => !InProgress && double.IsPositiveInfinity(_nextWaveAt);
+
 	public WaveCycle(double firstWaveAt)
 	{
 		_nextWaveAt = firstWaveAt;
@@ -47,6 +49,22 @@ internal sealed class WaveCycle
 	public double SecondsUntilNextWave(double now)
 	{
 		return InProgress ? 0 : Math.Max(0, _nextWaveAt - now);
+	}
+
+	public void Hold()
+	{
+		if (!InProgress)
+		{
+			_nextWaveAt = double.PositiveInfinity;
+		}
+	}
+
+	public void Release(double nextWaveAt)
+	{
+		if (IsHeld)
+		{
+			_nextWaveAt = nextWaveAt;
+		}
 	}
 
 	public void StartNextWaveNow(double now)

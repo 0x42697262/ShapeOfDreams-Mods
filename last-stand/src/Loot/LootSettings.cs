@@ -19,14 +19,21 @@ internal sealed class LootSettings
 
 	public bool GuaranteedDropPerWave { get; }
 
+	public bool FreeLeftoverItems { get; }
+
 	public int HeroicBossChaosRewards { get; }
 
 	public double ItemRarityFloor { get; }
 
+	public bool ItemDrops { get; }
+
 	public LootSettings(RarityTable items, double memoryShare, RarityTable chaos,
 		IReadOnlyDictionary<EnemyTier, TierLoot> tiers, int mobItemsPerPlayerPerWave, double growthPerWave,
-		bool guaranteedDropPerWave, int heroicBossChaosRewards, double itemRarityFloor)
+		bool guaranteedDropPerWave, int heroicBossChaosRewards, double itemRarityFloor, bool freeLeftoverItems,
+		bool itemDrops)
 	{
+		ItemDrops = itemDrops;
+		FreeLeftoverItems = freeLeftoverItems;
 		ItemRarityFloor = itemRarityFloor;
 		Items = items;
 		MemoryShare = memoryShare;

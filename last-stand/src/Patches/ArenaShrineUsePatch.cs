@@ -3,15 +3,15 @@ using LastStand.Mode;
 
 namespace LastStand.Patches;
 
-[HarmonyPatch(typeof(Shrine), nameof(Shrine.DoPostUseRoutines))]
+[HarmonyPatch(typeof(Shrine), "DoPostUseRoutines")]
 internal static class ArenaShrineUsePatch
 {
 	[HarmonyPostfix]
-	private static void Postfix(Shrine __instance)
+	private static void Postfix(Shrine __instance, Entity entity)
 	{
 		if (LastStandMode.IsHosting())
 		{
-			LastStandMod.Current?.Session?.Shrines.OnUsed(__instance);
+			LastStandMod.Current?.Session?.OnShrineUsed(__instance, entity);
 		}
 	}
 }

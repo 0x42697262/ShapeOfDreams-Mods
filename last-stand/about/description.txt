@@ -1,7 +1,37 @@
-Host-only wave survival for solo and co-op.
+[h1]Last Stand[/h1]
+[b]Endless wave survival for Shape of Dreams. Solo or co-op. Only the host needs the mod.[/b]
 
-Hold a boss arena against endless waves that grow every minute. Minibosses join from mid waves, and Pain minibosses hurt the whole party until they fall. Kills drop memories and essences that fade if nobody claims them, and a Dream Well at the center of the arena turns dream dust into upgrades.
+Hold one boss arena against waves that never stop. Every wave is bigger and stronger than the last. How far can your build go?
 
-Pick "Last Stand" as the game mode: in Solo after choosing to play, or in the Game Mode dropdown when creating a lobby.
+[h2]How to play[/h2]
+[list]
+[*][b]Solo:[/b] press Singleplayer, then pick [b]Last Stand[/b] under Limbo.
+[*][b]Co-op:[/b] create a lobby and pick [b]Last Stand[/b] in the Game Mode dropdown.
+[*]Leave camp through the rift. The fight starts in the arena.
+[/list]
 
-Only the host needs this mod. Friends can join on a fully vanilla client.
+[h2]Features[/h2]
+[list]
+[*][b]Endless waves.[/b] The next wave starts once the last one is cleared, after a short break. Every 5th wave is a surge with twice the monsters.
+[*][b]Clear too fast and it hits back.[/b] From wave 30, killing 80% of a wave within 10 seconds doubles the health and damage of every later wave, and it stacks.
+[*][b]Minibosses[/b] every 10 waves, and [b]Pain minibosses[/b] every 20 that hurt the whole party until they fall.
+[*][b]Heroic bosses[/b], the game's real zone bosses, join at wave 49, 99, 124, 149… and drop Corrupted Chaos rewards.
+[*][b]Monsters from other worlds[/b] join the pool as you go. Mirage skins, hunters and hunter zones with falling artillery arrive in the late waves.
+[*][b]Environments[/b] change the rules for a wave every 10 waves.
+[*][b]Shrines on the arena's edge:[/b] Dream Well, Altar of Cleansing, Shrine of Ascension, Maw of Doom, Shrine of Destiny, Hatred Remnant and Reminiscence of Luck.
+[*][b]Gold prices rise every wave[/b] (5% compounding, until wave 100), so spend it while it's cheap.
+[*][b]Optional difficulty:[/b] Curse to start. Each wave waits until a player takes a curse at the Hatred Remnant, and that curse falls on everyone.
+[*][b]Knocked-out heroes come back[/b] when the wave is cleared, as long as someone is still standing.
+[*][b]Your score is the wave you reach.[/b]
+[/list]
+
+[h2]Fully configurable[/h2]
+The host can tune almost everything from the [b]Last Stand[/b] button in the lobby's settings panel: arena room, wave size and pace, scaling, bosses, shrines, environments, item drops and more.
+
+[h2]Good to know[/h2]
+[list]
+[*][b]Host only.[/b] Friends can join on a fully vanilla client.
+[*]Lucid dreams and game modifiers work as normal.
+[*]The lobby shows the MOD icon, since Last Stand changes gameplay.
+[*]This is an early version. Please report bugs in the comments.
+[/list]

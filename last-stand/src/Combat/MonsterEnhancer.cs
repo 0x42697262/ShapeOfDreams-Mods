@@ -5,35 +5,38 @@ namespace LastStand.Combat;
 
 internal static class MonsterEnhancer
 {
-	public static void ApplyWaveScaling(Entity entity, WavePlan plan)
+	public static void ApplyWaveScaling(Entity entity, double healthBonusPercent, double damageBonusPercent)
 	{
-		if (plan.HealthBonusPercent <= 0 && plan.DamageBonusPercent <= 0)
+		if (!(healthBonusPercent <= 0.0) || !(damageBonusPercent <= 0.0))
 		{
-			return;
+			entity.Status.AddStatBonus(new StatBonus
+			{
+				maxHealthPercentage = (float)healthBonusPercent,
+				attackDamagePercentage = (float)damageBonusPercent,
+				abilityPowerPercentage = (float)damageBonusPercent
+			});
 		}
-
-		entity.Status.AddStatBonus(new StatBonus
-		{
-			maxHealthPercentage = (float)plan.HealthBonusPercent,
-			attackDamagePercentage = (float)plan.DamageBonusPercent,
-			abilityPowerPercentage = (float)plan.DamageBonusPercent,
-		});
 	}
 
-	public static void MultiplyStats(Entity entity, double healthMultiplier, double damageMultiplier)
+	public static void Multiply(Entity entity, double health, double damage)
 	{
 		if (entity.IsNullInactiveDeadOrKnockedOut())
 		{
 			return;
 		}
 
-		BonusStats current = entity.Status.bonusStats;
+		float damagePercent = ExtraPercent(damage);
 		entity.Status.AddStatBonus(new StatBonus
 		{
-			maxHealthPercentage = ExtraPercent(healthMultiplier, current.maxHealthPercentage),
-			attackDamagePercentage = ExtraPercent(damageMultiplier, current.attackDamagePercentage),
-			abilityPowerPercentage = ExtraPercent(damageMultiplier, current.abilityPowerPercentage),
+			maxHealthPercentage = ExtraPercent(health),
+			attackDamagePercentage = damagePercent,
+			abilityPowerPercentage = damagePercent,
 		});
+	}
+
+	private static float ExtraPercent(double multiplier)
+	{
+		return (float)((multiplier - 1) * Tuning.PercentScale);
 	}
 
 	public static void AddAbilityHaste(Entity entity, double haste)
@@ -52,11 +55,6 @@ internal static class MonsterEnhancer
 		{
 			entity.CreateStatusEffect<Se_HunterBuff>(entity, new CastInfo(entity));
 		}
-	}
-
-	private static float ExtraPercent(double multiplier, float currentPercent)
-	{
-		return (float)((multiplier - 1) * (Tuning.PercentScale + currentPercent));
 	}
 
 	public static void ApplyMirage(Entity entity, MirageSkinEffect skin)

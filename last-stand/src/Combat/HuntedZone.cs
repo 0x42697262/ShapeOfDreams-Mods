@@ -1,8 +1,10 @@
+using Mirror;
+
 namespace LastStand.Combat;
 
 internal sealed class HuntedZone
 {
-	private readonly ArenaModifier<RoomMod_Hunted> _modifier = new ArenaModifier<RoomMod_Hunted>();
+	private readonly ArenaModifier _modifier = new ArenaModifier();
 	private int _previousHuntLevel;
 
 	public bool IsActive => _modifier.IsActive;
@@ -19,9 +21,17 @@ internal sealed class HuntedZone
 
 		_previousHuntLevel = zones.currentHuntLevel;
 		zones.currentHuntLevel = huntLevel;
-		if (!_modifier.Add())
+		if (!_modifier.Add(nameof(RoomMod_Hunted), KeepArtilleryWithoutRift))
 		{
 			zones.currentHuntLevel = _previousHuntLevel;
+		}
+	}
+
+	private static void KeepArtilleryWithoutRift(RoomModifierBase modifier)
+	{
+		if (modifier is RoomMod_Hunted hunted)
+		{
+			hunted.endWhenRiftOpen = false;
 		}
 	}
 
@@ -40,7 +50,7 @@ internal sealed class HuntedZone
 		_modifier.Remove();
 
 		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
-		if (zones != null)
+		if (zones != null && NetworkServer.active)
 		{
 			zones.currentHuntLevel = _previousHuntLevel;
 		}

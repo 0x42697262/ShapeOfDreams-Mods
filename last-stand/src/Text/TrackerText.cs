@@ -1,14 +1,17 @@
+
+
 namespace LastStand.Text;
 
-internal static class HudText
+internal static class TrackerText
 {
-	public const string Camp = "Last Stand: Camp";
-
-	public const string Arriving = "Last Stand";
-
 	public static string NextWave(int wave, int seconds)
 	{
 		return $"Wave {wave} in {seconds}s";
+	}
+
+	public static string AwaitingCurse(int wave)
+	{
+		return $"Wave {wave}: choose a curse";
 	}
 
 	public static string WaveRunning(int wave, int monstersLeft)

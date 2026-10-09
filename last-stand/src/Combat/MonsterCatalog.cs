@@ -26,7 +26,7 @@ internal sealed class MonsterCatalog
 
 	public int HeroicBossCount => _heroicBosses.Count;
 
-	public bool TryBuild(IReadOnlyList<string> heroicBossTypes)
+	public bool TryBuild(IReadOnlyList<string> heroicBossTypes, IReadOnlyList<string> allHeroicBossTypes)
 	{
 		Zone current = CurrentZone();
 		if (current == null || current.defaultMonsters == null || current.defaultMonsters.pool == null)
@@ -62,7 +62,20 @@ internal sealed class MonsterCatalog
 			.ThenBy(skin => skin.GetType().Name, StringComparer.Ordinal));
 
 		_heroicBosses.Clear();
-		foreach (string typeName in heroicBossTypes)
+		AddHeroicBosses(heroicBossTypes);
+		if (_heroicBosses.Count == 0)
+		{
+			Log.Info(LogText.HeroicBossesFromWholeList(heroicBossTypes.Count));
+			AddHeroicBosses(allHeroicBossTypes);
+		}
+
+		_zoneRegulars = pool.GetMonsters(int.MaxValue, DewRandom.instance);
+		return true;
+	}
+
+	private void AddHeroicBosses(IReadOnlyList<string> typeNames)
+	{
+		foreach (string typeName in typeNames)
 		{
 			BossMonster boss = HeroicBosses.Find(typeName);
 			if (boss == null)
@@ -78,9 +91,6 @@ internal sealed class MonsterCatalog
 				_heroicBosses.Add(boss);
 			}
 		}
-
-		_zoneRegulars = pool.GetMonsters(int.MaxValue, DewRandom.instance);
-		return true;
 	}
 
 	public BossMonster RandomHeroicBoss()

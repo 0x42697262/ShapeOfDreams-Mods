@@ -64,6 +64,22 @@ internal sealed class EnemyRegistry
 		return _ofTier;
 	}
 
+	public int RemoveAll()
+	{
+		int removed = 0;
+		foreach (Entity entity in new List<Entity>(_alive.Keys))
+		{
+			if (!entity.IsNullOrInactive())
+			{
+				entity.Destroy();
+				removed++;
+			}
+		}
+
+		Clear();
+		return removed;
+	}
+
 	public void Clear()
 	{
 		_alive.Clear();

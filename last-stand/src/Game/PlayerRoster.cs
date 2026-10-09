@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace LastStand.Game;
 
 internal static class PlayerRoster
 {
 	private const int AtLeastOnePlayer = 1;
+
+	private const int MinimumHeroLevel = 1;
 
 	public static int PlayerCount()
 	{
@@ -21,6 +24,79 @@ internal static class PlayerRoster
 		}
 
 		return count < AtLeastOnePlayer ? AtLeastOnePlayer : count;
+	}
+
+	public static int GoldSharers()
+	{
+		int num = ((DewPlayer.gamePlayers != null) ? DewPlayer.gamePlayers.Count : 0);
+		if (num >= 1)
+		{
+			return num;
+		}
+		return 1;
+	}
+
+	public static int GiveGold(int amount)
+	{
+		int players = 0;
+		if (amount <= 0 || DewPlayer.gamePlayers == null)
+		{
+			return players;
+		}
+
+		foreach (DewPlayer player in DewPlayer.gamePlayers)
+		{
+			if (player != null)
+			{
+				player.EarnGold(amount);
+				players++;
+			}
+		}
+
+		return players;
+	}
+
+	public static int GiveDreamDust(int amount)
+	{
+		int players = 0;
+		if (amount <= 0 || DewPlayer.gamePlayers == null)
+		{
+			return players;
+		}
+
+		foreach (DewPlayer player in DewPlayer.gamePlayers)
+		{
+			if (player != null)
+			{
+				player.EarnDreamDust(amount);
+				players++;
+			}
+		}
+
+		return players;
+	}
+
+	public static int SetHeroLevel(int level)
+	{
+		int heroes = 0;
+		if (DewPlayer.gamePlayers == null)
+		{
+			return heroes;
+		}
+
+		foreach (DewPlayer player in DewPlayer.gamePlayers)
+		{
+			Hero hero = player != null ? player.hero : null;
+			if (hero.IsNullOrInactive())
+			{
+				continue;
+			}
+
+			hero.Status.level = Mathf.Clamp(level, MinimumHeroLevel, hero.maxLevel);
+			heroes++;
+		}
+
+		return heroes;
 	}
 
 	public static void FillPlayersWithLiveHeroes(List<DewPlayer> buffer)

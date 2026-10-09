@@ -8,8 +8,7 @@ namespace LastStand.Combat;
 internal sealed class PainService
 {
 	private readonly PainAura _aura = new PainAura();
-	private readonly ArenaModifier<RoomMod_CorruptedChaos_AuraOfPain> _zone =
-		new ArenaModifier<RoomMod_CorruptedChaos_AuraOfPain>();
+	private readonly ArenaModifier _zone = new ArenaModifier();
 	private readonly EnemyRegistry _enemies;
 	private readonly Func<EnemyTier, bool> _hasPending;
 
@@ -21,10 +20,12 @@ internal sealed class PainService
 
 	public event Action GroupFell;
 
+	public bool ZoneActive => _zone.IsActive;
+
 	public void OnSpawned(Entity entity, PainSettings settings)
 	{
 		_aura.Empower(entity, settings);
-		if (!_zone.IsActive && _zone.Add())
+		if (!_zone.IsActive && _zone.Add(nameof(RoomMod_CorruptedChaos_AuraOfPain)))
 		{
 			Log.Info(LogText.PainZoneStarted());
 		}

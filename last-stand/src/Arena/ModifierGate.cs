@@ -6,12 +6,12 @@ internal static class ModifierGate
 {
 	private static int _ownAdds;
 
-	public static int AddOwn<T>(ZoneManager zones, int nodeIndex, Action<T> beforePrepare) where T : RoomModifierBase
+	public static int AddOwn(ZoneManager zones, int nodeIndex, string type, Action<RoomModifierBase> beforePrepare)
 	{
 		_ownAdds++;
 		try
 		{
-			return zones.AddModifier(nodeIndex, beforePrepare);
+			return zones.AddModifier(nodeIndex, new ModifierData { type = type }, beforePrepare);
 		}
 		finally
 		{

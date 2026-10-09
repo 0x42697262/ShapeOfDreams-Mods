@@ -22,8 +22,7 @@ internal sealed class SpawnQueue
 		_finaleAt = NotScheduled;
 		Add(EnemyTier.Pain, plan.PainCount);
 		Add(EnemyTier.MiniBoss, plan.MiniBossCount);
-		Add(EnemyTier.Hunter, plan.HunterCount);
-		Add(EnemyTier.Regular, plan.RegularCount);
+		AddMixed(EnemyTier.Hunter, plan.HunterCount, EnemyTier.Regular, plan.RegularCount);
 	}
 
 	public bool HasPending(EnemyTier tier)
@@ -104,6 +103,16 @@ internal sealed class SpawnQueue
 		for (; _finale > 0; _finale--)
 		{
 			_released.Add(EnemyTier.HeroicBoss);
+		}
+	}
+
+	private void AddMixed(EnemyTier spread, int spreadCount, EnemyTier rest, int restCount)
+	{
+		int total = spreadCount + restCount;
+		for (int i = 0; i < total; i++)
+		{
+			bool spreadTurn = (long)(i + 1) * spreadCount / total > (long)i * spreadCount / total;
+			_pending.Enqueue(spreadTurn ? spread : rest);
 		}
 	}
 

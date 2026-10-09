@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using LastStand.Combat;
 using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LastStand.Loot;
@@ -10,8 +10,11 @@ namespace LastStand.Loot;
 internal sealed class LootService
 {
 	private readonly DropLedger _ledger = new DropLedger();
+
 	private readonly DropTally _tally = new DropTally();
+
 	private readonly List<DewPlayer> _players = new List<DewPlayer>();
+
 	private readonly List<string> _guids = new List<string>();
 
 	public void OnEnemyDied(EnemyDeath death, int wave, LootSettings settings)
@@ -21,7 +24,7 @@ internal sealed class LootService
 		LootDropper.DropDreamDust(death.Position, decision.DreamDust);
 		LootDropper.DropGold(death.Position, decision.Gold);
 
-		if (!decision.DropsItem)
+		if (!settings.ItemDrops || !decision.DropsItem)
 		{
 			return;
 		}
@@ -49,9 +52,14 @@ internal sealed class LootService
 
 	public void OnWaveCleared(int wave, LootSettings settings)
 	{
-		if (settings.GuaranteedDropPerWave)
+		if (settings.ItemDrops && settings.GuaranteedDropPerWave)
 		{
 			GrantMissedDrops(wave, settings);
+		}
+
+		if (settings.FreeLeftoverItems)
+		{
+			FreeLeftovers(wave);
 		}
 	}
 
@@ -65,6 +73,21 @@ internal sealed class LootService
 	{
 		_ledger.StartWave();
 		_tally.Clear();
+	}
+
+	private static void FreeLeftovers(int wave)
+	{
+		int freed = LeftoverItems.Release();
+		if (freed == 0)
+		{
+			return;
+		}
+
+		Log.Info(LogText.LeftoverItemsFreed(wave, freed));
+		if (PlayerRoster.PlayerCount() > 1)
+		{
+			ChatNotices.Broadcast(Messages.LeftoverItemsFreed(freed));
+		}
 	}
 
 	private void GrantMissedDrops(int wave, LootSettings settings)

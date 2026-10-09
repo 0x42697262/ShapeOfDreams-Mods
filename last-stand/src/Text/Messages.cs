@@ -6,12 +6,15 @@ internal static class Messages
 {
 	public const string ModeName = "Last Stand";
 
-	public const string ModeDescription =
-		"Hold a boss arena against endless waves that grow stronger every wave. Minibosses " +
-		"come every 10 waves, monsters from other worlds join over time, then hunters and " +
-		"Mirage skins. Pain minibosses hurt everyone until they fall. Memories and essences " +
-		"are scarce and fade if nobody claims them, and a Dream Well at the center turns " +
-		"dream dust into upgrades. Only the host needs this mod.";
+	public const string ModeDescription = "Hold a boss arena against endless waves that grow stronger every wave.";
+
+	public const string ModeTooltip = "Endless waves in a single arena";
+
+	private const string NoticeColor = "#e8a33d";
+
+	private const string WarningColor = "#ff4d4d";
+
+	private const string SuccessColor = "#5ad45a";
 
 	public static string HeroicBossArrives()
 	{
@@ -28,13 +31,29 @@ internal static class Messages
 		return Notice($"The heroic boss falls! {chaosRewards} Corrupted Chaos rewards dropped.");
 	}
 
-	public const string ModeTooltip = "Endless waves in a single arena";
-
-	private const string NoticeColor = "#e8a33d";
+	public static string LobbyName(int startingWorld)
+	{
+		return $"{ModeName} (Wave Mode) Z{startingWorld}";
+	}
 
 	public static string Notice(string text)
 	{
-		return $"<color={NoticeColor}>[{ModeName}] {text}</color>";
+		return Colored(NoticeColor, text);
+	}
+
+	public static string Success(string text)
+	{
+		return Colored(SuccessColor, text);
+	}
+
+	public static string Warning(string text)
+	{
+		return Colored(WarningColor, text);
+	}
+
+	private static string Colored(string color, string text)
+	{
+		return $"<color={color}>[{ModeName}] {text}</color>";
 	}
 
 	public static string ArenaReady(int secondsUntilFirstWave)
@@ -87,9 +106,54 @@ internal static class Messages
 		return Notice(text);
 	}
 
+	public static string LeftoverItemsFreed(int count)
+	{
+		return Notice($"{count} unclaimed memory or essence drop(s) on the ground are now free for anyone.");
+	}
+
+	public static string FastClear(double seconds, int nextWave, double multiplier)
+	{
+		return Warning($"Wave cleared within {seconds:0.#}s. From wave {nextWave} on, monsters hit back with x{multiplier:0.##} health and damage.");
+	}
+
+	public static string ArenaReadyAwaitingCurse()
+	{
+		return Notice("Hold the arena. Choose a curse at the Hatred Remnant to start wave 1.");
+	}
+
+	public static string WaveClearedAwaitingCurse(int wave, int nextWave)
+	{
+		return Success($"Wave {wave} cleared. Choose a curse at the Hatred Remnant to start wave {nextWave}.");
+	}
+
+	public static string CurseStartsWave(string strength, int wave, int seconds)
+	{
+		return Notice($"A {strength} curse falls on everyone. Wave {wave} starts in {seconds} s.");
+	}
+
 	public static string WaveCleared(int wave, int secondsUntilNextWave)
 	{
-		return Notice($"Wave {wave} cleared. The next wave arrives in {secondsUntilNextWave} s.");
+		return Success($"Wave {wave} cleared. The next wave arrives in {secondsUntilNextWave} s.");
+	}
+
+	public static string FriendlyFireStarted()
+	{
+		return Notice("A dark urge takes hold: every hero is cursed until this wave is cleared.");
+	}
+
+	public static string FriendlyFireEnded()
+	{
+		return Notice("The dark urge fades. Heroes are allies again.");
+	}
+
+	public static string EnvironmentStarted(string name)
+	{
+		return Notice($"The arena changes: {name}. It lasts until this wave is cleared.");
+	}
+
+	public static string EnvironmentEnded(string name)
+	{
+		return Notice($"{name} fades.");
 	}
 
 	public static string PainFell()

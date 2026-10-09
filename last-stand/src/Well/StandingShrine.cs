@@ -1,4 +1,3 @@
-using LastStand.Config;
 using LastStand.Diagnostics;
 using LastStand.Text;
 using UnityEngine;
@@ -11,11 +10,22 @@ internal sealed class StandingShrine<T> where T : Shrine
 	private const float NoCooldown = 0f;
 
 	private readonly string _name;
+	private readonly ShrineUses _uses;
+	private readonly float _adoptRadius;
 	private T _shrine;
 
-	public StandingShrine(string name)
+	public StandingShrine(string name, ShrineUses uses, float adoptRadius)
 	{
 		_name = name;
+		_uses = uses;
+		_adoptRadius = adoptRadius;
+	}
+
+	public T Current => _shrine;
+
+	public bool Owns(Shrine shrine)
+	{
+		return shrine != null && shrine == _shrine;
 	}
 
 	public void Place(Vector3 position)
@@ -39,7 +49,7 @@ internal sealed class StandingShrine<T> where T : Shrine
 
 	public void OnUsed(Shrine shrine)
 	{
-		if (shrine == null || shrine != _shrine)
+		if (_uses != ShrineUses.Unlimited || !Owns(shrine))
 		{
 			return;
 		}
@@ -54,12 +64,12 @@ internal sealed class StandingShrine<T> where T : Shrine
 		_shrine = null;
 	}
 
-	private static T FindExisting(Vector3 position)
+	private T FindExisting(Vector3 position)
 	{
 		foreach (T shrine in Object.FindObjectsByType<T>(FindObjectsSortMode.None))
 		{
 			if (!shrine.IsNullOrInactive()
-			    && Vector3.Distance(shrine.transform.position, position) <= Tuning.ShrineAdoptRadius)
+			    && Vector3.Distance(shrine.transform.position, position) <= _adoptRadius)
 			{
 				return shrine;
 			}
@@ -68,10 +78,22 @@ internal sealed class StandingShrine<T> where T : Shrine
 		return null;
 	}
 
-	private static void Configure(T shrine)
+	private void Configure(T shrine)
 	{
-		shrine.maxUseCountPerPlayer = Unlimited;
-		shrine.NetworkmaxTotalUseCount = Unlimited;
-		shrine.useCooldown = NoCooldown;
+		if (_uses == ShrineUses.Unlimited)
+		{
+			shrine.maxUseCountPerPlayer = Unlimited;
+			shrine.NetworkmaxTotalUseCount = Unlimited;
+			shrine.useCooldown = NoCooldown;
+			return;
+		}
+
+		T prefab = DewResources.GetByType<T>();
+		if (prefab != null)
+		{
+			shrine.maxUseCountPerPlayer = prefab.maxUseCountPerPlayer;
+			shrine.NetworkmaxTotalUseCount = prefab.maxTotalUseCount;
+			shrine.useCooldown = prefab.useCooldown;
+		}
 	}
 }

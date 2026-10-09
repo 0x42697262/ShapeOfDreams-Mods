@@ -1,5 +1,6 @@
 using LastStand.Identity;
 using LastStand.Text;
+using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,19 @@ internal static class LobbyConfigButton
 {
 	public static void Ensure(Transform panel)
 	{
-		if (panel == null || panel.Find(ModIdentity.LobbyButtonName) != null)
+		if (panel == null)
+		{
+			return;
+		}
+
+		Transform existing = panel.Find(ModIdentity.LobbyButtonName);
+		if (existing != null)
+		{
+			existing.gameObject.SetActive(NetworkServer.active);
+			return;
+		}
+
+		if (!NetworkServer.active)
 		{
 			return;
 		}

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using LastStand.Config;
 using LastStand.Identity;
 using LastStand.Text;
@@ -89,58 +88,13 @@ internal sealed class ConfigWindow : MonoBehaviour
 		note.alignment = TextAlignmentOptions.Center;
 		note.text = ConfigText.WindowNote;
 
-		ScrollRect scroll = UnityEngine.Object.Instantiate(DewGUI.widgetScrollRect, content.transform);
-		scroll.SetExpandWidth(expand: true);
-		scroll.horizontal = false;
-
-		RectTransform scrollContent = scroll.content;
-		HorizontalLayoutGroup row = scrollContent.gameObject.AddComponent<HorizontalLayoutGroup>();
-		DewGUI.ApplyLayoutGroupDefaultSettings(row, TextAnchor.UpperLeft);
-		row.spacing = ConfigWindowLayout.ColumnSpacing;
-		row.padding = new RectOffset(ConfigWindowLayout.ScrollPadding, ConfigWindowLayout.ScrollPadding,
-			ConfigWindowLayout.ScrollVerticalPadding, ConfigWindowLayout.ScrollVerticalPadding);
-		if (!scrollContent.TryGetComponent(out ContentSizeFitter fitter))
-		{
-			fitter = scrollContent.gameObject.AddComponent<ContentSizeFitter>();
-		}
-
-		fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-		Transform[] columns = new Transform[ConfigWindowLayout.ColumnCount];
-		for (int i = 0; i < columns.Length; i++)
-		{
-			VerticalLayoutGroup column = DewGUI.CreateVerticalLayoutGroup(scrollContent, TextAnchor.UpperLeft);
-			column.spacing = ConfigWindowLayout.RowSpacing;
-			column.childForceExpandWidth = true;
-			columns[i] = column.transform;
-		}
-
 		float canvasWidth = DewGUI.canvasTransform.rect.width;
 		float windowWidth = canvasWidth > 0f
 			? Mathf.Min(ConfigWindowLayout.PreferredWindowWidth, canvasWidth - ConfigWindowLayout.ScreenEdgeMargin)
 			: ConfigWindowLayout.PreferredWindowWidth;
 		window.SetWidth(windowWidth);
-		scroll.SetHeight(ConfigWindowLayout.MaxScrollHeight);
-		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)window.transform);
 
-		float columnWidth = ColumnWidthFor(scroll);
-		foreach (Transform column in columns)
-		{
-			column.SetWidth(columnWidth);
-			LayoutElement layout = column.GetComponent<LayoutElement>();
-			if (layout == null)
-			{
-				layout = column.gameObject.AddComponent<LayoutElement>();
-			}
-
-			layout.minWidth = columnWidth;
-			layout.flexibleWidth = 0f;
-		}
-
-		_draft.BuildWidgets(columns[0], out SafeAction _, out SafeAction _);
-		float tallest = SpreadIntoColumns(scrollContent, columns);
-		scroll.SetHeight(Mathf.Clamp(tallest + ConfigWindowLayout.ScrollHeightSlack,
-			ConfigWindowLayout.MinScrollHeight, ConfigWindowLayout.MaxScrollHeight));
+		SettingsPanel.Build(_draft, content.transform, ConfigWindowLayout.PageHeight, out SafeAction _, out SafeAction _);
 
 		HorizontalLayoutGroup buttons = DewGUI.CreateHorizontalLayoutGroup(content.transform, TextAnchor.MiddleCenter);
 		buttons.spacing = ConfigWindowLayout.ButtonSpacing;
@@ -148,71 +102,6 @@ internal sealed class ConfigWindow : MonoBehaviour
 
 		AddButton(buttons.transform, ConfigText.ApplyButton, Apply);
 		AddButton(buttons.transform, ConfigText.CancelButton, Close);
-	}
-
-	private static float ColumnWidthFor(ScrollRect scroll)
-	{
-		RectTransform viewport = scroll.viewport != null ? scroll.viewport : (RectTransform)scroll.transform;
-		float available = viewport.rect.width;
-
-		Scrollbar bar = scroll.verticalScrollbar;
-		if (bar != null && scroll.verticalScrollbarVisibility != ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport)
-		{
-			available -= ((RectTransform)bar.transform).rect.width;
-		}
-
-		available -= 2 * ConfigWindowLayout.ScrollPadding
-		             + (ConfigWindowLayout.ColumnCount - 1) * ConfigWindowLayout.ColumnSpacing
-		             + ConfigWindowLayout.ScrollbarGap;
-		float width = available / ConfigWindowLayout.ColumnCount;
-		return width > ConfigWindowLayout.MinimumColumnWidth ? Mathf.Floor(width) : ConfigWindowLayout.FallbackColumnWidth;
-	}
-
-	private static float SpreadIntoColumns(RectTransform scrollContent, Transform[] columns)
-	{
-		Transform source = columns[0];
-		LayoutRebuilder.ForceRebuildLayoutImmediate(scrollContent);
-
-		List<List<Transform>> sections = new List<List<Transform>>();
-		List<float> heights = new List<float>();
-		for (int i = 0; i < source.childCount; i++)
-		{
-			Transform child = source.GetChild(i);
-			if (child.name.Contains(ConfigWindowLayout.HeaderMarker) || sections.Count == 0)
-			{
-				sections.Add(new List<Transform>());
-				heights.Add(0f);
-			}
-
-			sections[sections.Count - 1].Add(child);
-			float height = child is RectTransform rect ? LayoutUtility.GetPreferredHeight(rect) : 0f;
-			heights[heights.Count - 1] += Mathf.Max(height, ConfigWindowLayout.MinimumElementHeight)
-			                              + ConfigWindowLayout.RowSpacing;
-		}
-
-		int[] firstOfColumn = ColumnSplit.Evenly(heights, columns.Length);
-		float tallest = 0f;
-		int column = 0;
-		float columnHeight = 0f;
-		for (int s = 0; s < sections.Count; s++)
-		{
-			while (column + 1 < columns.Length && s >= firstOfColumn[column + 1])
-			{
-				column++;
-				columnHeight = 0f;
-			}
-
-			foreach (Transform element in sections[s])
-			{
-				element.SetParent(columns[column], worldPositionStays: false);
-				element.SetAsLastSibling();
-			}
-
-			columnHeight += heights[s];
-			tallest = Mathf.Max(tallest, columnHeight);
-		}
-
-		return tallest;
 	}
 
 	private static void AddButton(Transform parent, string label, Action onClick)

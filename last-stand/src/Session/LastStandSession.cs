@@ -1,4 +1,3 @@
-using System;
 using LastStand.Arena;
 using LastStand.Combat;
 using LastStand.Config;
@@ -10,29 +9,51 @@ using LastStand.Text;
 using LastStand.Waves;
 using LastStand.Well;
 using Mirror;
+using System;
 
 namespace LastStand.Session;
 
 internal sealed class LastStandSession
 {
 	private readonly EnemyRegistry _enemies = new EnemyRegistry();
+
 	private readonly ArenaArrival _arrival = new ArenaArrival();
+
 	private readonly CampRift _campRift = new CampRift();
+
 	private readonly RunGoal _goal = new RunGoal();
+
+	private readonly WaveTracker _tracker = new WaveTracker();
+
+	private readonly StartingWorld _world = new StartingWorld();
+
+	private readonly GoldPrices _goldPrices = new GoldPrices();
+
+	private readonly CurseStart _curseStart = new CurseStart();
+
+	private readonly ArenaPanel _panel = new ArenaPanel();
+
+	private readonly StartingBonus _startingBonus = new StartingBonus();
+
 	private readonly HeroicBosses _heroicBosses = new HeroicBosses();
+
 	private readonly TestBoss _testBoss;
+
 	private readonly LootService _loot = new LootService();
+
 	private readonly WaveDirector _waves;
+
 	private readonly PainService _pain;
 
 	private SessionSettings _settings;
+
 	private SessionPhase _phase = SessionPhase.Inactive;
+
 	private int _arenaNode = ArenaLocator.NoNode;
+
 	private double _now;
 
 	public PlainArena PlainArena { get; } = new PlainArena();
-
-	private readonly ArenaMusic _music = new ArenaMusic();
 
 	public ArenaShrines Shrines { get; } = new ArenaShrines();
 
@@ -44,9 +65,9 @@ internal sealed class LastStandSession
 		_testBoss = new TestBoss(_heroicBosses);
 		_waves = new WaveDirector(_enemies, _heroicBosses, OnEnemySpawned);
 		_pain = new PainService(_enemies, _waves.HasPending);
-
 		_waves.WaveStarted += OnWaveStarted;
 		_waves.WaveCleared += OnWaveCleared;
+		_waves.FastCleared += OnFastCleared;
 		_enemies.Died += OnEnemyDied;
 		_pain.GroupFell += _waves.RestoreHuntedZone;
 	}
@@ -59,50 +80,48 @@ internal sealed class LastStandSession
 	public void UseSettings(SessionSettings settings)
 	{
 		_settings = settings;
-	}
-
-	public void OnRoomMusicStarted(Room room)
-	{
-		_music.OnRoomStarted(room, _settings.RandomBossMusic);
+		if (_phase == SessionPhase.Fighting)
+		{
+			ApplyGoldPrices(_waves.CurrentWave);
+		}
 	}
 
 	public void Tick(double now)
 	{
 		_now = now;
-
 		if (!LastStandMode.IsHosting())
 		{
-			if (_phase != SessionPhase.Inactive)
+			if (_phase != 0)
 			{
 				Reset();
 			}
-
 			return;
 		}
-
 		_goal.Tick(now);
-
+		_tracker.Tick(now, TrackerProgress(now));
+		_startingBonus.Tick(_settings.StartingGold, _settings.StartingDreamDust);
 		if (!ArenaLocator.IsStandingInArena())
 		{
 			if (_phase == SessionPhase.Fighting || _phase == SessionPhase.Arriving)
 			{
 				StopFight();
 			}
-
 			_phase = SessionPhase.Camp;
+			_world.Tick(now, _settings.StartingWorld);
 			_campRift.Tick(now);
 			return;
 		}
-
-		int node = ArenaLocator.CurrentNode();
-		if (_phase != SessionPhase.Fighting || node != _arenaNode)
+		int num = ArenaLocator.CurrentNode();
+		if (_phase != SessionPhase.Fighting || num != _arenaNode)
 		{
-			Arrive(now, node);
+			Arrive(now, num);
 			return;
 		}
-
 		_waves.Tick(now, _settings.Waves);
+		TickCurseStart(now);
 		_pain.Tick(now, _settings.Pain);
+		_panel.Tick(_waves.HasArenaModifier || _pain.ZoneActive);
+		Shrines.Tick(now, _waves.ClearedWaves, _settings.AscensionResetWaves, _settings.Waves.CurseToStart);
 	}
 
 	public void SpawnTestBoss(string typeName)
@@ -119,6 +138,125 @@ internal sealed class LastStandSession
 	public bool OwnsHeroicBoss(Entity entity)
 	{
 		return _heroicBosses.Owns(entity);
+	}
+
+	public void GiveGold(int amount)
+	{
+		int players = PlayerRoster.GiveGold(amount);
+		if (players == 0)
+		{
+			Log.Warn(LogText.GoldNotGranted);
+			return;
+		}
+
+		Log.Info(LogText.GoldGranted(amount, players));
+	}
+
+	public void GiveDreamDust(int amount)
+	{
+		int players = PlayerRoster.GiveDreamDust(amount);
+		if (players == 0)
+		{
+			Log.Warn(LogText.DreamDustNotGranted);
+			return;
+		}
+
+		Log.Info(LogText.DreamDustGranted(amount, players));
+	}
+
+	public void SetHeroLevel(int level)
+	{
+		Log.Info(LogText.LevelSet(level, PlayerRoster.SetHeroLevel(level)));
+	}
+
+	public void GrantSecondWind(int charges, float invulnerableSeconds)
+	{
+		float seconds = Math.Max(0f, invulnerableSeconds);
+		Log.Info(LogText.SecondWindSet(charges, seconds, SecondWind.Grant(charges, seconds)));
+	}
+
+	public void SkipWaves(int waves)
+	{
+		if (_phase != SessionPhase.Fighting || waves <= 0)
+		{
+			Log.Warn(LogText.SkipNotPossible);
+			return;
+		}
+
+		_pain.Reset();
+		_waves.Skip(waves);
+		Log.Info(LogText.SkipQueued(waves, _waves.CurrentWave));
+	}
+
+	public void DropEssence(string query, int? quality)
+	{
+		if (!TryGetHostHero(out Hero host)
+		    || !TryResolve(CheatItems.FindEssence(query), CommandText.EssenceKind, query, out ItemLookup item))
+		{
+			return;
+		}
+
+		Gem gem = CheatItems.SpawnEssence(item, quality, host.owner, host.agentPosition, out int spawned);
+		LogDrop(gem, CommandText.EssenceKind, query, CommandText.QualityStat, spawned);
+	}
+
+	public void DropMemory(string query, int? level)
+	{
+		if (!TryGetHostHero(out Hero host)
+		    || !TryResolve(CheatItems.FindMemory(query), CommandText.MemoryKind, query, out ItemLookup item))
+		{
+			return;
+		}
+
+		SkillTrigger skill = CheatItems.SpawnMemory(item, level, host.owner, host.agentPosition, out int spawned);
+		LogDrop(skill, CommandText.MemoryKind, query, CommandText.LevelStat, spawned);
+	}
+
+	private static bool TryGetHostHero(out Hero host)
+	{
+		host = DewPlayer.local != null ? DewPlayer.local.hero : null;
+		if (!host.IsNullInactiveDeadOrKnockedOut())
+		{
+			return true;
+		}
+
+		Log.Warn(LogText.CheatNoHostHero);
+		return false;
+	}
+
+	private static bool TryResolve(ItemLookup lookup, string kind, string query, out ItemLookup item)
+	{
+		item = lookup;
+		if (lookup.IsFound)
+		{
+			return true;
+		}
+
+		Log.Warn(lookup.Candidates.Count == 0
+			? LogText.ItemNotFound(kind, query)
+			: LogText.ItemAmbiguous(kind, query, lookup.Candidates, Tuning.MaxListedCandidates));
+		return false;
+	}
+
+	private static void LogDrop(Actor dropped, string kind, string query, string stat, int value)
+	{
+		switch (dropped)
+		{
+			case Gem gem:
+				Log.Info(LogText.ItemSpawned(kind, gem.GetType().Name, gem.rarity, stat, value));
+				return;
+			case SkillTrigger skill:
+				Log.Info(LogText.ItemSpawned(kind, skill.GetType().Name, skill.rarity, stat, value));
+				return;
+			default:
+				Log.Warn(LogText.ItemNotFound(kind, query));
+				return;
+		}
+	}
+
+	public int CapKillGold(int amount)
+	{
+		return KillGoldRule.Cap(amount, _settings.MaxKillGoldPerPlayer, PlayerRoster.GoldSharers());
 	}
 
 	public void OnHeroicBossDied(BossMonster boss)
@@ -142,6 +280,17 @@ internal sealed class LastStandSession
 		return false;
 	}
 
+	public bool AllowsRoomClear()
+	{
+		if (!RoomCombat.IsHeldOpen)
+		{
+			return true;
+		}
+
+		Log.Info(LogText.RoomClearBlocked);
+		return false;
+	}
+
 	public void RerollChaos(Shrine_Chaos shrine)
 	{
 		ChaosRarity.Reroll(shrine, _settings.Loot, Math.Max(Tuning.FirstWave, _waves.CurrentWave));
@@ -157,41 +306,32 @@ internal sealed class LastStandSession
 
 	public void JumpToWave(int wave)
 	{
-		if (_phase != SessionPhase.Fighting || wave < Tuning.FirstWave)
+		if (_phase != SessionPhase.Fighting || wave < 1)
 		{
-			Log.Warn(LogText.JumpNotPossible);
+			Log.Warn("laststand_wave: only works in the arena, with a wave of 1 or more.");
 			return;
 		}
-
-		int previous = wave - 1;
-		_waves.Resume(previous, false, _now);
-		ProgressStore.Save(_arenaNode, previous, false);
+		int wave2 = wave - 1;
+		_waves.Resume(wave2, inProgress: false, _now, _waves.FastClearStacks);
+		ProgressStore.Save(_arenaNode, wave2, inProgress: false, _waves.FastClearStacks);
 		Log.Info(LogText.JumpedToWave(wave));
 	}
 
-	public string HudLabel(double now)
+	private string TrackerProgress(double now)
 	{
-		if (!_settings.ShowWaveInHud)
+		if (!_settings.ShowWaveInQuestTracker || _phase != SessionPhase.Fighting)
 		{
 			return null;
 		}
-
-		switch (_phase)
+		if (_waves.WaitingForCurse)
 		{
-			case SessionPhase.Inactive:
-				return null;
-			case SessionPhase.Camp:
-				return HudText.Camp;
-			case SessionPhase.Arriving:
-				return HudText.Arriving;
+			return TrackerText.AwaitingCurse(_waves.CurrentWave + 1);
 		}
-
 		if (_waves.WaveInProgress)
 		{
-			return HudText.WaveRunning(_waves.CurrentWave, _enemies.Occupied(now) + _waves.PendingSpawns);
+			return TrackerText.WaveRunning(_waves.CurrentWave, _enemies.Occupied(now) + _waves.PendingSpawns);
 		}
-
-		return HudText.NextWave(_waves.CurrentWave + 1, (int)Math.Ceiling(_waves.SecondsUntilNextWave(now)));
+		return TrackerText.NextWave(_waves.CurrentWave + 1, (int)Math.Ceiling(_waves.SecondsUntilNextWave(now)));
 	}
 
 	public string Describe()
@@ -207,53 +347,55 @@ internal sealed class LastStandSession
 		PlainArena.Reset();
 		_campRift.Reset();
 		_goal.Reset();
+		_tracker.Remove();
+		_world.Reset();
 		_phase = SessionPhase.Inactive;
 	}
 
 	private void Arrive(double now, int node)
 	{
 		_phase = SessionPhase.Arriving;
-		if (!_arrival.TryArrive(now, out ArenaPoints arena))
+		if (_arrival.TryArrive(now, out var arena))
 		{
-			return;
+			StopFight();
+			_arenaNode = node;
+			_phase = SessionPhase.Fighting;
+			int num = WorldMapNodes.HideAllBut(NetworkedManagerBase<ZoneManager>.softInstance, node);
+			if (num > 0)
+			{
+				Log.Info(LogText.MapNodesHidden(num, node));
+			}
+			Shrines.Place(arena, _settings);
+			if (ProgressStore.TryLoad(node, out var wave, out var inProgress, out var fastClears))
+			{
+				int adopted = (inProgress ? EnemyAdoption.AdoptSurvivors(_enemies) : 0);
+				_waves.Resume(wave, inProgress, now + _settings.Waves.IntermissionSeconds, fastClears);
+				ApplyGoldPrices(wave);
+				Log.Info(LogText.ProgressRestored(wave, inProgress, adopted, fastClears));
+			}
+			else
+			{
+				_waves.Begin(now + _settings.FirstWaveDelaySeconds);
+				ApplyGoldPrices(_waves.CurrentWave);
+				Log.Info(LogText.ArenaReady(_arrival.StagedHeroes, arena.Center));
+				ChatNotices.Broadcast((_settings.Waves.CurseToStart && Shrines.HatredStanding) ? Messages.ArenaReadyAwaitingCurse() : Messages.ArenaReady((int)Math.Ceiling(_settings.FirstWaveDelaySeconds)));
+			}
 		}
-
-		StopFight();
-		_arenaNode = node;
-		_phase = SessionPhase.Fighting;
-
-		int hidden = WorldMapNodes.HideAllBut(NetworkedManagerBase<ZoneManager>.softInstance, node);
-		if (hidden > 0)
-		{
-			Log.Info(LogText.MapNodesHidden(hidden, node));
-		}
-
-		Shrines.Place(arena, _settings.AltarOfCleansing);
-
-		if (ProgressStore.TryLoad(node, out int wave, out bool inProgress))
-		{
-			int adopted = inProgress ? EnemyAdoption.AdoptSurvivors(_enemies) : 0;
-			_waves.Resume(wave, inProgress, now + _settings.Waves.IntermissionSeconds);
-			Log.Info(LogText.ProgressRestored(wave, inProgress, adopted));
-			return;
-		}
-
-		_waves.Begin(now + _settings.FirstWaveDelaySeconds);
-
-		Log.Info(LogText.ArenaReady(_arrival.StagedHeroes, arena.Center));
-		ChatNotices.Broadcast(Messages.ArenaReady((int)Math.Ceiling(_settings.FirstWaveDelaySeconds)));
 	}
 
 	private void StopFight()
 	{
 		_waves.Reset();
 		_pain.Reset();
+		_panel.Reset();
 		_loot.Reset();
 		_enemies.Clear();
 		_arrival.Reset();
 		_testBoss.Forget();
 		_heroicBosses.Clear();
 		Shrines.Forget();
+		_goldPrices.Restore();
+		_curseStart.Reset();
 		_arenaNode = ArenaLocator.NoNode;
 	}
 
@@ -268,20 +410,96 @@ internal sealed class LastStandSession
 
 	private void OnWaveStarted(WavePlan plan)
 	{
-		ProgressStore.Save(_arenaNode, plan.Number, true);
+		ProgressStore.Save(_arenaNode, plan.Number, inProgress: true, _waves.FastClearStacks);
 		_loot.OnWaveStarted();
+		Shrines.OnWaveStarted();
+		ApplyGoldPrices(plan.Number);
+	}
+
+	private void ApplyGoldPrices(int wave)
+	{
+		_goldPrices.Set(_settings.GoldPrices.MultiplierAt(wave), wave);
+	}
+
+	private void TickCurseStart(double now)
+	{
+		switch (_curseStart.Tick(now, _settings.Waves, _waves, Shrines.HatredStanding))
+		{
+		case CurseStartEvent.HoldStarted:
+			Shrines.ResetHatredUses();
+			Log.Info(LogText.CurseHoldStarted(_waves.CurrentWave + 1));
+			break;
+		case CurseStartEvent.StartedWithoutCurse:
+			Log.Warn(LogText.WaveStartedWithoutCurse(_waves.CurrentWave));
+			break;
+		}
+	}
+
+	public void OnHatredCurse(Hero chooser, HatredStrengthType strength)
+	{
+		if (_phase == SessionPhase.Fighting && strength != 0 && _curseStart.TryRelease(_now, _settings.Waves, _waves))
+		{
+			int othersCursed = SharedCurses.CurseOthers(chooser, strength);
+			double curseStartDelaySeconds = _settings.Waves.CurseStartDelaySeconds;
+			int wave = _waves.CurrentWave + 1;
+			Log.Info(LogText.CurseStartsWave(wave, strength.ToString(), othersCursed, curseStartDelaySeconds));
+			ChatNotices.Broadcast(Messages.CurseStartsWave(strength.ToString(), wave, (int)Math.Ceiling(curseStartDelaySeconds)));
+		}
+	}
+
+	public void OnCurseCreated(CurseStatusEffect curse)
+	{
+		if (_phase != SessionPhase.Fighting || !CurseGoals.EndsByKillsOrTravel(curse))
+		{
+			return;
+		}
+
+		int monsters = _waves.MonstersInWave(_settings.Waves);
+		if (monsters <= 0)
+		{
+			return;
+		}
+
+		QuestProgressType before = curse.progressType;
+		int beforeAmount = curse.requiredAmount;
+		int kills = CurseGoalRule.Kills(monsters, PlayerRoster.PlayerCount(),
+			_settings.Curses.WavesFor(curse.currentStrength));
+		CurseGoals.SetKills(curse, kills);
+		Log.Info(LogText.CurseGoalSet(curse.GetType().Name, before.ToString(), beforeAmount, kills));
+	}
+
+	public void OnHatredShardOpening(Shrine_Hatred_Reward shard)
+	{
+		if (_phase != SessionPhase.Fighting)
+		{
+			return;
+		}
+
+		int wave = Math.Max(Tuning.FirstWave, _waves.CurrentWave);
+		float dreamDust = HatredShards.Open(shard, wave, _settings.HatredDreamDustPerWave, _settings.HatredShardGold);
+		Log.Info(LogText.HatredShardOpened(wave, dreamDust, _settings.HatredShardGold));
+	}
+
+	public void OnShrineUsed(Shrine shrine, Entity user)
+	{
+		Shrines.OnUsed(shrine, user, _settings.DestinyClaimsPerWave);
+	}
+
+	private void OnFastCleared()
+	{
+		ProgressStore.Save(_arenaNode, _waves.CurrentWave, inProgress: true, _waves.FastClearStacks);
 	}
 
 	private void OnWaveCleared(int wave)
 	{
-		ProgressStore.Save(_arenaNode, wave, false);
+		ProgressStore.Save(_arenaNode, wave, inProgress: false, _waves.FastClearStacks);
 		_loot.OnWaveCleared(wave, _settings.Loot);
-
-		int revived = HeroSouls.ReviveKnockedOut();
-		if (revived > 0)
+		Shrines.OnWaveCleared(wave, _settings.AscensionResetWaves);
+		int num = HeroSouls.ReviveKnockedOut();
+		if (num > 0)
 		{
-			Log.Info(LogText.HeroesRevived(wave, revived));
-			ChatNotices.Broadcast(Messages.HeroesRevived(revived));
+			Log.Info(LogText.HeroesRevived(wave, num));
+			ChatNotices.Broadcast(Messages.HeroesRevived(num));
 		}
 	}
 

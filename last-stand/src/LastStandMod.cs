@@ -17,10 +17,6 @@ public class LastStandMod : ModBehaviour
 
 	internal LastStandSession Session { get; private set; }
 
-	internal LocationLabel Hud { get; } = new LocationLabel();
-
-	private Func<double, string> _hudLabel;
-
 	private readonly ErrorThrottle _tickErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
 
 	private void Awake()
@@ -32,7 +28,6 @@ public class LastStandMod : ModBehaviour
 	{
 		instance.isAlteringGameplay = true;
 		Session = new LastStandSession(SessionSettings.From(config));
-		_hudLabel = Session.HudLabel;
 		ChoiceFields.Register();
 		harmony.PatchAll();
 		CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
@@ -54,24 +49,14 @@ public class LastStandMod : ModBehaviour
 		{
 			_tickErrors.Report(Time.time, LogText.TickFailed, e);
 		}
-
-		try
-		{
-			Hud.Tick(Time.time, _hudLabel);
-		}
-		catch (Exception e)
-		{
-			Log.Error(LogText.HudFailed, e);
-			Hud.Show(null);
-		}
 	}
 
 	private void OnDestroy()
 	{
 		Session?.Reset();
-		Hud.Show(null);
 		ConfigWindow.Close();
 		InjectedUi.RemoveAll();
+		LobbyModeOption.Detach();
 		ChoiceFields.Unregister();
 		harmony.UnpatchAll(harmony.Id);
 

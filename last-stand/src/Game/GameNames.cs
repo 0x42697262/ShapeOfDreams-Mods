@@ -1,7 +1,21 @@
+
+
 namespace LastStand.Game;
 
 internal static class GameNames
 {
+	public const string CurseOnCreate = "OnCreate";
+
+	public const string HatredDoCurse = "DoCurse";
+
+	public const string ArenaPanelModifier = nameof(RoomMod_FragmentOfRadiance_MysteriousPlace);
+
+	public const string ArenaPanelSidetrackRift = "Rift_Sidetrack_FragmentOfRadiance";
+
+	public const string TrackerTitleKey = "InGame_ThreatLevelDisplay_ThreatLevelRising";
+
+	public const string TrackerDescriptionKey = "RoomMod_HarderFightBetterReward_Name";
+
 	public const string PrimusArenaRoom = "Room_Primus_Boss_0";
 
 	public const string ForestArenaRoom = "Room_Forest_Boss_0";
@@ -34,19 +48,6 @@ internal static class GameNames
 
 	public const string LocalizedNameSuffix = "_Name";
 
-	public static readonly string[] BossMusicTrackGuids =
-	{
-		"44b4082316a67a34aa42c158823ffd18",
-		"fdbb42f02a7667d4ebb445250c947bd3",
-		"11dd0ca2f5eb7224bb06418696194032",
-		"ec9380823cabf9d4e9de7843488f768f",
-		"b9c1464d58f50954c8f3fd5c1fd704c3",
-		"39aeb947b3bd006458ac51da21af0536",
-		"add7fcbb30744e740bd82fc26d4974b7",
-		"5c6e5c46604e8f8408d039c951f4cbb0",
-		"b7df9f9f9b461e847aa4f227109da88b",
-	};
-
 	public const string HeroSoulModifier = "RoomMod_HeroSoul";
 
 	public const string LobbySettingsStart = "Start";
@@ -67,15 +68,76 @@ internal static class GameNames
 
 	public const string GenerateWorld = "GenerateWorld_Imp";
 
-	public const string LocationRoomLoaded = "OnRoomLoaded";
-
 	public const string EntityOnDeath = "OnDeath";
+
+	public const string ShrineUseCounts = "_useCountByPlayer";
+
+	public const string ShrineOnUse = "OnUse";
 
 	public const string DefaultTestBoss = ForestBoss;
 
 	public const string DefaultHeroicBosses =
 		ForestBoss + ", " + DarkCaveBoss + ", " + DespairBoss + ", " + SkyBoss + ", " + SnowMountainBoss + ", " +
 		LavaLandBoss;
+
+	public const string AcceleratedTime = nameof(RoomMod_AcceleratedTime);
+
+	public const string ArcticTerritory = nameof(RoomMod_ArcticTerritory);
+
+	public const string BlackRain = nameof(RoomMod_BlackRain);
+
+	public const string DarkCondensationZone = nameof(RoomMod_DarkCondensationZone);
+
+	public const string EngulfedInFlame = nameof(RoomMod_EngulfedInFlame);
+
+	public const string FireDevil = nameof(RoomMod_FireDevil);
+
+	public const string GazeOfErebos = nameof(RoomMod_GazeOfErebos);
+
+	public const string GoldEverywhere = nameof(RoomMod_GoldEverywhere);
+
+	public const string GravityTraining = nameof(RoomMod_GravityTraining);
+
+	public const string InkStrikeWarning = nameof(RoomMod_InkStrikeWarning);
+
+	public const string InversionSigil = nameof(RoomMod_InversionSigil);
+
+	public const string LeafPuppies = nameof(RoomMod_LeafPuppies);
+
+	public const string LingeringAuraOfGuidance = nameof(RoomMod_LingeringAuraOfGuidance);
+
+	public const string MeteoricLife = nameof(RoomMod_MeteoricLife);
+
+	public const string PureDream = nameof(RoomMod_PureDream);
+
+	public const string RiskOfMeteors = nameof(RoomMod_RiskOfMeteors);
+
+	public const string StarCookie = nameof(RoomMod_StarCookie);
+
+	public const string SymbioteHabitat = nameof(RoomMod_SymbioteHabitat);
+
+	public const string ToxicArea = nameof(RoomMod_ToxicArea);
+
+	public const string UnstableRatSwarm = nameof(RoomMod_UnstableRatSwarm);
+
+	public const string UnstableVeilOfTime = nameof(RoomMod_UnstableVeilOfTime);
+
+	public const string VeilOfDark = nameof(RoomMod_VeilOfDark);
+
+	public const string WarpingField = nameof(RoomMod_WarpingField);
+
+	public const string DefaultEnvironments =
+		AcceleratedTime + ", " + ArcticTerritory + ", " + BlackRain + ", " + DarkCondensationZone + ", " +
+		EngulfedInFlame + ", " + FireDevil + ", " + GazeOfErebos + ", " + GoldEverywhere + ", " + GravityTraining +
+		", " + InkStrikeWarning + ", " + InversionSigil + ", " + LeafPuppies + ", " + MeteoricLife + ", " +
+		PureDream + ", " + RiskOfMeteors + ", " + SymbioteHabitat + ", " + ToxicArea + ", " + UnstableRatSwarm +
+		", " + UnstableVeilOfTime + ", " + VeilOfDark + ", " + WarpingField;
+
+	public const string MildStrength = "Mild";
+
+	public const string PotentStrength = "Potent";
+
+	public const string PowerfulStrength = "Powerful";
 
 	public const string ActorOnCreate = "OnCreate";
 

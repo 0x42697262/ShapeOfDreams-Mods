@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
 using LastStand.Combat;
 using LastStand.Loot;
 using LastStand.Waves;
+using System.Collections.Generic;
+using System;
 
 namespace LastStand.Config;
 
@@ -14,11 +14,43 @@ internal sealed class SessionSettings
 
 	public double FirstWaveDelaySeconds { get; }
 
-	public bool ShowWaveInHud { get; }
+	public bool ShowWaveInQuestTracker { get; }
 
-	public bool RandomBossMusic { get; }
+	public int StartingWorld { get; }
+
+	public bool DreamWell { get; }
 
 	public bool AltarOfCleansing { get; }
+
+	public bool ShrineOfAscension { get; }
+
+	public bool MawOfDoom { get; }
+
+	public bool ShrineOfDestiny { get; }
+
+	public int DestinyClaimsPerWave { get; }
+
+	public bool HatredRemnant { get; }
+
+	public int HatredDreamDustPerWave { get; }
+
+	public int HatredShardGold { get; }
+
+	public bool ReminiscenceOfLuck { get; }
+
+	public CurseSettings Curses { get; }
+
+	public Cadence AscensionResetWaves { get; }
+
+	public GoldPriceRule GoldPrices { get; }
+
+	public int StartingGold { get; }
+
+	public int StartingDreamDust { get; }
+
+	public bool CheatCommands { get; }
+
+	public int MaxKillGoldPerPlayer { get; }
 
 	public bool StripRoomModifiers { get; }
 
@@ -28,15 +60,29 @@ internal sealed class SessionSettings
 
 	public LootSettings Loot { get; }
 
-	private SessionSettings(string arenaRoom, double firstWaveDelaySeconds, bool showWaveInHud,
-		bool randomBossMusic, bool altarOfCleansing, bool stripRoomModifiers, WaveSettings waves, PainSettings pain,
-		LootSettings loot)
+	private SessionSettings(string arenaRoom, double firstWaveDelaySeconds, bool showWaveInQuestTracker, int startingWorld, bool dreamWell, bool altarOfCleansing, bool shrineOfAscension, bool mawOfDoom, bool shrineOfDestiny, int destinyClaimsPerWave, bool hatredRemnant, int hatredDreamDustPerWave, int hatredShardGold, bool reminiscenceOfLuck, CurseSettings curses, Cadence ascensionResetWaves, GoldPriceRule goldPrices, int startingGold, int startingDreamDust, bool cheatCommands, int maxKillGoldPerPlayer, bool stripRoomModifiers, WaveSettings waves, PainSettings pain, LootSettings loot)
 	{
+		DreamWell = dreamWell;
 		AltarOfCleansing = altarOfCleansing;
-		RandomBossMusic = randomBossMusic;
+		ShrineOfAscension = shrineOfAscension;
+		MawOfDoom = mawOfDoom;
+		ShrineOfDestiny = shrineOfDestiny;
+		DestinyClaimsPerWave = destinyClaimsPerWave;
+		HatredRemnant = hatredRemnant;
+		HatredDreamDustPerWave = hatredDreamDustPerWave;
+		HatredShardGold = hatredShardGold;
+		ReminiscenceOfLuck = reminiscenceOfLuck;
+		Curses = curses;
+		AscensionResetWaves = ascensionResetWaves;
+		GoldPrices = goldPrices;
+		StartingGold = startingGold;
+		StartingDreamDust = startingDreamDust;
+		CheatCommands = cheatCommands;
+		MaxKillGoldPerPlayer = maxKillGoldPerPlayer;
 		ArenaRoom = arenaRoom;
 		FirstWaveDelaySeconds = firstWaveDelaySeconds;
-		ShowWaveInHud = showWaveInHud;
+		ShowWaveInQuestTracker = showWaveInQuestTracker;
+		StartingWorld = startingWorld;
 		StripRoomModifiers = stripRoomModifiers;
 		Waves = waves;
 		Pain = pain;
@@ -45,8 +91,7 @@ internal sealed class SessionSettings
 
 	public static SessionSettings From(LastStandConfig config)
 	{
-		return new SessionSettings(config.arenaRoom, Math.Max(0f, config.firstWaveDelaySeconds),
-			config.showWaveInHud, config.randomBossMusic, config.altarOfCleansing, config.stripRoomModifiers, WavesFrom(config), PainFrom(config), LootFrom(config));
+		return new SessionSettings(config.arenaRoom, Math.Max(0f, config.firstWaveDelaySeconds), config.showWaveInQuestTracker, Math.Max(1, config.startingWorld), config.dreamWell, config.altarOfCleansing, config.shrineOfAscension, config.mawOfDoom, config.shrineOfDestiny, Math.Max(1, config.destinyClaimsPerWave), config.hatredRemnant || config.curseToStartWaves, Math.Max(0, config.hatredDreamDustPerWave), Math.Max(0, config.hatredShardGold), config.reminiscenceOfLuck, CursesFrom(config), CadenceFrom(config.ascensionResetEveryWaves, config.ascensionResetEveryWaves), GoldPricesFrom(config), Math.Max(0, config.startingGold), StartingDreamDustRule.Amount(Math.Max(0, config.startingDreamDust), Math.Max(1, config.startingWorld)), config.cheatCommands, Math.Max(0, config.maxKillGoldPerPlayer), config.stripRoomModifiers, WavesFrom(config), PainFrom(config), LootFrom(config));
 	}
 
 	private static WaveSettings WavesFrom(LastStandConfig config)
@@ -54,54 +99,71 @@ internal sealed class SessionSettings
 		return new WaveSettings
 		{
 			IntermissionSeconds = Math.Max(0f, config.intermissionSeconds),
+			BossIntermissionSeconds = Math.Max(0f, config.bossIntermissionSeconds),
+			CurseToStart = config.curseToStartWaves,
+			CurseStartDelaySeconds = Math.Max(0f, config.curseStartDelaySeconds),
 			RegularBase = Math.Max(0, config.regularBase),
 			RegularGrowthPerWave = Math.Max(0, config.regularGrowthPerWave),
+			RegularGrowthUntilWave = Math.Max(1, config.regularGrowthUntilWave),
 			ExtraPlayerShare = Math.Max(0f, config.extraPlayerShare),
 			Surges = CadenceFrom(config.surgeIntervalWaves, config.surgeIntervalWaves),
 			SurgeMultiplier = Math.Max(0f, config.surgeMonsterMultiplier),
-			MaxAliveBase = Math.Max(MinimumStep, config.maxAliveBase),
+			MaxAliveBase = Math.Max(1, config.maxAliveBase),
 			MaxAlivePerExtraPlayer = Math.Max(0, config.maxAlivePerExtraPlayer),
 			SpawnIntervalSeconds = Math.Max(0f, config.spawnIntervalSeconds),
-			SpawnsPerInterval = Math.Max(MinimumStep, config.spawnsPerInterval),
+			SpawnsPerInterval = Math.Max(1, config.spawnsPerInterval),
 			MinSpawnDistanceFromHeroes = Math.Max(0f, config.minSpawnDistanceFromHeroes),
-
-			StartingAmbientLevel = Math.Max(Tuning.MinimumAmbientLevel, config.startingAmbientLevel),
-			WavesPerAmbientLevel = Math.Max(MinimumStep, config.wavesPerAmbientLevel),
+			StartingAmbientLevel = Math.Max(1, config.startingAmbientLevel),
+			WavesPerAmbientLevel = Math.Max(1, config.wavesPerAmbientLevel),
 			HealthBonusPerWave = Math.Max(0f, config.healthBonusPercentPerWave),
 			DamageBonusPerWave = Math.Max(0f, config.damageBonusPercentPerWave),
-
+			LateScalingFromWave = Math.Max(1, config.lateScalingFromWave),
+			LateHealthBonusPerWave = Math.Max(0f, config.lateHealthBonusPercentPerWave),
+			LateDamageBonusPerWave = Math.Max(0f, config.lateDamageBonusPercentPerWave),
+			FastClear = new FastClearRule(Math.Max(0f, config.fastClearKillPercent) / 100f, Math.Max(0f, config.fastClearSeconds), Math.Max(0f, config.fastClearStatMultiplier), Math.Max(1, config.fastClearFromWave), config.fastClearAffectsHeroicBosses ? (Math.Max(0f, config.fastClearHeroicBossPercent) / 100f) : 0f),
 			MiniBosses = CadenceFrom(config.miniBossFromWave, config.miniBossIntervalWaves),
-			MiniBossOccurrencesPerExtra = Math.Max(MinimumStep, config.miniBossOccurrencesPerExtra),
+			MiniBossOccurrencesPerExtra = Math.Max(1, config.miniBossOccurrencesPerExtra),
 			MaxMiniBosses = Math.Max(0, config.maxMiniBossesPerWave),
-			MiniBossHealthMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.miniBossHealthMultiplier),
-			MiniBossDamageMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.miniBossDamageMultiplier),
-
 			Pain = CadenceFrom(config.painFromWave, config.painIntervalWaves),
-			PainOccurrencesPerExtra = Math.Max(MinimumStep, config.painOccurrencesPerExtra),
+			PainOccurrencesPerExtra = Math.Max(1, config.painOccurrencesPerExtra),
 			MaxPain = Math.Max(0, config.maxPainPerWave),
-
-			HeroicBosses = CadenceFrom(config.heroicBossFromWave, config.heroicBossIntervalWaves),
-			HeroicBossStepWaves = Math.Max(MinimumStep, config.heroicBossStepWaves),
+			HeroicBosses = new ShiftingCadence(CadenceFrom(config.heroicBossFromWave, config.heroicBossIntervalWaves), config.heroicBossFasterFromWave, Math.Max(1, config.heroicBossLateIntervalWaves)),
+			HeroicBossStepWaves = Math.Max(1, config.heroicBossStepWaves),
 			MaxHeroicBosses = Math.Max(0, config.maxHeroicBossesPerWave),
 			HeroicBossEntranceDelaySeconds = Math.Max(0f, config.heroicBossEntranceDelaySeconds),
-			HeroicBossHealthMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.heroicBossHealthMultiplier),
-			HeroicBossDamageMultiplier = Math.Max(Tuning.MinimumStatMultiplier, config.heroicBossDamageMultiplier),
 			HeroicBossAbilityHaste = Math.Max(0f, config.heroicBossAbilityHaste),
 			HeroicBossHastePerBossWave = Math.Max(0f, config.heroicBossAbilityHastePerBossWave),
+			HeroicBossHealthMultiplier = Math.Max(0.1f, config.heroicBossHealthMultiplier),
+			HeroicBossDamageMultiplier = Math.Max(0.1f, config.heroicBossDamageMultiplier),
 			HeroicBossTypes = ListFrom(config.heroicBossTypes),
-
+			AllHeroicBossTypes = ConfigChoices.Values(ChoiceSet.HeroicBosses),
 			ForeignTypes = CadenceFrom(config.foreignTypesFromWave, config.foreignTypesIntervalWaves),
-			ForeignTypesPerUnlock = Math.Max(MinimumStep, config.foreignTypesPerUnlock),
-
-			HunterFromWave = Math.Max(Tuning.FirstWave, config.hunterFromWave),
-			HunterIntervalWaves = Math.Max(MinimumStep, config.hunterIntervalWaves),
-			MaxHunters = Math.Max(0, config.maxHuntersPerWave),
-			HuntedZoneIntervalWaves = Math.Max(MinimumStep, config.huntedZoneIntervalWaves),
+			ForeignTypesPerUnlock = Math.Max(1, config.foreignTypesPerUnlock),
+			HunterFromWave = Math.Max(1, config.hunterFromWave),
+			AllHuntersFromWave = Math.Max(Math.Max(1, config.hunterFromWave), config.allHuntersFromWave),
+			HuntLevelStepWaves = Math.Max(1, config.huntLevelStepWaves),
 			MaxHuntLevel = Math.Max(0, config.maxHuntLevel),
-
 			Mirage = CadenceFrom(config.mirageFromWave, config.mirageIntervalWaves),
 			MirageChance = ToChance(config.mirageChancePercent),
+			MirageRampFromWave = Math.Max(1, config.mirageRampFromWave),
+			AllMirageFromWave = Math.Max(Math.Max(1, config.mirageRampFromWave), config.allMirageFromWave),
+			FriendlyFireFromWave = Math.Max(1, config.friendlyFireFromWave),
+			FriendlyFireChance = ToChance(config.friendlyFireChancePercent),
+			DarkUrgeStrength = StrengthFrom(config.darkUrgeStrength),
+			Environments = CadenceFrom(config.environmentFromWave, config.environmentIntervalWaves),
+			EnvironmentUntilWave = config.environmentUntilWave,
+			EnvironmentTypes = KnownChoices(config.environmentTypes, ChoiceSet.Environments)
 		};
+	}
+
+	private static GoldPriceRule GoldPricesFrom(LastStandConfig config)
+	{
+		return new GoldPriceRule(config.freeGoldShrines, Math.Max(0f, config.goldPriceGrowthPercent) / 100f, CadenceFrom(config.goldPriceGrowthEveryWaves, config.goldPriceGrowthEveryWaves), Math.Max(0, config.goldPriceGrowthUntilWave));
+	}
+
+	private static CurseSettings CursesFrom(LastStandConfig config)
+	{
+		return new CurseSettings(Math.Max(0.05f, config.curseMildWavesOfKills), Math.Max(0.05f, config.cursePotentWavesOfKills), Math.Max(0.05f, config.cursePowerfulWavesOfKills));
 	}
 
 	private static PainSettings PainFrom(LastStandConfig config)
@@ -158,12 +220,29 @@ internal sealed class SessionSettings
 			growthPerWave: Math.Max(0f, config.rewardGrowthPercentPerWave) / Tuning.PercentScale,
 			guaranteedDropPerWave: config.guaranteedDropPerWave,
 			heroicBossChaosRewards: Math.Max(0, config.heroicBossChaosRewards),
-			itemRarityFloor: ToChance(Math.Max(0f, config.itemRarityFloorPercent)));
+			itemRarityFloor: ToChance(Math.Max(0f, config.itemRarityFloorPercent)),
+			freeLeftoverItems: config.freeLeftoverItemsAtWaveEnd,
+			itemDrops: config.monsterItemDrops);
 	}
 
 	private static IReadOnlyList<string> ListFrom(string text)
 	{
 		return ChoiceList.Split(text);
+	}
+
+	private static HatredStrengthType StrengthFrom(string text)
+	{
+		if (!ChoiceList.Contains(ConfigChoices.CurseStrengths, text) || !Enum.TryParse<HatredStrengthType>(text, out var result))
+		{
+			return HatredStrengthType.Potent;
+		}
+		return result;
+	}
+
+	private static IReadOnlyList<string> KnownChoices(string text, ChoiceSet set)
+	{
+		IReadOnlyList<Choice> choices = ConfigChoices.For(set);
+		return ChoiceList.Split(text).FindAll(item => ChoiceList.Contains(choices, item));
 	}
 
 	private static Cadence CadenceFrom(int firstWave, int intervalWaves)

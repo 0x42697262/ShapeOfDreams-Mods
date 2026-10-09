@@ -4,11 +4,15 @@ namespace LastStand.Config;
 
 internal static class ConfigSchema
 {
-	public const int Current = 8;
+	public const int Current = 40;
 
 	public static bool IsCurrent(string json)
 	{
-		JToken version = JObject.Parse(json)[nameof(LastStandConfig.schemaVersion)];
-		return version != null && version.Type == JTokenType.Integer && version.Value<int>() == Current;
+		JToken jToken = JObject.Parse(json)["schemaVersion"];
+		if (jToken != null && jToken.Type == JTokenType.Integer)
+		{
+			return jToken.Value<int>() == 40;
+		}
+		return false;
 	}
 }
