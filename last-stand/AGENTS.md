@@ -14,7 +14,8 @@ seen working; the newest ones (the highest numbers) are still untested.
 description (BBCode). Their sources are in `art/`: `art/build.sh` runs
 `art/icon/icon.py` and `art/preview/preview.py` (SVG from code, with the
 cropped screenshots beside it) and renders both into `about/` with
-`rsvg-convert` and ImageMagick. The output matches the shipped files pixel
+`rsvg-convert` and ImageMagick. `art/preview/crop.sh` cuts the tiles from the
+full screenshots in `art/preview/raw/`. The output matches the shipped files pixel
 for pixel.
 
 **Workshop upload.** The game's mod manager uploads the whole mod folder
