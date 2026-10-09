@@ -1,16 +1,6 @@
-[b]New: merged waves[/b]
-From wave 48, a wave has at most 100 monsters and hunters, whatever the player count, and they carry the strength of the whole wave. Wave 131 solo would have 266 monsters, so its 100 have x2.66 health and damage each. Bonus gold and dream dust per kill grow the same way. The monster count no longer stops growing at wave 110, so merged waves keep getting stronger.
-
-[b]Changed: surge waves[/b]
-Once waves merge, a surge (every 5th wave) doubles the monsters' strength instead of their number, and brings 2 extra minibosses and 2 extra Pain minibosses.
-
-[b]New: boss health floor[/b]
-Once waves merge, minibosses and Pain minibosses have at least 5 times the health of the toughest monster in the wave, and heroic bosses at least 20 times.
-
 [b]New: heroic bosses drop stardust[/b]
-Heroic bosses now drop the stardust a boss kill gives in a normal run: 16, plus 2 on Normal, 4 on Hard or 7 on Nightmare, plus 3 per evil lucid dream. Every player gets it.
+Heroic bosses now drop the stardust a boss kill gives in a normal run: 16, plus 2 on Normal, 4 on Hard or 7 on Nightmare, plus 3 per evil lucid dream. Every player gets it, including players without the mod. It can be turned off in the settings (Heroic boss stardust).
 
-[b]Changed: fewer monsters at once[/b]
-At most 35 monsters are alive at a time (70 on surge waves), down from 200, so the host lags less. The rest of the wave arrives as monsters die.
+Your settings are kept this time.
 
 Only the host needs this update.
