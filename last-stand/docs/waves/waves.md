@@ -50,10 +50,12 @@ works through these knobs, all using systems the game already syncs:
   on top of what the earlier waves added: wave 149 is +1480%, wave 150
   +1530%, wave 160 +2030%, wave 200 +4030% (`WaveSchedule.StatBonus`). This is a server-side
   `StatBonus`, so clients see it through the synced stats.
-- **Fast clear:** if 80% of a wave's monsters (`Fast clear: kills (%)`,
-  rounded up, bosses included) die within 10 s of the wave starting
-  (`Fast clear: within (s)`), every monster from the next wave on gets ×2
-  health and damage (`Fast clear: stats from next wave (x)`). It carries
+- **Fast clear:** if 80% of a wave's monsters (`Fast clear: instant kills
+  (%)`, rounded up, bosses included) are killed instantly, every monster
+  from the next wave on gets ×2 health and damage (`Fast clear: stats from
+  next wave (x)`). A monster is killed instantly when it dies within 0.5 s
+  of the first hit it takes (`Fast clear: instant within (s)`); one that
+  dies from its first hit counts as 0 s. It carries
   over (from wave 30 by default, see below): clear wave 54 fast and wave 55 is doubled, wave 56 keeps that ×2
   (plus its normal per-wave growth) with no further doubling, until another
   fast clear stacks a second ×2 (×4), and so on. Heroic bosses get a share
@@ -64,18 +66,28 @@ works through these knobs, all using systems the game already syncs:
   clear that fast already deals enormous damage, and a full ×1024 boss
   would be unkillable. At 0% or with the toggle off, bosses are left out.
   Chat says so at once, in red instead of the usual orange (the "Wave N
-  cleared" line is green), and the log shows `fast clear: wave N lost K of M
-  monster(s)`; every `wave N:` line shows `fastClear=xM`.
+  cleared" line is green), and the log shows `fast clear: wave N had K of M
+  monster(s) die within 0.5 s of their first hit`; every `wave N:` line
+  shows `fastClear=xM`. A watched wave that misses logs how close it came
+  when it's cleared: `fast clear: wave N had K of D death(s) within 0.5 s
+  of the first hit; X needed`.
   The game adds stat bonuses together, so a plain +100% on top of the
   wave's +500% would only be ×1.17. Instead each monster's wave bonus is
   raised to `(100 + bonus) × M − 100`: with one fast clear, wave 21's +200%
   (3× base) becomes +500% (6× base), exactly double (`FastClearRule.Raise`,
-  applied per monster in `WaveDirector.Enhance`). Kills are counted by
-  `FastClearWatch` from `EnemyRegistry.Died` (Last Stand's own spawns only),
-  and `laststand_skip` doesn't count. The number of fast clears is saved
+  applied per monster in `WaveDirector.Enhance`). Each of Last Stand's own
+  spawns records the time of its first `Entity.EntityEvent_OnTakeDamage`
+  (fired on the server, before the lethal hit's `Kill`), and
+  `EnemyRegistry.Died` reports the time from it to the death.
+  `FastClearWatch` counts the instant ones, and `laststand_skip` doesn't
+  count. The number of fast clears is saved
   with the wave progress (`ProgressStore`), so a mod reload keeps it (log:
-  `progress restored: ... N fast clear(s) so far`). Big waves spawn over more
-  than 10 s, so it mostly catches early and mid-sized waves. Any of the
+  `progress restored: ... N fast clear(s) so far`). An earlier version
+  counted kills within 10 s of the wave's start. Spawning tops out at about
+  12 monsters a second, so big waves could never reach 80% in time however
+  hard players hit; time from the first hit doesn't depend on the spawn
+  rate, the wave size or the walk in. It also corrects itself: each ×2
+  makes monsters take longer to die, until waves stop counting. Any of the
   three at 0 (or the multiplier at 1) turns it off. `Fast clear: from wave`
   (default 30) is the first wave that's watched: waves 1 to 29 never
   count, so the first possible doubling is wave 31. Stacks already earned

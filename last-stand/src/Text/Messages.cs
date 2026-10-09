@@ -111,9 +111,9 @@ internal static class Messages
 		return Notice($"{count} unclaimed memory or essence drop(s) on the ground are now free for anyone.");
 	}
 
-	public static string FastClear(double seconds, int nextWave, double multiplier)
+	public static string FastClear(int wave, int instantKills, int monsters, double seconds, double multiplier)
 	{
-		return Warning($"Wave cleared within {seconds:0.#}s. From wave {nextWave} on, monsters hit back with x{multiplier:0.##} health and damage.");
+		return Warning($"{instantKills} of wave {wave}'s {monsters} monsters died within {seconds:0.##}s of their first hit. From wave {wave + 1} on, monsters hit back with x{multiplier:0.##} health and damage.");
 	}
 
 	public static string ArenaReadyAwaitingCurse()

@@ -9,7 +9,7 @@ internal readonly struct FastClearRule
 
 	public double KillShare { get; }
 
-	public double WindowSeconds { get; }
+	public double KillSeconds { get; }
 
 	public double StatMultiplier { get; }
 
@@ -17,13 +17,13 @@ internal readonly struct FastClearRule
 
 	public double HeroicBossShare { get; }
 
-	public bool IsOn => KillShare > 0 && WindowSeconds > 0 && StatMultiplier != NoChange;
+	public bool IsOn => KillShare > 0 && KillSeconds > 0 && StatMultiplier != NoChange;
 
-	public FastClearRule(double killShare, double windowSeconds, double statMultiplier, int fromWave,
+	public FastClearRule(double killShare, double killSeconds, double statMultiplier, int fromWave,
 		double heroicBossShare)
 	{
 		KillShare = killShare;
-		WindowSeconds = windowSeconds;
+		KillSeconds = killSeconds;
 		StatMultiplier = statMultiplier;
 		FromWave = fromWave;
 		HeroicBossShare = heroicBossShare;
@@ -32,6 +32,11 @@ internal readonly struct FastClearRule
 	public bool WatchesWave(int wave)
 	{
 		return IsOn && wave >= FromWave;
+	}
+
+	public bool IsInstantKill(double secondsSinceFirstHit)
+	{
+		return secondsSinceFirstHit <= KillSeconds;
 	}
 
 	public int KillsNeeded(int monsters)

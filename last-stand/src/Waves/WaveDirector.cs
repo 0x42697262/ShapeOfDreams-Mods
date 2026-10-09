@@ -221,7 +221,7 @@ internal sealed class WaveDirector
 	{
 		ApplyPlan(settings);
 		_queue.Enqueue(_plan);
-		_fastClear.Start(_plan.Number, _plan.TotalMonsters, now, settings.FastClear);
+		_fastClear.Start(_plan.Number, _plan.TotalMonsters, settings.FastClear);
 
 		Log.Info(LogText.WaveStarted(_plan));
 		ChatNotices.Broadcast(Messages.WaveStarted(_plan));
@@ -324,16 +324,17 @@ internal sealed class WaveDirector
 
 	private void OnEnemyDied(EnemyDeath death)
 	{
-		if (_plan == null || _settings == null || !_fastClear.OnKill(_now))
+		if (_plan == null || _settings == null || !_fastClear.OnKill(death.SecondsSinceFirstHit))
 		{
 			return;
 		}
 
 		FastClearRule rule = _settings.FastClear;
 		double multiplier = rule.MultiplierFor(_fastClear.Stacks);
-		Log.Info(LogText.FastClearTriggered(_plan.Number, _fastClear.Kills, _plan.TotalMonsters, rule.WindowSeconds,
-			multiplier, rule.HeroicBossMultiplierFor(_fastClear.Stacks)));
-		ChatNotices.Broadcast(Messages.FastClear(rule.WindowSeconds, _plan.Number + 1, multiplier));
+		Log.Info(LogText.FastClearTriggered(_plan.Number, _fastClear.InstantKills, _plan.TotalMonsters,
+			rule.KillSeconds, multiplier, rule.HeroicBossMultiplierFor(_fastClear.Stacks)));
+		ChatNotices.Broadcast(Messages.FastClear(_plan.Number, _fastClear.InstantKills, _plan.TotalMonsters,
+			rule.KillSeconds, multiplier));
 		FastCleared?.Invoke();
 	}
 
@@ -343,6 +344,13 @@ internal sealed class WaveDirector
 		EndEnvironment();
 		EndFriendlyFire();
 
+		if (_fastClear.Missed && _settings != null)
+		{
+			Log.Info(LogText.FastClearMissed(_cycle.CurrentWave, _fastClear.InstantKills, _fastClear.Deaths,
+				_fastClear.Needed, _settings.FastClear.KillSeconds));
+		}
+
+		_fastClear.Cancel();
 		Log.Info(LogText.WaveCleared(_cycle.CurrentWave));
 		if (curseToStart)
 		{

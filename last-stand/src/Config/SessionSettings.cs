@@ -139,7 +139,7 @@ internal sealed class SessionSettings
 			LateHealthBonusPerWave = Math.Max(0f, config.lateHealthBonusPercentPerWave),
 			LateDamageBonusPerWave = Math.Max(0f, config.lateDamageBonusPercentPerWave),
 			FastClear = new FastClearRule(Math.Max(0f, config.fastClearKillPercent) / Tuning.PercentScale,
-				Math.Max(0f, config.fastClearSeconds), Math.Max(0f, config.fastClearStatMultiplier),
+				Math.Max(0f, config.fastClearKillSeconds), Math.Max(0f, config.fastClearStatMultiplier),
 				Math.Max(Tuning.FirstWave, config.fastClearFromWave),
 				config.fastClearAffectsHeroicBosses
 					? Math.Max(0f, config.fastClearHeroicBossPercent) / Tuning.PercentScale

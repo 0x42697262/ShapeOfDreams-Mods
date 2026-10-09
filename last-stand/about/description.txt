@@ -13,7 +13,7 @@ Hold one boss arena against waves that never stop. Every wave is bigger and stro
 [h2]Features[/h2]
 [list]
 [*][b]Endless waves.[/b] The next wave starts once the last one is cleared, after a short break. Every 5th wave is a surge with twice the monsters.
-[*][b]Clear too fast and it hits back.[/b] From wave 30, killing 80% of a wave within 10 seconds doubles the health and damage of every later wave, and it stacks.
+[*][b]Clear too fast and it hits back.[/b] From wave 30, if 80% of a wave's monsters die within half a second of their first hit, every later wave gets double health and damage, and it stacks.
 [*][b]Minibosses[/b] every 10 waves, and [b]Pain minibosses[/b] every 20 that hurt the whole party until they fall.
 [*][b]Heroic bosses[/b], the game's real zone bosses, join at wave 49, 99, 124, 149… and drop Corrupted Chaos rewards.
 [*][b]Monsters from other worlds[/b] join the pool as you go. Mirage skins, hunters and hunter zones with falling artillery arrive in the late waves.

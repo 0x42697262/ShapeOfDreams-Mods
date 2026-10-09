@@ -367,19 +367,21 @@ internal static class ConfigText
 	public const string LateScalingFromWaveDescription =
 		"From this wave, each wave adds the late values below instead. Earlier bonuses stay.";
 
-	public const string FastClearKillPercentLabel = "Fast clear: kills (%)";
+	public const string FastClearKillPercentLabel = "Fast clear: instant kills (%)";
 
 	public const string FastClearKillPercentDescription =
-		"Kill this share of a wave's monsters within the time below and every later wave is tougher. 0 = off.";
+		"When this share of a wave's monsters is killed instantly (see below), every later wave is tougher. " +
+		"0 = off.";
 
 	public const string FastClearFromWaveLabel = "Fast clear: from wave";
 
 	public const string FastClearFromWaveDescription =
 		"First wave that can count as a fast clear. Earlier waves never raise stats.";
 
-	public const string FastClearSecondsLabel = "Fast clear: within (s)";
+	public const string FastClearKillSecondsLabel = "Fast clear: instant within (s)";
 
-	public const string FastClearSecondsDescription = "Counted from the wave's start. 0 = off.";
+	public const string FastClearKillSecondsDescription =
+		"A monster counts as killed instantly when it dies within this long of the first hit it takes. 0 = off.";
 
 	public const string FastClearStatMultiplierLabel = "Fast clear: stats from next wave (x)";
 

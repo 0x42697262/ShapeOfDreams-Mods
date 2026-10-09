@@ -4,43 +4,51 @@ namespace LastStand.Waves;
 
 internal sealed class FastClearWatch
 {
+	private FastClearRule _rule;
 	private bool _watching;
+	private bool _triggered;
 	private int _needed;
-	private int _kills;
-	private double _deadline;
 
-	public int Kills => _kills;
+	public int InstantKills { get; private set; }
+
+	public int Deaths { get; private set; }
+
+	public int Needed => _needed;
+
+	public bool Missed => _watching && !_triggered;
 
 	public int Stacks { get; private set; }
 
-	public void Start(int wave, int monsters, double now, FastClearRule rule)
+	public void Start(int wave, int monsters, FastClearRule rule)
 	{
+		_rule = rule;
 		_watching = rule.WatchesWave(wave) && monsters > 0;
+		_triggered = false;
 		_needed = rule.KillsNeeded(monsters);
-		_kills = 0;
-		_deadline = now + rule.WindowSeconds;
+		InstantKills = 0;
+		Deaths = 0;
 	}
 
-	public bool OnKill(double now)
+	public bool OnKill(double secondsSinceFirstHit)
 	{
 		if (!_watching)
 		{
 			return false;
 		}
 
-		if (now > _deadline)
-		{
-			_watching = false;
-			return false;
-		}
-
-		_kills++;
-		if (_kills < _needed)
+		Deaths++;
+		if (!_rule.IsInstantKill(secondsSinceFirstHit))
 		{
 			return false;
 		}
 
-		_watching = false;
+		InstantKills++;
+		if (_triggered || InstantKills < _needed)
+		{
+			return false;
+		}
+
+		_triggered = true;
 		Stacks++;
 		return true;
 	}

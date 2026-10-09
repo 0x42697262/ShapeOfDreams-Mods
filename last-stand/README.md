@@ -19,9 +19,10 @@ essences and turns what you collect into upgrades.
 - **Curse to start** (difficulty option, off by default): no wave timer.
   Each wave waits until a player takes a curse at the Hatred Remnant, which
   curses every player, each with a different curse.
-- **Clear too fast and it hits back:** from wave 30, kill 80% of a wave within 10 s and
-  every later wave's monsters get double health and damage, stacking with
-  each fast clear (heroic bosses take half the stacks).
+- **Clear too fast and it hits back:** from wave 30, if 80% of a wave's
+  monsters die within 0.5 s of their first hit, every later wave's monsters
+  get double health and damage, stacking with each fast clear (heroic
+  bosses take half the stacks).
 - **Minibosses** come every 10 waves, then several at once.
 - **Heroic bosses**, the game's real zone bosses, enter at waves 49 and 99,
   then every 25 waves (124, 149, 174…). One more joins every 50 waves: two

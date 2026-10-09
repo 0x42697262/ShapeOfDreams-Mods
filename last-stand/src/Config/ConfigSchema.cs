@@ -4,7 +4,7 @@ namespace LastStand.Config;
 
 internal static class ConfigSchema
 {
-	public const int Current = 40;
+	public const int Current = 41;
 
 	public static bool IsCurrent(string json)
 	{

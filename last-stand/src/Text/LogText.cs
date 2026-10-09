@@ -408,10 +408,15 @@ internal static class LogText
 		return $"blocked room modifier {modifierType} on arena node {nodeIndex}.";
 	}
 
-	public static string FastClearTriggered(int wave, int kills, int monsters, double seconds, double multiplier,
-		double heroicMultiplier)
+	public static string FastClearTriggered(int wave, int instantKills, int monsters, double seconds,
+		double multiplier, double heroicMultiplier)
 	{
-		return $"fast clear: wave {wave} lost {kills} of {monsters} monster(s) within {seconds:0.#} s; from wave {wave + 1} monsters have x{multiplier:0.##} health and damage, heroic bosses x{heroicMultiplier:0.##}.";
+		return $"fast clear: wave {wave} had {instantKills} of {monsters} monster(s) die within {seconds:0.##} s of their first hit; from wave {wave + 1} monsters have x{multiplier:0.##} health and damage, heroic bosses x{heroicMultiplier:0.##}.";
+	}
+
+	public static string FastClearMissed(int wave, int instantKills, int deaths, int needed, double seconds)
+	{
+		return $"fast clear: wave {wave} had {instantKills} of {deaths} death(s) within {seconds:0.##} s of the first hit; {needed} needed.";
 	}
 
 	public static string WaveCleared(int wave)

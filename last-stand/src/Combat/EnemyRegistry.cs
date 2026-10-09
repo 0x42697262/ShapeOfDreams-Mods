@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using LastStand.Config;
+using UnityEngine;
 
 namespace LastStand.Combat;
 
 internal sealed class EnemyRegistry
 {
 	private readonly Dictionary<Entity, EnemyTier> _alive = new Dictionary<Entity, EnemyTier>();
+	private readonly Dictionary<Entity, float> _firstHitAt = new Dictionary<Entity, float>();
 	private readonly List<Entity> _stale = new List<Entity>();
 	private readonly List<Entity> _ofTier = new List<Entity>();
 	private readonly List<double> _reservations = new List<double>();
@@ -42,6 +44,7 @@ internal sealed class EnemyRegistry
 		}
 
 		_alive[entity] = tier;
+		entity.EntityEvent_OnTakeDamage += (Action<EventInfoDamage>)(_ => OnDamaged(entity));
 		entity.EntityEvent_OnDeath += (Action<EventInfoKill>)(kill => OnDeath(entity, tier, kill));
 	}
 
@@ -83,9 +86,18 @@ internal sealed class EnemyRegistry
 	public void Clear()
 	{
 		_alive.Clear();
+		_firstHitAt.Clear();
 		_stale.Clear();
 		_ofTier.Clear();
 		_reservations.Clear();
+	}
+
+	private void OnDamaged(Entity entity)
+	{
+		if (_alive.ContainsKey(entity) && !_firstHitAt.ContainsKey(entity))
+		{
+			_firstHitAt[entity] = Time.time;
+		}
 	}
 
 	private void OnDeath(Entity entity, EnemyTier tier, EventInfoKill kill)
@@ -95,11 +107,16 @@ internal sealed class EnemyRegistry
 			return;
 		}
 
+		double sinceFirstHit = _firstHitAt.TryGetValue(entity, out float firstHitAt)
+			? Math.Max(0, Time.time - firstHitAt)
+			: 0;
+		_firstHitAt.Remove(entity);
+
 		DewPlayer killer = kill.actor != null && kill.actor.firstEntity != null
 			? kill.actor.firstEntity.owner
 			: null;
 
-		Died?.Invoke(new EnemyDeath(tier, entity.agentPosition, killer));
+		Died?.Invoke(new EnemyDeath(tier, entity.agentPosition, killer, sinceFirstHit));
 	}
 
 	private void Prune(double now)
@@ -118,6 +135,7 @@ internal sealed class EnemyRegistry
 		foreach (Entity entity in _stale)
 		{
 			_alive.Remove(entity);
+			_firstHitAt.Remove(entity);
 		}
 	}
 }

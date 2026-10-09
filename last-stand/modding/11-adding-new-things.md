@@ -404,7 +404,7 @@ Two artifacts, both written **before** the first test:
 1. **A log line with numbers**, with the mod's fixed prefix, at the moment
    the feature decides something. Not "destiny reset" but
    `destiny: claims reset after wave 12.` Not "fast clear" but
-   `fast clear: wave 31 lost 40 of 50 monster(s) within 10 s; from wave 32
+   `fast clear: wave 31 had 40 of 50 monster(s) die within 0.5 s of their first hit; from wave 32
    monsters have x2 health and damage, heroic bosses x1.41.` The numbers are
    what let you compare the log to what you saw.
 2. **An in-game check**: a numbered paragraph that says exactly what to
@@ -1192,8 +1192,9 @@ the default panel). Any state the game mutates and never restores
 
 ## Part 4. Worked example C (short): a rule, a watch, and additive stats
 
-**Goal.** If 80% of a wave dies within 10 s of its start, every later
-monster gets ×2 health and damage, stacking.
+**Goal.** If players kill nearly everything instantly, every later
+monster gets ×2 health and damage, stacking. Concretely: if 80% of a
+wave's monsters die within 0.5 s of the first hit they take.
 
 ### C1. The rule is plain math
 
@@ -1205,13 +1206,35 @@ public double MultiplierFor(int stacks) => IsOn ? Math.Pow(StatMultiplier, stack
 
 No Unity, no networking, so it can be read and reasoned about alone.
 
-### C2. The watch hangs off an event, not a patch
+### C2. The watch hangs off events, not a patch
 
-Kills come from `entity.EntityEvent_OnDeath`, subscribed per monster when
-the mod spawns it (`EnemyRegistry`), so only the mod's own wave monsters
-count. The watch is a small state machine (`Start`, `OnKill(now)`,
-`Cancel`, `Reset(stacks)`) that the wave director feeds. The skip command
-cancels it, so a cheat can't trigger it.
+Deaths come from `entity.EntityEvent_OnDeath` and first hits from
+`entity.EntityEvent_OnTakeDamage`, both subscribed per monster when the
+mod spawns it (`EnemyRegistry`), so only the mod's own wave monsters
+count. Reading `Actor` showed the order on a lethal hit: the damage event
+fires first, then `target.Kill()`, so a one-shot monster records its first
+hit in the same frame and reports 0 s. The watch is a small state machine
+(`Start`, `OnKill(secondsSinceFirstHit)`, `Cancel`, `Reset(stacks)`) that
+the wave director feeds. The skip command cancels it, so a cheat can't
+trigger it.
+
+### C2b. The first metric measured the wrong thing
+
+The first version counted kills within 10 s of the **wave's start**. In
+play it almost never fired, even for teams that deleted everything. The
+reason was in the mod's own numbers: spawning releases 6 monsters every
+0.5 s, so at most about 120 exist after 10 s, and the walk in from the
+spawn point eats into the window too. On any wave much larger than that,
+80% can't even be alive in time. The metric measured the spawn rate, not
+the players.
+
+The method: before trusting a threshold, list every factor that can hold
+the measured number down, and check that only the thing you mean to
+measure is left. Time from a monster's first hit to its death depends on
+nothing but how hard it's being hit. It also corrects itself: each ×2
+makes monsters live longer, until waves stop counting. And when a watched
+wave misses, the log says by how much (`K of D death(s) within 0.5 s of
+the first hit; X needed`), so the threshold can be tuned from data.
 
 ### C3. The stat math has to match how the game adds bonuses
 
@@ -1254,7 +1277,7 @@ The stack count goes into the same AppDomain slot as the wave number
 (`ProgressStore`), so a reload logs `progress restored: … N fast clear(s)
 so far` and keeps the multiplier. Every `wave N:` log line carries
 `fastClear=xM heroicFastClear=xK`, and the trigger logs
-`fast clear: wave W lost K of M monster(s) within 10 s; …`.
+`fast clear: wave W had K of M monster(s) die within 0.5 s of their first hit; …`.
 
 ---
 

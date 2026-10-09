@@ -216,9 +216,9 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.FastClearFromWaveDescription)]
 	public int fastClearFromWave = 30;
 
-	[LabelText(ConfigText.FastClearSecondsLabel)]
-	[Description(ConfigText.FastClearSecondsDescription)]
-	public float fastClearSeconds = 10f;
+	[LabelText(ConfigText.FastClearKillSecondsLabel)]
+	[Description(ConfigText.FastClearKillSecondsDescription)]
+	public float fastClearKillSeconds = 0.5f;
 
 	[LabelText(ConfigText.FastClearStatMultiplierLabel)]
 	[Description(ConfigText.FastClearStatMultiplierDescription)]

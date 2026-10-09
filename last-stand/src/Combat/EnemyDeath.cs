@@ -10,10 +10,13 @@ internal readonly struct EnemyDeath
 
 	public DewPlayer Killer { get; }
 
-	public EnemyDeath(EnemyTier tier, Vector3 position, DewPlayer killer)
+	public double SecondsSinceFirstHit { get; }
+
+	public EnemyDeath(EnemyTier tier, Vector3 position, DewPlayer killer, double secondsSinceFirstHit)
 	{
 		Tier = tier;
 		Position = position;
 		Killer = killer;
+		SecondsSinceFirstHit = secondsSinceFirstHit;
 	}
 }

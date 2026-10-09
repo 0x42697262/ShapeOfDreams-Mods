@@ -902,10 +902,12 @@ Each answer still needs to be seen working:
     as wave 100.
 
 72. **Fast clear carries over** (set `Fast clear: from wave` to 1 first;
-    the default is 30): kill 80% of wave 1 (5 of 6) within 10 s.
-    Chat says, in red (`#ff4d4d`) instead of the usual orange, `Wave cleared within 10s. From wave 2 on, monsters hit back
-    with x2 health and damage.` and the log `fast clear: wave 1 lost 5 of
-    6 monster(s)`. The `wave 2:` and `wave 3:` lines show `fastClear=x2`
+    the default is 30): one-shot 5 of wave 1's 6 monsters (see check 82
+    for the trigger).
+    Chat says, in red (`#ff4d4d`) instead of the usual orange, `5 of wave
+    1's 6 monsters died within 0.5s of their first hit. From wave 2 on,
+    monsters hit back with x2 health and damage.` and the log `fast clear:
+    wave 1 had 5 of 6 monster(s) die within 0.5 s of their first hit`. The `wave 2:` and `wave 3:` lines show `fastClear=x2`
     and both waves' monsters take about twice the hits; a second fast clear
     makes it `x4`. A heroic boss (`laststand_wave 49`) after a fast clear
     has normal health. A slow wave and `laststand_skip` never trigger it.
@@ -955,6 +957,15 @@ Each answer still needs to be seen working:
     the friend joins within a few seconds instead of waiting on "The
     expedition is preparing to move after fighting a Heroic Boss". A
     friend who joins while the boss is alive gets in too.
+82. **Fast clear by time to kill** (schema 41): with `Fast clear: from
+    wave` at 1, one-shot most of wave 1: the log shows `fast clear: wave 1
+    had K of 6 monster(s) die within 0.5 s of their first hit` as soon as
+    the 5th instant kill lands, even on a big wave that takes far longer
+    than 10 s to spawn. Hit monsters a few times each on a later wave: no
+    trigger, and at the wave's end `fast clear: wave N had K of D death(s)
+    within 0.5 s of the first hit; X needed`. Old config files are moved
+    to `.old` (schema 41, `Fast clear: within (s)` replaced by `Fast clear:
+    instant within (s)`).
 
 ## Conventions
 
