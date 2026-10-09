@@ -8,11 +8,7 @@ internal static class ConfigSchema
 
 	public static bool IsCurrent(string json)
 	{
-		JToken jToken = JObject.Parse(json)["schemaVersion"];
-		if (jToken != null && jToken.Type == JTokenType.Integer)
-		{
-			return jToken.Value<int>() == 40;
-		}
-		return false;
+		JToken version = JObject.Parse(json)[nameof(LastStandConfig.schemaVersion)];
+		return version != null && version.Type == JTokenType.Integer && version.Value<int>() == Current;
 	}
 }

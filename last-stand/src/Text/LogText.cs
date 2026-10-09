@@ -1,8 +1,7 @@
+using System.Collections.Generic;
 using LastStand.Combat;
 using LastStand.Config;
 using LastStand.Waves;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace LastStand.Text;
@@ -15,7 +14,8 @@ internal static class LogText
 
 	public const string SoloButtonFailed = "could not add the Last Stand solo button.";
 
-	public const string LobbyButtonFailed = "could not add the Last Stand settings button to the lobby; use the laststand_config console command.";
+	public const string LobbyButtonFailed =
+		"could not add the Last Stand settings button to the lobby; use the laststand_config console command.";
 
 	public const string ConfigSaveFailed = "could not save the Last Stand config.";
 
@@ -149,7 +149,7 @@ internal static class LogText
 
 	public static string HatredChoicesNeedCurse(string replaced, string with)
 	{
-		return "hatred: choice " + replaced + " replaced with " + with + " so every choice is a curse.";
+		return $"hatred: choice {replaced} replaced with {with} so every choice is a curse.";
 	}
 
 	public static string HatredUsesReset(int wave)
@@ -318,18 +318,18 @@ internal static class LogText
 		return $"test boss: spawned {typeName} at level {level}.";
 	}
 
-	public static string HeroicBossStats(int wave, string boss, float maxHealth, float attackDamage, float abilityPower, float abilityHaste)
+	public static string HeroicBossStats(int wave, string boss, float maxHealth, float attackDamage, float abilityPower,
+		float abilityHaste)
 	{
-		return $"heroic boss: wave {wave} {boss} maxHealth={maxHealth:0} attackDamage={attackDamage:0} " + $"abilityPower={abilityPower:0} abilityHaste={abilityHaste:0}";
+		return $"heroic boss: wave {wave} {boss} maxHealth={maxHealth:0} attackDamage={attackDamage:0} " +
+		       $"abilityPower={abilityPower:0} abilityHaste={abilityHaste:0}";
 	}
 
 	public static string HeroicBossBiggestHit(int wave, string boss, float hit, string source)
 	{
-		if (!(hit <= 0f))
-		{
-			return $"heroic boss: wave {wave} {boss} biggest hit on a hero {hit:0} (after armor, shields included) from {source}.";
-		}
-		return $"heroic boss: wave {wave} {boss} died without hitting a hero.";
+		return hit <= 0
+			? $"heroic boss: wave {wave} {boss} died without hitting a hero."
+			: $"heroic boss: wave {wave} {boss} biggest hit on a hero {hit:0} (after armor, shields included) from {source}.";
 	}
 
 	public static string HeroicBossDied(int chaosRewards)
@@ -370,12 +370,23 @@ internal static class LogText
 
 	public static string WaveStarted(WavePlan plan)
 	{
-		return $"wave {plan.Number}: regular={plan.RegularCount} surge={plan.IsSurge} hunter={plan.HunterCount} " + $"miniboss={plan.MiniBossCount} pain={plan.PainCount} heroic={plan.HeroicBossCount} " + $"heroicHaste={plan.HeroicBossHaste:0} " + $"ambient={plan.AmbientLevel} " + $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " + $"fastClear=x{plan.FastClearMultiplier:0.##} heroicFastClear=x{plan.HeroicFastClearMultiplier:0.##} " + $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " + $"mirageChance={plan.MirageChance * 100.0:0}% " + $"huntLevel={plan.HuntLevel} cap={plan.MaxAlive}.";
+		return $"wave {plan.Number}: regular={plan.RegularCount} surge={plan.IsSurge} hunter={plan.HunterCount} " +
+		       $"miniboss={plan.MiniBossCount} pain={plan.PainCount} heroic={plan.HeroicBossCount} " +
+		       $"heroicHaste={plan.HeroicBossHaste:0} " +
+		       $"ambient={plan.AmbientLevel} " +
+		       $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " +
+		       $"fastClear=x{plan.FastClearMultiplier:0.##} heroicFastClear=x{plan.HeroicFastClearMultiplier:0.##} " +
+		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +
+		       $"mirageChance={plan.MirageChance * Tuning.PercentScale:0}% " +
+		       $"huntLevel={plan.HuntLevel} cap={plan.MaxAlive}.";
 	}
 
-	public static string CatalogBuilt(int foreignTypes, int mirageSkins, int hunterStartWave, int allHuntersWave, int heroicBosses)
+	public static string CatalogBuilt(int foreignTypes, int mirageSkins, int hunterStartWave, int allHuntersWave,
+		int heroicBosses)
 	{
-		return $"catalog: {foreignTypes} monster type(s) from other worlds, {mirageSkins} Mirage skin(s), " + $"{heroicBosses} heroic boss type(s); hunters start at wave {hunterStartWave}, every monster is " + $"a hunter from wave {allHuntersWave}.";
+		return $"catalog: {foreignTypes} monster type(s) from other worlds, {mirageSkins} Mirage skin(s), " +
+		       $"{heroicBosses} heroic boss type(s); hunters start at wave {hunterStartWave}, every monster is " +
+		       $"a hunter from wave {allHuntersWave}.";
 	}
 
 	public static string ModifiersStripped(int count)
@@ -388,7 +399,8 @@ internal static class LogText
 		return $"blocked room modifier {modifierType} on arena node {nodeIndex}.";
 	}
 
-	public static string FastClearTriggered(int wave, int kills, int monsters, double seconds, double multiplier, double heroicMultiplier)
+	public static string FastClearTriggered(int wave, int kills, int monsters, double seconds, double multiplier,
+		double heroicMultiplier)
 	{
 		return $"fast clear: wave {wave} lost {kills} of {monsters} monster(s) within {seconds:0.#} s; from wave {wave + 1} monsters have x{multiplier:0.##} health and damage, heroic bosses x{heroicMultiplier:0.##}.";
 	}
@@ -410,7 +422,7 @@ internal static class LogText
 
 	public static string ArenaPanelShown(string type)
 	{
-		return "panel: " + type + " shown as the arena's default modifier panel.";
+		return $"panel: {type} shown as the arena's default modifier panel.";
 	}
 
 	public static string EdgeRing(int shrines, float medianReach, float cap)

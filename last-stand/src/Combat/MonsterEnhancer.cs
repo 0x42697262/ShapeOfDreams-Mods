@@ -1,5 +1,4 @@
 using LastStand.Config;
-using LastStand.Waves;
 
 namespace LastStand.Combat;
 
@@ -7,15 +6,17 @@ internal static class MonsterEnhancer
 {
 	public static void ApplyWaveScaling(Entity entity, double healthBonusPercent, double damageBonusPercent)
 	{
-		if (!(healthBonusPercent <= 0.0) || !(damageBonusPercent <= 0.0))
+		if (healthBonusPercent <= 0 && damageBonusPercent <= 0)
 		{
-			entity.Status.AddStatBonus(new StatBonus
-			{
-				maxHealthPercentage = (float)healthBonusPercent,
-				attackDamagePercentage = (float)damageBonusPercent,
-				abilityPowerPercentage = (float)damageBonusPercent
-			});
+			return;
 		}
+
+		entity.Status.AddStatBonus(new StatBonus
+		{
+			maxHealthPercentage = (float)healthBonusPercent,
+			attackDamagePercentage = (float)damageBonusPercent,
+			abilityPowerPercentage = (float)damageBonusPercent,
+		});
 	}
 
 	public static void Multiply(Entity entity, double health, double damage)

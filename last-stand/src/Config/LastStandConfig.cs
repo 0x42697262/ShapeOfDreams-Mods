@@ -8,7 +8,7 @@ namespace LastStand.Config;
 public class LastStandConfig : ModConfig
 {
 	[HideInInspector]
-	public int schemaVersion = 40;
+	public int schemaVersion = ConfigSchema.Current;
 
 	[Page(SettingsPage.General)]
 	[Header(ConfigText.RunHeader)]
@@ -17,8 +17,8 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ArenaRoomDescription)]
 	public string arenaRoom = GameNames.DefaultArenaRoom;
 
-	[LabelText("Starting world")]
-	[Description("Which world the run plays as. Higher = tougher monsters, better loot, more gold and XP, pricier shrines.")]
+	[LabelText(ConfigText.StartingWorldLabel)]
+	[Description(ConfigText.StartingWorldDescription)]
 	public int startingWorld = 1;
 
 	[LabelText(ConfigText.StartingGoldLabel)]
@@ -57,12 +57,12 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ShrineOfAscensionDescription)]
 	public bool shrineOfAscension = true;
 
-	[LabelText("Ascension uses come back every N waves")]
-	[Description("Locked until the first of these waves is cleared. After that, everyone's 4 uses reset every N cleared waves (1 = every wave, 10 = 10, 20, 30…). Unused uses don't carry over.")]
+	[LabelText(ConfigText.AscensionResetEveryWavesLabel)]
+	[Description(ConfigText.AscensionResetEveryWavesDescription)]
 	public int ascensionResetEveryWaves = 1;
 
-	[LabelText("Maw of Doom")]
-	[Description("Maw of Doom on the edge ring. Levels a memory or raises essence quality for gold. Flat 20 gold (0 with free gold shrines) and 8% destroy chance (5% for essences) on every use.")]
+	[LabelText(ConfigText.MawOfDoomLabel)]
+	[Description(ConfigText.MawOfDoomDescription)]
 	public bool mawOfDoom = true;
 
 	[LabelText(ConfigText.ShrineOfDestinyLabel)]
@@ -77,8 +77,8 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ReminiscenceOfLuckDescription)]
 	public bool reminiscenceOfLuck = true;
 
-	[LabelText("Free gold shrines")]
-	[Description("Gold prices set to 0 in the arena: free Maw of Doom, Ascension and Luck prays, clients included. Maw keeps its 8% risk. Altar of Cleansing still costs gold.")]
+	[LabelText(ConfigText.FreeGoldShrinesLabel)]
+	[Description(ConfigText.FreeGoldShrinesDescription)]
 	public bool freeGoldShrines;
 
 	[LabelText(ConfigText.GoldPriceGrowthPercentLabel)]
@@ -208,8 +208,8 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.LateDamagePerWaveDescription)]
 	public float lateDamageBonusPercentPerWave = 50f;
 
-	[LabelText("Fast clear: kills (%)")]
-	[Description("Kill this share of a wave's monsters within the time below and every later wave is tougher. 0 = off.")]
+	[LabelText(ConfigText.FastClearKillPercentLabel)]
+	[Description(ConfigText.FastClearKillPercentDescription)]
 	public float fastClearKillPercent = 80f;
 
 	[LabelText(ConfigText.FastClearFromWaveLabel)]
@@ -220,8 +220,8 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.FastClearSecondsDescription)]
 	public float fastClearSeconds = 10f;
 
-	[LabelText("Fast clear: stats from next wave (x)")]
-	[Description("Health and damage multiplier from the next wave on, stacking with each fast clear, on top of wave scaling. 1 = off.")]
+	[LabelText(ConfigText.FastClearStatMultiplierLabel)]
+	[Description(ConfigText.FastClearStatMultiplierDescription)]
 	public float fastClearStatMultiplier = 2f;
 
 	[LabelText(ConfigText.FastClearHeroicBossesLabel)]
@@ -375,12 +375,12 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HeroicBossHasteGrowthDescription)]
 	public float heroicBossAbilityHastePerBossWave = 50f;
 
-	[LabelText("Heroic boss health multiplier")]
-	[Description("Heroic boss HP x this. Stacks with world, difficulty, co-op and wave scaling.")]
+	[LabelText(ConfigText.HeroicBossHealthMultiplierLabel)]
+	[Description(ConfigText.HeroicBossHealthMultiplierDescription)]
 	public float heroicBossHealthMultiplier = 5f;
 
-	[LabelText("Heroic boss damage multiplier")]
-	[Description("Heroic boss damage x this. Stacks with world, difficulty and wave scaling.")]
+	[LabelText(ConfigText.HeroicBossDamageMultiplierLabel)]
+	[Description(ConfigText.HeroicBossDamageMultiplierDescription)]
 	public float heroicBossDamageMultiplier = 8f;
 
 	[PickMany(ChoiceSet.HeroicBosses)]
@@ -499,9 +499,9 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ItemRarityFloorDescription)]
 	public float itemRarityFloorPercent = 25f;
 
-	[Header("Enemy rewards")]
-	[LabelText("Max kill gold per player")]
-	[Description("Kill gold cap per player per kill, before gold-gain bonuses. Miniboss, Pain and heroic boss bonus gold is uncapped. 0 = no cap (vanilla kill gold).")]
+	[Header(ConfigText.EnemyRewardsHeader)]
+	[LabelText(ConfigText.MaxKillGoldLabel)]
+	[Description(ConfigText.MaxKillGoldDescription)]
 	public int maxKillGoldPerPlayer;
 
 	[LabelText(ConfigText.RewardGrowthLabel)]

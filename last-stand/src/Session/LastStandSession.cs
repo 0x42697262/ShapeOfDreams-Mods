@@ -1,3 +1,4 @@
+using System;
 using LastStand.Arena;
 using LastStand.Combat;
 using LastStand.Config;
@@ -9,7 +10,6 @@ using LastStand.Text;
 using LastStand.Waves;
 using LastStand.Well;
 using Mirror;
-using System;
 
 namespace LastStand.Session;
 
@@ -65,6 +65,7 @@ internal sealed class LastStandSession
 		_testBoss = new TestBoss(_heroicBosses);
 		_waves = new WaveDirector(_enemies, _heroicBosses, OnEnemySpawned);
 		_pain = new PainService(_enemies, _waves.HasPending);
+
 		_waves.WaveStarted += OnWaveStarted;
 		_waves.WaveCleared += OnWaveCleared;
 		_waves.FastCleared += OnFastCleared;
@@ -89,34 +90,41 @@ internal sealed class LastStandSession
 	public void Tick(double now)
 	{
 		_now = now;
+
 		if (!LastStandMode.IsHosting())
 		{
-			if (_phase != 0)
+			if (_phase != SessionPhase.Inactive)
 			{
 				Reset();
 			}
+
 			return;
 		}
+
 		_goal.Tick(now);
 		_tracker.Tick(now, TrackerProgress(now));
 		_startingBonus.Tick(_settings.StartingGold, _settings.StartingDreamDust);
+
 		if (!ArenaLocator.IsStandingInArena())
 		{
 			if (_phase == SessionPhase.Fighting || _phase == SessionPhase.Arriving)
 			{
 				StopFight();
 			}
+
 			_phase = SessionPhase.Camp;
 			_world.Tick(now, _settings.StartingWorld);
 			_campRift.Tick(now);
 			return;
 		}
-		int num = ArenaLocator.CurrentNode();
-		if (_phase != SessionPhase.Fighting || num != _arenaNode)
+
+		int node = ArenaLocator.CurrentNode();
+		if (_phase != SessionPhase.Fighting || node != _arenaNode)
 		{
-			Arrive(now, num);
+			Arrive(now, node);
 			return;
 		}
+
 		_waves.Tick(now, _settings.Waves);
 		TickCurseStart(now);
 		_pain.Tick(now, _settings.Pain);
@@ -306,14 +314,15 @@ internal sealed class LastStandSession
 
 	public void JumpToWave(int wave)
 	{
-		if (_phase != SessionPhase.Fighting || wave < 1)
+		if (_phase != SessionPhase.Fighting || wave < Tuning.FirstWave)
 		{
-			Log.Warn("laststand_wave: only works in the arena, with a wave of 1 or more.");
+			Log.Warn(LogText.JumpNotPossible);
 			return;
 		}
-		int wave2 = wave - 1;
-		_waves.Resume(wave2, inProgress: false, _now, _waves.FastClearStacks);
-		ProgressStore.Save(_arenaNode, wave2, inProgress: false, _waves.FastClearStacks);
+
+		int previous = wave - 1;
+		_waves.Resume(previous, false, _now, _waves.FastClearStacks);
+		ProgressStore.Save(_arenaNode, previous, false, _waves.FastClearStacks);
 		Log.Info(LogText.JumpedToWave(wave));
 	}
 
@@ -323,14 +332,17 @@ internal sealed class LastStandSession
 		{
 			return null;
 		}
+
 		if (_waves.WaitingForCurse)
 		{
 			return TrackerText.AwaitingCurse(_waves.CurrentWave + 1);
 		}
+
 		if (_waves.WaveInProgress)
 		{
 			return TrackerText.WaveRunning(_waves.CurrentWave, _enemies.Occupied(now) + _waves.PendingSpawns);
 		}
+
 		return TrackerText.NextWave(_waves.CurrentWave + 1, (int)Math.Ceiling(_waves.SecondsUntilNextWave(now)));
 	}
 
@@ -355,32 +367,38 @@ internal sealed class LastStandSession
 	private void Arrive(double now, int node)
 	{
 		_phase = SessionPhase.Arriving;
-		if (_arrival.TryArrive(now, out var arena))
+		if (!_arrival.TryArrive(now, out ArenaPoints arena))
 		{
-			StopFight();
-			_arenaNode = node;
-			_phase = SessionPhase.Fighting;
-			int num = WorldMapNodes.HideAllBut(NetworkedManagerBase<ZoneManager>.softInstance, node);
-			if (num > 0)
-			{
-				Log.Info(LogText.MapNodesHidden(num, node));
-			}
-			Shrines.Place(arena, _settings);
-			if (ProgressStore.TryLoad(node, out var wave, out var inProgress, out var fastClears))
-			{
-				int adopted = (inProgress ? EnemyAdoption.AdoptSurvivors(_enemies) : 0);
-				_waves.Resume(wave, inProgress, now + _settings.Waves.IntermissionSeconds, fastClears);
-				ApplyGoldPrices(wave);
-				Log.Info(LogText.ProgressRestored(wave, inProgress, adopted, fastClears));
-			}
-			else
-			{
-				_waves.Begin(now + _settings.FirstWaveDelaySeconds);
-				ApplyGoldPrices(_waves.CurrentWave);
-				Log.Info(LogText.ArenaReady(_arrival.StagedHeroes, arena.Center));
-				ChatNotices.Broadcast((_settings.Waves.CurseToStart && Shrines.HatredStanding) ? Messages.ArenaReadyAwaitingCurse() : Messages.ArenaReady((int)Math.Ceiling(_settings.FirstWaveDelaySeconds)));
-			}
+			return;
 		}
+
+		StopFight();
+		_arenaNode = node;
+		_phase = SessionPhase.Fighting;
+
+		int hidden = WorldMapNodes.HideAllBut(NetworkedManagerBase<ZoneManager>.softInstance, node);
+		if (hidden > 0)
+		{
+			Log.Info(LogText.MapNodesHidden(hidden, node));
+		}
+
+		Shrines.Place(arena, _settings);
+
+		if (ProgressStore.TryLoad(node, out int wave, out bool inProgress, out int fastClears))
+		{
+			int adopted = inProgress ? EnemyAdoption.AdoptSurvivors(_enemies) : 0;
+			_waves.Resume(wave, inProgress, now + _settings.Waves.IntermissionSeconds, fastClears);
+			ApplyGoldPrices(wave);
+			Log.Info(LogText.ProgressRestored(wave, inProgress, adopted, fastClears));
+			return;
+		}
+
+		_waves.Begin(now + _settings.FirstWaveDelaySeconds);
+		ApplyGoldPrices(_waves.CurrentWave);
+		Log.Info(LogText.ArenaReady(_arrival.StagedHeroes, arena.Center));
+		ChatNotices.Broadcast(_settings.Waves.CurseToStart && Shrines.HatredStanding
+			? Messages.ArenaReadyAwaitingCurse()
+			: Messages.ArenaReady((int)Math.Ceiling(_settings.FirstWaveDelaySeconds)));
 	}
 
 	private void StopFight()
@@ -410,7 +428,7 @@ internal sealed class LastStandSession
 
 	private void OnWaveStarted(WavePlan plan)
 	{
-		ProgressStore.Save(_arenaNode, plan.Number, inProgress: true, _waves.FastClearStacks);
+		ProgressStore.Save(_arenaNode, plan.Number, true, _waves.FastClearStacks);
 		_loot.OnWaveStarted();
 		Shrines.OnWaveStarted();
 		ApplyGoldPrices(plan.Number);
@@ -425,26 +443,29 @@ internal sealed class LastStandSession
 	{
 		switch (_curseStart.Tick(now, _settings.Waves, _waves, Shrines.HatredStanding))
 		{
-		case CurseStartEvent.HoldStarted:
-			Shrines.ResetHatredUses();
-			Log.Info(LogText.CurseHoldStarted(_waves.CurrentWave + 1));
-			break;
-		case CurseStartEvent.StartedWithoutCurse:
-			Log.Warn(LogText.WaveStartedWithoutCurse(_waves.CurrentWave));
-			break;
+			case CurseStartEvent.HoldStarted:
+				Shrines.ResetHatredUses();
+				Log.Info(LogText.CurseHoldStarted(_waves.CurrentWave + 1));
+				break;
+			case CurseStartEvent.StartedWithoutCurse:
+				Log.Warn(LogText.WaveStartedWithoutCurse(_waves.CurrentWave));
+				break;
 		}
 	}
 
 	public void OnHatredCurse(Hero chooser, HatredStrengthType strength)
 	{
-		if (_phase == SessionPhase.Fighting && strength != 0 && _curseStart.TryRelease(_now, _settings.Waves, _waves))
+		if (_phase != SessionPhase.Fighting || strength == HatredStrengthType.None
+		    || !_curseStart.TryRelease(_now, _settings.Waves, _waves))
 		{
-			int othersCursed = SharedCurses.CurseOthers(chooser, strength);
-			double curseStartDelaySeconds = _settings.Waves.CurseStartDelaySeconds;
-			int wave = _waves.CurrentWave + 1;
-			Log.Info(LogText.CurseStartsWave(wave, strength.ToString(), othersCursed, curseStartDelaySeconds));
-			ChatNotices.Broadcast(Messages.CurseStartsWave(strength.ToString(), wave, (int)Math.Ceiling(curseStartDelaySeconds)));
+			return;
 		}
+
+		int othersCursed = SharedCurses.CurseOthers(chooser, strength);
+		double delay = _settings.Waves.CurseStartDelaySeconds;
+		int wave = _waves.CurrentWave + 1;
+		Log.Info(LogText.CurseStartsWave(wave, strength.ToString(), othersCursed, delay));
+		ChatNotices.Broadcast(Messages.CurseStartsWave(strength.ToString(), wave, (int)Math.Ceiling(delay)));
 	}
 
 	public void OnCurseCreated(CurseStatusEffect curse)
@@ -487,19 +508,20 @@ internal sealed class LastStandSession
 
 	private void OnFastCleared()
 	{
-		ProgressStore.Save(_arenaNode, _waves.CurrentWave, inProgress: true, _waves.FastClearStacks);
+		ProgressStore.Save(_arenaNode, _waves.CurrentWave, true, _waves.FastClearStacks);
 	}
 
 	private void OnWaveCleared(int wave)
 	{
-		ProgressStore.Save(_arenaNode, wave, inProgress: false, _waves.FastClearStacks);
+		ProgressStore.Save(_arenaNode, wave, false, _waves.FastClearStacks);
 		_loot.OnWaveCleared(wave, _settings.Loot);
 		Shrines.OnWaveCleared(wave, _settings.AscensionResetWaves);
-		int num = HeroSouls.ReviveKnockedOut();
-		if (num > 0)
+
+		int revived = HeroSouls.ReviveKnockedOut();
+		if (revived > 0)
 		{
-			Log.Info(LogText.HeroesRevived(wave, num));
-			ChatNotices.Broadcast(Messages.HeroesRevived(num));
+			Log.Info(LogText.HeroesRevived(wave, revived));
+			ChatNotices.Broadcast(Messages.HeroesRevived(revived));
 		}
 	}
 

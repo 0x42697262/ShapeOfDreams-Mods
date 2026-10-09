@@ -1,5 +1,5 @@
-using System.Globalization;
 using System;
+using System.Globalization;
 
 namespace LastStand.Session;
 
@@ -32,12 +32,16 @@ internal static class ProgressStore
 
 	public static void Save(int node, int wave, bool inProgress, int fastClears)
 	{
-		string text = CurrentRunKey();
-		if (text != null)
+		string run = CurrentRunKey();
+		if (run == null)
 		{
-			string data = string.Join('|'.ToString(), text, node.ToString(CultureInfo.InvariantCulture), wave.ToString(CultureInfo.InvariantCulture), inProgress ? "1" : "0", fastClears.ToString(CultureInfo.InvariantCulture));
-			AppDomain.CurrentDomain.SetData("LastStand.Progress", data);
+			return;
 		}
+
+		string data = string.Join(Separator.ToString(), run, node.ToString(CultureInfo.InvariantCulture),
+			wave.ToString(CultureInfo.InvariantCulture), inProgress ? InProgressFlag : BetweenWavesFlag,
+			fastClears.ToString(CultureInfo.InvariantCulture));
+		AppDomain.CurrentDomain.SetData(Slot, data);
 	}
 
 	public static bool TryLoad(int node, out int wave, out bool inProgress, out int fastClears)
@@ -45,22 +49,29 @@ internal static class ProgressStore
 		wave = 0;
 		inProgress = false;
 		fastClears = 0;
-		string text = CurrentRunKey();
-		if (text == null || !(AppDomain.CurrentDomain.GetData("LastStand.Progress") is string text2))
+		string run = CurrentRunKey();
+		if (run == null || !(AppDomain.CurrentDomain.GetData(Slot) is string data))
 		{
 			return false;
 		}
-		string[] array = text2.Split('|');
-		if ((array.Length != 5 && array.Length != 4) || array[0] != text || !int.TryParse(array[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var result) || result != node || !int.TryParse(array[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out wave) || wave <= 0)
+
+		string[] parts = data.Split(Separator);
+		if ((parts.Length != FieldCount && parts.Length != FieldCountWithoutFastClears) || parts[0] != run
+		    || !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int savedNode)
+		    || savedNode != node
+		    || !int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out wave)
+		    || wave <= 0)
 		{
 			wave = 0;
 			return false;
 		}
-		inProgress = array[3] == "1";
-		if (array.Length == 5)
+
+		inProgress = parts[3] == InProgressFlag;
+		if (parts.Length == FieldCount)
 		{
-			int.TryParse(array[4], NumberStyles.Integer, CultureInfo.InvariantCulture, out fastClears);
+			int.TryParse(parts[4], NumberStyles.Integer, CultureInfo.InvariantCulture, out fastClears);
 		}
+
 		return true;
 	}
 

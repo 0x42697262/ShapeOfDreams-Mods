@@ -1,9 +1,9 @@
+using System;
+using System.Collections.Generic;
 using LastStand.Arena;
 using LastStand.Config;
 using LastStand.Text;
 using LastStand.Waves;
-using System.Collections.Generic;
-using System;
 using UnityEngine;
 
 namespace LastStand.Well;
@@ -41,34 +41,41 @@ internal sealed class ArenaShrines
 		{
 			_edgeShrines.Add(_well.Place);
 		}
+
 		if (settings.AltarOfCleansing)
 		{
 			_edgeShrines.Add(_altar.Place);
 		}
+
 		if (settings.ShrineOfAscension)
 		{
 			_edgeShrines.Add(_ascension.Place);
 		}
+
 		if (settings.MawOfDoom)
 		{
 			_edgeShrines.Add(_maw.Place);
 		}
+
 		if (settings.ShrineOfDestiny)
 		{
 			_edgeShrines.Add(_destiny.Place);
 		}
+
 		if (settings.HatredRemnant)
 		{
 			_edgeShrines.Add(_hatred.Place);
 		}
+
 		if (settings.ReminiscenceOfLuck)
 		{
 			_edgeShrines.Add(_luck.Place);
 		}
-		Vector3[] array = EdgePlacement.PickRing(arena, _edgeShrines.Count);
+
+		Vector3[] ring = EdgePlacement.PickRing(arena, _edgeShrines.Count);
 		for (int i = 0; i < _edgeShrines.Count; i++)
 		{
-			_edgeShrines[i](array[i]);
+			_edgeShrines[i](ring[i]);
 		}
 	}
 
@@ -95,15 +102,17 @@ internal sealed class ArenaShrines
 
 	public void Tick(double now, int clearedWaves, Cadence ascensionResetWaves, bool cursesOnly)
 	{
-		if (!(now < _nextPinAt))
+		if (now < _nextPinAt)
 		{
-			_nextPinAt = now + 1.0;
-			_maw.PinUses();
-			_ascension.LockUntilFirstReset(clearedWaves, ascensionResetWaves);
-			if (cursesOnly)
-			{
-				_hatred.RequireCurses();
-			}
+			return;
+		}
+
+		_nextPinAt = now + Tuning.ShrinePinSeconds;
+		_maw.PinUses();
+		_ascension.LockUntilFirstReset(clearedWaves, ascensionResetWaves);
+		if (cursesOnly)
+		{
+			_hatred.RequireCurses();
 		}
 	}
 
@@ -114,7 +123,7 @@ internal sealed class ArenaShrines
 
 	public void Forget()
 	{
-		_nextPinAt = 0.0;
+		_nextPinAt = 0;
 		_well.Forget();
 		_altar.Forget();
 		_ascension.Forget();

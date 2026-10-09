@@ -1,4 +1,3 @@
-using LastStand.Config;
 using System;
 
 namespace LastStand.Waves;
@@ -19,43 +18,50 @@ internal static class WaveSchedule
 
 	public static WavePlan Plan(int wave, int players, WaveSettings settings, WaveContent content)
 	{
-		int num = Math.Max(0, players - 1);
-		int num2 = wave - 1;
-		int num3 = Math.Min(wave, settings.RegularGrowthUntilWave) - 1;
-		double num4 = 1.0 + settings.ExtraPlayerShare * (double)num;
-		int num5 = ForeignTypesUnlocked(wave, settings, content.ForeignTypes);
-		int num6 = MirageSkinsUnlocked(wave, settings, content.MirageSkins);
-		int hunterFromWave = settings.HunterFromWave;
-		bool flag = settings.Surges.IsOn(wave);
-		double num7 = (flag ? settings.SurgeMultiplier : 1.0);
-		int num8 = (int)Math.Round((double)(settings.RegularBase + settings.RegularGrowthPerWave * num3) * num4 * num7);
-		int num9 = (int)Math.Round((double)num8 * HunterShare(wave, settings));
-		int num10 = Scaled(wave, settings.Pain, settings.PainOccurrencesPerExtra, settings.MaxPain);
-		bool flag2 = HasEnvironment(wave, settings, num10);
-		int huntLevel = ((!flag2) ? HuntLevel(wave, hunterFromWave, settings) : 0);
-		int num11 = ((content.HeroicBossTypes > 0) ? HeroicBosses(wave, settings) : 0);
+		int extraPlayers = Math.Max(0, players - SoloPlayers);
+		int wavesSinceFirst = wave - FirstOfTier;
+		int growingWaves = Math.Min(wave, settings.RegularGrowthUntilWave) - FirstOfTier;
+		double playerScale = SoloPlayers + settings.ExtraPlayerShare * extraPlayers;
+
+		int foreign = ForeignTypesUnlocked(wave, settings, content.ForeignTypes);
+		int mirage = MirageSkinsUnlocked(wave, settings, content.MirageSkins);
+		int hunterStart = settings.HunterFromWave;
+		bool surge = settings.Surges.IsOn(wave);
+		double surgeScale = surge ? settings.SurgeMultiplier : NoSurge;
+		int monsters = (int)Math.Round(
+			(settings.RegularBase + settings.RegularGrowthPerWave * growingWaves) * playerScale * surgeScale);
+		int hunters = (int)Math.Round(monsters * HunterShare(wave, settings));
+		int pain = Scaled(wave, settings.Pain, settings.PainOccurrencesPerExtra, settings.MaxPain);
+		bool environment = HasEnvironment(wave, settings, pain);
+		int huntLevel = environment ? NoHuntLevel : HuntLevel(wave, hunterStart, settings);
+		int heroic = content.HeroicBossTypes > 0 ? HeroicBosses(wave, settings) : 0;
+
 		return new WavePlan
 		{
 			Number = wave,
-			RegularCount = num8 - num9,
-			IsSurge = flag,
-			HunterCount = num9,
-			MiniBossCount = Scaled(wave, settings.MiniBosses, settings.MiniBossOccurrencesPerExtra, settings.MaxMiniBosses),
-			PainCount = num10,
-			HeroicBossCount = num11,
+			RegularCount = monsters - hunters,
+			IsSurge = surge,
+			HunterCount = hunters,
+			MiniBossCount = Scaled(wave, settings.MiniBosses, settings.MiniBossOccurrencesPerExtra,
+				settings.MaxMiniBosses),
+			PainCount = pain,
+			HeroicBossCount = heroic,
 			HeroicBossHaste = HeroicBossHaste(wave, settings),
-			AmbientLevel = settings.StartingAmbientLevel + num2 / settings.WavesPerAmbientLevel,
-			MaxAlive = (int)Math.Round((double)(settings.MaxAliveBase + settings.MaxAlivePerExtraPlayer * num) * Math.Max(1.0, num7)),
-			HealthBonusPercent = StatBonus(wave, settings.HealthBonusPerWave, settings.LateHealthBonusPerWave, settings.LateScalingFromWave),
-			DamageBonusPercent = StatBonus(wave, settings.DamageBonusPerWave, settings.LateDamageBonusPerWave, settings.LateScalingFromWave),
-			ForeignTypesUnlocked = num5,
-			NewForeignTypes = (num5 > ForeignTypesUnlocked(wave - 1, settings, content.ForeignTypes)),
+			AmbientLevel = settings.StartingAmbientLevel + wavesSinceFirst / settings.WavesPerAmbientLevel,
+			MaxAlive = (int)Math.Round(
+				(settings.MaxAliveBase + settings.MaxAlivePerExtraPlayer * extraPlayers) * Math.Max(NoSurge, surgeScale)),
+			HealthBonusPercent = StatBonus(wave, settings.HealthBonusPerWave, settings.LateHealthBonusPerWave,
+				settings.LateScalingFromWave),
+			DamageBonusPercent = StatBonus(wave, settings.DamageBonusPerWave, settings.LateDamageBonusPerWave,
+				settings.LateScalingFromWave),
+			ForeignTypesUnlocked = foreign,
+			NewForeignTypes = foreign > ForeignTypesUnlocked(wave - FirstOfTier, settings, content.ForeignTypes),
 			HuntLevel = huntLevel,
-			MirageSkinsUnlocked = num6,
-			NewMirageSkin = (num6 > MirageSkinsUnlocked(wave - 1, settings, content.MirageSkins)),
-			MirageChance = ((num6 > 0) ? MirageChance(wave, settings) : 0.0),
-			HasEnvironment = flag2,
-			FriendlyFireChance = ((wave >= settings.FriendlyFireFromWave && num11 == 0) ? settings.FriendlyFireChance : 0.0)
+			MirageSkinsUnlocked = mirage,
+			NewMirageSkin = mirage > MirageSkinsUnlocked(wave - FirstOfTier, settings, content.MirageSkins),
+			MirageChance = mirage > 0 ? MirageChance(wave, settings) : 0,
+			HasEnvironment = environment,
+			FriendlyFireChance = wave >= settings.FriendlyFireFromWave && heroic == 0 ? settings.FriendlyFireChance : 0,
 		};
 	}
 

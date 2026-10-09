@@ -3,7 +3,7 @@ using LastStand.Mode;
 
 namespace LastStand.Patches;
 
-[HarmonyPatch(typeof(Shrine), "DoPostUseRoutines")]
+[HarmonyPatch(typeof(Shrine), nameof(Shrine.DoPostUseRoutines))]
 internal static class ArenaShrineUsePatch
 {
 	[HarmonyPostfix]

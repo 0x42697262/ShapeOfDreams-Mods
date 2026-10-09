@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using LastStand.Game;
 using LastStand.Text;
-using System.Collections.Generic;
 
 namespace LastStand.Config;
 
@@ -55,11 +55,11 @@ internal static class ConfigChoices
 		new Choice(GameNames.MeteoricLife, ConfigText.MeteoricLifeDetail),
 	};
 
-	public static readonly IReadOnlyList<Choice> CurseStrengths = new Choice[3]
+	public static readonly IReadOnlyList<Choice> CurseStrengths = new[]
 	{
-		new Choice("Mild", "Mild: 15% damage between players"),
-		new Choice("Potent", "Potent: 25% damage between players"),
-		new Choice("Powerful", "Powerful: 40% damage between players")
+		new Choice(GameNames.MildStrength, ConfigText.MildDarkUrge),
+		new Choice(GameNames.PotentStrength, ConfigText.PotentDarkUrge),
+		new Choice(GameNames.PowerfulStrength, ConfigText.PowerfulDarkUrge),
 	};
 
 	public static IReadOnlyList<string> Values(ChoiceSet set)
@@ -76,12 +76,16 @@ internal static class ConfigChoices
 
 	public static IReadOnlyList<Choice> For(ChoiceSet set)
 	{
-		return set switch
+		switch (set)
 		{
-			ChoiceSet.HeroicBosses => HeroicBosses, 
-			ChoiceSet.Environments => Environments, 
-			ChoiceSet.CurseStrengths => CurseStrengths, 
-			_ => ArenaRooms, 
-		};
+			case ChoiceSet.HeroicBosses:
+				return HeroicBosses;
+			case ChoiceSet.Environments:
+				return Environments;
+			case ChoiceSet.CurseStrengths:
+				return CurseStrengths;
+			default:
+				return ArenaRooms;
+		}
 	}
 }

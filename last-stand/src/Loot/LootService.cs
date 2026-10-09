@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using LastStand.Combat;
 using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace LastStand.Loot;

@@ -105,11 +105,13 @@ internal static class ConfigText
 
 	public const string HeroicBossHealthMultiplierLabel = "Heroic boss health multiplier";
 
-	public const string HeroicBossHealthMultiplierDescription = "Heroic boss HP x this. Stacks with world, difficulty, co-op and wave scaling.";
+	public const string HeroicBossHealthMultiplierDescription =
+		"Heroic boss HP x this. Stacks with world, difficulty, co-op and wave scaling.";
 
 	public const string HeroicBossDamageMultiplierLabel = "Heroic boss damage multiplier";
 
-	public const string HeroicBossDamageMultiplierDescription = "Heroic boss damage x this. Stacks with world, difficulty and wave scaling.";
+	public const string HeroicBossDamageMultiplierDescription =
+		"Heroic boss damage x this. Stacks with world, difficulty and wave scaling.";
 
 	public const string HeroicBossTypesLabel = "Heroic boss types";
 
@@ -129,7 +131,9 @@ internal static class ConfigText
 
 	public const string MaxKillGoldLabel = "Max kill gold per player";
 
-	public const string MaxKillGoldDescription = "Kill gold cap per player per kill, before gold-gain bonuses. Miniboss, Pain and heroic boss bonus gold is uncapped. 0 = no cap (vanilla kill gold).";
+	public const string MaxKillGoldDescription =
+		"Kill gold cap per player per kill, before gold-gain bonuses. Miniboss, Pain and heroic boss bonus " +
+		"gold is uncapped. 0 = no cap (vanilla kill gold).";
 
 	public const string HeroicBossDropMultiplierLabel = "Heroic boss item chance multiplier";
 
@@ -156,11 +160,15 @@ internal static class ConfigText
 
 	public const string AscensionResetEveryWavesLabel = "Ascension uses come back every N waves";
 
-	public const string AscensionResetEveryWavesDescription = "Locked until the first of these waves is cleared. After that, everyone's 4 uses reset every N cleared waves (1 = every wave, 10 = 10, 20, 30…). Unused uses don't carry over.";
+	public const string AscensionResetEveryWavesDescription =
+		"Locked until the first of these waves is cleared. After that, everyone's 4 uses reset every N " +
+		"cleared waves (1 = every wave, 10 = 10, 20, 30…). Unused uses don't carry over.";
 
 	public const string MawOfDoomLabel = "Maw of Doom";
 
-	public const string MawOfDoomDescription = "Maw of Doom on the edge ring. Levels a memory or raises essence quality for gold. Flat 20 gold (0 with free gold shrines) and 8% destroy chance (5% for essences) on every use.";
+	public const string MawOfDoomDescription =
+		"Maw of Doom on the edge ring. Levels a memory or raises essence quality for gold. Flat 20 gold (0 " +
+		"with free gold shrines) and 8% destroy chance (5% for essences) on every use.";
 
 	public const string ShrineOfDestinyLabel = "Shrine of Destiny";
 
@@ -213,23 +221,31 @@ internal static class ConfigText
 
 	public const string StartingDreamDustLabel = "Starting dream dust";
 
-	public const string StartingDreamDustDescription = "Bonus dream dust per player at run start: amount x 2^(starting world), so 10 gives 20 in world 1 and 80 in world 3. 0 = off.";
+	public const string StartingDreamDustDescription =
+		"Bonus dream dust per player at run start: amount x 2^(starting world), so 10 gives 20 in world 1 and " +
+		"80 in world 3. 0 = off.";
 
 	public const string GoldPriceGrowthPercentLabel = "Gold price growth (%)";
 
-	public const string GoldPriceGrowthPercentDescription = "Gold prices go up this much every N waves, compounding: 5% every wave is 11.5x at wave 50 and 131x at wave 100. Clients see the same prices. Altar of Cleansing stays vanilla. 0 = off.";
+	public const string GoldPriceGrowthPercentDescription =
+		"Gold prices go up this much every N waves, compounding: 5% every wave is 11.5x at wave 50 and 131x " +
+		"at wave 100. Clients see the same prices. Altar of Cleansing stays vanilla. 0 = off.";
 
 	public const string GoldPriceGrowthEveryWavesLabel = "Gold prices grow every N waves";
 
-	public const string GoldPriceGrowthEveryWavesDescription = "How often gold prices take a step up. The first step is at wave N.";
+	public const string GoldPriceGrowthEveryWavesDescription =
+		"How often gold prices take a step up. The first step is at wave N.";
 
 	public const string GoldPriceGrowthUntilWaveLabel = "Gold prices stop growing at wave";
 
-	public const string GoldPriceGrowthUntilWaveDescription = "Last wave that raises gold prices; they stay there after it. 100 with 5% = 131x. 0 = never stop.";
+	public const string GoldPriceGrowthUntilWaveDescription =
+		"Last wave that raises gold prices; they stay there after it. 100 with 5% = 131x. 0 = never stop.";
 
 	public const string FreeGoldShrinesLabel = "Free gold shrines";
 
-	public const string FreeGoldShrinesDescription = "Gold prices set to 0 in the arena: free Maw of Doom, Ascension and Luck prays, clients included. Maw keeps its 8% risk. Altar of Cleansing still costs gold.";
+	public const string FreeGoldShrinesDescription =
+		"Gold prices set to 0 in the arena: free Maw of Doom, Ascension and Luck prays, clients included. Maw " +
+		"keeps its 8% risk. Altar of Cleansing still costs gold.";
 
 	public const string CheatCommandsLabel = "Allow cheat commands";
 
@@ -276,7 +292,10 @@ internal static class ConfigText
 
 	public const string CurseToStartLabel = "Curse to start each wave";
 
-	public const string CurseToStartDescription = "Difficulty: no wave timer. A wave starts only after a player picks a curse (Mild or stronger) at the Hatred Remnant, which curses every other player too, each with a different curse. Turns the Hatred Remnant on.";
+	public const string CurseToStartDescription =
+		"Difficulty: no wave timer. A wave starts only after a player picks a curse (Mild or stronger) at the " +
+		"Hatred Remnant, which curses every other player too, each with a different curse. Turns the Hatred " +
+		"Remnant on.";
 
 	public const string CurseStartDelayLabel = "Curse to start: delay (s)";
 
@@ -350,11 +369,13 @@ internal static class ConfigText
 
 	public const string FastClearKillPercentLabel = "Fast clear: kills (%)";
 
-	public const string FastClearKillPercentDescription = "Kill this share of a wave's monsters within the time below and every later wave is tougher. 0 = off.";
+	public const string FastClearKillPercentDescription =
+		"Kill this share of a wave's monsters within the time below and every later wave is tougher. 0 = off.";
 
 	public const string FastClearFromWaveLabel = "Fast clear: from wave";
 
-	public const string FastClearFromWaveDescription = "First wave that can count as a fast clear. Earlier waves never raise stats.";
+	public const string FastClearFromWaveDescription =
+		"First wave that can count as a fast clear. Earlier waves never raise stats.";
 
 	public const string FastClearSecondsLabel = "Fast clear: within (s)";
 
@@ -362,15 +383,20 @@ internal static class ConfigText
 
 	public const string FastClearStatMultiplierLabel = "Fast clear: stats from next wave (x)";
 
-	public const string FastClearStatMultiplierDescription = "Health and damage multiplier from the next wave on, stacking with each fast clear, on top of wave scaling. 1 = off.";
+	public const string FastClearStatMultiplierDescription =
+		"Health and damage multiplier from the next wave on, stacking with each fast clear, on top of wave " +
+		"scaling. 1 = off.";
 
 	public const string FastClearHeroicBossesLabel = "Fast clear: heroic bosses too";
 
-	public const string FastClearHeroicBossesDescription = "Heroic bosses also get tougher from fast clears, by the share below.";
+	public const string FastClearHeroicBossesDescription =
+		"Heroic bosses also get tougher from fast clears, by the share below.";
 
 	public const string FastClearHeroicBossPercentLabel = "Fast clear: heroic boss share (%)";
 
-	public const string FastClearHeroicBossPercentDescription = "Each fast clear counts this much for heroic bosses. At 50% with x2, 10 fast clears give x32 instead of x1024.";
+	public const string FastClearHeroicBossPercentDescription =
+		"Each fast clear counts this much for heroic bosses. At 50% with x2, 10 fast clears give x32 instead " +
+		"of x1024.";
 
 	public const string LateHealthPerWaveLabel = "Late health per wave (%)";
 
@@ -388,7 +414,9 @@ internal static class ConfigText
 
 	public const string StartingWorldLabel = "Starting world";
 
-	public const string StartingWorldDescription = "Which world the run plays as. Higher = tougher monsters, better loot, more gold and XP, pricier shrines.";
+	public const string StartingWorldDescription =
+		"Which world the run plays as. Higher = tougher monsters, better loot, more gold and XP, pricier " +
+		"shrines.";
 
 	public const string WavesPerAmbientLevelLabel = "Waves per monster level";
 

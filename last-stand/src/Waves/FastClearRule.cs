@@ -1,11 +1,11 @@
-using LastStand.Config;
 using System;
+using LastStand.Config;
 
 namespace LastStand.Waves;
 
 internal readonly struct FastClearRule
 {
-	public const double NoChange = 1.0;
+	public const double NoChange = 1;
 
 	public double KillShare { get; }
 

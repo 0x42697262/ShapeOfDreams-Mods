@@ -1,10 +1,10 @@
+using System;
 using LastStand.Arena;
 using LastStand.Combat;
 using LastStand.Config;
 using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
-using System;
 using UnityEngine;
 
 namespace LastStand.Waves;
@@ -125,36 +125,52 @@ internal sealed class WaveDirector
 	{
 		_now = now;
 		_settings = settings;
-		if (_cycle != null && (_catalog.IsReady || TryBuildCatalog(settings)) && (_spawnPoints.IsReady || _spawnPoints.TryPrepare()))
+		if (_cycle == null)
 		{
-			if (_cycle.InProgress && _plan == null)
-			{
-				ResumePlan(settings, now);
-			}
-			if (_cycle.TryStartWave(now))
-			{
-				StartWave(settings, now);
-			}
-			if (_skipsLeft > 0 && _cycle.InProgress)
-			{
-				_fastClear.Cancel();
-				_queue.Clear();
-				int removed = _enemies.RemoveAll();
-				Log.Info(LogText.WaveSkipped(_cycle.CurrentWave, removed));
-			}
-			ReleaseSpawns(now, settings);
-			_friendlyFire.Tick(now);
-			bool fieldClear = _queue.PendingCount == 0 && _enemies.Occupied(now) == 0;
-			double num = WaveSchedule.BreakAfter(_plan, settings);
-			if (_cycle.TryFinishWave(now, fieldClear, num))
-			{
-				FinishWave(num, settings.CurseToStart);
-				ContinueSkipping(now);
-			}
-			else if (!_cycle.InProgress)
-			{
-				ContinueSkipping(now);
-			}
+			return;
+		}
+
+		if (!_catalog.IsReady && !TryBuildCatalog(settings))
+		{
+			return;
+		}
+
+		if (!_spawnPoints.IsReady && !_spawnPoints.TryPrepare())
+		{
+			return;
+		}
+
+		if (_cycle.InProgress && _plan == null)
+		{
+			ResumePlan(settings, now);
+		}
+
+		if (_cycle.TryStartWave(now))
+		{
+			StartWave(settings, now);
+		}
+
+		if (_skipsLeft > 0 && _cycle.InProgress)
+		{
+			_fastClear.Cancel();
+			_queue.Clear();
+			int removed = _enemies.RemoveAll();
+			Log.Info(LogText.WaveSkipped(_cycle.CurrentWave, removed));
+		}
+
+		ReleaseSpawns(now, settings);
+		_friendlyFire.Tick(now);
+
+		bool fieldClear = _queue.PendingCount == 0 && _enemies.Occupied(now) == 0;
+		double breakSeconds = WaveSchedule.BreakAfter(_plan, settings);
+		if (_cycle.TryFinishWave(now, fieldClear, breakSeconds))
+		{
+			FinishWave(breakSeconds, settings.CurseToStart);
+			ContinueSkipping(now);
+		}
+		else if (!_cycle.InProgress)
+		{
+			ContinueSkipping(now);
 		}
 	}
 
@@ -206,11 +222,12 @@ internal sealed class WaveDirector
 		ApplyPlan(settings);
 		_queue.Enqueue(_plan);
 		_fastClear.Start(_plan.Number, _plan.TotalMonsters, now, settings.FastClear);
+
 		Log.Info(LogText.WaveStarted(_plan));
 		ChatNotices.Broadcast(Messages.WaveStarted(_plan));
 		BeginEnvironment(settings);
 		BeginFriendlyFire(settings, now);
-		this.WaveStarted?.Invoke(_plan);
+		WaveStarted?.Invoke(_plan);
 	}
 
 	private void ResumePlan(WaveSettings settings, double now)
@@ -292,9 +309,12 @@ internal sealed class WaveDirector
 
 	private void ApplyPlan(WaveSettings settings)
 	{
-		_plan = WaveSchedule.Plan(content: new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount, _catalog.HeroicBossCount), wave: _cycle.CurrentWave, players: PlayerRoster.PlayerCount(), settings: settings);
+		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
+			_catalog.HeroicBossCount);
+		_plan = WaveSchedule.Plan(_cycle.CurrentWave, PlayerRoster.PlayerCount(), settings, content);
 		_plan.FastClearMultiplier = settings.FastClear.MultiplierFor(_fastClear.Stacks);
 		_plan.HeroicFastClearMultiplier = settings.FastClear.HeroicBossMultiplierFor(_fastClear.Stacks);
+
 		MonsterStrength.SetAmbientLevel(_plan.AmbientLevel);
 		if (_plan.IsHunted)
 		{
@@ -304,14 +324,17 @@ internal sealed class WaveDirector
 
 	private void OnEnemyDied(EnemyDeath death)
 	{
-		if (_plan != null && _settings != null && _fastClear.OnKill(_now))
+		if (_plan == null || _settings == null || !_fastClear.OnKill(_now))
 		{
-			FastClearRule fastClear = _settings.FastClear;
-			double multiplier = fastClear.MultiplierFor(_fastClear.Stacks);
-			Log.Info(LogText.FastClearTriggered(_plan.Number, _fastClear.Kills, _plan.TotalMonsters, fastClear.WindowSeconds, multiplier, fastClear.HeroicBossMultiplierFor(_fastClear.Stacks)));
-			ChatNotices.Broadcast(Messages.FastClear(fastClear.WindowSeconds, _plan.Number + 1, multiplier));
-			this.FastCleared?.Invoke();
+			return;
 		}
+
+		FastClearRule rule = _settings.FastClear;
+		double multiplier = rule.MultiplierFor(_fastClear.Stacks);
+		Log.Info(LogText.FastClearTriggered(_plan.Number, _fastClear.Kills, _plan.TotalMonsters, rule.WindowSeconds,
+			multiplier, rule.HeroicBossMultiplierFor(_fastClear.Stacks)));
+		ChatNotices.Broadcast(Messages.FastClear(rule.WindowSeconds, _plan.Number + 1, multiplier));
+		FastCleared?.Invoke();
 	}
 
 	private void FinishWave(double breakSeconds, bool curseToStart)
@@ -319,6 +342,7 @@ internal sealed class WaveDirector
 		_huntedZone.End();
 		EndEnvironment();
 		EndFriendlyFire();
+
 		Log.Info(LogText.WaveCleared(_cycle.CurrentWave));
 		if (curseToStart)
 		{
@@ -328,7 +352,8 @@ internal sealed class WaveDirector
 		{
 			ChatNotices.Broadcast(Messages.WaveCleared(_cycle.CurrentWave, (int)Math.Ceiling(breakSeconds)));
 		}
-		this.WaveCleared?.Invoke(_cycle.CurrentWave);
+
+		WaveCleared?.Invoke(_cycle.CurrentWave);
 	}
 
 	private void ReleaseSpawns(double now, WaveSettings settings)
@@ -381,26 +406,31 @@ internal sealed class WaveDirector
 		{
 			return;
 		}
-		double multiplier = ((tier == EnemyTier.HeroicBoss) ? plan.HeroicFastClearMultiplier : plan.FastClearMultiplier);
-		MonsterEnhancer.ApplyWaveScaling(entity, FastClearRule.Raise(plan.HealthBonusPercent, multiplier), FastClearRule.Raise(plan.DamageBonusPercent, multiplier));
+
+		double multiplier = tier == EnemyTier.HeroicBoss ? plan.HeroicFastClearMultiplier : plan.FastClearMultiplier;
+		MonsterEnhancer.ApplyWaveScaling(entity, FastClearRule.Raise(plan.HealthBonusPercent, multiplier),
+			FastClearRule.Raise(plan.DamageBonusPercent, multiplier));
+
 		if (tier == EnemyTier.Hunter)
 		{
 			MonsterEnhancer.MakeHunter(entity);
 		}
+
 		if (tier == EnemyTier.HeroicBoss)
 		{
 			double haste = plan.HeroicBossHaste;
 			double health = settings.HeroicBossHealthMultiplier;
 			double damage = settings.HeroicBossDamageMultiplier;
 			int wave = plan.Number;
-			Dew.CallDelayed(delegate
+			Dew.CallDelayed(() =>
 			{
 				MonsterEnhancer.Multiply(entity, health, damage);
 				MonsterEnhancer.AddAbilityHaste(entity, haste);
 				HeroicBossReport.Watch(entity, wave);
 			});
 		}
-		if (tier.IsMob() && (double)UnityEngine.Random.value < plan.MirageChance)
+
+		if (tier.IsMob() && UnityEngine.Random.value < plan.MirageChance)
 		{
 			MonsterEnhancer.ApplyMirage(entity, _catalog.RandomMirageSkin(plan.MirageSkinsUnlocked));
 		}

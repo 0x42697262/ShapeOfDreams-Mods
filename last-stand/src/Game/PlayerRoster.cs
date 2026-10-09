@@ -28,12 +28,8 @@ internal static class PlayerRoster
 
 	public static int GoldSharers()
 	{
-		int num = ((DewPlayer.gamePlayers != null) ? DewPlayer.gamePlayers.Count : 0);
-		if (num >= 1)
-		{
-			return num;
-		}
-		return 1;
+		int players = DewPlayer.gamePlayers != null ? DewPlayer.gamePlayers.Count : 0;
+		return players < AtLeastOnePlayer ? AtLeastOnePlayer : players;
 	}
 
 	public static int GiveGold(int amount)
