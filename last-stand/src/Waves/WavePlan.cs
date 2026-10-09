@@ -16,6 +16,10 @@ internal sealed class WavePlan
 
 	public double MergeMultiplier { get; set; } = MergeRule.NoChange;
 
+	public double MiniBossHealthMultiple { get; set; }
+
+	public double HeroicBossHealthMultiple { get; set; }
+
 	public int MiniBossCount { get; set; }
 
 	public int PainCount { get; set; }
@@ -53,6 +57,8 @@ internal sealed class WavePlan
 	public double FriendlyFireChance { get; set; }
 
 	public bool IsHunted => HuntLevel > 0;
+
+	public bool HasBossHealthFloor => MiniBossHealthMultiple > 0 || HeroicBossHealthMultiple > 0;
 
 	public bool IsMerged => MergeMultiplier != MergeRule.NoChange;
 

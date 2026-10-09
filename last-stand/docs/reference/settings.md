@@ -77,6 +77,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Extra player share | 0.5 |
 | | Surge every N waves / monster multiplier | 5 / 2 |
 | | Merged wave size (merging starts where one player's count reaches it) / merged surges: extra minibosses / extra Pain minibosses | 100 (wave 48) / 2 / 2 |
+| | Merged waves: miniboss health / heroic boss health (× the toughest monster, at least) | 5 / 20 |
 | | Max monsters alive / per extra player | 35 / 0 |
 | | Min spawn distance from heroes | 8 m |
 | | Spawn interval / spawns per batch | 0.5 s / 6 |

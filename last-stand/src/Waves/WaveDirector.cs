@@ -25,6 +25,8 @@ internal sealed class WaveDirector
 
 	private readonly FastClearWatch _fastClear = new FastClearWatch();
 
+	private readonly BossHealthFloor _bossHealth = new BossHealthFloor();
+
 	private readonly ErrorThrottle _spawnErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
 
 	private readonly MonsterSpawner _spawner;
@@ -161,6 +163,11 @@ internal sealed class WaveDirector
 		}
 
 		ReleaseSpawns(now, settings);
+		if (_cycle.InProgress)
+		{
+			_bossHealth.Tick(now, _plan, _enemies);
+		}
+
 		_friendlyFire.Tick(now);
 
 		bool fieldClear = _queue.PendingCount == 0 && _enemies.Occupied(now) == 0;
@@ -201,6 +208,7 @@ internal sealed class WaveDirector
 		_plan = null;
 		_skipsLeft = 0;
 		_fastClear.Reset(0);
+		_bossHealth.StartWave();
 		_queue.Clear();
 		_spawner.Reset();
 		_catalog.Clear();
@@ -228,6 +236,7 @@ internal sealed class WaveDirector
 	{
 		ApplyPlan(settings);
 		_queue.Enqueue(_plan);
+		_bossHealth.StartWave();
 		_fastClear.Start(_plan.Number, _plan.TotalMonsters, settings.FastClear);
 
 		Log.Info(LogText.WaveStarted(_plan));
@@ -423,7 +432,10 @@ internal sealed class WaveDirector
 		}
 
 		double multiplier = tier == EnemyTier.HeroicBoss ? plan.HeroicFastClearMultiplier : plan.FastClearMultiplier;
-		multiplier *= plan.MergeMultiplier;
+		if (tier.IsMob())
+		{
+			multiplier *= plan.MergeMultiplier;
+		}
 
 		MonsterEnhancer.ApplyWaveScaling(entity, FastClearRule.Raise(plan.HealthBonusPercent, multiplier),
 			FastClearRule.Raise(plan.DamageBonusPercent, multiplier));

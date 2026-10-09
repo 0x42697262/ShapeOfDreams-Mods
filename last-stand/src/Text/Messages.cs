@@ -90,7 +90,7 @@ internal static class Messages
 
 		if (plan.IsMerged)
 		{
-			text += $" They fight with the strength of {plan.UnmergedMobCount}: x{plan.MergeMultiplier:0.##} health and damage for every monster.";
+			text += $" They fight with the strength of {plan.UnmergedMobCount}: x{plan.MergeMultiplier:0.##} health and damage each.";
 		}
 
 		if (plan.NewForeignTypes)

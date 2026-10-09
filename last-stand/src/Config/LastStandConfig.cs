@@ -173,6 +173,14 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.MergedSurgePainDescription)]
 	public int mergedSurgePain = 2;
 
+	[LabelText(ConfigText.MergedMiniBossHealthLabel)]
+	[Description(ConfigText.MergedMiniBossHealthDescription)]
+	public float mergedMiniBossHealthMultiple = 5f;
+
+	[LabelText(ConfigText.MergedHeroicBossHealthLabel)]
+	[Description(ConfigText.MergedHeroicBossHealthDescription)]
+	public float mergedHeroicBossHealthMultiple = 20f;
+
 	[Header(ConfigText.SpawningHeader)]
 	[LabelText(ConfigText.MaxAliveBaseLabel)]
 	[Description(ConfigText.MaxAliveBaseDescription)]

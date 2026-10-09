@@ -994,9 +994,12 @@ Each answer still needs to be seen working:
     `merged=266/x2.66` with `hunter=100 regular=0`, chat says `They fight
     with the strength of 266: x2.66 health and damage for every monster.`,
     and only 100 monsters spawn, each taking about 2.66× the hits, with
-    2.66× bigger bonus gold and dream dust orbs. Minibosses and heroic
-    bosses there have about 2.66× their unmerged health (the `heroic boss:`
-    maxHealth line at a merged boss wave). Set `Monsters in wave 1` to 20:
+    2.66× bigger bonus gold and dream dust orbs. On a merged wave with
+    minibosses (`laststand_wave 140`) the log shows `boss health: wave 140
+    … (5x the toughest monster's …)` for any miniboss below 5×, within a
+    second of the first monsters, and each miniboss's bar shows the new
+    maximum. At `laststand_wave 149` a heroic boss below 20× logs the
+    same with `20x`. Set `Monsters in wave 1` to 20:
     the merge line says wave 41. `Merged wave size` 0: nothing merges.
 85. **Alive cap 35** (schema 42): on a big wave (`laststand_wave 101`)
     never more than 35 monsters are alive at once (`cap=35` in the `wave

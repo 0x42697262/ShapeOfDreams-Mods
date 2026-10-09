@@ -46,6 +46,8 @@ internal static class WaveSchedule
 			HunterCount = hunters,
 			UnmergedMobCount = monsters,
 			MergeMultiplier = merge.StrengthFor(wave, monsters),
+			MiniBossHealthMultiple = merge.MiniBossHealthMultipleFor(wave),
+			HeroicBossHealthMultiple = merge.HeroicBossHealthMultipleFor(wave),
 			MiniBossCount = Scaled(wave, settings.MiniBosses, settings.MiniBossOccurrencesPerExtra,
 				settings.MaxMiniBosses) + merge.ExtraMiniBosses(wave, surge),
 			PainCount = pain,

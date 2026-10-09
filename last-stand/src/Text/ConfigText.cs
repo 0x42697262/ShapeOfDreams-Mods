@@ -328,8 +328,7 @@ internal static class ConfigText
 	public const string MergedWaveSizeDescription =
 		"From the wave where wave 1's monsters plus the growth reach this (wave 48 by default), every wave " +
 		"spawns at most this many monsters and hunters, whatever the player count, and they carry the rest's " +
-		"strength: every monster's health and damage, and mob bonus gold and dream dust, x count / size. " +
-		"0 = off.";
+		"strength: health, damage, bonus gold and dream dust x count / size. 0 = off.";
 
 	public const string MergedSurgeMiniBossesLabel = "Merged surges: extra minibosses";
 
@@ -340,6 +339,18 @@ internal static class ConfigText
 
 	public const string MergedSurgePainDescription =
 		"Pain minibosses added to every surge wave once waves merge, on top of any scheduled ones.";
+
+	public const string MergedMiniBossHealthLabel = "Merged waves: miniboss health (x toughest monster)";
+
+	public const string MergedMiniBossHealthDescription =
+		"Once waves merge, minibosses and Pain minibosses have at least this many times the max health of the " +
+		"toughest monster in the wave. 0 = off.";
+
+	public const string MergedHeroicBossHealthLabel = "Merged waves: heroic boss health (x toughest monster)";
+
+	public const string MergedHeroicBossHealthDescription =
+		"Once waves merge, heroic bosses have at least this many times the max health of the toughest monster " +
+		"in the wave. 0 = off.";
 
 	public const string ExtraPlayerShareLabel = "Extra player share";
 

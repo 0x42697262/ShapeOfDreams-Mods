@@ -10,8 +10,9 @@ the run.
 Turbulence). The game adds its own world bonus to every monster in
 `DewDifficultySettings.ApplyDifficultyModifiers`, with a curve per kind
 (regular, miniboss, boss); Last Stand doesn't touch it. The only multiplier
-Last Stand adds is the per-wave bonus, and stat bonuses add up, so a monster
-at world `N`, wave `W` has the game's world `N` bonus plus the wave bonus.
+Last Stand adds is the per-wave bonus, and percentage stat bonuses multiply
+(`BonusStats` `+` uses `DewMath.MultiplyPercentageBonuses`), so a monster at
+world `N`, wave `W` has the game's world `N` bonus times the wave bonus.
 
 Raising the world makes monsters stronger by the game's curves (at
 difficulty factor 1):

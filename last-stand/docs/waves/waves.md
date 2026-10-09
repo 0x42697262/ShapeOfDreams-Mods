@@ -62,11 +62,23 @@ works through these knobs, all using systems the game already syncs:
   dust per kill of these monsters are multiplied the same way
   (`LootService`), so a merged wave pays what the full count would have;
   vanilla kill gold isn't. Minibosses, Pain minibosses and heroic bosses
-  aren't merged, but they get the same strength multiplier, so they keep
-  the health ratio to regular monsters they had before merging (a merged
-  wave of ×4 regular monsters with ×1 bosses would leave bosses weaker
-  than the mobs around them). Their rewards don't change. A surge still
-  doubles the count, so it
+  aren't merged and don't get the merge multiplier. Instead, once waves
+  merge, they have a health floor: at least 5× the max health of the
+  toughest regular monster or hunter in the wave for minibosses and Pain
+  minibosses (`Merged waves: miniboss health`), and 20× for heroic bosses
+  (`Merged waves: heroic boss health`). Without it, ×8 monsters would
+  leave the bosses weaker than the mobs around them. `BossHealthFloor`
+  checks every 0.5 s during the wave: it remembers the highest max health
+  any of the wave's monsters had, and raises any boss below its floor with
+  one extra `maxHealthPercentage` bonus of `(floor / current − 1) × 100%`.
+  The game multiplies percentage bonuses together (`BonusStats` `+` uses
+  `DewMath.MultiplyPercentageBonuses`), so that bonus is exactly ×(floor /
+  current), and `AddStatBonus` keeps the health ratio. A tougher monster later in
+  the wave raises the floor again. Bosses spawn before most of the wave,
+  so the first raise comes within a second of the first monsters. The log
+  shows `boss health: wave N <type> maxHealth A -> B (5x the toughest
+  monster's C)`. A boss already above its floor is left alone. Their
+  rewards don't change. A surge still doubles the count, so it
   doubles the merged strength, and it also brings 2 extra minibosses
   (`Merged surges: extra minibosses`) and 2 extra Pain minibosses (`Merged
   surges: extra Pain minibosses`), added after the usual caps. The Pain
@@ -105,11 +117,13 @@ works through these knobs, all using systems the game already syncs:
   shows `fastClear=xM`. A watched wave that misses logs how close it came
   when it's cleared: `fast clear: wave N had K of D death(s) within 0.5 s
   of the first hit; X needed`.
-  The game adds stat bonuses together, so a plain +100% on top of the
-  wave's +500% would only be ×1.17. Instead each monster's wave bonus is
-  raised to `(100 + bonus) × M − 100`: with one fast clear, wave 21's +200%
-  (3× base) becomes +500% (6× base), exactly double (`FastClearRule.Raise`,
-  applied per monster in `WaveDirector.Enhance`). Each of Last Stand's own
+  Each monster's wave bonus is raised to `(100 + bonus) × M − 100`: with
+  one fast clear, wave 21's +200% (3× base) becomes +500% (6× base),
+  exactly double (`FastClearRule.Raise`, applied per monster in
+  `WaveDirector.Enhance`). The game multiplies percentage stat bonuses
+  together (`BonusStats` `+` uses `DewMath.MultiplyPercentageBonuses`), so
+  a separate +100% bonus would also be ×2; raising the wave bonus does the
+  same in one bonus. Each of Last Stand's own
   spawns records the time of its first `Entity.EntityEvent_OnTakeDamage`
   (fired on the server, before the lethal hit's `Kill`), and
   `EnemyRegistry.Died` reports the time from it to the death.

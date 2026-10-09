@@ -1236,11 +1236,12 @@ makes monsters live longer, until waves stop counting. And when a watched
 wave misses, the log says by how much (`K of D death(s) within 0.5 s of
 the first hit; X needed`), so the threshold can be tuned from data.
 
-### C3. The stat math has to match how the game adds bonuses
+### C3. The stat math has to match how the game combines bonuses
 
-The obvious implementation, `AddStatBonus(new StatBonus { maxHealthPercentage = 100 })`
-for ×2, is wrong. `EntityStatus.CalculateStats` **sums** every granted
-bonus, then multiplies once:
+Before writing `AddStatBonus(new StatBonus { maxHealthPercentage = 100 })`
+for ×2, check how the game combines it with the bonuses the monster already
+has. `EntityStatus.CalculateStats` folds every granted bonus with `+`, then
+multiplies once:
 
 ```csharp
 BonusStats @default = BonusStats.Default;
@@ -1255,9 +1256,24 @@ NetworkbonusStats = @default;
 data.maxHealth *= 1f + bonusStats.maxHealthPercentage / 100f;
 ```
 
-So +100% on top of a wave's +500% gives (1 + 6) / (1 + 5) ≈ ×1.17, not
-×2. The fix is to raise the wave bonus itself so the total comes out
-right:
+That `+` looks like a sum, and it's easy to stop reading there and conclude
+that +100% on top of a wave's +500% gives (1 + 6) / (1 + 5) ≈ ×1.17. Last
+Stand's docs said exactly that for a while. But `@default` is a
+`BonusStats`, and `BonusStats` overloads `operator +`:
+
+```csharp
+result.maxHealthFlat = x.maxHealthFlat + y.maxHealthFlat;
+result.maxHealthPercentage = DewMath.MultiplyPercentageBonuses(x.maxHealthPercentage, y.maxHealthPercentage);
+...
+public static float MultiplyPercentageBonuses(float a, float b)
+{
+	return ((1f + a * 0.01f) * (1f + b * 0.01f) - 1f) * 100f;
+}
+```
+
+Flat values add; percentages compound. A separate +100% bonus is exactly
+×2 on top of everything else. Last Stand raises the wave bonus itself
+instead, which gives the same total in one bonus:
 
 ```csharp
 public static double Raise(double bonusPercent, double multiplier)
@@ -1267,9 +1283,11 @@ public static double Raise(double bonusPercent, double multiplier)
 ```
 
 Wave 21's +200% (3× base) with one stack becomes +500% (6× base), exactly
-double. The method that found this: read `CalculateStats` before
-assuming bonuses multiply (step 2: read every input, here the other
-bonuses on the same entity).
+double. The method: when a game type is combined with `+`, `*` or `==`,
+open the type and look for an operator overload before you assume the
+arithmetic (step 2: read every input, here the operator itself). The same
+mistake once made a health floor overshoot by the boss's whole existing
+bonus, because its formula divided out a sum that was really a product.
 
 ### C4. Survive and measure
 
@@ -1290,7 +1308,7 @@ is explained, and the trap that usually bites first.
 
 | You want to add… | Search first | Technique chapter | Usual trap |
 |---|---|---|---|
-| Monster behavior or strength | `Monster`, `EntityAI`, `RoomMonsters`, `StatBonus` | 06 | stat bonuses add, not multiply |
+| Monster behavior or strength | `Monster`, `EntityAI`, `RoomMonsters`, `StatBonus` | 06 | percentage bonuses compound through an overloaded `+` |
 | A reward or drop | `PickupManager`, `LootManager`, `Dew.Create*` | 06 | server-only APIs; forbidden stardust |
 | A shrine or interactable | `Shrine_*`, `RoomMod_Spawn*`, `EditSkillShrine` | 04, 05, 06 | per-player limit isn't synced |
 | HUD information | `DewQuest`, `UI_InGame_*` | 04, 08 | most UI is built locally by each client |
@@ -1310,7 +1328,7 @@ is explained, and the trap that usually bites first.
   subclasses.
 - **Read:** the monster type's `OnCreate` and `OnDeath` overrides; boss
   types spawn helpers with themselves as parent.
-- **Traps:** bonuses sum (example C). An `isBossSpawn` rule forces one
+- **Traps:** percentage bonuses compound through `BonusStats operator +` (example C). An `isBossSpawn` rule forces one
   spawn with no hunter buff. `SpawnMiniBoss` always calls `SelectMiniBoss`,
   which throws when the room's default pool has no miniboss type, even if
   you pass the entity. `BossMonster.OnDeath` pauses game time and runs the

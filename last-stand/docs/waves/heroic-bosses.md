@@ -41,6 +41,11 @@ multiplier`). The game multiplies stat bonuses together
 (`DewMath.MultiplyPercentageBonuses`), so a `+(M − 1) × 100%` bonus is
 exactly ×M whatever else the boss has.
 
+Once waves merge (wave 48 by default), a heroic boss also has a health
+floor of 20× the toughest monster in its wave (`Merged waves: heroic boss
+health`); below it, it gets one more bonus up to the floor. See
+[Waves](waves.md).
+
 Health is `base × world × difficulty × (1 + 0.85 × (players − 1)) × wave ×
 multiplier`. Base health (prefabs; bosses gain nothing per level): Belphomet
 8,000, Seeker 8,800, Skoll 9,200, Infernus 9,600, Nyx 10,400, Azurak

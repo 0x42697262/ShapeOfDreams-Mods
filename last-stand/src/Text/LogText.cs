@@ -404,6 +404,12 @@ internal static class LogText
 		       $"huntLevel={plan.HuntLevel} cap={plan.MaxAlive}.";
 	}
 
+	public static string BossHealthRaised(int wave, string type, double before, double after, double multiple,
+		double toughestMob)
+	{
+		return $"boss health: wave {wave} {type} maxHealth {before:0} -> {after:0} ({multiple:0.##}x the toughest monster's {toughestMob:0}).";
+	}
+
 	public static string MergeStarts(int wave, int cap)
 	{
 		return $"merge: from wave {wave}, waves hold at {cap} monsters and hunters and carry the rest's strength.";

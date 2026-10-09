@@ -1,4 +1,5 @@
 using System;
+using LastStand.Config;
 
 namespace LastStand.Waves;
 
@@ -18,10 +19,17 @@ internal readonly struct MergeRule
 
 	public int SurgePain { get; }
 
+	public double MiniBossHealthMultiple { get; }
+
+	public double HeroicBossHealthMultiple { get; }
+
 	public bool IsOn => FromWave != Never && Cap > 0;
 
-	public MergeRule(int regularBase, int growthPerWave, int cap, int surgeMiniBosses, int surgePain)
+	public MergeRule(int regularBase, int growthPerWave, int cap, int surgeMiniBosses, int surgePain,
+		double miniBossHealthMultiple, double heroicBossHealthMultiple)
 	{
+		MiniBossHealthMultiple = miniBossHealthMultiple;
+		HeroicBossHealthMultiple = heroicBossHealthMultiple;
 		Cap = cap;
 		FromWave = StartWave(regularBase, growthPerWave, cap);
 		SurgeMiniBosses = surgeMiniBosses;
@@ -61,6 +69,26 @@ internal readonly struct MergeRule
 	public double StrengthFor(int wave, int monsters)
 	{
 		return Covers(wave) && monsters > Cap ? (double)monsters / Cap : NoChange;
+	}
+
+	public double MiniBossHealthMultipleFor(int wave)
+	{
+		return Covers(wave) ? MiniBossHealthMultiple : 0;
+	}
+
+	public double HeroicBossHealthMultipleFor(int wave)
+	{
+		return Covers(wave) ? HeroicBossHealthMultiple : 0;
+	}
+
+	public static double ExtraPercentToReach(double health, double target)
+	{
+		if (health <= 0 || health >= target)
+		{
+			return 0;
+		}
+
+		return (target / health - 1) * Tuning.PercentScale;
 	}
 
 	public int ExtraMiniBosses(int wave, bool surge)
