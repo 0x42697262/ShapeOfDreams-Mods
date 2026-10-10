@@ -15,6 +15,11 @@ internal static class EdgePlacement
 
 	public static Vector3[] PickRing(ArenaPoints arena, int count)
 	{
+		if (ArmTipPlacement.TryPick(count, out Vector3[] tips))
+		{
+			return tips;
+		}
+
 		Vector3[] spots = new Vector3[count];
 		if (count <= 0)
 		{

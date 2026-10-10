@@ -37,6 +37,19 @@ own direction, so in a long or uneven room the shape stretches with the room.
   it isn't.
 - Log: `edge ring: 7 shrine(s), median reach X m, capped at Y m; N
   direction(s) end at unplayable ground (lava).`
+- **Lava Land: arm edges.** The Lava Land boss room is a platform with
+  eight arms in a lava sea. There the ring isn't measured: when the room
+  has `LavaLand_InfernusPillarPosition` (its eight arm-tip points, the
+  same ones monsters spawn at, see `docs/start/arena.md`) and at least as
+  many points as shrines, `ArmTipPlacement` puts one shrine per arm.
+  The arms are sorted by angle around the component's center, and shrine
+  i takes arm `i × arms / shrines` (seven shrines leave one arm free, two
+  face each other). From the arm's point it walks outward in 0.5 m steps,
+  up to 10 m, while there is navmesh and the ground is playable (not
+  lava), and the shrine stands 1.5 m short of that edge, pulled back toward
+  the point if that spot is lava. Log: `edge ring: 7 shrine(s) on the
+  edges of 8 arm(s) from LavaLand_InfernusPillarPosition, on average X m
+  past the spawn points.`
 - **Why not one ring:** the first version used one radius for all, the
   shortest reach of the set, and traced only to the first navmesh boundary.
   In the Snow Mountain boss room one short direction (or a rock) kept every

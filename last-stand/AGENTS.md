@@ -1040,12 +1040,13 @@ Each answer still needs to be seen working:
     + 7; 18 on Normal), chat says so, and the host and a vanilla client
     each gain that much stardust (title screen total). With `Heroic boss
     stardust` off: `0 stardust` and no orbs.
-87. **Shrines out of the lava:** with `Arena room` set to Lava Land, the
-    `edge ring:` line shows a median reach well under the old 58.8 m and
-    a nonzero `direction(s) end at unplayable ground (lava)`. All seven
-    shrines stand on the platform near its rim, none in the lava, and
-    using them deals no lava damage. Other rooms log `0 direction(s)` and
-    keep their places. The log shows `spawns: 8 fixed spawn point(s) from
+87. **Lava Land arms:** with `Arena room` set to Lava Land, a new run
+    logs `edge ring: 7 shrine(s) on the edges of 8 arm(s) ...` with a
+    positive `m past the spawn points`. Each shrine stands near the outer
+    end of its own arm, one arm stays free, none is in the lava, and
+    using them deals no lava damage. Other rooms log the usual `edge
+    ring: ... median reach` line with `0 direction(s)` and keep their
+    places. The log shows `spawns: 8 fixed spawn point(s) from
     LavaLand_InfernusPillarPosition`, and every monster, miniboss and
     heroic boss appears near the tip of one of the eight arms (never in
     the lava, never within 8 m of a hero while another arm is free).

@@ -477,6 +477,12 @@ internal static class LogText
 		return $"spawns: {anchors} fixed spawn point(s) from {source}; monsters spawn only there.";
 	}
 
+	public static string ArmTipRing(int shrines, int arms, string source, float pastTips)
+	{
+		return $"edge ring: {shrines} shrine(s) on the edges of {arms} arm(s) from {source}, " +
+		       $"on average {pastTips:0.0} m past the spawn points.";
+	}
+
 	public static string EdgeRing(int shrines, float medianReach, float cap, int unplayableDirections)
 	{
 		return $"edge ring: {shrines} shrine(s), median reach {medianReach:0.0} m, capped at {cap:0.0} m; " +
