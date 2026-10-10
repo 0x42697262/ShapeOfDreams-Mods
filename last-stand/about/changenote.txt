@@ -1,4 +1,4 @@
-[b]New: boss music in the arena[/b]
-The arena now plays its boss room's own boss music instead of the zone's music, for every player, including players without the mod and anyone who joins mid-run. It can be turned off in the settings (Boss music).
+[b]Fix: Lava Land arena[/b]
+The shrines now stand at the outer ends of the eight arms, one per arm, and monsters spawn near the arm tips. Nothing stands or spawns in the lava anymore.
 
 Only the host needs this update.
