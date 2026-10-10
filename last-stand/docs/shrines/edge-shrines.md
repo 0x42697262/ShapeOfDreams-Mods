@@ -18,14 +18,25 @@ own direction, so in a long or uneven room the shape stretches with the room.
   doesn't count). Pillars and rocks in the way don't cut the reach short.
   Only the 6 farthest points are path-checked; if none passes, the old
   first-boundary trace (`NavMesh.Raycast`) is used.
+- **Lava ends the reach:** the march stops at the first floor point that
+  `Dew.IsNotPlayableOnTop` reports (the ground under it is an
+  `INotPlayableOnTop` collider, such as `LavaLand_Lava`, the lava sea in
+  the Lava Land boss room). The navmesh there runs on over the lava, so
+  without this the reach went out about 59 m and shrines stood in the lava,
+  far from the fight. When the march hits lava, the reach is the farthest
+  walkable point before it (or 0), never the old trace, which doesn't see
+  lava.
 - **Cap:** a reach is capped at 1.3× the median reach of all 72, so a
   corridor or the entry path doesn't pull a shrine far away.
 - **Directions:** every start of the 72 is tried, one direction every
   360° / n, and the start with the largest total capped reach wins.
 - **Spot:** each shrine stands at its direction's capped reach minus 1.5 m
   (never under 6 m), snapped with `Dew.GetValidAgentDestination_LinearSweep`
-  from the center, so it's on the navmesh and reachable on foot.
-- Log: `edge ring: 7 shrine(s), median reach X m, capped at Y m.`
+  from the center, so it's on the navmesh and reachable on foot. If that
+  spot is unplayable ground, it moves 1 m at a time toward the center until
+  it isn't.
+- Log: `edge ring: 7 shrine(s), median reach X m, capped at Y m; N
+  direction(s) end at unplayable ground (lava).`
 - **Why not one ring:** the first version used one radius for all, the
   shortest reach of the set, and traced only to the first navmesh boundary.
   In the Snow Mountain boss room one short direction (or a rock) kept every

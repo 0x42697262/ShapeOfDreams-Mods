@@ -453,6 +453,13 @@ These were checked in the decompiled code.
   `TryGetNodeIndexForNextGoal`. Map items are indexed by node index with null
   gaps (`InGameUIManager.fullWorldMapNodeItems`), so hiding middle nodes is
   safe.
+- **Lava.** `LavaLand_Lava` (Dew.Contents, an `Actor` in the Lava Land
+  boss room) is `INotPlayableOnTop` and `IBanRoomNodesOnTop`. Every
+  `tickInterval` the server damages entities whose ground raycast hits its
+  collider (3% max health, growing per tick). The navmesh runs over it.
+  `Dew.IsNotPlayableOnTop(pos)` (public, static) raycasts the ground at
+  `pos` and is true when the hit collider has an `INotPlayableOnTop`;
+  `Dew.GetGoodRewardPosition` uses it to keep drops off lava.
 - **Mod reloads.** With developer mode and `enableAutoReloadMods` (in
   `QuickSave/r_platform.json`), any file change under `Mods/` reloads the mod
   mid-run (`DewMod` watcher; it waits for the window to have focus). `DewMod`
@@ -1028,6 +1035,12 @@ Each answer still needs to be seen working:
     + 7; 18 on Normal), chat says so, and the host and a vanilla client
     each gain that much stardust (title screen total). With `Heroic boss
     stardust` off: `0 stardust` and no orbs.
+87. **Shrines out of the lava:** with `Arena room` set to Lava Land, the
+    `edge ring:` line shows a median reach well under the old 58.8 m and
+    a nonzero `direction(s) end at unplayable ground (lava)`. All seven
+    shrines stand on the platform near its rim, none in the lava, and
+    using them deals no lava damage. Other rooms log `0 direction(s)` and
+    keep their places.
 
 ## Conventions
 

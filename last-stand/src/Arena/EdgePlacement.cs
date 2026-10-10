@@ -22,9 +22,14 @@ internal static class EdgePlacement
 		}
 
 		float[] reaches = new float[Tuning.EdgeDirections];
+		int blocked = 0;
 		for (int d = 0; d < reaches.Length; d++)
 		{
-			reaches[d] = Reach(arena.Center, DirectionAt(d));
+			reaches[d] = Reach(arena.Center, DirectionAt(d), out bool unplayable);
+			if (unplayable)
+			{
+				blocked++;
+			}
 		}
 
 		float cap = Median(reaches) * Tuning.EdgeMaxShareOfMedian;
@@ -33,12 +38,25 @@ internal static class EdgePlacement
 		{
 			int d = ShrineDirection(start, i, count);
 			float radius = Mathf.Max(Mathf.Min(reaches[d], cap) - Tuning.EdgeInset, Tuning.EdgeFallbackRadius);
-			Vector3 wantedSpot = arena.Center + DirectionAt(d) * radius;
-			spots[i] = Dew.GetValidAgentDestination_LinearSweep(arena.Center, wantedSpot);
+			spots[i] = PlayableSpot(arena.Center, DirectionAt(d), radius);
 		}
 
-		Log.Info(LogText.EdgeRing(count, Median(reaches), cap));
+		Log.Info(LogText.EdgeRing(count, Median(reaches), cap, blocked));
 		return spots;
+	}
+
+	private static Vector3 PlayableSpot(Vector3 center, Vector3 direction, float radius)
+	{
+		for (float distance = radius; distance > 0f; distance -= Tuning.EdgeMarchStep)
+		{
+			Vector3 spot = Dew.GetValidAgentDestination_LinearSweep(center, center + direction * distance);
+			if (!Dew.IsNotPlayableOnTop(spot))
+			{
+				return spot;
+			}
+		}
+
+		return center;
 	}
 
 	private static int BestStart(float[] reaches, int count, float cap)
@@ -75,17 +93,26 @@ internal static class EdgePlacement
 		return sorted[sorted.Length / 2];
 	}
 
-	private static float Reach(Vector3 center, Vector3 direction)
+	private static float Reach(Vector3 center, Vector3 direction, out bool unplayable)
 	{
 		Floor.Clear();
+		unplayable = false;
 		for (float distance = Tuning.EdgeRayStartDistance; distance <= Tuning.EdgeSearchDistance;
 		     distance += Tuning.EdgeMarchStep)
 		{
-			if (NavMesh.SamplePosition(center + direction * distance, out NavMeshHit hit, Tuning.EdgeSampleRadius,
+			if (!NavMesh.SamplePosition(center + direction * distance, out NavMeshHit hit, Tuning.EdgeSampleRadius,
 				    NavMesh.AllAreas))
 			{
-				Floor.Add(hit.position);
+				continue;
 			}
+
+			if (Dew.IsNotPlayableOnTop(hit.position))
+			{
+				unplayable = true;
+				break;
+			}
+
+			Floor.Add(hit.position);
 		}
 
 		int checks = 0;
@@ -95,6 +122,11 @@ internal static class EdgePlacement
 			{
 				return Flat(center, Floor[i]);
 			}
+		}
+
+		if (unplayable)
+		{
+			return Floor.Count > 0 ? Flat(center, Floor[0]) : 0f;
 		}
 
 		return RaycastReach(center, direction);

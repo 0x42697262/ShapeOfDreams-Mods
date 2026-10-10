@@ -472,9 +472,10 @@ internal static class LogText
 		return $"panel: {type} shown as the arena's default modifier panel.";
 	}
 
-	public static string EdgeRing(int shrines, float medianReach, float cap)
+	public static string EdgeRing(int shrines, float medianReach, float cap, int unplayableDirections)
 	{
-		return $"edge ring: {shrines} shrine(s), median reach {medianReach:0.0} m, capped at {cap:0.0} m.";
+		return $"edge ring: {shrines} shrine(s), median reach {medianReach:0.0} m, capped at {cap:0.0} m; " +
+		       $"{unplayableDirections} direction(s) end at unplayable ground (lava).";
 	}
 
 	public static string ShrinePlaced(string name, Vector3 position)
