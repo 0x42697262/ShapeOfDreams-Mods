@@ -106,9 +106,9 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HatredDreamDustPerWaveDescription)]
 	public int hatredDreamDustPerWave = 50;
 
-	[LabelText(ConfigText.HatredShardGoldLabel)]
-	[Description(ConfigText.HatredShardGoldDescription)]
-	public int hatredShardGold = 500;
+	[LabelText(ConfigText.HatredGoldPerWaveLabel)]
+	[Description(ConfigText.HatredGoldPerWaveDescription)]
+	public int hatredGoldPerWave = 50;
 
 	[LabelText(ConfigText.CurseMildWavesLabel)]
 	[Description(ConfigText.CurseWavesDescription)]

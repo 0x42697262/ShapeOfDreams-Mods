@@ -24,15 +24,15 @@ internal static class HatredShardUsePatch
 	}
 }
 
-[HarmonyPatch(typeof(PickupManager), nameof(PickupManager.DropGold))]
+[HarmonyPatch(typeof(GameManager), nameof(GameManager.GetSpecialRewardAmount_Gold))]
 internal static class HatredShardGoldPatch
 {
-	[HarmonyPrefix]
-	private static void Prefix(ref int amount)
+	[HarmonyPostfix]
+	private static void Postfix(ref float __result)
 	{
-		if (HatredShards.TryGetGold(out int gold))
+		if (HatredShards.TryGetGold(out float amount))
 		{
-			amount = gold;
+			__result = amount;
 		}
 	}
 }

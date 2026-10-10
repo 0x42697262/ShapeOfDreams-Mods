@@ -5,19 +5,17 @@ internal static class HatredShards
 	private const float NoGold = 0f;
 
 	private static float? _dreamDustBase;
-	private static int? _gold;
+	private static float? _goldBase;
 
-	public static float Open(Shrine_Hatred_Reward shard, int wave, int dreamDustPerWave, int gold)
+	public static void Open(Shrine_Hatred_Reward shard, int wave, int dreamDustPerWave, int goldPerWave)
 	{
-		if (gold <= 0)
+		if (goldPerWave <= 0)
 		{
 			shard.goldWeight = NoGold;
 		}
 
-		float dreamDust = (float)dreamDustPerWave * wave;
-		_dreamDustBase = dreamDust;
-		_gold = gold;
-		return dreamDust;
+		_dreamDustBase = (float)dreamDustPerWave * wave;
+		_goldBase = (float)goldPerWave * wave;
 	}
 
 	public static bool TryGetDreamDust(out float amount)
@@ -26,15 +24,15 @@ internal static class HatredShards
 		return _dreamDustBase.HasValue;
 	}
 
-	public static bool TryGetGold(out int amount)
+	public static bool TryGetGold(out float amount)
 	{
-		amount = _gold ?? 0;
-		return _gold.HasValue;
+		amount = _goldBase ?? 0f;
+		return _goldBase.HasValue;
 	}
 
 	public static void Close()
 	{
 		_dreamDustBase = null;
-		_gold = null;
+		_goldBase = null;
 	}
 }

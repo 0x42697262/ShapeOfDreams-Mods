@@ -158,9 +158,9 @@ internal static class LogText
 		return $"luck: picks, prays and choices renewed after wave {wave}.";
 	}
 
-	public static string HatredShardOpened(int wave, float dreamDustBase, int gold)
+	public static string HatredShardOpened(int wave, float dreamDustBase, float goldBase)
 	{
-		return $"hatred: shard opened at wave {wave}; dream dust base {dreamDustBase:0}, gold {gold}.";
+		return $"hatred: shard opened at wave {wave}; dream dust base {dreamDustBase:0}, gold base {goldBase:0}.";
 	}
 
 	public static string CurseStartsWave(int wave, string strength, int othersCursed, double seconds)

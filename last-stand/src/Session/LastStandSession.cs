@@ -517,8 +517,10 @@ internal sealed class LastStandSession
 		}
 
 		int wave = Math.Max(Tuning.FirstWave, _waves.CurrentWave);
-		float dreamDust = HatredShards.Open(shard, wave, _settings.HatredDreamDustPerWave, _settings.HatredShardGold);
-		Log.Info(LogText.HatredShardOpened(wave, dreamDust, _settings.HatredShardGold));
+		HatredShards.Open(shard, wave, _settings.HatredDreamDustPerWave, _settings.HatredGoldPerWave);
+		HatredShards.TryGetDreamDust(out float dreamDust);
+		HatredShards.TryGetGold(out float gold);
+		Log.Info(LogText.HatredShardOpened(wave, dreamDust, gold));
 	}
 
 	public void OnShrineUsed(Shrine shrine, Entity user)

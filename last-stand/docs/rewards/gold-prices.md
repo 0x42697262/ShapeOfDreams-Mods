@@ -27,7 +27,8 @@ at 131× after wave 100.
 
 Until wave 100 this outgrows gold income on purpose: bonus gold grows 1% of
 its base a wave in a straight line (about 2× at wave 100), vanilla kill gold
-follows the world, not the wave, and Hatred Shard gold is flat. After wave
+follows the world, not the wave, and Hatred Shard gold grows in a straight
+line (50 a wave). After wave
 100 prices hold while bonus gold keeps growing, so shrines slowly get
 affordable again. Without the stop, wave 200 would be 17,293× (a 345,852
 gold Maw). Growth at 0% keeps vanilla prices all run; 4% a wave gives 50× at
@@ -45,7 +46,8 @@ through `GetAdjustedGoldAmount` only), so it keeps its vanilla price.
 Side effect: special gold rewards that the game prices from a buy price
 (`GameManager.GetSpecialRewardAmount_Gold`, used by gold boxes, hidden
 stashes, Pot of Greed and the like) grow by the same multiplier. The Hatred
-Shard isn't affected: its gold is set to a flat amount (see
+Shard isn't affected: while it opens, that amount is replaced by
+`Hatred Shard gold per wave` × the wave (see
 [Hatred Remnant](../shrines/hatred-remnant.md)).
 
 ## Free gold shrines

@@ -815,10 +815,11 @@ Each answer still needs to be seen working:
     can choose a strength once, gets the curse and a Hatred Shard, and can
     choose again after the wave is cleared (log: `hatred: choices reset after
     wave N`). The shard's reward never includes platinum, its gold is
-    exactly 500 at every strength (with free gold shrines on, not 1), and its
-    dream dust is about 50 × wave × the strength multiplier (0.8 / 1.5 / 2.4 /
-    3.3), with the log line `hatred: shard opened at wave N; dream dust base
-    X, gold 500`. Old config files are moved to `.old` (schema 18).
+    about 50 × wave × the strength multiplier (0.5 / 0.8 / 1.2 / 1.6, see
+    check 93; with free gold shrines on, not 1), and its dream dust is about
+    50 × wave × the strength multiplier (0.8 / 1.5 / 2.4 / 3.3), with the
+    log line `hatred: shard opened at wave N; dream dust base X, gold base
+    Y`. Old config files are moved to `.old` (schema 18).
 56. **Curse goals:** every curse taken in the arena logs `curse: ... now
     ends after N kill(s)`, with N about one player's share of the wave (×1,
     ×1.25, ×1.75 by strength). The curse quest on the host and on a vanilla
@@ -1094,6 +1095,14 @@ Each answer still needs to be seen working:
     times higher. A slow fight logs `no change`. A mod reload keeps the
     multiplier (`progress restored: ... heroic bosses xS health from fast
     kills`). At 0, nothing is logged and `heroicKill=x1` stays.
+93. **Hatred gold by wave** (schema 43): `laststand_wave 50`, take a
+    curse and open shards until one rolls gold. The log shows `hatred:
+    shard opened at wave 50; dream dust base 2500, gold base 2500`, and the
+    gold picked up is about 1250 (None), 2000 (Mild), 3000 (Potent) or
+    4000 (Powerful), ±15%, on the host and a vanilla client, never 500.
+    With free gold shrines on it's the same, not 1. `Hatred Shard gold per
+    wave` at 0: shards never roll gold. Old config files are moved to
+    `.old`.
 
 ## Conventions
 

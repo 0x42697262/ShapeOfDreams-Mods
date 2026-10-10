@@ -87,7 +87,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Shrine of Ascension / opens and uses come back every N waves | on / 1 |
 | | Maw of Doom | on |
 | | Shrine of Destiny / claims per wave | on / 2 |
-| | Hatred Remnant / Hatred Shard dream dust per wave / gold | on / 50 / 500 |
+| | Hatred Remnant / Hatred Shard dream dust per wave / gold per wave | on / 50 / 50 |
 | | Reminiscence of Luck | on |
 | | Curse length in waves of kills: Mild / Potent / Powerful | 1 / 1.25 / 1.75 |
 | | Free gold shrines | off |

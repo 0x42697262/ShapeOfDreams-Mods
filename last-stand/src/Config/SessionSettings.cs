@@ -34,7 +34,7 @@ internal sealed class SessionSettings
 
 	public int HatredDreamDustPerWave { get; }
 
-	public int HatredShardGold { get; }
+	public int HatredGoldPerWave { get; }
 
 	public bool ReminiscenceOfLuck { get; }
 
@@ -64,7 +64,7 @@ internal sealed class SessionSettings
 
 	private SessionSettings(string arenaRoom, double firstWaveDelaySeconds, bool showWaveInQuestTracker, int startingWorld,
 		bool dreamWell, bool altarOfCleansing, bool shrineOfAscension, bool mawOfDoom, bool shrineOfDestiny,
-		int destinyClaimsPerWave, bool hatredRemnant, int hatredDreamDustPerWave, int hatredShardGold,
+		int destinyClaimsPerWave, bool hatredRemnant, int hatredDreamDustPerWave, int hatredGoldPerWave,
 		bool reminiscenceOfLuck, CurseSettings curses, Cadence ascensionResetWaves, GoldPriceRule goldPrices,
 		int startingGold, int startingDreamDust, bool cheatCommands, int maxKillGoldPerPlayer, bool stripRoomModifiers,
 		bool bossMusic, WaveSettings waves, PainSettings pain, LootSettings loot)
@@ -77,7 +77,7 @@ internal sealed class SessionSettings
 		DestinyClaimsPerWave = destinyClaimsPerWave;
 		HatredRemnant = hatredRemnant;
 		HatredDreamDustPerWave = hatredDreamDustPerWave;
-		HatredShardGold = hatredShardGold;
+		HatredGoldPerWave = hatredGoldPerWave;
 		ReminiscenceOfLuck = reminiscenceOfLuck;
 		Curses = curses;
 		AscensionResetWaves = ascensionResetWaves;
@@ -104,7 +104,7 @@ internal sealed class SessionSettings
 			config.altarOfCleansing, config.shrineOfAscension, config.mawOfDoom, config.shrineOfDestiny,
 			Math.Max(Tuning.MinimumDestinyClaims, config.destinyClaimsPerWave),
 			config.hatredRemnant || config.curseToStartWaves,
-			Math.Max(0, config.hatredDreamDustPerWave), Math.Max(0, config.hatredShardGold),
+			Math.Max(0, config.hatredDreamDustPerWave), Math.Max(0, config.hatredGoldPerWave),
 			config.reminiscenceOfLuck, CursesFrom(config),
 			CadenceFrom(config.ascensionResetEveryWaves, config.ascensionResetEveryWaves), GoldPricesFrom(config),
 			Math.Max(0, config.startingGold),

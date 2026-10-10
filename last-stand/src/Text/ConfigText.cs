@@ -228,10 +228,11 @@ internal static class ConfigText
 		"Reminiscence of Luck on the edge ring. One free memory or essence per player per wave from " +
 		"personal choices. Pray for gold to add a choice, up to 3 times. Resets when the wave is cleared.";
 
-	public const string HatredShardGoldLabel = "Hatred Shard gold";
+	public const string HatredGoldPerWaveLabel = "Hatred Shard gold per wave";
 
-	public const string HatredShardGoldDescription =
-		"Shard gold, same at every strength. 0 = shards never roll gold.";
+	public const string HatredGoldPerWaveDescription =
+		"Shard gold = this x wave x strength (None 0.5, Mild 0.8, Potent 1.2, Powerful 1.6), +/-15%. " +
+		"0 = shards never roll gold.";
 
 	public const string CurseMildWavesLabel = "Mild curse length (waves of kills)";
 
