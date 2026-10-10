@@ -97,6 +97,15 @@ public class LastStandConsole : ModBehaviour
 		}
 	}
 
+	[ConsoleCommand(CommandText.ReviveDescription, CommandText.Revive)]
+	public void Cmd_Revive()
+	{
+		if (CheatsAllowed())
+		{
+			LastStandMod.Current?.Session?.ReviveHeroes();
+		}
+	}
+
 	[ConsoleCommand(CommandText.LevelDescription, CommandText.Level)]
 	public void Cmd_Level(int level)
 	{

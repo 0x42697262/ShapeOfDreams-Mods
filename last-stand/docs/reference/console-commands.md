@@ -9,6 +9,7 @@ With Developer Mode on (F1, then `` ` ``):
 | `laststand_wave <n>` | Starts wave n now, e.g. after testing (host only). Monsters already out stay |
 | `laststand_gold <amount>` | Cheat: grants that gold to every player (host; needs `Allow cheat commands`) |
 | `laststand_dust <amount>` | Cheat: grants that dream dust to every player |
+| `laststand_revive` | Cheat: revives every knocked-out hero now at full health (`Se_HeroKnockedOut.Revive(1)`, the same call the after-wave revive makes with the game's default 50%). Does nothing once every hero is down, since the run is over then |
 | `laststand_level <n>` | Cheat: sets every hero to level n, capped at the game's max |
 | `laststand_essence <rarity or name> [quality]` | Cheat: drops an essence near the host, reserved for the host. A rarity (`common`, `rare`, `epic`, `legendary`) picks a random one from the run's pool; otherwise a type name or part of a type or display name (`listgems` lists them). Quality defaults to the game's roll for that rarity and world |
 | `laststand_memory <rarity or name> [level]` | Cheat: the same for a memory (`listskills` lists them); level defaults to the game's roll |

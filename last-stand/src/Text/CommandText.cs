@@ -30,6 +30,10 @@ internal static class CommandText
 	public const string DreamDustDescription =
 		"Cheat: grant the given dream dust to every player, e.g. laststand_dust 5000 (host, needs cheat commands on)";
 
+	public const string Revive = "laststand_revive";
+	public const string ReviveDescription =
+		"Cheat: revive every knocked-out hero at full health now (host, needs cheat commands on)";
+
 	public const string Level = "laststand_level";
 	public const string LevelDescription =
 		"Cheat: set every hero to the given level, capped at the game's max, e.g. laststand_level 20 (host, needs " +

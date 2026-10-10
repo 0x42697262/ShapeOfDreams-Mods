@@ -294,6 +294,11 @@ internal static class LogText
 			: $"cheat: gave {heroes} hero(es) Second Wind x{charges} ({seconds:0.#} s invulnerable).";
 	}
 
+	public static string CheatRevived(int heroes)
+	{
+		return $"cheat: revived {heroes} knocked-out hero(es) at full health.";
+	}
+
 	public static string LevelSet(int level, int heroes)
 	{
 		return $"cheat: set {heroes} hero(es) to level {level} (capped at the game's max).";

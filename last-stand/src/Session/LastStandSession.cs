@@ -178,6 +178,11 @@ internal sealed class LastStandSession
 		Log.Info(LogText.DreamDustGranted(amount, players));
 	}
 
+	public void ReviveHeroes()
+	{
+		Log.Info(LogText.CheatRevived(HeroSouls.ReviveKnockedOut(Tuning.CheatReviveHealth)));
+	}
+
 	public void SetHeroLevel(int level)
 	{
 		Log.Info(LogText.LevelSet(level, PlayerRoster.SetHeroLevel(level)));

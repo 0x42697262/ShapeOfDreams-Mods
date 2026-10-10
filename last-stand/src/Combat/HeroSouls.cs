@@ -1,4 +1,5 @@
 using System;
+using LastStand.Config;
 using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
@@ -38,6 +39,11 @@ internal static class HeroSouls
 
 	public static int ReviveKnockedOut()
 	{
+		return ReviveKnockedOut(Tuning.GameDefaultReviveHealth);
+	}
+
+	public static int ReviveKnockedOut(float healthRatio)
+	{
 		if (Dew.GetAliveHeroCount() == 0)
 		{
 			return 0;
@@ -58,7 +64,7 @@ internal static class HeroSouls
 				continue;
 			}
 
-			knockedOut.Revive();
+			knockedOut.Revive(healthRatio);
 			revived++;
 		}
 

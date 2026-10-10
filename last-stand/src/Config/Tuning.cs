@@ -106,6 +106,10 @@ internal static class Tuning
 
 	public const float PlayableStepMeters = 1f;
 
+	public const float GameDefaultReviveHealth = -1f;
+
+	public const float CheatReviveHealth = 1f;
+
 	public const float ArmEdgeStepMeters = 0.5f;
 
 	public const float ArmEdgeSearchMeters = 10f;

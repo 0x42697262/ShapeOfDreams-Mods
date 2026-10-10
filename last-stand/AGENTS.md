@@ -1051,6 +1051,12 @@ Each answer still needs to be seen working:
     heroic boss appears near the tip of one of the eight arms (never in
     the lava, never within 8 m of a hero while another arm is free).
     Other rooms have no `spawns:` line and spawn across the room.
+88. **Revive cheat:** in co-op with `Allow cheat commands` on, get a
+    hero knocked out mid-wave and run `laststand_revive`: the log says
+    `cheat: revived 1 knocked-out hero(es) at full health.`, the hero
+    stands up at full health on the host and a vanilla client, and no
+    soul or lost-soul quest is left. With cheats off it logs that cheats
+    are off. With nobody down it revives 0.
 
 ## Conventions
 
