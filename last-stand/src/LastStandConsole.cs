@@ -17,6 +17,7 @@ public class LastStandConsole : ModBehaviour
 		if (mod?.Session != null)
 		{
 			Log.Info(mod.Session.Describe());
+			BossFinder.LogAll();
 		}
 	}
 

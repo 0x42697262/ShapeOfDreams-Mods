@@ -483,6 +483,24 @@ internal static class LogText
 		       $"on average {pastTips:0.0} m past the spawn points.";
 	}
 
+	public static readonly string[] ScreenDirections =
+	{
+		"up", "up-right", "right", "down-right", "down", "down-left", "left", "up-left",
+	};
+
+	public static string BossFound(string type, Vector3 position, float distance, string direction, bool statue,
+		bool onLava, float health)
+	{
+		return $"boss: {type}{(statue ? " (Pure Dream statue)" : string.Empty)} at {position}, " +
+		       $"{distance:0} m {direction} of your hero on screen{(onLava ? ", on lava" : string.Empty)}, " +
+		       $"health {health:P0}.";
+	}
+
+	public static string BossesFound(int count)
+	{
+		return $"boss: {count} boss monster(s) alive.";
+	}
+
 	public static string EdgeRing(int shrines, float medianReach, float cap, int unplayableDirections)
 	{
 		return $"edge ring: {shrines} shrine(s), median reach {medianReach:0.0} m, capped at {cap:0.0} m; " +

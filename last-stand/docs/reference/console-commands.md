@@ -4,7 +4,7 @@ With Developer Mode on (F1, then `` ` ``):
 
 | Command | Does |
 |---|---|
-| `laststand_status` | Logs mode, phase, wave, time to next wave, alive, queued, and items dropped per rarity |
+| `laststand_status` | Logs mode, phase, wave, time to next wave, alive, queued, and items dropped per rarity, then one `boss:` line per living boss monster (type, Pure Dream statue or not, position, distance and on-screen direction from your hero, on lava or not, health) and a count |
 | `laststand_next` | Starts the next wave now, even if monsters remain (host only) |
 | `laststand_wave <n>` | Starts wave n now, e.g. after testing (host only). Monsters already out stay |
 | `laststand_gold <amount>` | Cheat: grants that gold to every player (host; needs `Allow cheat commands`) |
