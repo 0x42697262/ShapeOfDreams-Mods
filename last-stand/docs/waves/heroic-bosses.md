@@ -85,6 +85,56 @@ health. 50× was tried first: a wave 49 boss had about 23 million health and
 lost only a quarter of it in five minutes of nonstop fighting. 10× damage was
 also too much.
 
+**Fast kills raise the next boss** (off by default). Fast clear (see
+[Waves](waves.md)) watches mobs, and a boss wave's mobs say nothing about
+how fast the boss itself dies. So heroic bosses have their own check,
+`Heroic fast kill: seconds per boss`. It's 0 (off) by default: at the
+default `Starting world` 1 a strong party melts heroic bosses, but from a
+starting world of about 4 their vanilla zone scaling keeps up. 15 is a
+good start when it's needed.
+
+It measures the party's best burst, not the fight's length. A timer from
+the first hit to the death can be beaten by stalling (hit once, wait,
+then burst) and runs on through a boss's immune phases and its walks out
+of reach. Instead, every damage event on a heroic boss
+(`EntityEvent_OnTakeDamage`, which `EnemyRegistry` already hooks for fast
+clear and now reports as `EnemyRegistry.Hit`) adds its amount to a
+sliding window of `Heroic fast kill: burst window (s)` (5).
+`HeroicFastKillWatch` keeps the heaviest window. In `Actor.cs` the event's
+`damage.amount` is the health removed plus what a shield absorbed, and a
+hit blocked by damage immunity fires `EntityEvent_OnDamageNegatedByImmunity`
+and returns before it, so immune time adds nothing. Each hit counts at most
+the boss's max health, so one huge overkill hit can't count for more than
+a whole boss.
+
+When the wave is cleared, the best window becomes a projected kill time:
+`window × average heroic max health ÷ best window damage`, the seconds one
+boss would last at that rate. A fight shorter than the window uses its own
+length (first heroic hit to last), so a 2 s kill reads as 2 s, not 5. If
+the projection is under the target, every later heroic boss's health is
+multiplied by `target ÷ projection`, at most `Heroic fast kill: largest
+step` (×10) per wave: at 15, a 5 s projection gives ×3. It never goes back
+down and compounds (×3 then ×2 is ×6), and a projection at or over the
+target changes nothing, so it settles at the target. Holding back doesn't
+help: the only way to keep the burst low is to deal low damage the whole
+fight while the boss hits at ×8.
+
+The multiplier goes on top of `Heroic boss health multiplier`
+(`WaveDirector.Enhance`, the delayed `MonsterEnhancer.Multiply`) and stacks
+with fast clear's heroic share; the 20× toughest-monster floor still
+applies after. Only Last Stand's own heroic spawns count: the boss's
+helpers and a boss it summons (Erebos) aren't heroic tier. It's measured
+at the wave's clear rather than at the boss's death, so the killing hit
+is always in. A skipped wave and a wave resumed after a mod reload aren't
+measured; the multiplier is saved with the wave progress, so a reload
+keeps it. With the setting back at 0 the earned multiplier stops applying.
+
+Logs: `heroic fast kill: wave 49's heroic bosses took 41,203,118 damage in
+their best 5 s, a kill in 2.1 s per boss at that rate (target 15 s); this
+step x7.14 (largest x10), heroic bosses now have x7.14 health.`, or the
+same with `no change.`; every `wave N:` line shows `heroicKill=xM`. Chat
+says it in red.
+
 **Full kit.** It's the real `BossMonster` with its own AI: the boss AI always
 targets the nearest hero, picks its ability pool (the hard pool where the zone
 says so), and runs its patterns, combos, phase changes at health thresholds,

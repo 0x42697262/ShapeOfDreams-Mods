@@ -24,6 +24,7 @@ internal sealed class WaveDirector
 	private readonly SpawnPoints _spawnPoints = new SpawnPoints();
 
 	private readonly FastClearWatch _fastClear = new FastClearWatch();
+	private readonly HeroicFastKillWatch _heroicFastKill = new HeroicFastKillWatch();
 
 	private readonly BossHealthFloor _bossHealth = new BossHealthFloor();
 
@@ -46,6 +47,8 @@ internal sealed class WaveDirector
 	private int _skipsLeft;
 
 	public int FastClearStacks => _fastClear.Stacks;
+
+	public double HeroicKillMultiplier => _heroicFastKill.Multiplier;
 
 	public double MergeMultiplier => _plan != null ? _plan.MergeMultiplier : MergeRule.NoChange;
 
@@ -73,6 +76,7 @@ internal sealed class WaveDirector
 		_onSpawned = onSpawned;
 		_spawner = new MonsterSpawner(_catalog, heroicBosses);
 		_enemies.Died += OnEnemyDied;
+		_enemies.Hit += _heroicFastKill.OnHit;
 	}
 
 	public void Begin(double firstWaveAt)
@@ -80,15 +84,17 @@ internal sealed class WaveDirector
 		_cycle = new WaveCycle(firstWaveAt);
 		_plan = null;
 		_fastClear.Reset(0);
+		_heroicFastKill.Reset(HeroicFastKillRule.NoChange);
 		_queue.Clear();
 	}
 
-	public void Resume(int wave, bool inProgress, double nextWaveAt, int fastClearStacks)
+	public void Resume(int wave, bool inProgress, double nextWaveAt, int fastClearStacks, double heroicKillMultiplier)
 	{
 		_cycle = WaveCycle.Resume(wave, inProgress, nextWaveAt);
 		_plan = null;
 		_skipsLeft = 0;
 		_fastClear.Reset(fastClearStacks);
+		_heroicFastKill.Reset(heroicKillMultiplier);
 		_queue.Clear();
 	}
 
@@ -157,6 +163,7 @@ internal sealed class WaveDirector
 		if (_skipsLeft > 0 && _cycle.InProgress)
 		{
 			_fastClear.Cancel();
+			_heroicFastKill.Cancel();
 			_queue.Clear();
 			int removed = _enemies.RemoveAll();
 			Log.Info(LogText.WaveSkipped(_cycle.CurrentWave, removed));
@@ -208,6 +215,7 @@ internal sealed class WaveDirector
 		_plan = null;
 		_skipsLeft = 0;
 		_fastClear.Reset(0);
+		_heroicFastKill.Reset(HeroicFastKillRule.NoChange);
 		_bossHealth.StartWave();
 		_queue.Clear();
 		_spawner.Reset();
@@ -238,6 +246,8 @@ internal sealed class WaveDirector
 		_queue.Enqueue(_plan);
 		_bossHealth.StartWave();
 		_fastClear.Start(_plan.Number, _plan.TotalMonsters, settings.FastClear);
+		_heroicFastKill.Start(settings.HeroicFastKill.IsOn && _plan.HeroicBossCount > 0,
+			settings.HeroicFastKill.BurstSeconds);
 
 		Log.Info(LogText.WaveStarted(_plan));
 		ChatNotices.Broadcast(Messages.WaveStarted(_plan));
@@ -330,6 +340,7 @@ internal sealed class WaveDirector
 		_plan = WaveSchedule.Plan(_cycle.CurrentWave, PlayerRoster.PlayerCount(), settings, content);
 		_plan.FastClearMultiplier = settings.FastClear.MultiplierFor(_fastClear.Stacks);
 		_plan.HeroicFastClearMultiplier = settings.FastClear.HeroicBossMultiplierFor(_fastClear.Stacks);
+		_plan.HeroicKillMultiplier = settings.HeroicFastKill.MultiplierFor(_heroicFastKill.Multiplier);
 
 		MonsterStrength.SetAmbientLevel(_plan.AmbientLevel);
 		if (_plan.IsHunted)
@@ -354,6 +365,30 @@ internal sealed class WaveDirector
 		FastCleared?.Invoke();
 	}
 
+	private void MeasureHeroicFight(int wave)
+	{
+		HeroicFastKillRule rule = _settings.HeroicFastKill;
+		if (!_heroicFastKill.Measured)
+		{
+			Log.Info(LogText.HeroicFastKillUnmeasured(wave));
+			return;
+		}
+
+		double projected = _heroicFastKill.ProjectedSecondsPerBoss;
+		double step = rule.StepFor(projected);
+		if (step <= HeroicFastKillRule.NoChange)
+		{
+			Log.Info(LogText.HeroicFastKillMissed(wave, _heroicFastKill.BestBurstDamage, _heroicFastKill.BurstSeconds,
+				projected, rule.SecondsPerBoss));
+			return;
+		}
+
+		_heroicFastKill.Raise(step);
+		Log.Info(LogText.HeroicFastKill(wave, _heroicFastKill.BestBurstDamage, _heroicFastKill.BurstSeconds, projected,
+			rule.SecondsPerBoss, step, rule.MaxStep, _heroicFastKill.Multiplier));
+		ChatNotices.Broadcast(Messages.HeroicFastKill(projected, rule.SecondsPerBoss, _heroicFastKill.Multiplier));
+	}
+
 	private void FinishWave(double breakSeconds, bool curseToStart)
 	{
 		_huntedZone.End();
@@ -366,7 +401,13 @@ internal sealed class WaveDirector
 				_fastClear.Needed, _settings.FastClear.KillSeconds));
 		}
 
+		if (_heroicFastKill.Active && _settings != null)
+		{
+			MeasureHeroicFight(_cycle.CurrentWave);
+		}
+
 		_fastClear.Cancel();
+		_heroicFastKill.Cancel();
 		Log.Info(LogText.WaveCleared(_cycle.CurrentWave));
 		if (curseToStart)
 		{
@@ -448,7 +489,7 @@ internal sealed class WaveDirector
 		if (tier == EnemyTier.HeroicBoss)
 		{
 			double haste = plan.HeroicBossHaste;
-			double health = settings.HeroicBossHealthMultiplier;
+			double health = settings.HeroicBossHealthMultiplier * plan.HeroicKillMultiplier;
 			double damage = settings.HeroicBossDamageMultiplier;
 			int wave = plan.Number;
 			Dew.CallDelayed(() =>

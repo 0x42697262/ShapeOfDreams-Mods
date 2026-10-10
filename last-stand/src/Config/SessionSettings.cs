@@ -150,6 +150,9 @@ internal sealed class SessionSettings
 				config.fastClearAffectsHeroicBosses
 					? Math.Max(0f, config.fastClearHeroicBossPercent) / Tuning.PercentScale
 					: 0f),
+			HeroicFastKill = new HeroicFastKillRule(Math.Max(0f, config.heroicFastKillSeconds),
+				Math.Max(0f, config.heroicFastKillBurstSeconds),
+				Math.Max((float)HeroicFastKillRule.NoChange, config.heroicFastKillMaxStep)),
 
 			MiniBosses = CadenceFrom(config.miniBossFromWave, config.miniBossIntervalWaves),
 			MiniBossOccurrencesPerExtra = Math.Max(MinimumStep, config.miniBossOccurrencesPerExtra),

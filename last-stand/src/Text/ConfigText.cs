@@ -118,6 +118,24 @@ internal static class ConfigText
 	public const string HeroicBossDamageMultiplierDescription =
 		"Heroic boss damage x this. Stacks with world, difficulty and wave scaling.";
 
+	public const string HeroicFastKillSecondsLabel = "Heroic fast kill: seconds per boss";
+
+	public const string HeroicFastKillSecondsDescription =
+		"Off at 0 (15 is a good start). After a boss wave, the heroic bosses' best burst of damage is turned " +
+		"into a kill time per boss. Under this, later heroic bosses get more health in proportion: a 5 s kill " +
+		"at 15 gives x3. Never goes back down.";
+
+	public const string HeroicFastKillBurstLabel = "Heroic fast kill: burst window (s)";
+
+	public const string HeroicFastKillBurstDescription =
+		"The heaviest stretch of this many seconds of damage on the heroic bosses is what counts, so stalling " +
+		"or a boss's immune phase doesn't hide a fast kill.";
+
+	public const string HeroicFastKillMaxStepLabel = "Heroic fast kill: largest step";
+
+	public const string HeroicFastKillMaxStepDescription =
+		"Most one fast kill can multiply heroic boss health by, so a single burst doesn't overshoot.";
+
 	public const string HeroicBossTypesLabel = "Heroic boss types";
 
 	public const string HeroicBossTypesDescription =

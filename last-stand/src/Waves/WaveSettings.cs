@@ -51,6 +51,8 @@ internal sealed class WaveSettings
 
 	public FastClearRule FastClear { get; set; }
 
+	public HeroicFastKillRule HeroicFastKill { get; set; }
+
 	public Cadence MiniBosses { get; set; }
 
 	public int MiniBossOccurrencesPerExtra { get; set; }

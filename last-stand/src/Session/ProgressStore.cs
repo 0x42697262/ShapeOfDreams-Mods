@@ -9,9 +9,13 @@ internal static class ProgressStore
 
 	private const char Separator = '|';
 
-	private const int FieldCount = 5;
+	private const int FieldCount = 6;
+
+	private const int FieldCountWithoutHeroicKills = 5;
 
 	private const int FieldCountWithoutFastClears = 4;
+
+	private const double NoHeroicKills = 1;
 
 	private const string InProgressFlag = "1";
 
@@ -30,7 +34,7 @@ internal static class ProgressStore
 		       zones.worldSeed.ToString(CultureInfo.InvariantCulture);
 	}
 
-	public static void Save(int node, int wave, bool inProgress, int fastClears)
+	public static void Save(int node, int wave, bool inProgress, int fastClears, double heroicKillMultiplier)
 	{
 		string run = CurrentRunKey();
 		if (run == null)
@@ -40,15 +44,18 @@ internal static class ProgressStore
 
 		string data = string.Join(Separator.ToString(), run, node.ToString(CultureInfo.InvariantCulture),
 			wave.ToString(CultureInfo.InvariantCulture), inProgress ? InProgressFlag : BetweenWavesFlag,
-			fastClears.ToString(CultureInfo.InvariantCulture));
+			fastClears.ToString(CultureInfo.InvariantCulture),
+			heroicKillMultiplier.ToString(CultureInfo.InvariantCulture));
 		AppDomain.CurrentDomain.SetData(Slot, data);
 	}
 
-	public static bool TryLoad(int node, out int wave, out bool inProgress, out int fastClears)
+	public static bool TryLoad(int node, out int wave, out bool inProgress, out int fastClears,
+		out double heroicKillMultiplier)
 	{
 		wave = 0;
 		inProgress = false;
 		fastClears = 0;
+		heroicKillMultiplier = NoHeroicKills;
 		string run = CurrentRunKey();
 		if (run == null || !(AppDomain.CurrentDomain.GetData(Slot) is string data))
 		{
@@ -56,7 +63,8 @@ internal static class ProgressStore
 		}
 
 		string[] parts = data.Split(Separator);
-		if ((parts.Length != FieldCount && parts.Length != FieldCountWithoutFastClears) || parts[0] != run
+		if ((parts.Length != FieldCount && parts.Length != FieldCountWithoutHeroicKills &&
+		     parts.Length != FieldCountWithoutFastClears) || parts[0] != run
 		    || !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int savedNode)
 		    || savedNode != node
 		    || !int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out wave)
@@ -67,9 +75,15 @@ internal static class ProgressStore
 		}
 
 		inProgress = parts[3] == InProgressFlag;
-		if (parts.Length == FieldCount)
+		if (parts.Length >= FieldCountWithoutHeroicKills)
 		{
 			int.TryParse(parts[4], NumberStyles.Integer, CultureInfo.InvariantCulture, out fastClears);
+		}
+
+		if (parts.Length == FieldCount &&
+		    !double.TryParse(parts[5], NumberStyles.Float, CultureInfo.InvariantCulture, out heroicKillMultiplier))
+		{
+			heroicKillMultiplier = NoHeroicKills;
 		}
 
 		return true;

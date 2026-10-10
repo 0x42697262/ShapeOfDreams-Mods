@@ -403,6 +403,18 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HeroicBossDamageMultiplierDescription)]
 	public float heroicBossDamageMultiplier = 8f;
 
+	[LabelText(ConfigText.HeroicFastKillSecondsLabel)]
+	[Description(ConfigText.HeroicFastKillSecondsDescription)]
+	public float heroicFastKillSeconds = 0f;
+
+	[LabelText(ConfigText.HeroicFastKillBurstLabel)]
+	[Description(ConfigText.HeroicFastKillBurstDescription)]
+	public float heroicFastKillBurstSeconds = 5f;
+
+	[LabelText(ConfigText.HeroicFastKillMaxStepLabel)]
+	[Description(ConfigText.HeroicFastKillMaxStepDescription)]
+	public float heroicFastKillMaxStep = 10f;
+
 	[PickMany(ChoiceSet.HeroicBosses)]
 	[LabelText(ConfigText.HeroicBossTypesLabel)]
 	[Description(ConfigText.HeroicBossTypesDescription)]

@@ -15,6 +15,8 @@ internal sealed class EnemyRegistry
 
 	public event Action<EnemyDeath> Died;
 
+	public event Action<EnemyHit> Hit;
+
 	public int Occupied(double now)
 	{
 		Prune(now);
@@ -44,7 +46,7 @@ internal sealed class EnemyRegistry
 		}
 
 		_alive[entity] = tier;
-		entity.EntityEvent_OnTakeDamage += (Action<EventInfoDamage>)(_ => OnDamaged(entity));
+		entity.EntityEvent_OnTakeDamage += (Action<EventInfoDamage>)(info => OnDamaged(entity, tier, info));
 		entity.EntityEvent_OnDeath += (Action<EventInfoKill>)(kill => OnDeath(entity, tier, kill));
 	}
 
@@ -92,12 +94,15 @@ internal sealed class EnemyRegistry
 		_reservations.Clear();
 	}
 
-	private void OnDamaged(Entity entity)
+	private void OnDamaged(Entity entity, EnemyTier tier, EventInfoDamage info)
 	{
+		float now = Time.time;
 		if (_alive.ContainsKey(entity) && !_firstHitAt.ContainsKey(entity))
 		{
-			_firstHitAt[entity] = Time.time;
+			_firstHitAt[entity] = now;
 		}
+
+		Hit?.Invoke(new EnemyHit(tier, entity.netId, info.damage.amount, entity.maxHealth, now));
 	}
 
 	private void OnDeath(Entity entity, EnemyTier tier, EventInfoKill kill)

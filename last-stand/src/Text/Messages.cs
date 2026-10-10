@@ -162,6 +162,11 @@ internal static class Messages
 		return Warning($"{instantKills} of wave {wave}'s {monsters} monsters died within {seconds:0.##}s of their first hit. From wave {wave + 1} on, monsters hit back with x{multiplier:0.##} health and damage.");
 	}
 
+	public static string HeroicFastKill(double secondsPerBoss, double target, double multiplier)
+	{
+		return Warning($"Your best burst would kill a heroic boss in {secondsPerBoss:0.#}s, faster than {target:0}s. Heroic bosses now return with x{multiplier:0.##} health.");
+	}
+
 	public static string ArenaReadyAwaitingCurse()
 	{
 		return Notice("Hold the arena. Choose a curse at the Hatred Remnant to start wave 1.");

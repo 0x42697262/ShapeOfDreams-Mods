@@ -144,12 +144,13 @@ internal static class LogText
 		return $"wave {wave} resumed after a reload; no new monsters are added to it.";
 	}
 
-	public static string ProgressRestored(int wave, bool inProgress, int adopted, int fastClears)
+	public static string ProgressRestored(int wave, bool inProgress, int adopted, int fastClears,
+		double heroicKillMultiplier)
 	{
 		return (inProgress
 			? $"progress restored: wave {wave} is still being fought, {adopted} monster(s) on the field taken over"
 			: $"progress restored: wave {wave} was cleared; wave {wave + 1} comes next") +
-		       $", {fastClears} fast clear(s) so far.";
+		       $", {fastClears} fast clear(s) so far, heroic bosses x{heroicKillMultiplier:0.##} health from fast kills.";
 	}
 
 	public static string LuckChoicesRenewed(int wave)
@@ -422,6 +423,7 @@ internal static class LogText
 		       $"ambient={plan.AmbientLevel} " +
 		       $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " +
 		       $"fastClear=x{plan.FastClearMultiplier:0.##} heroicFastClear=x{plan.HeroicFastClearMultiplier:0.##} " +
+		       $"heroicKill=x{plan.HeroicKillMultiplier:0.##} " +
 		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +
 		       $"mirageChance={plan.MirageChance * Tuning.PercentScale:0}% " +
 		       $"huntLevel={plan.HuntLevel} cap={plan.MaxAlive}.";
@@ -460,6 +462,27 @@ internal static class LogText
 		double multiplier, double heroicMultiplier)
 	{
 		return $"fast clear: wave {wave} had {instantKills} of {monsters} monster(s) die within {seconds:0.##} s of their first hit; from wave {wave + 1} monsters have x{multiplier:0.##} health and damage, heroic bosses x{heroicMultiplier:0.##}.";
+	}
+
+	public static string HeroicFastKill(int wave, double burstDamage, double burstSeconds, double projected,
+		double target, double step, double maxStep, double multiplier)
+	{
+		return $"heroic fast kill: wave {wave}'s heroic bosses took {burstDamage:N0} damage in their best " +
+		       $"{burstSeconds:0.#} s, a kill in {projected:0.#} s per boss at that rate (target {target:0.#} s); " +
+		       $"this step x{step:0.##} (largest x{maxStep:0.##}), heroic bosses now have x{multiplier:0.##} health.";
+	}
+
+	public static string HeroicFastKillMissed(int wave, double burstDamage, double burstSeconds, double projected,
+		double target)
+	{
+		return $"heroic fast kill: wave {wave}'s heroic bosses took {burstDamage:N0} damage in their best " +
+		       $"{burstSeconds:0.#} s, a kill in {projected:0.#} s per boss at that rate (target {target:0.#} s); " +
+		       "no change.";
+	}
+
+	public static string HeroicFastKillUnmeasured(int wave)
+	{
+		return $"heroic fast kill: wave {wave}'s heroic bosses died without a recorded hit; not measured.";
 	}
 
 	public static string FastClearMissed(int wave, int instantKills, int deaths, int needed, double seconds)

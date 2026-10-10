@@ -40,6 +40,8 @@ internal sealed class WavePlan
 
 	public double HeroicFastClearMultiplier { get; set; } = 1;
 
+	public double HeroicKillMultiplier { get; set; } = 1;
+
 	public int ForeignTypesUnlocked { get; set; }
 
 	public bool NewForeignTypes { get; set; }
