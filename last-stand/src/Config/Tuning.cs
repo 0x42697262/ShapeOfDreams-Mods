@@ -104,6 +104,10 @@ internal static class Tuning
 
 	public const float EdgeFallbackRadius = 6f;
 
+	public const float PlayableStepMeters = 1f;
+
+	public const float SpawnAnchorDepthMeters = 3f;
+
 	public const int MawOfDoomPinnedUses = 1;
 
 	public const float ShrinePinSeconds = 1f;

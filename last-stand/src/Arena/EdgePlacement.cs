@@ -38,26 +38,13 @@ internal static class EdgePlacement
 		{
 			int d = ShrineDirection(start, i, count);
 			float radius = Mathf.Max(Mathf.Min(reaches[d], cap) - Tuning.EdgeInset, Tuning.EdgeFallbackRadius);
-			spots[i] = PlayableSpot(arena.Center, DirectionAt(d), radius);
+			spots[i] = PlayableGround.PullToward(arena.Center, arena.Center + DirectionAt(d) * radius);
 		}
 
 		Log.Info(LogText.EdgeRing(count, Median(reaches), cap, blocked));
 		return spots;
 	}
 
-	private static Vector3 PlayableSpot(Vector3 center, Vector3 direction, float radius)
-	{
-		for (float distance = radius; distance > 0f; distance -= Tuning.EdgeMarchStep)
-		{
-			Vector3 spot = Dew.GetValidAgentDestination_LinearSweep(center, center + direction * distance);
-			if (!Dew.IsNotPlayableOnTop(spot))
-			{
-				return spot;
-			}
-		}
-
-		return center;
-	}
 
 	private static int BestStart(float[] reaches, int count, float cap)
 	{
@@ -106,7 +93,7 @@ internal static class EdgePlacement
 				continue;
 			}
 
-			if (Dew.IsNotPlayableOnTop(hit.position))
+			if (!PlayableGround.IsPlayable(hit.position))
 			{
 				unplayable = true;
 				break;

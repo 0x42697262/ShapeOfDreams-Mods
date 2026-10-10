@@ -460,6 +460,11 @@ These were checked in the decompiled code.
   `Dew.IsNotPlayableOnTop(pos)` (public, static) raycasts the ground at
   `pos` and is true when the hit collider has an `INotPlayableOnTop`;
   `Dew.GetGoodRewardPosition` uses it to keep drops off lava.
+  `LavaLand_InfernusPillarPosition` (Dew.Contents, a
+  `SingletonBehaviour`, active in the scene) has eight child transforms,
+  one at the tip of each arm (read with UnityPy, about 19.5 m from its own
+  position, the platform's middle); `GetRandomPosition` deals them out in
+  shuffled order for Infernus's pillars.
 - **Mod reloads.** With developer mode and `enableAutoReloadMods` (in
   `QuickSave/r_platform.json`), any file change under `Mods/` reloads the mod
   mid-run (`DewMod` watcher; it waits for the window to have focus). `DewMod`
@@ -1040,7 +1045,11 @@ Each answer still needs to be seen working:
     a nonzero `direction(s) end at unplayable ground (lava)`. All seven
     shrines stand on the platform near its rim, none in the lava, and
     using them deals no lava damage. Other rooms log `0 direction(s)` and
-    keep their places.
+    keep their places. The log shows `spawns: 8 fixed spawn point(s) from
+    LavaLand_InfernusPillarPosition`, and every monster, miniboss and
+    heroic boss appears near the tip of one of the eight arms (never in
+    the lava, never within 8 m of a hero while another arm is free).
+    Other rooms have no `spawns:` line and spawn across the room.
 
 ## Conventions
 

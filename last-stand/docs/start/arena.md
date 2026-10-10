@@ -120,5 +120,27 @@ so they come from every side. Each spawn:
   so nothing spawns on top of someone. After that the game takes any valid
   point, so a spawn never fails just because the heroes are spread out.
 
+**Lava Land: fixed spawn points.** The Lava Land boss room is a platform
+with eight arms in a lava sea, and the navmesh runs on over the lava
+(`LavaLand_Lava`). The game's spawn filter only looks at the navmesh, so
+random section points landed in the lava. Rather than retrying until a
+point is off the lava (extra raycasts and path checks per spawn), the room
+gets fixed spawn points: the scene's `LavaLand_InfernusPillarPosition`
+(where Infernus raises its pillars) has eight child transforms, one at the
+tip of each arm, about 19.5 m from the center. When `SpawnPoints` finds
+that component, every spawn (regular, hunter, miniboss, Pain and heroic
+boss) uses them:
+
+- starts at a random one of the eight and takes the first that is at least
+  8 m from every living hero (any, if none is);
+- moves up to 3 m from the tip toward the component's center (the
+  platform's middle), so monsters don't stack on one spot and stay on the
+  arm, then snaps with `Dew.GetValidAgentDestination_Closest`.
+
+That's one random pick and one snap per spawn, cheaper than the room
+sampling. Log: `spawns: 8 fixed spawn point(s) from
+LavaLand_InfernusPillarPosition; monsters spawn only there.` Other rooms
+don't have the component and keep the room sampling above.
+
 The game sends each new monster toward the nearest hero, so monsters far away
 walk in.

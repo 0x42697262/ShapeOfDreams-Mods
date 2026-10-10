@@ -472,6 +472,11 @@ internal static class LogText
 		return $"panel: {type} shown as the arena's default modifier panel.";
 	}
 
+	public static string SpawnAnchors(int anchors, string source)
+	{
+		return $"spawns: {anchors} fixed spawn point(s) from {source}; monsters spawn only there.";
+	}
+
 	public static string EdgeRing(int shrines, float medianReach, float cap, int unplayableDirections)
 	{
 		return $"edge ring: {shrines} shrine(s), median reach {medianReach:0.0} m, capped at {cap:0.0} m; " +
