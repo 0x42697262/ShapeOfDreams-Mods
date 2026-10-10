@@ -70,7 +70,7 @@ before decompiling something again.
 
 ## Needs an in-game check
 
-1. **Lobby option:** Create Lobby lists "PvP Arena", it isn't preselected,
+1. **Lobby option:** Create Lobby lists "PvP Arena" (not preselected),
    picking it renames the lobby `Dream Arena (PvP)` and shows the
    description, and the run starts in the mode (`arena_status`:
    `mode=True active=True`). Picking Shape of Dreams starts a normal run with
