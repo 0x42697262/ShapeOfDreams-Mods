@@ -1,19 +1,8 @@
-[b]Fixed: Hatred Shard gold grows with the wave[/b]
-A Hatred Shard that rolls gold used to give a flat 500 at every strength. It now gives 50 gold per wave, times the strength: about 1,250 (None) to 4,000 (Powerful) at wave 50, and 2,500 to 8,000 at wave 100. The amount can be changed in the settings (Hatred Shard gold per wave).
+[list]
+[*]Hatred Shard gold now scales with the wave and curse strength (50 per wave) instead of a flat 500.
+[*]Curse kill goals keep growing after wave 48 and are no longer split between players.
+[*]Fast clear's instant kill window is now 1s (was 0.5s).
+[*]New: heroic fast kill. Kill a heroic boss too fast and the next ones get more health. Set "Heroic fast kill: seconds per boss" to 0 to turn it off.
+[/list]
 
-[b]Fixed: curse kill goals keep growing after wave 48[/b]
-From wave 48, waves spawn at most 100 tougher monsters, and curse kill goals used to shrink with them and stop growing. Goals now follow the whole wave and keep rising every wave, so late curses take more than one wave to lift.
-
-[b]Changed: curse kill goals aren't split between players[/b]
-A curse counts every monster the cursed player hurt shortly before it died, whoever finished it, so goals are no longer divided by the number of players. With two players a Mild curse at wave 47 now needs 147 kills instead of 74.
-
-[b]Changed: fast clear allows 1 second[/b]
-A monster now counts as killed instantly for fast clear when it dies within 1 second of its first hit, up from 0.5 seconds.
-
-[b]New: heroic fast kill[/b]
-Heroic bosses can get tougher when your party kills them too fast. After a boss wave, the party's heaviest 5 seconds of damage on the boss is turned into a kill time. If that's faster than the target, later heroic bosses get more health in proportion, up to x10 per boss wave, and chat says so. Waiting before bursting, or a boss's immune phase, doesn't hide a fast kill. The target is 15 seconds per boss (Heroic fast kill: seconds per boss). A host whose party wants to one-shot bosses can set it to 0 to turn it off.
-
-[b]Settings reset[/b]
-This update resets Last Stand's settings to the new defaults. Your old settings file is kept next to the new one with a .old extension.
-
-Only the host needs this update.
+Settings are reset with this update (old file kept as .old). Only the host needs to update.
