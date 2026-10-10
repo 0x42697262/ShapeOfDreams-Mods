@@ -1074,6 +1074,15 @@ Each answer still needs to be seen working:
     to random spots in reach.`, the statues appear on the platform or
     arms for the host and a vanilla client, still frozen, and break as
     before. Running it again moves them to new spots.
+91. **Settings change notices:** host a Last Stand lobby with a vanilla
+    client. Change `Boss music` and `Starting gold` in the Last Stand
+    window and Apply: both players see `[Last Stand] Host changed Boss
+    music: on -> off` and `... Starting gold: 100 -> 200` in orange. Same
+    from the mod manager's gear screen. Unchecking one environment shows
+    `Environment types: 21 -> 20 picked, removed <name>`. Reset to
+    defaults after many changes shows at most 6 lines plus `...and N more
+    setting(s) changed.` Apply with nothing changed sends nothing. On the
+    title screen, or as a client, only `settings:` log lines appear.
 
 ## Conventions
 

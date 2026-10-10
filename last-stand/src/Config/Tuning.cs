@@ -108,6 +108,8 @@ internal static class Tuning
 
 	public const int PureDreamSpotAttempts = 10;
 
+	public const int MaxSettingChangesInChat = 6;
+
 	public const float GameDefaultReviveHealth = -1f;
 
 	public const float CheatReviveHealth = 1f;

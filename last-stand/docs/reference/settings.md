@@ -11,6 +11,30 @@ the same reason `laststand_config` refuses on a connected client and logs
 `only the host's settings apply`. The mod manager's own config screen
 belongs to the game and can't be hidden; it only edits that player's file.
 
+**Change notices.** Every applied change is announced in chat, so players
+in the lobby (or mid-run) see what the host changed:
+`[Last Stand] Host changed Boss music: on -> off`. Both places end in
+`ModBehaviour.OnConfigChanged()` after the new values are in `config` (the
+lobby window through `LastStandMod.ApplyConfig`, the mod manager after
+copying its working copy back), so `SettingsAnnouncer` keeps a clone of the
+last applied config (taken in `LoadConfigsToDisk`) and diffs it there:
+- `SettingChange.Between` compares every field the settings panel shows
+  (`ConfigFields.Visible`: public or `[SerializeField]`, not
+  `[HideInInspector]`, so `schemaVersion` never shows).
+- `SettingChangeText` names the field by its `[LabelText]`, writes bools as
+  on/off and floats with up to 3 decimals, and names picked rooms, bosses,
+  environments and strengths by their localized game name (or the
+  choice's own text). Checkbox lists show counts and what moved:
+  `Environment types: 21 -> 20 picked, removed Toxic Area`.
+- Each change is logged (`settings: ...`). Chat gets the first 6
+  (`Tuning.MaxSettingChangesInChat`), then `...and N more setting(s)
+  changed.`, so a Reset to defaults doesn't flood it.
+- Chat goes out only while hosting a Last Stand session
+  (`LastStandMode.IsHosting()`: server active, Last Stand selected). A
+  client changing their own file, or anyone on the title screen, only gets
+  the log lines. Notices are raw chat messages, so vanilla clients read
+  them too.
+
 **Layout.** Both places show the same panel, laid out like a system settings
 app: a sidebar of pages on the left (General, Shrines, Waves, Monsters,
 Bosses, Events, Rewards) and the selected page on the right. A page has a

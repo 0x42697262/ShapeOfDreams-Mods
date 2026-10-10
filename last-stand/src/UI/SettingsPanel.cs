@@ -101,15 +101,8 @@ internal sealed class SettingsPanel
 
 	private void BuildFields()
 	{
-		FieldInfo[] fields = _state.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-		foreach (FieldInfo field in fields)
+		foreach (FieldInfo field in ConfigFields.Visible(_state.GetType()))
 		{
-			if ((!field.IsPublic && field.GetCustomAttribute<SerializeField>() == null)
-			    || field.GetCustomAttribute<HideInInspector>() != null)
-			{
-				continue;
-			}
-
 			DewGUI.FieldBuilder builder = BuilderFor(field);
 			if (builder == null)
 			{

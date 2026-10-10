@@ -19,6 +19,8 @@ public class LastStandMod : ModBehaviour
 
 	private readonly ErrorThrottle _tickErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
 
+	private readonly SettingsAnnouncer _settingsAnnouncer = new SettingsAnnouncer();
+
 	private void Awake()
 	{
 		Current = this;
@@ -76,6 +78,7 @@ public class LastStandMod : ModBehaviour
 		}
 
 		base.LoadConfigsToDisk();
+		_settingsAnnouncer.Remember(config);
 	}
 
 	internal void ApplyConfig(LastStandConfig edited)
@@ -96,6 +99,7 @@ public class LastStandMod : ModBehaviour
 
 	public override void OnConfigChanged()
 	{
+		_settingsAnnouncer.Announce(config);
 		Session?.UseSettings(SessionSettings.From(config));
 	}
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LastStand.Waves;
 
 namespace LastStand.Text;
@@ -31,6 +32,44 @@ internal static class Messages
 		return stardust > 0
 			? Notice($"The heroic boss falls! {chaosRewards} Corrupted Chaos rewards and {stardust} stardust dropped.")
 			: Notice($"The heroic boss falls! {chaosRewards} Corrupted Chaos rewards dropped.");
+	}
+
+	public const string SettingOn = "on";
+
+	public const string SettingOff = "off";
+
+	public const string SettingNumberFormat = "0.###";
+
+	public static string SettingChangeLine(string name, string before, string after)
+	{
+		return $"{name}: {before} -> {after}";
+	}
+
+	public static string SettingListChangeLine(string name, int before, int after, List<string> added,
+		List<string> removed)
+	{
+		string line = $"{name}: {before} -> {after} picked";
+		if (added.Count > 0)
+		{
+			line += $", added {string.Join(", ", added)}";
+		}
+
+		if (removed.Count > 0)
+		{
+			line += $", removed {string.Join(", ", removed)}";
+		}
+
+		return line;
+	}
+
+	public static string SettingChanged(string line)
+	{
+		return Notice($"Host changed {line}");
+	}
+
+	public static string MoreSettingsChanged(int count)
+	{
+		return Notice($"...and {count} more setting(s) changed.");
 	}
 
 	public static string LobbyName(int startingWorld)
