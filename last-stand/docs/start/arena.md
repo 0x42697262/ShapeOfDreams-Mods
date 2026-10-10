@@ -61,8 +61,15 @@ every room load) skips the game's placement, sets the knock-out's
 hero left on any node. When a wave is cleared, every knocked-out hero is
 revived through the game's own `Se_HeroKnockedOut.Revive` (half health, the
 game's default), as long as at least one hero is still standing, so they
-have the break to get ready for the next wave. If everyone
-is down, the game's own game over follows as usual. Chat announces the revive.
+have the break to get ready for the next wave. "Standing" uses the game's
+own game-over rule (`GameManager.CheckGameOver`): any `Hero` in
+`ActorManager.allHeroes` that isn't knocked out. That list includes heroes
+no player owns, such as the AI allies of the AllyPlayerAI Workshop mod, so
+a solo player knocked out while an AI ally still fights is revived too.
+(`Dew.GetAliveHeroCount` counts only `DewPlayer.gamePlayers`' heroes; the
+first version used it, so a solo player with AI allies was never revived
+while the run went on.) If everyone is down, the game's own game over
+follows as usual. Chat announces the revive.
 
 **The world map shows only the camp and the arena.** The map (M) draws every
 node except sidetrack nodes, and `WorldNodeData.IsSidetrackNode` is just

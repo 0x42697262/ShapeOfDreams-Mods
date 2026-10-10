@@ -37,18 +37,13 @@ internal static class HeroSouls
 		}
 	}
 
-	public static int ReviveKnockedOut()
+	public static int ReviveAfterWave()
 	{
-		return ReviveKnockedOut(Tuning.GameDefaultReviveHealth);
+		return AnyHeroStanding() ? ReviveAll(Tuning.GameDefaultReviveHealth) : 0;
 	}
 
-	public static int ReviveKnockedOut(float healthRatio)
+	public static int ReviveAll(float healthRatio)
 	{
-		if (Dew.GetAliveHeroCount() == 0)
-		{
-			return 0;
-		}
-
 		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
 		if (actors == null)
 		{
@@ -69,6 +64,25 @@ internal static class HeroSouls
 		}
 
 		return revived;
+	}
+
+	private static bool AnyHeroStanding()
+	{
+		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
+		if (actors == null)
+		{
+			return false;
+		}
+
+		foreach (Hero hero in actors.allHeroes)
+		{
+			if (hero != null && hero.isActive && !hero.isKnockedOut)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static bool IsSoulOf(ModifierData modifier, DewPlayer owner)

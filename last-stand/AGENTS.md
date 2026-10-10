@@ -689,7 +689,9 @@ Each answer still needs to be seen working:
 27. **Revive after the wave:** no soul shrine or "lost soul" quest appears
     when a hero is knocked out. They're revived when the wave is cleared
     (log: `revive: N knocked-out hero(es) revived after wave W was cleared`),
-    only if someone is still alive.
+    only if someone is still standing, AI allies from other mods
+    included (solo with AllyPlayerAI: your knocked-out hero comes back
+    after the wave while an ally lives).
 28. **World map:** M shows only the camp and the arena node, on clients too.
 29. **Heroic boss after a reload:** a heroic boss alive during a mod reload
     still drops its 3 Corrupted Chaos rewards when killed, and the game's
@@ -1055,8 +1057,9 @@ Each answer still needs to be seen working:
     hero knocked out mid-wave and run `laststand_revive`: the log says
     `cheat: revived 1 knocked-out hero(es) at full health.`, the hero
     stands up at full health on the host and a vanilla client, and no
-    soul or lost-soul quest is left. With cheats off it logs that cheats
-    are off. With nobody down it revives 0.
+    soul or lost-soul quest is left. Solo with AI allies (AllyPlayerAI)
+    works the same. With cheats off it logs that cheats are off. With
+    nobody down it revives 0.
 
 ## Conventions
 

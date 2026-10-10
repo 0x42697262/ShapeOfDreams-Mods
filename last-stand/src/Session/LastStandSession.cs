@@ -180,7 +180,7 @@ internal sealed class LastStandSession
 
 	public void ReviveHeroes()
 	{
-		Log.Info(LogText.CheatRevived(HeroSouls.ReviveKnockedOut(Tuning.CheatReviveHealth)));
+		Log.Info(LogText.CheatRevived(HeroSouls.ReviveAll(Tuning.CheatReviveHealth)));
 	}
 
 	public void SetHeroLevel(int level)
@@ -530,7 +530,7 @@ internal sealed class LastStandSession
 		_loot.OnWaveCleared(wave, _settings.Loot);
 		Shrines.OnWaveCleared(wave, _settings.AscensionResetWaves);
 
-		int revived = HeroSouls.ReviveKnockedOut();
+		int revived = HeroSouls.ReviveAfterWave();
 		if (revived > 0)
 		{
 			Log.Info(LogText.HeroesRevived(wave, revived));
