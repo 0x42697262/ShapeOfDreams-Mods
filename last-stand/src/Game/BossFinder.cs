@@ -1,4 +1,5 @@
 using LastStand.Arena;
+using LastStand.Combat;
 using LastStand.Diagnostics;
 using LastStand.Text;
 using UnityEngine;
@@ -31,7 +32,7 @@ internal static class BossFinder
 			Vector3 position = boss.agentPosition;
 			Log.Info(LogText.BossFound(boss.GetType().Name, position,
 				Vector2.Distance(from.ToXY(), position.ToXY()), ScreenDirection(from, position),
-				boss.Status.TryGetStatusEffect(out Se_PureDream_Statue _), !PlayableGround.IsPlayable(position),
+				DreamStatues.IsStatue(boss), !PlayableGround.IsPlayable(position),
 				boss.normalizedHealth));
 		}
 

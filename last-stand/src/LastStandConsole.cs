@@ -97,6 +97,15 @@ public class LastStandConsole : ModBehaviour
 		}
 	}
 
+	[ConsoleCommand(CommandText.StatuesDescription, CommandText.Statues)]
+	public void Cmd_Statues()
+	{
+		if (CheatsAllowed())
+		{
+			LastStandMod.Current?.Session?.MoveDreamStatues();
+		}
+	}
+
 	[ConsoleCommand(CommandText.ReviveDescription, CommandText.Revive)]
 	public void Cmd_Revive()
 	{

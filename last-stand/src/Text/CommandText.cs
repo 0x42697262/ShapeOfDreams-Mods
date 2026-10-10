@@ -30,6 +30,11 @@ internal static class CommandText
 	public const string DreamDustDescription =
 		"Cheat: grant the given dream dust to every player, e.g. laststand_dust 5000 (host, needs cheat commands on)";
 
+	public const string Statues = "laststand_statues";
+	public const string StatuesDescription =
+		"Cheat: move every Pure Dream statue to a random playable spot you can walk to (host, needs cheat " +
+		"commands on)";
+
 	public const string Revive = "laststand_revive";
 	public const string ReviveDescription =
 		"Cheat: revive every knocked-out hero at full health now (host, needs cheat commands on)";

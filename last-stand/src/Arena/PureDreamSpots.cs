@@ -25,6 +25,18 @@ internal static class PureDreamSpots
 		}
 	}
 
+	public static bool TryPickAnywhere(out Vector3 spot)
+	{
+		return TryPick(RandomRoomNode, out spot);
+	}
+
+	private static Vector3 RandomRoomNode()
+	{
+		Room room = SingletonDewNetworkBehaviour<Room>.softInstance;
+		RoomSection section = room.sections[UnityEngine.Random.Range(0, room.sections.Count)];
+		return section.GetAnyRandomNode();
+	}
+
 	private static Vector3 Pick(Func<Vector3> roll)
 	{
 		Vector3 spot = roll();

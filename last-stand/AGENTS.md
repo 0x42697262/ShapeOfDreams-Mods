@@ -1068,6 +1068,12 @@ Each answer still needs to be seen working:
     log may show `pure dream: ... after N tries` lines, and rarely a
     `moved ... in to ...` line. Breaking a statue still gives the heroic
     boss rewards. Other rooms' Pure Dream statues look the same as before.
+90. **Statue cheat:** with cheats on and Pure Dream statues out of reach
+    (such as the Infernus ones on the Lava Land entrance ledge), run
+    `laststand_statues`: the log says `cheat: moved N Pure Dream statue(s)
+    to random spots in reach.`, the statues appear on the platform or
+    arms for the host and a vanilla client, still frozen, and break as
+    before. Running it again moves them to new spots.
 
 ## Conventions
 

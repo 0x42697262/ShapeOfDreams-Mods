@@ -78,6 +78,14 @@ stone placed at ... after N tries` and `pure dream: no good statue or
 stone spot in 10 tries; moved ... in to ...`. If anything throws, the
 game's own pick is used.
 
+When the wave ends and Pure Dream is removed, `Se_PureDream_Statue` goes
+with it (it's the modifier's child), but the statues stay: AI off,
+population cost 0, and on every client the dream-dust material and a
+stopped animator, set once by RPC. So a leftover statue is recognized as a
+`Monster` owned by `DewPlayer.environment` with `AI.disableAI` set
+(`DreamStatues.IsStatue`), which `laststand_status` and `laststand_statues`
+use.
+
 In the Lava Land boss room the statues are Infernus (the room's pool is
 the boss), and Last Stand counts a broken one as a heroic boss: 3
 Corrupted Chaos and the boss stardust each (`HeroicBosses.Owns` claims any

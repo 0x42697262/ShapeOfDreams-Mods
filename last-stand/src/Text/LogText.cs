@@ -294,6 +294,11 @@ internal static class LogText
 			: $"cheat: gave {heroes} hero(es) Second Wind x{charges} ({seconds:0.#} s invulnerable).";
 	}
 
+	public static string DreamStatuesMoved(int statues)
+	{
+		return $"cheat: moved {statues} Pure Dream statue(s) to random spots in reach.";
+	}
+
 	public static string CheatRevived(int heroes)
 	{
 		return $"cheat: revived {heroes} knocked-out hero(es) at full health.";

@@ -178,6 +178,11 @@ internal sealed class LastStandSession
 		Log.Info(LogText.DreamDustGranted(amount, players));
 	}
 
+	public void MoveDreamStatues()
+	{
+		Log.Info(LogText.DreamStatuesMoved(DreamStatues.MoveAll()));
+	}
+
 	public void ReviveHeroes()
 	{
 		Log.Info(LogText.CheatRevived(HeroSouls.ReviveAll(Tuning.CheatReviveHealth)));
