@@ -1190,6 +1190,37 @@ These are hard rules for all code in this repo.
   without a bump, players keep the old values. This happened once already:
   the first build's file kept minibosses at wave 4, Pain every 3 waves and the
   24-monster cap through several later changes.
+- **Version bumps are their own commit.** Code changes (with their docs and
+  checks) are committed first. The release is then one commit named
+  `vX.Y.Z` that only changes `modVer` in `about/metadata.json` and the
+  version line (and, if needed, the rest) of `about/changenote.txt`. Never
+  put code in it. Before 1.0, every release with features or fixes bumps
+  the minor version (0.7.0 to 0.8.0).
+  If more changes land before the upload, commit them on their own and
+  keep the same version.
+- **Change note.** Rewrite `about/changenote.txt` for each release (see
+  *Change notes* above for how it reaches Steam). It covers only what
+  changed since the last upload, written like a dev's patch notes, not a
+  press release. The first line is the version in bold, `[b]vX.Y.Z[/b]`,
+  matching `modVer` (from v0.9.0 on; v0.8.0 went up without it). Then a
+  Steam BBCode `[list]` of one-line bullets, plain words, no reasons or
+  mechanics (those belong in `docs/`). Give the old value when a default
+  changes. Start a new feature with `New:` and, if it's on
+  by default, say how to turn it off in the same line. End with
+  `Settings are reset with this update (old file kept as .old).` when
+  `ConfigSchema.Current` changed since the last upload, then `Only the
+  host needs to update.` Example (v0.8.0, with the version line added):
+  ```
+  [b]v0.8.0[/b]
+  [list]
+  [*]Hatred Shard gold now scales with the wave and curse strength (50 per wave) instead of a flat 500.
+  [*]Curse kill goals keep growing after wave 48 and are no longer split between players.
+  [*]Fast clear's instant kill window is now 1s (was 0.5s).
+  [*]New: heroic fast kill. Kill a heroic boss too fast and the next ones get more health. Set "Heroic fast kill: seconds per boss" to 0 to turn it off.
+  [/list]
+
+  Settings are reset with this update (old file kept as .old). Only the host needs to update.
+  ```
 - **Where things go:** new tunables go in `LastStandConfig` and are validated in
   `SessionSettings.From`. Internal constants go in `Tuning`. Game identifiers
   go in `GameNames`. Every string goes in `src/Text`. Patches only check
