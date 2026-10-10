@@ -1,0 +1,10 @@
+[b]Fix: Pure Dream statues and stones[/b]
+In the arena, Pure Dream's dream statues and dust stones now only appear on ground you can walk to. No more statues in the lava or up on the entrance ledge.
+
+[b]Fix: knocked out with AI allies[/b]
+If you play solo with AI teammates from another mod and get knocked out, you now get back up when the wave is cleared, as long as one of your teammates is still alive. Before, you stayed down for the rest of the run. 
+
+[b]New cheat commands[/b] (need Allow cheat commands on)
+laststand_revive revives every knocked-out hero at full health. laststand_statues moves Pure Dream statues to random spots you can reach. laststand_status now also lists living bosses and where they are.
+
+Only the host needs this update.
