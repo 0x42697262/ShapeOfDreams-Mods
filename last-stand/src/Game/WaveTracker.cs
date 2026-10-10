@@ -67,7 +67,7 @@ internal sealed class WaveTracker
 			_shown = progress;
 		}
 
-		int connections = ReadyConnections();
+		int connections = PlayerRoster.ReadyConnections();
 		if (connections != _labeledConnections)
 		{
 			_quest.SetLocalizedTitle(GameNames.TrackerTitleKey);
@@ -109,19 +109,5 @@ internal sealed class WaveTracker
 
 		Log.Info(LogText.TrackerStarted);
 		return true;
-	}
-
-	private static int ReadyConnections()
-	{
-		int ready = 0;
-		foreach (NetworkConnectionToClient connection in NetworkServer.connections.Values)
-		{
-			if (connection != null && connection.isReady)
-			{
-				ready++;
-			}
-		}
-
-		return ready;
 	}
 }

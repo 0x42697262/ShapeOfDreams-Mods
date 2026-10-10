@@ -101,6 +101,14 @@ internal static class LogText
 		return $"workshop: attached about/changenote.txt ({length} characters) as the update's change note.";
 	}
 
+	public const string ArenaMusicMissing =
+		"boss music: this arena room has no boss music of its own; the zone's music plays.";
+
+	public static string ArenaMusicPlayed(string effect, int connections)
+	{
+		return $"boss music: played the room's {effect} for the host and {connections} ready connection(s).";
+	}
+
 	public static string MidJoinOpened(MidJoinWaitType previous)
 	{
 		return $"mid-join: cleared the game's {previous} wait so players can join during waves.";

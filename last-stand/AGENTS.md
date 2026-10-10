@@ -476,8 +476,17 @@ These were checked in the decompiled code.
   and the database's `nameToGuid`/`guidToName` don't list them (checked in
   game). Their `resourceId` GUIDs (read with UnityPy from the scenes'
   sharedassets) are all in the Addressables `catalog.bin`.
-  Clients can't be given a track: networked effects are addressed by path
-  under a `NetworkIdentity` that already holds them.
+  An arbitrary track can't be given to clients: networked effects are
+  addressed by path under a `NetworkIdentity` that already holds them. But
+  each boss room's own start object (`BossMusicStart`; `BossMusic` in
+  Forest) has a `NetworkIdentity`, `FxNetworkedEffect` and `FxChangeMusic`,
+  and vanilla starts it with `FxNetworkedEffect.PlayNetworked()` from the
+  boss section's `onStartCombatArea` (read from the scenes' `UnityEvent`
+  persistent calls). `DewEffect.PlayNetworked` sends `PlayEffectMessage`
+  to all connections, the host's included, and each resolves the object in
+  its own scene. Last Stand's `ArenaMusic` calls the same method.
+  `MusicManager.Update` only switches when `current != next`, so replaying
+  the same track doesn't restart it.
 - **Arena node modifiers.** World gen writes modifiers straight into node
   data. Seen on an arena node: `RoomMod_SpawnGuidance`,
   `RoomMod_StrayMemory_StartProp`, `RoomMod_HarderFightBetterReward`. Later
@@ -658,8 +667,13 @@ Each answer still needs to be seen working:
     manager's screen. Apply saves the file, Cancel and Escape drop the edits,
     and the dropdown list isn't clipped by the scroll area. Same dropdowns for
     Dream Arena's `Arena room` and `Dummy monster`.
-26. **No random boss music** (removed, schema 37): the arena plays the
-    zone's normal music, and nothing in the log mentions boss music.
+26. **Room boss music:** in the default Primus arena, about 2 s after
+    arrival the music switches to the room's boss track for the host and
+    a vanilla client (log `boss music: played the room's BossMusicStart
+    for the host and N ready connection(s).`). A friend who joins mid-run
+    hears it a few seconds after loading, and the host's track doesn't
+    restart. Same in the Forest arena (`BossMusic`). With `Boss music`
+    off the zone music plays and nothing is logged.
 27. **Revive after the wave:** no soul shrine or "lost soul" quest appears
     when a hero is knocked out. They're revived when the wave is cleared
     (log: `revive: N knocked-out hero(es) revived after wave W was cleared`),

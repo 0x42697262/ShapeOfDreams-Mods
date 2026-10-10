@@ -73,10 +73,30 @@ then skip those nodes. Nothing else needs them: the arena never travels on,
 and the game only uses the sidetrack test for hunter progress and for picking
 quest nodes.
 
-**Music.** The room plays its zone's normal music. A random boss track for
-the host was tried and removed: music is local to each game, every client
-picks its own in `Room.OnLateStart`, and no synced state or networked effect
-can name a track, so only the host ever heard it.
+**Music.** The arena plays its boss room's own boss music, for the host and
+every client (`Boss music`, on). Music is local to each game: every client
+picks the zone's track in `Room.OnLateStart`, and `MusicManager` isn't
+networked. But each boss room scene carries its own start object
+(`BossMusicStart`, `BossMusic` in the Forest room) with a `NetworkIdentity`,
+an `FxNetworkedEffect` and an `FxChangeMusic` holding the room's track. In a
+normal run the boss section's `onStartCombatArea` calls
+`FxNetworkedEffect.PlayNetworked()` on it, which sends the game's own effect
+message to every client; each finds its own copy of the object by its
+`netId` and plays the track. The arena loads cleared, so that never happens
+by itself. `ArenaMusic` makes the same call: once the arena is ready it finds
+the room's `FxNetworkedEffect` whose `FxChangeMusic` has a track (by its
+components, which skips Ink's local second-phase track and Primus's
+`Silence Music`), waits 2 s, and calls `PlayNetworked()` (log `boss music:
+played the room's BossMusicStart for the host and N ready connection(s).`).
+It plays it again 2 s after the number of ready connections changes, so a
+player who joins mid-run or reconnects hears it too; `MusicManager` only
+switches when the track differs, so nobody else's track restarts. A room
+without its own boss music logs that once and keeps the zone music.
+
+An earlier version tried a random heroic boss track instead. Only the host
+heard it: an arbitrary track can't be named over the network, since a
+networked effect can only play objects that already exist in the client's
+scene. The room's own track does exist there, which is why this works.
 
 The arena's center is `Room_BossArena` when the room has one, otherwise the
 `pathablePivot` of the largest `RoomSection`. On arrival, players are placed in

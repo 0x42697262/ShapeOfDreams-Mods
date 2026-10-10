@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 namespace LastStand.Game;
@@ -8,6 +9,20 @@ internal static class PlayerRoster
 	private const int AtLeastOnePlayer = 1;
 
 	private const int MinimumHeroLevel = 1;
+
+	public static int ReadyConnections()
+	{
+		int ready = 0;
+		foreach (NetworkConnectionToClient connection in NetworkServer.connections.Values)
+		{
+			if (connection != null && connection.isReady)
+			{
+				ready++;
+			}
+		}
+
+		return ready;
+	}
 
 	public static int PlayerCount()
 	{

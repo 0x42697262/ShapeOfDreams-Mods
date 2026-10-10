@@ -44,6 +44,11 @@ internal static class ConfigText
 
 	public const string ChaosRarityHeader = "Chaos rarity";
 
+	public const string BossMusicLabel = "Boss music";
+
+	public const string BossMusicDescription =
+		"The arena plays its boss room's own boss music instead of the zone's music, for every player.";
+
 	public const string StripRoomModifiersLabel = "Plain arena (no room modifiers)";
 
 	public const string StripRoomModifiersDescription =

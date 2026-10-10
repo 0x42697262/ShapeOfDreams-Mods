@@ -56,6 +56,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 |---|---|---|
 | Arena | Arena room | Primus (dropdown) |
 | | Plain arena (no room modifiers) | on |
+| | Boss music (the arena room's own) | on |
 | | Show wave in quest tracker | on |
 | | Dream Well | on |
 | | Altar of Cleansing | on |

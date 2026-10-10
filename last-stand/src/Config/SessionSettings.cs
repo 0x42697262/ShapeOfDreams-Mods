@@ -54,6 +54,8 @@ internal sealed class SessionSettings
 
 	public bool StripRoomModifiers { get; }
 
+	public bool BossMusic { get; }
+
 	public WaveSettings Waves { get; }
 
 	public PainSettings Pain { get; }
@@ -65,7 +67,7 @@ internal sealed class SessionSettings
 		int destinyClaimsPerWave, bool hatredRemnant, int hatredDreamDustPerWave, int hatredShardGold,
 		bool reminiscenceOfLuck, CurseSettings curses, Cadence ascensionResetWaves, GoldPriceRule goldPrices,
 		int startingGold, int startingDreamDust, bool cheatCommands, int maxKillGoldPerPlayer, bool stripRoomModifiers,
-		WaveSettings waves, PainSettings pain, LootSettings loot)
+		bool bossMusic, WaveSettings waves, PainSettings pain, LootSettings loot)
 	{
 		DreamWell = dreamWell;
 		AltarOfCleansing = altarOfCleansing;
@@ -89,6 +91,7 @@ internal sealed class SessionSettings
 		ShowWaveInQuestTracker = showWaveInQuestTracker;
 		StartingWorld = startingWorld;
 		StripRoomModifiers = stripRoomModifiers;
+		BossMusic = bossMusic;
 		Waves = waves;
 		Pain = pain;
 		Loot = loot;
@@ -107,7 +110,7 @@ internal sealed class SessionSettings
 			Math.Max(0, config.startingGold),
 			StartingDreamDustRule.Amount(Math.Max(0, config.startingDreamDust),
 				Math.Max(Tuning.MinStartingWorld, config.startingWorld)),
-			config.cheatCommands, Math.Max(0, config.maxKillGoldPerPlayer), config.stripRoomModifiers,
+			config.cheatCommands, Math.Max(0, config.maxKillGoldPerPlayer), config.stripRoomModifiers, config.bossMusic,
 			WavesFrom(config), PainFrom(config), LootFrom(config));
 	}
 

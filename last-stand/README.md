@@ -12,7 +12,7 @@ essences and turns what you collect into upgrades.
 ## Features
 
 - One arena, no travel. The fight happens in a boss room with the boss
-  removed.
+  removed, to that room's own boss music, for every player.
 - A new wave starts **once the last one is cleared**, after a short break.
   Each wave is bigger and stronger than the last.
 - Every monster gets **more health and damage every wave**.

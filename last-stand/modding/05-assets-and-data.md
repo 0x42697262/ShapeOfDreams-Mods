@@ -907,14 +907,32 @@ then loads the track, and `ManagerBase<MusicManager>.softInstance.Play(item)`
 plays it. Last Stand shipped exactly that, with the nine GUIDs in its
 `GameNames` and a postfix on `Room.OnLateStart`.
 
-**Conclusion, and why the feature was removed later.** `MusicManager` is a
-plain local `ManagerBase`, not networked. The host heard the boss track,
-vanilla clients kept the zone music. There's no synced channel to hand a
-client a track (networked effects are addressed under a `NetworkIdentity`
-that already contains them; see `04-host-only-networking.md`). A feature
-only the host can hear was dropped. The data method still did its job: it
-turned "where is the boss music?" into nine checked GUIDs, and made the
-limit visible before more work went in.
+**Conclusion, and what came after.** `MusicManager` is a plain local
+`ManagerBase`, not networked. The host heard the boss track, vanilla
+clients kept the zone music. There's no synced channel to hand a client an
+arbitrary track (networked effects are addressed under a `NetworkIdentity`
+that already contains them; see `04-host-only-networking.md`), so the
+random-track feature was dropped.
+
+**Step 5: read the scene's wiring, not just its data.** Listing every
+component on the `BossMusicStart` objects, and reading the boss section's
+`onStartCombatArea` `UnityEvent` (its `m_PersistentCalls.m_Calls`: target
+object and `m_MethodName`), changed the answer:
+
+```
+Despair  BossMusicStart  ['NetworkIdentity', 'FxNetworkedEffect', 'FxChangeMusic']
+   Section_Monsters BossSection onStartCombatArea -> BossMusicStart PlayNetworked
+   Section_Monsters BossSection onClearCombatArea -> BossMusicEnd PlayNetworked
+Forest   BossMusic       ['NetworkIdentity', 'FxChangeMusic', 'FxNetworkedEffect']
+   Section_Monsters Boss Section onStartCombatArea -> BossMusic PlayNetworked
+```
+
+Each room's own start object is a networked scene object, and the game
+starts it with `FxNetworkedEffect.PlayNetworked()`, which every client
+receives. Last Stand now makes that call in the arena, so every player hears
+the room's own boss track. The random track stayed impossible; the room's
+own track never was. `UnityEvent` persistent calls are serialized data, so
+they only show up in the scene, never in the decompiled code.
 
 **Where else this applies:** any `AssetRef<T>` (follow its `guid`), sound
 effects (`DewAudioClip`, also guid-linked), finding the `Special_RoomAnnouncer`

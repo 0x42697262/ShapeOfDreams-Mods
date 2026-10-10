@@ -1152,7 +1152,38 @@ local effects inside the scene. No SyncVar or RPC names a track, and a
 networked effect can only play components that already exist under a
 networked object.
 
-**Verdict.** Only the host would hear it. The feature was removed.
+**Verdict.** A *random* track: only the host would hear it, and that
+version was removed.
+
+**But keep tracing.** The last sentence holds the way out: a networked
+effect can play components that already exist under a networked object.
+Every boss room scene has one. Reading the scenes (`05-assets-and-data.md`,
+section 4.8) shows `BossMusicStart` carrying a `NetworkIdentity`, an
+`FxNetworkedEffect` and the `FxChangeMusic` with the room's track, and the
+boss section's `onStartCombatArea` `UnityEvent` calling
+`FxNetworkedEffect.PlayNetworked()` on it:
+
+```csharp
+public void PlayNetworked()
+{
+	DewEffect.PlayNetworked(base.netIdentity, base.gameObject);
+}
+```
+
+`DewEffect.PlayNetworked` sends a `PlayEffectMessage` (the parent's `netId`
+and a path id, 0 for the object itself) with `NetworkServer.SendToAll`, the
+host's own connection included. Each client resolves the `netId` to its own
+copy of the scene object and runs `DewEffect.Play` on it, which plays the
+`FxChangeMusic` locally. So the room's *own* track reaches every vanilla
+client, through the exact call the game makes in a normal boss fight. Last
+Stand's arena loads cleared, so the combat area never starts; the mod
+calls `PlayNetworked()` itself once the arena is ready, and again when a
+player joins (`MusicManager` ignores a replay of the current track).
+
+The general lesson: "only local" is a statement about one input. Before
+dropping a feature, list what already exists on every client (scene
+objects, prefabs, localization keys) and look for a networked path the
+game already uses to trigger it.
 
 ### 6.8 Chat: `MessageType.Raw` renders as-is
 
@@ -1505,7 +1536,7 @@ Testing only with everyone present from the start hides every row marked
 | server outcomes (damage, death, gold, items, buffs) | yes, via their synced state | change server logic (patches, server methods) |
 | plain/prefab field on a spawned object | **no** (client uses its prefab) | change a synced input the client compares it with (6.1), or accept host-only effect if only the server reads it (6.10) |
 | `[NonSerialized]` field without `[SyncVar]` | **no** | same as above |
-| `ManagerBase<T>` state (music, camera, edit window, message box) | **no** | none; spawn something that drives it on clients, or drop it |
+| `ManagerBase<T>` state (music, camera, edit window, message box) | **no** | trigger a networked object that already drives it on clients (a scene `FxNetworkedEffect`, section 6.7), spawn one, or drop it |
 | UI text built locally (location label, panels) | only via its synced inputs, at its recompute time | trace its inputs and triggers (6.4–6.6) |
 | localized strings | only keys the client already has | pick an existing key; free text only through raw channels (`currentProgress`, `MessageType.Raw`) |
 | static tuning (prefab numbers of allowed types) | yes, via JSON overrides, for every run | `overrides` folder (`05-assets-and-data.md`) |

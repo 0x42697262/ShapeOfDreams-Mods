@@ -12,6 +12,10 @@ internal static class Tuning
 
 	public const float MidJoinCheckSeconds = 1f;
 
+	public const float ArenaMusicCheckSeconds = 1f;
+
+	public const float ArenaMusicSendDelaySeconds = 2f;
+
 	public const float BossHealthFloorCheckSeconds = 0.5f;
 
 	public const int EvilLucidDreamBossStardust = 3;
