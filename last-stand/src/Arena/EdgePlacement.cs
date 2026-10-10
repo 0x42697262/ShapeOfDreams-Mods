@@ -10,7 +10,6 @@ namespace LastStand.Arena;
 
 internal static class EdgePlacement
 {
-	private static readonly NavMeshPath Path = new NavMeshPath();
 	private static readonly List<Vector3> Floor = new List<Vector3>();
 
 	public static Vector3[] PickRing(ArenaPoints arena, int count)
@@ -110,7 +109,7 @@ internal static class EdgePlacement
 		int checks = 0;
 		for (int i = Floor.Count - 1; i >= 0 && checks < Tuning.EdgePathChecks; i--, checks++)
 		{
-			if (IsWalkableFrom(center, Floor[i]))
+			if (PlayableGround.IsReachable(center, Floor[i]))
 			{
 				return Flat(center, Floor[i]);
 			}
@@ -137,24 +136,6 @@ internal static class EdgePlacement
 			? hit.position
 			: target;
 		return Flat(center, boundary);
-	}
-
-	private static bool IsWalkableFrom(Vector3 center, Vector3 spot)
-	{
-		if (!NavMesh.CalculatePath(center, spot, NavMesh.AllAreas, Path) ||
-		    Path.status != NavMeshPathStatus.PathComplete)
-		{
-			return false;
-		}
-
-		float walked = 0f;
-		Vector3[] corners = Path.corners;
-		for (int i = 1; i < corners.Length; i++)
-		{
-			walked += Vector3.Distance(corners[i - 1], corners[i]);
-		}
-
-		return walked <= Vector3.Distance(center, spot) * Tuning.EdgeMaxPathStretch;
 	}
 
 	private static float Flat(Vector3 center, Vector3 point)

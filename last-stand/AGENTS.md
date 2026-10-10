@@ -1060,6 +1060,14 @@ Each answer still needs to be seen working:
     soul or lost-soul quest is left. Solo with AI allies (AllyPlayerAI)
     works the same. With cheats off it logs that cheats are off. With
     nobody down it revives 0.
+89. **Pure Dream statues in reach:** in the Lava Land arena, run
+    `laststand_wave 6` until Pure Dream comes up (or `laststand_wave 16`).
+    The Infernus statues and dust stones all stand on the platform or the
+    arms, none in the lava or on the entrance ledge; `laststand_status`
+    shows each statue under 25 m from the center with no `on lava`. The
+    log may show `pure dream: ... after N tries` lines, and rarely a
+    `moved ... in to ...` line. Breaking a statue still gives the heroic
+    boss rewards. Other rooms' Pure Dream statues look the same as before.
 
 ## Conventions
 

@@ -506,6 +506,19 @@ internal static class LogText
 		return $"boss: {count} boss monster(s) alive.";
 	}
 
+	public const string PureDreamSpotFailed = "pure dream: picking a statue or stone spot failed; the game's own spot is used.";
+
+	public static string PureDreamSpotRerolled(int tries, Vector3 spot)
+	{
+		return $"pure dream: statue or stone placed at {spot} after {tries} tries (the others were on lava or " +
+		       "out of the arena).";
+	}
+
+	public static string PureDreamSpotPulled(int tries, Vector3 last, Vector3 pulled)
+	{
+		return $"pure dream: no good statue or stone spot in {tries} tries; moved {last} in to {pulled}.";
+	}
+
 	public static string EdgeRing(int shrines, float medianReach, float cap, int unplayableDirections)
 	{
 		return $"edge ring: {shrines} shrine(s), median reach {medianReach:0.0} m, capped at {cap:0.0} m; " +

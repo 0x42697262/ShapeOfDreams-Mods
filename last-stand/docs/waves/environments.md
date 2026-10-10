@@ -28,7 +28,7 @@ effects, hazards and visuals. Removing it destroys the actor, whose
 | Accelerated Time | Everyone moves, attacks and casts faster, monsters too |
 | Veil of Time | One random memory per character gets −85% cooldown, the rest +400% |
 | Dream of Wealth | Monsters drop gold on death, and gold stones appear |
-| Pure Dream | Monsters drop dream dust on death, and dust stones appear |
+| Pure Dream | Monsters drop dream dust on death, and dust stones and breakable dream statues appear |
 | Black Rain | Elemental damage and duration down, other damage up |
 | Symbiote Habitat | More attack speed, less armor |
 | Inversion Sigil | Elements flipped; plain damage becomes a random element |
@@ -54,6 +54,35 @@ Dream of the Star Seeker (it hands out stardust far faster than normal play;
 Last Stand gives stardust only at the vanilla boss-kill rate), and the modifiers that need a normal room to work: Distant Memories
 (clears every monster and opens the rift), Challenging Fight and Fallen Star
 (tied to the exit rift and room rewards).
+
+**Pure Dream statues and stones stay in the arena.** Pure Dream places
+dust stones (`PropEnt_Stone_DreamDust`) and a few dream statues: monsters
+from the room's own `defaultRule.pool`, frozen (AI off, animator off,
+dream-dust material, unstoppable, 1.2–1.3× size), owned by the
+environment and outside the wave count, that drop dream dust when broken
+(`Se_PureDream_Statue`). Both take their spot from the private
+`RoomMod_PureDream.CalSpawnPosition`, which picks a random prop cell of
+the room's whole map (`innerPropNodeIndices`). In a boss room that map
+includes places the fight never reaches: the Lava Land lava sea (the
+navmesh runs over it) and the raised entrance ledge where heroes land
+(about 30 m up, seen with `laststand_status`). In the arena a prefix
+(`PureDreamSpotPatch`) runs the game's own pick through a reverse patch
+and keeps it only if the spot is playable (`Dew.IsNotPlayableOnTop` is
+false) and reachable on foot from the arena center (a complete navmesh
+path at most 1.6× the straight line, the same test as the edge shrines).
+Otherwise it picks again, up to 10 times (each pick uses up one prop
+cell, as the game's own does). After 10 bad picks the last spot is moved
+to the center's height and pulled toward the center 1 m at a time until
+it's playable (`PlayableGround.PullToward`). Logs: `pure dream: statue or
+stone placed at ... after N tries` and `pure dream: no good statue or
+stone spot in 10 tries; moved ... in to ...`. If anything throws, the
+game's own pick is used.
+
+In the Lava Land boss room the statues are Infernus (the room's pool is
+the boss), and Last Stand counts a broken one as a heroic boss: 3
+Corrupted Chaos and the boss stardust each (`HeroicBosses.Owns` claims any
+supported `BossMonster` in the arena node, a fallback for bosses alive
+across a mod reload). That's kept as a feature for now.
 
 **The arena counts as in combat during an environment.** The arena loads
 cleared (`Room.didClearRoom` is true from `isRevisit`), and many environments

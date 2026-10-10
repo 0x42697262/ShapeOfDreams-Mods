@@ -1,10 +1,31 @@
 using LastStand.Config;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace LastStand.Arena;
 
 internal static class PlayableGround
 {
+	private static readonly NavMeshPath Path = new NavMeshPath();
+
+	public static bool IsReachable(Vector3 center, Vector3 spot)
+	{
+		if (!NavMesh.CalculatePath(center, spot, NavMesh.AllAreas, Path) ||
+		    Path.status != NavMeshPathStatus.PathComplete)
+		{
+			return false;
+		}
+
+		float walked = 0f;
+		Vector3[] corners = Path.corners;
+		for (int i = 1; i < corners.Length; i++)
+		{
+			walked += Vector3.Distance(corners[i - 1], corners[i]);
+		}
+
+		return walked <= Vector3.Distance(center, spot) * Tuning.EdgeMaxPathStretch;
+	}
+
 	public static bool IsPlayable(Vector3 position)
 	{
 		return !Dew.IsNotPlayableOnTop(position);

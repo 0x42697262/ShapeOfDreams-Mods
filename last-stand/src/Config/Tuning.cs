@@ -106,6 +106,8 @@ internal static class Tuning
 
 	public const float PlayableStepMeters = 1f;
 
+	public const int PureDreamSpotAttempts = 10;
+
 	public const float GameDefaultReviveHealth = -1f;
 
 	public const float CheatReviveHealth = 1f;

@@ -112,6 +112,8 @@ internal static class GameNames
 
 	public const string PureDream = nameof(RoomMod_PureDream);
 
+	public const string PureDreamSpawnPosition = "CalSpawnPosition";
+
 	public const string RiskOfMeteors = nameof(RoomMod_RiskOfMeteors);
 
 	public const string StarCookie = nameof(RoomMod_StarCookie);
