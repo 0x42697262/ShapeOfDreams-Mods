@@ -1,4 +1,10 @@
-[b]New: settings changes in chat[/b]
-When the host changes Last Stand's settings, everyone in the lobby or the run sees what changed in chat, for example "Host changed Boss music: on -> off". Players without the mod see it too.
+[b]Fixed: Hatred Shard gold grows with the wave[/b]
+A Hatred Shard that rolls gold used to give a flat 500 at every strength. It now gives 50 gold per wave, times the strength: about 1,250 (None) to 4,000 (Powerful) at wave 50, and 2,500 to 8,000 at wave 100. The amount can be changed in the settings (Hatred Shard gold per wave).
+
+[b]New: heroic fast kill (off by default)[/b]
+Heroic bosses can get tougher when your party kills them too fast. After a boss wave, the party's heaviest 5 seconds of damage on the boss is turned into a kill time. If that's faster than the target, later heroic bosses get more health in proportion, up to x10 per boss wave, and chat says so. Waiting before bursting, or a boss's immune phase, doesn't hide a fast kill. Turn it on with Heroic fast kill: seconds per boss (15 is a good start). It helps most at starting world 1, where heroic bosses fall quickly.
+
+[b]Settings reset[/b]
+This update resets Last Stand's settings to the new defaults. Your old settings file is kept next to the new one with a .old extension.
 
 Only the host needs this update.
