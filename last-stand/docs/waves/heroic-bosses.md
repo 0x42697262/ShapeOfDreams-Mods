@@ -85,13 +85,14 @@ health. 50× was tried first: a wave 49 boss had about 23 million health and
 lost only a quarter of it in five minutes of nonstop fighting. 10× damage was
 also too much.
 
-**Fast kills raise the next boss** (off by default). Fast clear (see
-[Waves](waves.md)) watches mobs, and a boss wave's mobs say nothing about
-how fast the boss itself dies. So heroic bosses have their own check,
-`Heroic fast kill: seconds per boss`. It's 0 (off) by default: at the
-default `Starting world` 1 a strong party melts heroic bosses, but from a
-starting world of about 4 their vanilla zone scaling keeps up. 15 is a
-good start when it's needed.
+**Fast kills raise the next boss.** Fast clear (see [Waves](waves.md))
+watches mobs, and a boss wave's mobs say nothing about how fast the boss
+itself dies. So heroic bosses have their own check, `Heroic fast kill:
+seconds per boss`, 15 by default. At the default `Starting world` 1 a
+strong party melts heroic bosses; from a starting world of about 4 their
+vanilla zone scaling mostly keeps up, so it rarely fires there. A host
+whose party wants to one-shot bosses sets it to 0 (off). It was 0 by
+default until schema 45.
 
 It measures the party's best burst, not the fight's length. A timer from
 the first hit to the death can be beaten by stalling (hit once, wait,

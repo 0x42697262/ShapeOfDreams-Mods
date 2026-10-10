@@ -28,7 +28,8 @@ essences and turns what you collect into upgrades.
   then every 25 waves (124, 149, 174…). One more joins every 50 waves: two
   at 99 and 124, three at 149 and 174, four at 199. Each drops 3 Corrupted
   Chaos rewards, the kind Pain minibosses leave, and the stardust a boss
-  kill gives in a normal run.
+  kill gives in a normal run. Kill them too fast (under 15 s each at your
+  best burst) and later heroic bosses come back with more health.
 - **Pain minibosses** change the rules while they live: every hero takes
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.

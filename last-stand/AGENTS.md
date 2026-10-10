@@ -1084,8 +1084,8 @@ Each answer still needs to be seen working:
     defaults after many changes shows at most 6 lines plus `...and N more
     setting(s) changed.` Apply with nothing changed sends nothing. On the
     title screen, or as a client, only `settings:` log lines appear.
-92. **Heroic fast kill** (off by default): set `Heroic fast kill:
-    seconds per boss` to 15, `laststand_wave 49` and kill the boss fast.
+92. **Heroic fast kill** (15 s by default since schema 45, see check 96):
+    `laststand_wave 49` and kill the boss fast.
     At the wave's clear the log shows `heroic fast kill: wave 49's heroic
     bosses took D damage in their best 5 s, a kill in P s per boss at that
     rate (target 15 s); this step xS` with S = 15 / P (at most 10), and
@@ -1116,6 +1116,11 @@ Each answer still needs to be seen working:
     wave 1's monsters in two quick hits each (under 1 s apart): the log
     shows `fast clear: wave 1 had K of 6 monster(s) die within 1 s of
     their first hit`. Old config files are moved to `.old`.
+96. **Heroic fast kill on by default** (schema 45): a new config shows
+    `Heroic fast kill: seconds per boss` at 15, and the `wave 49:` line
+    shows `heroicKill=x1`. After a fast kill the log has `heroic fast
+    kill: ...` with no settings change. Old config files are moved to
+    `.old`.
 
 ## Conventions
 

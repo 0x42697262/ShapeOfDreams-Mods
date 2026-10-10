@@ -10,8 +10,8 @@ A curse counts every monster the cursed player hurt shortly before it died, whoe
 [b]Changed: fast clear allows 1 second[/b]
 A monster now counts as killed instantly for fast clear when it dies within 1 second of its first hit, up from 0.5 seconds.
 
-[b]New: heroic fast kill (off by default)[/b]
-Heroic bosses can get tougher when your party kills them too fast. After a boss wave, the party's heaviest 5 seconds of damage on the boss is turned into a kill time. If that's faster than the target, later heroic bosses get more health in proportion, up to x10 per boss wave, and chat says so. Waiting before bursting, or a boss's immune phase, doesn't hide a fast kill. Turn it on with Heroic fast kill: seconds per boss (15 is a good start). It helps most at starting world 1, where heroic bosses fall quickly.
+[b]New: heroic fast kill[/b]
+Heroic bosses can get tougher when your party kills them too fast. After a boss wave, the party's heaviest 5 seconds of damage on the boss is turned into a kill time. If that's faster than the target, later heroic bosses get more health in proportion, up to x10 per boss wave, and chat says so. Waiting before bursting, or a boss's immune phase, doesn't hide a fast kill. The target is 15 seconds per boss (Heroic fast kill: seconds per boss). A host whose party wants to one-shot bosses can set it to 0 to turn it off.
 
 [b]Settings reset[/b]
 This update resets Last Stand's settings to the new defaults. Your old settings file is kept next to the new one with a .old extension.

@@ -405,7 +405,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicFastKillSecondsLabel)]
 	[Description(ConfigText.HeroicFastKillSecondsDescription)]
-	public float heroicFastKillSeconds = 0f;
+	public float heroicFastKillSeconds = 15f;
 
 	[LabelText(ConfigText.HeroicFastKillBurstLabel)]
 	[Description(ConfigText.HeroicFastKillBurstDescription)]
