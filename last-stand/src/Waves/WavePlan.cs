@@ -66,5 +66,7 @@ internal sealed class WavePlan
 
 	public int TotalMonsters => RegularCount + HunterCount + MiniBossCount + PainCount + HeroicBossCount;
 
+	public int FullStrengthMonsters => UnmergedMobCount + MiniBossCount + PainCount + HeroicBossCount;
+
 	public bool HasBoss => MiniBossCount > 0 || PainCount > 0 || HeroicBossCount > 0;
 }

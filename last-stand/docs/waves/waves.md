@@ -84,7 +84,8 @@ works through these knobs, all using systems the game already syncs:
   surges: extra Pain minibosses`), added after the usual caps. The Pain
   group puts the Pain zone in place of that wave's hunter zone while it
   lives, and the wave's break is the 40 s boss break. Fast clear's instant
-  kill share and curse kill goals count the merged wave. The chat line for
+  kill share counts the merged wave. Curse kill goals count the full
+  wave, so they keep growing (see [Curses](../shrines/curses.md)). The chat line for
   the wave says `They fight with the strength of N: xM health and damage
   each.` and the `wave N:` log line shows `merged=N/xM` (`merged=N/x1` when
   nothing merged). The rule is `MergeRule`, plain logic used by

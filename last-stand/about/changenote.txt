@@ -1,6 +1,12 @@
 [b]Fixed: Hatred Shard gold grows with the wave[/b]
 A Hatred Shard that rolls gold used to give a flat 500 at every strength. It now gives 50 gold per wave, times the strength: about 1,250 (None) to 4,000 (Powerful) at wave 50, and 2,500 to 8,000 at wave 100. The amount can be changed in the settings (Hatred Shard gold per wave).
 
+[b]Fixed: curse kill goals keep growing after wave 48[/b]
+From wave 48, waves spawn at most 100 tougher monsters, and curse kill goals used to shrink with them and stop growing. Goals now follow the whole wave and keep rising every wave, so late curses take more than one wave to lift.
+
+[b]Changed: curse kill goals aren't split between players[/b]
+A curse counts every monster the cursed player hurt shortly before it died, whoever finished it, so goals are no longer divided by the number of players. With two players a Mild curse at wave 47 now needs 147 kills instead of 74.
+
 [b]New: heroic fast kill (off by default)[/b]
 Heroic bosses can get tougher when your party kills them too fast. After a boss wave, the party's heaviest 5 seconds of damage on the boss is turned into a kill time. If that's faster than the target, later heroic bosses get more health in proportion, up to x10 per boss wave, and chat says so. Waiting before bursting, or a boss's immune phase, doesn't hide a fast kill. Turn it on with Heroic fast kill: seconds per boss (15 is a good start). It helps most at starting world 1, where heroic bosses fall quickly.
 

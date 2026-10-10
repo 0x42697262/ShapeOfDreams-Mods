@@ -5,9 +5,8 @@ namespace LastStand.Combat;
 
 internal static class CurseGoalRule
 {
-	public static int Kills(int waveMonsters, int players, double wavesOfKills)
+	public static int Kills(int waveMonsters, double wavesOfKills)
 	{
-		double perPlayer = waveMonsters / (double)Math.Max(1, players);
-		return Math.Max(Tuning.MinimumCurseKills, (int)Math.Round(perPlayer * wavesOfKills));
+		return Math.Max(Tuning.MinimumCurseKills, (int)Math.Round(waveMonsters * wavesOfKills));
 	}
 }

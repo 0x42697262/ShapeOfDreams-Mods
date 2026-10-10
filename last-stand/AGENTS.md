@@ -821,8 +821,8 @@ Each answer still needs to be seen working:
     log line `hatred: shard opened at wave N; dream dust base X, gold base
     Y`. Old config files are moved to `.old` (schema 18).
 56. **Curse goals:** every curse taken in the arena logs `curse: ... now
-    ends after N kill(s)`, with N about one player's share of the wave (×1,
-    ×1.25, ×1.75 by strength). The curse quest on the host and on a vanilla
+    ends after N kill(s)`, with N about the whole wave at full strength,
+    not split by players (×1, ×1.25, ×1.75 by strength; see check 94). The curse quest on the host and on a vanilla
     client shows a kill count (never rooms) from the start, counts down with
     kills, and the curse ends at 0.
 57. **Environments:** waves 6, 16 … 96, 106, 116 … each log `environment:
@@ -1103,6 +1103,14 @@ Each answer still needs to be seen working:
     With free gold shrines on it's the same, not 1. `Hatred Shard gold per
     wave` at 0: shards never roll gold. Old config files are moved to
     `.old`.
+94. **Curse goals past wave 48:** with two players, take a Mild curse at
+    wave 47 (goal about 147), then at 48, 51 and 101. The goal keeps
+    rising (150, 159, 309: the `wave N:` line's `merged=N` plus its
+    bosses; surge waves double), never dropping to about 100 and never
+    halved for two players. Every mob kill counts 1 on the host and a
+    vanilla client, whatever its merge strength, and a monster the cursed
+    hero only hit (another player's kill) counts too. Late curses last
+    more than one wave.
 
 ## Conventions
 

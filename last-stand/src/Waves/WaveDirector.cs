@@ -316,11 +316,11 @@ internal sealed class WaveDirector
 		ChatNotices.Broadcast(Messages.EnvironmentEnded(LocalizedNames.Find(type) ?? type));
 	}
 
-	public int MonstersInWave(WaveSettings settings)
+	public int FullStrengthMonstersInWave(WaveSettings settings)
 	{
 		if (_plan != null)
 		{
-			return _plan.TotalMonsters;
+			return _plan.FullStrengthMonsters;
 		}
 
 		if (_cycle == null)
@@ -330,7 +330,8 @@ internal sealed class WaveDirector
 
 		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
 			_catalog.HeroicBossCount);
-		return WaveSchedule.Plan(_cycle.CurrentWave + 1, PlayerRoster.PlayerCount(), settings, content).TotalMonsters;
+		return WaveSchedule.Plan(_cycle.CurrentWave + 1, PlayerRoster.PlayerCount(), settings, content)
+			.FullStrengthMonsters;
 	}
 
 	private void ApplyPlan(WaveSettings settings)

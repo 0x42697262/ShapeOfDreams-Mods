@@ -495,7 +495,7 @@ internal sealed class LastStandSession
 			return;
 		}
 
-		int monsters = _waves.MonstersInWave(_settings.Waves);
+		int monsters = _waves.FullStrengthMonstersInWave(_settings.Waves);
 		if (monsters <= 0)
 		{
 			return;
@@ -503,8 +503,7 @@ internal sealed class LastStandSession
 
 		QuestProgressType before = curse.progressType;
 		int beforeAmount = curse.requiredAmount;
-		int kills = CurseGoalRule.Kills(monsters, PlayerRoster.PlayerCount(),
-			_settings.Curses.WavesFor(curse.currentStrength));
+		int kills = CurseGoalRule.Kills(monsters, _settings.Curses.WavesFor(curse.currentStrength));
 		CurseGoals.SetKills(curse, kills);
 		Log.Info(LogText.CurseGoalSet(curse.GetType().Name, before.ToString(), beforeAmount, kills));
 	}

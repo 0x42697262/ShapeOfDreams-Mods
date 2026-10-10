@@ -241,8 +241,8 @@ internal static class ConfigText
 	public const string CursePowerfulWavesLabel = "Powerful curse length (waves of kills)";
 
 	public const string CurseWavesDescription =
-		"Curses end on kills, not travel. Length in waves of monsters split across players: 1 = one " +
-		"player's share of a wave. Assists count, heroic bosses count 10.";
+		"Curses end on kills, not travel. Length in waves of monsters at full strength: 1 = a whole wave, " +
+		"not split across players. Assists count, heroic bosses count 10.";
 
 	public const string StartingGoldLabel = "Starting gold";
 
