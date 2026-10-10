@@ -1,6 +1,4 @@
-[b]New: heroic bosses drop stardust[/b]
-Heroic bosses now drop the stardust a boss kill gives in a normal run: 16, plus 2 on Normal, 4 on Hard or 7 on Nightmare, plus 3 per evil lucid dream. Every player gets it, including players without the mod. It can be turned off in the settings (Heroic boss stardust).
-
-Your settings are kept this time.
+[b]New: boss music in the arena[/b]
+The arena now plays its boss room's own boss music instead of the zone's music, for every player, including players without the mod and anyone who joins mid-run. It can be turned off in the settings (Boss music).
 
 Only the host needs this update.
