@@ -950,9 +950,9 @@ Each answer still needs to be seen working:
     the default is 30): one-shot 5 of wave 1's 6 monsters (see check 82
     for the trigger).
     Chat says, in red (`#ff4d4d`) instead of the usual orange, `5 of wave
-    1's 6 monsters died within 0.5s of their first hit. From wave 2 on,
+    1's 6 monsters died within 1s of their first hit. From wave 2 on,
     monsters hit back with x2 health and damage.` and the log `fast clear:
-    wave 1 had 5 of 6 monster(s) die within 0.5 s of their first hit`. The `wave 2:` and `wave 3:` lines show `fastClear=x2`
+    wave 1 had 5 of 6 monster(s) die within 1 s of their first hit`. The `wave 2:` and `wave 3:` lines show `fastClear=x2`
     and both waves' monsters take about twice the hits; a second fast clear
     makes it `x4`. A heroic boss (`laststand_wave 49`) after a fast clear
     has normal health. A slow wave and `laststand_skip` never trigger it.
@@ -1004,11 +1004,11 @@ Each answer still needs to be seen working:
     friend who joins while the boss is alive gets in too.
 82. **Fast clear by time to kill** (schema 41): with `Fast clear: from
     wave` at 1, one-shot most of wave 1: the log shows `fast clear: wave 1
-    had K of 6 monster(s) die within 0.5 s of their first hit` as soon as
+    had K of 6 monster(s) die within 1 s of their first hit` as soon as
     the 5th instant kill lands, even on a big wave that takes far longer
     than 10 s to spawn. Hit monsters a few times each on a later wave: no
     trigger, and at the wave's end `fast clear: wave N had K of D death(s)
-    within 0.5 s of the first hit; X needed`. Old config files are moved
+    within 1 s of the first hit; X needed`. Old config files are moved
     to `.old` (schema 41, `Fast clear: within (s)` replaced by `Fast clear:
     instant within (s)`).
 83. **Workshop change note:** with `about/changenote.txt` written,
@@ -1111,6 +1111,11 @@ Each answer still needs to be seen working:
     vanilla client, whatever its merge strength, and a monster the cursed
     hero only hit (another player's kill) counts too. Late curses last
     more than one wave.
+95. **Fast clear within 1 s** (schema 44): a new config shows `Fast clear:
+    instant within (s)` at 1. With `Fast clear: from wave` at 1, kill
+    wave 1's monsters in two quick hits each (under 1 s apart): the log
+    shows `fast clear: wave 1 had K of 6 monster(s) die within 1 s of
+    their first hit`. Old config files are moved to `.old`.
 
 ## Conventions
 

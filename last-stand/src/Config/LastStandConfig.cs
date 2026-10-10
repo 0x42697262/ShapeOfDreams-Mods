@@ -238,7 +238,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.FastClearKillSecondsLabel)]
 	[Description(ConfigText.FastClearKillSecondsDescription)]
-	public float fastClearKillSeconds = 0.5f;
+	public float fastClearKillSeconds = 1f;
 
 	[LabelText(ConfigText.FastClearStatMultiplierLabel)]
 	[Description(ConfigText.FastClearStatMultiplierDescription)]

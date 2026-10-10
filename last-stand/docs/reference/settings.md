@@ -108,7 +108,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Spawn interval / spawns per batch | 0.5 s / 6 |
 | Scaling | Health / damage per wave | 10% / 10% |
 | | Steeper scaling from wave / late health / late damage per wave | 150 / 50% / 50% |
-| | Fast clear: instant kills / instant within (from the first hit) / stats from next wave (stacking) / from wave | 80% / 0.5 s / ×2 / 30 |
+| | Fast clear: instant kills / instant within (from the first hit) / stats from next wave (stacking) / from wave | 80% / 1 s / ×2 / 30 |
 | | Fast clear: heroic bosses too / heroic boss share | on / 50% |
 | | Starting monster level / waves per level | 1 / 4 |
 | | Starting world (vanilla world scaling) | 1 |

@@ -100,9 +100,9 @@ works through these knobs, all using systems the game already syncs:
 - **Fast clear:** if 80% of a wave's monsters (`Fast clear: instant kills
   (%)`, rounded up, bosses included) are killed instantly, every monster
   from the next wave on gets ×2 health and damage (`Fast clear: stats from
-  next wave (x)`). A monster is killed instantly when it dies within 0.5 s
-  of the first hit it takes (`Fast clear: instant within (s)`); one that
-  dies from its first hit counts as 0 s. It carries
+  next wave (x)`). A monster is killed instantly when it dies within 1 s
+  of the first hit it takes (`Fast clear: instant within (s)`; 0.5 s
+  until schema 44); one that dies from its first hit counts as 0 s. It carries
   over (from wave 30 by default, see below): clear wave 54 fast and wave 55 is doubled, wave 56 keeps that ×2
   (plus its normal per-wave growth) with no further doubling, until another
   fast clear stacks a second ×2 (×4), and so on. Heroic bosses get a share
@@ -114,9 +114,9 @@ works through these knobs, all using systems the game already syncs:
   would be unkillable. At 0% or with the toggle off, bosses are left out.
   Chat says so at once, in red instead of the usual orange (the "Wave N
   cleared" line is green), and the log shows `fast clear: wave N had K of M
-  monster(s) die within 0.5 s of their first hit`; every `wave N:` line
+  monster(s) die within 1 s of their first hit`; every `wave N:` line
   shows `fastClear=xM`. A watched wave that misses logs how close it came
-  when it's cleared: `fast clear: wave N had K of D death(s) within 0.5 s
+  when it's cleared: `fast clear: wave N had K of D death(s) within 1 s
   of the first hit; X needed`.
   Each monster's wave bonus is raised to `(100 + bonus) × M − 100`: with
   one fast clear, wave 21's +200% (3× base) becomes +500% (6× base),

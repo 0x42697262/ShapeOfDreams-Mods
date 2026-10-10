@@ -20,7 +20,7 @@ essences and turns what you collect into upgrades.
   Each wave waits until a player takes a curse at the Hatred Remnant, which
   curses every player, each with a different curse.
 - **Clear too fast and it hits back:** from wave 30, if 80% of a wave's
-  monsters die within 0.5 s of their first hit, every later wave's monsters
+  monsters die within 1 s of their first hit, every later wave's monsters
   get double health and damage, stacking with each fast clear (heroic
   bosses take half the stacks).
 - **Minibosses** come every 10 waves, then several at once.
