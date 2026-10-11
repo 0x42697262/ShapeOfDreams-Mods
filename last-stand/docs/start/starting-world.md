@@ -35,15 +35,18 @@ What a world means (the game's curves on Nightmare, vs world 1):
 | 50 | ×1774 | ×492 | ×6457 |
 
 **Where the waves sit.** With the default world rise, monsters fight like
-this world (add `starting world − 1` for a higher start; heroic bosses
-can sit higher after a [fast kill](../waves/heroic-bosses.md)):
+this world (add `starting world − 1` for a higher start; after a heroic
+[fast kill](../waves/heroic-bosses.md) every monster sits a fixed number
+of worlds higher on top of this):
 
 | Wave | 1 | 26 | 51 | 101 | 150 | 200 | 210 | 220 | 250 | 300 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Monster world | 1 | 2 | 3 | 5 | 7 | 9 | 14 | 19 | 34 | 59 |
 
 The chat line of every wave ends with "Difficulty: X.X" (the monster world), and the
-`wave N:` log line shows `world=`.
+`wave N:` log line shows `world=X raised=+R`, where R is the fast-kill
+raise already included in X. Like the wave climb, the raise moves stats
+only, not loot, gold or prices.
 
 The index also moves everything else the game ties to the world number:
 - **Boss skills:** `ZoneManager` rolls some zone indexes for hard boss ability

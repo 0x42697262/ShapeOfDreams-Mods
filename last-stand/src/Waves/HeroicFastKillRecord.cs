@@ -6,13 +6,17 @@ internal sealed class HeroicFastKillRecord
 {
 	private const double Everyone = 1;
 
-	public HeroicFastKillRecord(double projectedSeconds, Dictionary<string, double> burstDamageByPlayer)
+	public HeroicFastKillRecord(double projectedSeconds, double fromExtraWorlds,
+		Dictionary<string, double> burstDamageByPlayer)
 	{
 		ProjectedSeconds = projectedSeconds;
+		FromExtraWorlds = fromExtraWorlds;
 		BurstDamageByPlayer = burstDamageByPlayer;
 	}
 
 	public double ProjectedSeconds { get; }
+
+	public double FromExtraWorlds { get; }
 
 	public Dictionary<string, double> BurstDamageByPlayer { get; }
 

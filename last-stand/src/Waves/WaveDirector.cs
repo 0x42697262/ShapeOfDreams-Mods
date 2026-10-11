@@ -28,7 +28,7 @@ internal sealed class WaveDirector
 	private readonly HeroicFastKillWatch _heroicFastKill = new HeroicFastKillWatch();
 	private readonly PlayerKeys _playerKeys = new PlayerKeys();
 	private PaceLedger _pace = new PaceLedger();
-	private double _loggedHeroicMultiplier = HeroicFastKillRule.NoChange;
+	private double _loggedRaisedWorlds;
 
 	private readonly BossHealthFloor _bossHealth = new BossHealthFloor();
 
@@ -95,9 +95,9 @@ internal sealed class WaveDirector
 		_queue.Clear();
 	}
 
-	public double HeroicKillMultiplierHere(HeroicFastKillRule rule)
+	private double RaisedWorlds(HeroicFastKillRule rule, ICollection<string> present)
 	{
-		return _pace.HeroicKillMultiplier(rule, _playerKeys.Present());
+		return _pace.RaisedWorlds(rule, present, WorldScaling.ExtraWorldsForBossHealth);
 	}
 
 	private void ResetPace(PaceLedger pace)
@@ -105,7 +105,7 @@ internal sealed class WaveDirector
 		_heroicFastKill.Cancel();
 		_playerKeys.Clear();
 		_pace = pace;
-		_loggedHeroicMultiplier = HeroicFastKillRule.NoChange;
+		_loggedRaisedWorlds = 0;
 	}
 
 	public bool HasPending(EnemyTier tier)
@@ -365,13 +365,9 @@ internal sealed class WaveDirector
 		int wave = _cycle.CurrentWave;
 		_plan = WaveSchedule.Plan(wave, PlayerRoster.PlayerCount(), settings, content, UnityEngine.Random.value,
 			_environmentTally.CountIn(settings.Environment.Block(wave)));
-		_plan.MonsterWorld = WorldScaling.RealZoneIndex() + Tuning.WorldOfZoneIndexZero + _plan.ExtraWorlds;
-		double heroicKill = HeroicKillMultiplierHere(settings.HeroicFastKill);
-		_plan.HeroicKillMultiplier = settings.HeroicFastKill.MultiplierFor(heroicKill);
-		_plan.HeroicBossWorldRaise = _plan.HeroicBossCount > 0
-			? HeroicBossWorldRaise(_plan.ExtraWorlds, _plan.HeroicKillMultiplier)
-			: 0;
-		LogPaceForRoster(settings, heroicKill);
+		_plan.RaisedWorlds = RaisedWorlds(settings.HeroicFastKill, _playerKeys.Present());
+		_plan.MonsterWorld = MonsterWorld(_plan.ExtraWorlds + _plan.RaisedWorlds);
+		LogPaceForRoster(settings);
 
 		MonsterStrength.SetAmbientLevel(_plan.AmbientLevel);
 		if (_plan.IsHunted)
@@ -380,15 +376,20 @@ internal sealed class WaveDirector
 		}
 	}
 
-	private void LogPaceForRoster(WaveSettings settings, double heroicKill)
+	private void LogPaceForRoster(WaveSettings settings)
 	{
-		if (heroicKill == _loggedHeroicMultiplier)
+		if (_plan.RaisedWorlds == _loggedRaisedWorlds)
 		{
 			return;
 		}
 
-		_loggedHeroicMultiplier = heroicKill;
-		Log.Info(LogText.PaceForRoster(_plan.Number, heroicKill, _pace.HeroicKillMultiplier(settings.HeroicFastKill, null)));
+		_loggedRaisedWorlds = _plan.RaisedWorlds;
+		Log.Info(LogText.PaceForRoster(_plan.Number, _plan.RaisedWorlds, RaisedWorlds(settings.HeroicFastKill, null)));
+	}
+
+	private static double MonsterWorld(double extraWorlds)
+	{
+		return WorldScaling.RealZoneIndex() + Tuning.WorldOfZoneIndexZero + extraWorlds;
 	}
 
 	private void OnEnemyHit(EnemyHit hit)
@@ -417,18 +418,12 @@ internal sealed class WaveDirector
 			return;
 		}
 
-		_pace.Add(_heroicFastKill.Record());
-		double multiplier = HeroicKillMultiplierHere(rule);
+		_pace.Add(_heroicFastKill.Record(_plan.ExtraWorlds + _plan.RaisedWorlds));
+		double raised = RaisedWorlds(rule, _playerKeys.Present());
+		double world = MonsterWorld(_plan.ExtraWorlds + raised);
 		Log.Info(LogText.HeroicFastKill(wave, _heroicFastKill.BestBurstDamage, _heroicFastKill.BurstSeconds, projected,
-			rule.TargetSeconds, step, rule.MaxStep, multiplier));
-		double heroicWorld = _plan.MonsterWorld + HeroicBossWorldRaise(_plan.ExtraWorlds, rule.MultiplierFor(multiplier));
-		ChatNotices.Broadcast(Messages.HeroicFastKill(projected, rule.TargetSeconds, multiplier, heroicWorld,
-			_plan.MonsterWorld));
-	}
-
-	private static double HeroicBossWorldRaise(double extraWorlds, double healthMultiplier)
-	{
-		return WorldScaling.ExtraWorldsForBossHealth(extraWorlds, healthMultiplier) - extraWorlds;
+			rule.TargetSeconds, step, rule.MaxStep, raised - _plan.RaisedWorlds, raised));
+		ChatNotices.Broadcast(Messages.HeroicFastKill(projected, rule.TargetSeconds, _plan.MonsterWorld, world));
 	}
 
 	private void FinishWave(double breakSeconds, bool curseToStart)
@@ -507,9 +502,7 @@ internal sealed class WaveDirector
 			return;
 		}
 
-		double extraWorlds = tier == EnemyTier.HeroicBoss
-			? plan.ExtraWorlds + plan.HeroicBossWorldRaise
-			: plan.ExtraWorlds;
+		double extraWorlds = plan.ExtraWorlds + plan.RaisedWorlds;
 		WorldScaling.BonusPercentFor(entity, extraWorlds, out double health, out double damage);
 		double merge = tier.IsMob() ? plan.MergeMultiplier : MergeRule.NoChange;
 		MonsterEnhancer.ApplyStatBonus(entity, MergeRule.RaiseBonus(health, merge),

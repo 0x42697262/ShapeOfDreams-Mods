@@ -16,7 +16,9 @@ internal sealed class PaceLedger
 
 	private const char ValueSeparator = '=';
 
-	private const int PartCount = 2;
+	private const int RecordPartCount = 3;
+
+	private const int PairPartCount = 2;
 
 	private readonly List<HeroicFastKillRecord> _heroicKills = new List<HeroicFastKillRecord>();
 
@@ -27,19 +29,21 @@ internal sealed class PaceLedger
 		_heroicKills.Add(record);
 	}
 
-	public double HeroicKillMultiplier(HeroicFastKillRule rule, ICollection<string> present)
+	public double RaisedWorlds(HeroicFastKillRule rule, ICollection<string> present,
+		HeroicFastKillRule.WorldSolver solver)
 	{
-		double multiplier = HeroicFastKillRule.NoChange;
-		foreach (HeroicFastKillRecord record in _heroicKills)
+		if (!rule.IsOn)
 		{
-			double share = record.ShareOf(present);
-			if (share > 0)
-			{
-				multiplier *= rule.StepFor(record.ProjectedSeconds / share);
-			}
+			return 0;
 		}
 
-		return multiplier;
+		double worlds = 0;
+		foreach (HeroicFastKillRecord record in _heroicKills)
+		{
+			worlds += rule.RaiseFor(record, record.ShareOf(present), solver);
+		}
+
+		return worlds;
 	}
 
 	public string Serialize()
@@ -47,8 +51,9 @@ internal sealed class PaceLedger
 		StringBuilder text = new StringBuilder();
 		for (int i = 0; i < _heroicKills.Count; i++)
 		{
-			AppendRecord(text, i, _heroicKills[i].ProjectedSeconds.ToString(Tuning.RoundTripNumberFormat, CultureInfo.InvariantCulture),
-				_heroicKills[i].BurstDamageByPlayer, damage => damage.ToString(Tuning.RoundTripNumberFormat, CultureInfo.InvariantCulture));
+			HeroicFastKillRecord record = _heroicKills[i];
+			AppendRecord(text, i, Number(record.ProjectedSeconds) + PartSeparator + Number(record.FromExtraWorlds),
+				record.BurstDamageByPlayer, Number);
 		}
 
 		return text.ToString();
@@ -60,10 +65,10 @@ internal sealed class PaceLedger
 		foreach (string record in Records(text ?? string.Empty))
 		{
 			string[] parts = record.Split(PartSeparator);
-			if (parts.Length == PartCount &&
-			    double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out double projected))
+			if (parts.Length == RecordPartCount && TryParseDouble(parts[0], out double projected) &&
+			    TryParseDouble(parts[1], out double fromExtraWorlds))
 			{
-				ledger.Add(new HeroicFastKillRecord(projected, Entries<double>(parts[1], TryParseDouble)));
+				ledger.Add(new HeroicFastKillRecord(projected, fromExtraWorlds, Entries<double>(parts[2], TryParseDouble)));
 			}
 		}
 
@@ -111,13 +116,18 @@ internal sealed class PaceLedger
 		foreach (string entry in text.Split(EntrySeparator))
 		{
 			string[] pair = entry.Split(ValueSeparator);
-			if (pair.Length == PartCount && pair[0].Length > 0 && parse(pair[1], out T value))
+			if (pair.Length == PairPartCount && pair[0].Length > 0 && parse(pair[1], out T value))
 			{
 				entries[pair[0]] = value;
 			}
 		}
 
 		return entries;
+	}
+
+	private static string Number(double value)
+	{
+		return value.ToString(Tuning.RoundTripNumberFormat, CultureInfo.InvariantCulture);
 	}
 
 	private static bool TryParseDouble(string text, out double value)

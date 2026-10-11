@@ -82,8 +82,8 @@ works through these knobs, all using systems the game already syncs:
   the max health of the toughest regular monster or hunter in the wave
   (`Merged waves: miniboss health`). Without it, ×8 monsters would leave
   them weaker than the mobs around them. Heroic bosses have no floor any
-  more (20× until schema 53): their world, raised by the heroic fast kill,
-  sets their health (see [Heroic bosses](heroic-bosses.md)). `BossHealthFloor`
+  more (20× until schema 53): their world, like every monster's raised by
+  the heroic fast kill, sets their health (see [Heroic bosses](heroic-bosses.md)). `BossHealthFloor`
   checks every 0.5 s during the wave: it remembers the highest max health
   any of the wave's monsters had, and raises any boss below its floor with
   one extra `maxHealthPercentage` bonus of `(floor / current − 1) × 100%`.
@@ -162,13 +162,20 @@ works through these knobs, all using systems the game already syncs:
   (`BonusStats` `+` uses `DewMath.MultiplyPercentageBonuses`), so the
   monster ends up exactly at the raised world's scaling, and clients see
   it through the synced stats. Merged-wave strength multiplies mobs on
-  top (`MergeRule.RaiseBonus`). Heroic bosses use the wave's world plus
-  their own raise from the heroic fast kill (see [Heroic
-  bosses](heroic-bosses.md)).
+  top (`MergeRule.RaiseBonus`).
 
-  Chat's wave line ends with "Difficulty: X.X", the monster world (and
-  "Difficulty: X.X, heroic bosses Y.Y" on a heroic wave), and the `wave N:` log
-  line shows `world=` and `heroicWorld=`. Both count from the run's real
+  **Fast-kill raise on top.** A heroic fast kill adds a fixed number of
+  worlds for every monster, mobs to heroic bosses, from the next wave on
+  (see [Heroic bosses](heroic-bosses.md) and [Fast kill follows the
+  players](pace-by-player.md)). Each wave the raise for the players here
+  (`WavePlan.RaisedWorlds`) is added to the scheduled extra worlds for
+  every tier in `WaveDirector.Enhance`, so the monster world is the real
+  world + the schedule's extra worlds + the raise. Like the schedule, it
+  changes stats only.
+
+  Chat's wave line ends with "Difficulty: X.X", the monster world, and the
+  `wave N:` log line shows `world=X raised=+R`, where `world=` includes the
+  raise R (`+0` before any fast kill). It counts from the run's real
   world, so with `Starting world` 5, wave 26 is world 6.
 
   This replaced, in schema 53, a flat bonus of +10% health and damage per

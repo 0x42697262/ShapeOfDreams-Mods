@@ -29,7 +29,7 @@ For working notes, hard constraints and the in-game test list, see
 | [Pain minibosses](waves/pain-minibosses.md) | The damage aura and Corrupted Chaos rewards |
 | [Heroic bosses](waves/heroic-bosses.md) | Zone bosses on waves 25, 50, 75…, their world, fast kill and rewards |
 | [Environments](waves/environments.md) | Room modifiers that last one wave |
-| [Fast kill follows the players](waves/pace-by-player.md) | Why the heroic boss raise shrinks when the player who earned it leaves |
+| [Fast kill follows the players](waves/pace-by-player.md) | Why the fast kill's world raise shrinks when the player who earned it leaves |
 | [Dark urge](waves/dark-urge.md) | The co-op curse that lets heroes hurt each other |
 | [Curse to start](waves/curse-to-start.md) | Difficulty option: each wave waits for a curse on everyone |
 

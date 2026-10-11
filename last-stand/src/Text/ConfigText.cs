@@ -144,8 +144,8 @@ internal static class ConfigText
 
 	public const string HeroicFastKillSecondsDescription =
 		"After a boss wave, the party's best burst is turned into the time to kill all of that wave's heroic " +
-		"bosses. Under this, later heroic bosses are raised worlds until it would take this long: a 30 s " +
-		"kill at 90 needs x3 health. Only drops when a player who earned it leaves. 0 = off.";
+		"bosses. Under this, the difficulty (world) of every monster rises until that kill would take this " +
+		"long: a 30 s kill at 90 needs x3 boss health. Only drops when a player who earned it leaves. 0 = off.";
 
 	public const string HeroicFastKillBurstLabel = "Heroic fast kill: burst window (s)";
 
@@ -156,8 +156,7 @@ internal static class ConfigText
 	public const string HeroicFastKillMaxStepLabel = "Heroic fast kill: largest step";
 
 	public const string HeroicFastKillMaxStepDescription =
-		"Most one fast kill can multiply heroic boss health by (through their world), so a single burst " +
-		"doesn't overshoot.";
+		"Most boss health one fast kill can ask for, turned into worlds, so a single burst doesn't overshoot.";
 
 	public const string HeroicBossTypesLabel = "Heroic boss types";
 

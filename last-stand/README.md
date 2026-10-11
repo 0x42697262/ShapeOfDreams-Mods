@@ -31,9 +31,10 @@ essences and turns what you collect into upgrades.
   75, 4 at 100, up to 10. Each drops 2 Corrupted Chaos rewards, the kind
   Pain minibosses leave, and the stardust a boss kill gives in a normal
   run. Kill them too fast (all of a wave's bosses in under 90 s at your
-  best burst) and later heroic bosses come back from a stronger world. If
-  the player who earned that leaves, it goes back down, and returns when
-  they rejoin.
+  best burst) and the difficulty of every monster rises from the next
+  wave on, bosses and mobs alike (stats only; loot and gold stay the
+  same). If the player who earned that leaves, it goes back down, and
+  returns when they rejoin.
   From wave 125 each one storms in at a random moment while the wave's
   monsters are still spawning, not last.
 - **Pain minibosses** change the rules while they live: every hero takes

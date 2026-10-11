@@ -60,14 +60,14 @@ many are left. There is always at least one: if no box is checked, or none
 of the checked types can be used, the boss is picked from the whole list of
 six, and the log says so.
 
-**Strength: the wave's world plus a heroic raise, faster skills.** It
+**Strength: the wave's world, faster skills.** It
 spawns at the current monster level and gets the game's own boss scaling
 for the run's world, difficulty and player count. Then, like every other
 monster, it gets the difference up to a higher world (see [Waves](waves.md),
-*Strength, by world*), on the game's boss curve: the wave's world plus
-the heroic raise from fast kills below (0 until the party kills them too
-fast). So its health and damage are exactly a vanilla heroic boss's at
-that world. There are no flat boss multipliers any more (×5 health and ×8
+*Strength, by world*), on the game's boss curve: the wave's world, which
+includes the raise from fast kills below (0 until the party kills heroic
+bosses too fast). So its health and damage are exactly a vanilla heroic
+boss's at that world. There are no flat boss multipliers any more (×5 health and ×8
 damage until schema 53), and no merged-wave health floor (20× the
 toughest monster until schema 53).
 
@@ -85,8 +85,8 @@ from the ×5 multiplier and the old per-wave bonus and no longer apply.
 The log gives the real stats: `heroic boss: wave N <type> maxHealth=…
 attackDamage=…` one frame after the spawn, and `biggest hit on a hero …`
 (after armor, shields included) with the ability's type when the boss
-dies. The chat wave line says "heroic bosses like world Y.Y", and the
-`wave N:` log line shows `heroicWorld=`.
+dies. The bosses fight at the same world as the rest of the wave: the
+chat wave line's "Difficulty: X.X" and the `wave N:` log line's `world=`.
 It also gets ability haste, so it uses its patterns more often: +200 at
 wave 25 (`Heroic boss ability haste`), then +50 more on each later boss wave
 (`Heroic boss haste per later boss wave`): 250 at 50, 300 at 75, 350 at
@@ -98,11 +98,13 @@ log as `heroicHaste=`. The game turns haste into cooldown
 ability that allows cooldown reduction. Haste is a normal synced stat. It's
 applied one frame after the spawn, once the game's difficulty bonus is in.
 
-**Fast kills raise the next boss.** Heroic bosses have a check of their
+**Fast kills raise every monster.** Heroic bosses have a check of their
 own, `Heroic fast kill: seconds for all bosses`, 90 by default: killing
 all of a wave's heroic bosses together shouldn't take less than 90
-seconds of the party's best damage. Mobs aren't watched any more (fast
-clear was removed in schema 53); they just follow the wave's world. A
+seconds of the party's best damage. When it does, the difficulty (world)
+of every monster rises from the next wave on: mobs, minibosses, Pain
+minibosses, hunters and heroic bosses. Only heroic bosses are measured;
+mobs aren't watched any more (fast clear was removed in schema 53). A
 host whose party wants to one-shot bosses sets it to 0 (off). It was 0 by
 default until schema 45, 15 until schema 48, and counted per boss until
 schema 53.
@@ -128,46 +130,54 @@ A fight shorter than the window uses its own length (first heroic hit to
 last), so a 2 s kill reads as 2 s, not 5. If the projection is under the
 target, the step is `target ÷ projection`, at most `Heroic fast kill:
 largest step` (×100; ×50 until schema 53, ×10 before schema 51): at 90, a
-30 s projection gives ×3. Steps compound (×3 then ×2 is ×6), a projection
-at or over the target changes nothing, so it settles at the target, and
-it goes back down only when a player who earned it leaves ([Fast kill
-follows the players](pace-by-player.md)). Holding back doesn't help: the
-only way to keep the burst low is to deal low damage the whole fight.
+30 s projection gives ×3. A projection at or over the target changes
+nothing, so it settles at the target, and the raise goes back down only
+when a player who earned it leaves ([Fast kill follows the
+players](pace-by-player.md)) or the setting goes to 0. Holding back
+doesn't help: the only way to keep the burst low is to deal low damage
+the whole fight.
 
-**The multiplier becomes a world.** The step product M is a health
-multiplier for later heroic bosses, but it's applied as a higher world,
-not a flat bonus. Each wave, when the plan is made, `WaveDirector`
-asks `WorldScaling.ExtraWorldsForBossHealth` for the world where the
-game's boss health curve is M times the curve at the wave's world: it
-doubles a search span from the wave's world until the curve passes the
-target, then bisects 40 times. The heroic bosses spawn at that world
-(`WavePlan.HeroicBossWorldRaise` on top of the wave's extra worlds), so
-their damage rises by the game's own boss damage curve too, which grows
-more slowly than health late. M stays relative to the wave's world, so
-the same ×3 is about 2 worlds up at world 3, 4 at world 10 and about 60
-at world 50, where the boss curve is linear. Mobs aren't raised.
+**The step becomes a fixed number of worlds.** The step S is boss
+health, but it's applied as a higher world for everyone, not a flat
+bonus. At the fast kill, `WaveDirector` records the extra worlds the
+heroic bosses fought at (`HeroicFastKillRecord.FromExtraWorlds`: the
+wave's scheduled extra worlds plus the raise already in force). The
+record's raise is then `WorldScaling.ExtraWorldsForBossHealth(from, S) −
+from`: the world where the game's boss health curve is S times the curve
+at `from`, found by doubling a search span from `from` until the curve
+passes the target, then bisecting 40 times. The raise is a gap in worlds
+measured at the fast kill's wave, so it stays the same number of worlds
+for the rest of the run and doesn't grow as the curves flatten later.
+
+The raised worlds are the sum over every record (`PaceLedger.RaisedWorlds`,
+each record's raise from `HeroicFastKillRule.RaiseFor`). Each wave they
+are added to the scheduled extra worlds (`WavePlan.RaisedWorlds`), so
+every monster of the wave fights that much higher, each on its own curve
+(regular, miniboss or boss, see [Waves](waves.md), *Strength, by world*).
+Like the schedule's rise, it's stats only: loot, gold and prices follow
+the run's real world. A second fast kill is measured at the already
+raised world, so its worlds add on top of the first. Approximate sizes
+(Nightmare boss curve): ×3 is about +2 worlds near world 3 and about +4
+near world 10; ×18 at world 6 is roughly +6 worlds.
 
 Only Last Stand's own heroic spawns count: the boss's helpers and a boss
 it summons (Erebos) aren't heroic tier. It's measured at the wave's clear
 rather than at the boss's death, so the killing hit is always in. A
 skipped wave and a wave resumed after a mod reload aren't measured; the
-record behind the multiplier is saved with the wave progress, so a reload
-keeps it. With the setting back at 0 the earned multiplier stops applying.
+records behind the raise are saved with the wave progress, so a reload
+keeps them. With the setting at 0 the raise stops applying; set back
+above 0, it returns.
 
 Logs: `heroic fast kill: wave 50's heroic bosses took 41,203,118 damage in
 their best 5 s, all of them dead in 2.1 s at that rate (target 90 s); this
-step x42.86 (largest x100), heroic bosses now have x42.86 health.`, or the
-same with `no change.`; every `wave N:` line shows `heroicKill=xM`.
-`heroicWorld=` is above `world=` only on heroic waves: the raise is worked
-out per wave from M and only for waves that have heroic bosses, so between
-heroic waves `heroicWorld=` equals `world=` and the chat line shows just
-"Difficulty: X.X". Chat says the fast kill in red, with the heroic
-difficulty the raise gives at that wave's world: "Your best burst would kill
-all of this wave's heroic bosses in Xs, faster than 90s. Heroic bosses now
-return with xM health: heroic difficulty H now, while other monsters stay at
-D. It shows on the next heroic wave." By the next heroic wave both numbers
-have risen with the waves, and H − D shrinks a little, since the boss
-health curve flattens.
+step x42.86 boss health (largest x100) = +W world(s); every monster is now
++R world(s) up.`, or the same up to the target with `no change.`. Every
+`wave N:` line shows `world=X raised=+R`, where `world=` already includes
+R. Chat says the fast kill in red: "Your best burst would kill all of this
+wave's heroic bosses in Xs, faster than 90s. Difficulty rises from A to B
+for every monster." A is this wave's difficulty and B the same wave with
+the new raise; the next wave's "Difficulty: X.X" is B plus the schedule's
+rise for that wave.
 
 **Full kit.** It's the real `BossMonster` with its own AI: the boss AI always
 targets the nearest hero, picks its ability pool (the hard pool where the zone

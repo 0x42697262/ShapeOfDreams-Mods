@@ -26,13 +26,10 @@ internal sealed class WavePlan
 
 	public double ExtraWorlds { get; set; }
 
-	public double HeroicBossWorldRaise { get; set; }
+	public double RaisedWorlds { get; set; }
 
 	public double MonsterWorld { get; set; }
 
-	public double HeroicBossWorld => MonsterWorld + HeroicBossWorldRaise;
-
-	public double HeroicKillMultiplier { get; set; } = 1;
 
 	public double HeroicBossWindowSeconds { get; set; }
 

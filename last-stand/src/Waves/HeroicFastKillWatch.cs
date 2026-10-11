@@ -32,9 +32,9 @@ internal sealed class HeroicFastKillWatch
 		_windowSeconds = windowSeconds;
 	}
 
-	public HeroicFastKillRecord Record()
+	public HeroicFastKillRecord Record(double fromExtraWorlds)
 	{
-		return new HeroicFastKillRecord(ProjectedSeconds, new Dictionary<string, double>(_bestByPlayer));
+		return new HeroicFastKillRecord(ProjectedSeconds, fromExtraWorlds, new Dictionary<string, double>(_bestByPlayer));
 	}
 
 	public void OnHit(EnemyHit hit, string attacker)

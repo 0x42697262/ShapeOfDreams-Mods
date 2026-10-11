@@ -16,7 +16,7 @@ internal static partial class ModIdentity
 
 	public const string ProgressSlot = Tag + ".Progress";
 
-	public const string ProgressPaceFormat = "pace2";
+	public const string ProgressPaceFormat = "pace3";
 
 	public const string NoPlayerKey = "x";
 

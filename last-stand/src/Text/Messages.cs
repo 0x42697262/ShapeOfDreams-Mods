@@ -68,9 +68,7 @@ internal static class Messages
 			text += $" They fight with the strength of {plan.UnmergedMobCount}: x{plan.MergeMultiplier:0.##} health and damage each.";
 		}
 
-		text += plan.HeroicBossCount > 0
-			? $" Difficulty: {plan.MonsterWorld:0.0}, heroic bosses {plan.HeroicBossWorld:0.0}."
-			: $" Difficulty: {plan.MonsterWorld:0.0}.";
+		text += $" Difficulty: {plan.MonsterWorld:0.0}.";
 
 		if (plan.NewForeignTypes)
 		{
@@ -122,10 +120,10 @@ internal static class Messages
 		return SharedMessages.Notice($"{count} unclaimed memory or essence drop(s) on the ground are now free for anyone.");
 	}
 
-	public static string HeroicFastKill(double projectedSeconds, double targetSeconds, double multiplier,
-		double heroicWorld, double monsterWorld)
+	public static string HeroicFastKill(double projectedSeconds, double targetSeconds, double fromWorld,
+		double toWorld)
 	{
-		return SharedMessages.Warning($"Your best burst would kill all of this wave's heroic bosses in {projectedSeconds:0.#}s, faster than {targetSeconds:0}s. Heroic bosses now return with x{multiplier:0.##} health: heroic difficulty {heroicWorld:0.0} now, while other monsters stay at {monsterWorld:0.0}. It shows on the next heroic wave.");
+		return SharedMessages.Warning($"Your best burst would kill all of this wave's heroic bosses in {projectedSeconds:0.#}s, faster than {targetSeconds:0}s. Difficulty rises from {fromWorld:0.0} to {toWorld:0.0} for every monster.");
 	}
 
 	public static string ArenaReadyAwaitingCurse()

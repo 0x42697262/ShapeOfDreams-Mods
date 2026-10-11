@@ -31,8 +31,11 @@ internal readonly struct HeroicFastKillRule
 		return projectedSeconds <= 0 ? MaxStep : Math.Min(MaxStep, TargetSeconds / projectedSeconds);
 	}
 
-	public double MultiplierFor(double earned)
+	public delegate double WorldSolver(double fromExtraWorlds, double healthMultiplier);
+
+	public double RaiseFor(HeroicFastKillRecord record, double share, WorldSolver solver)
 	{
-		return IsOn ? earned : NoChange;
+		double step = share > 0 ? StepFor(record.ProjectedSeconds / share) : NoChange;
+		return step <= NoChange ? 0 : Math.Max(0, solver(record.FromExtraWorlds, step) - record.FromExtraWorlds);
 	}
 }

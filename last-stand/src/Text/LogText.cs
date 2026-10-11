@@ -112,9 +112,9 @@ internal static class LogText
 		       $", {heroicFastKills} heroic fast kill(s) on record.";
 	}
 
-	public static string PaceForRoster(int wave, double heroicKill, double heroicKillEveryone)
+	public static string PaceForRoster(int wave, double raised, double raisedEveryone)
 	{
-		return $"pace: wave {wave} gives heroic bosses x{heroicKill:0.##} of x{heroicKillEveryone:0.##} health " +
+		return $"pace: wave {wave} raises every monster +{raised:0.##} of +{raisedEveryone:0.##} world(s) " +
 		       "for the players here.";
 	}
 
@@ -366,8 +366,7 @@ internal static class LogText
 		       $"heroicWindow={plan.HeroicBossWindowSeconds:0}s " +
 		       $"heroicHaste={plan.HeroicBossHaste:0} " +
 		       $"ambient={plan.AmbientLevel} " +
-		       $"world={plan.MonsterWorld:0.##} heroicWorld={plan.HeroicBossWorld:0.##} " +
-		       $"heroicKill=x{plan.HeroicKillMultiplier:0.##} " +
+		       $"world={plan.MonsterWorld:0.##} raised=+{plan.RaisedWorlds:0.##} " +
 		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +
 		       $"mirageChance={plan.MirageChance * SharedTuning.PercentScale:0}% " +
 		       $"huntLevel={plan.HuntLevel} cap={plan.MaxAlive}.";
@@ -398,11 +397,12 @@ internal static class LogText
 	}
 
 	public static string HeroicFastKill(int wave, double burstDamage, double burstSeconds, double projected,
-		double target, double step, double maxStep, double multiplier)
+		double target, double step, double maxStep, double addedWorlds, double raisedWorlds)
 	{
 		return $"heroic fast kill: wave {wave}'s heroic bosses took {burstDamage:N0} damage in their best " +
 		       $"{burstSeconds:0.#} s, all of them dead in {projected:0.#} s at that rate (target {target:0.#} s); " +
-		       $"this step x{step:0.##} (largest x{maxStep:0.##}), heroic bosses now have x{multiplier:0.##} health.";
+		       $"this step x{step:0.##} boss health (largest x{maxStep:0.##}) = +{addedWorlds:0.##} world(s); " +
+		       $"every monster is now +{raisedWorlds:0.##} world(s) up.";
 	}
 
 	public static string HeroicFastKillMissed(int wave, double burstDamage, double burstSeconds, double projected,

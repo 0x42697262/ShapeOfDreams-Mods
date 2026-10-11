@@ -631,7 +631,7 @@ Each answer still needs to be seen working:
 22. **Heroic bosses:** at wave 25 the boss enters 3 s after the last monster
     spawns, plays its spawn animation, counts toward the wave, and drops 2
     Corrupted Chaos rewards (the Pain kind). There's no time pause, no rift and no boss soul.
-    Its health and damage are vanilla boss scaling at the wave's world (`heroicWorld=`), it uses its skills about three times as often, and every default boss uses its patterns and helpers. Pillars and
+    Its health and damage are vanilla boss scaling at the wave's world (`world=`), it uses its skills about three times as often, and every default boss uses its patterns and helpers. Pillars and
     hallucinations vanish when it dies. Nyx with The Consort of Night (Erebos)
     causes no boss-kill flow. Check what clients see.
 23. **Plain arena:** no extra shrines or props in the arena. The log shows
@@ -1041,12 +1041,12 @@ Each answer still needs to be seen working:
     rate (target 90 s); this step xS` with P the time for both bosses
     together and S = 90 / P (at most 100), and chat says it in red.
     Hitting once, waiting, then bursting still gives a short P.
-    `laststand_wave 75`: the `wave 75:` line shows `heroicKill=xS` and a
-    `heroicWorld=` above `world=`, and `heroic boss: wave 75 ...
-    maxHealth=` is about S times what it is without the fast kill. A slow
-    fight logs `no change`. A mod reload keeps it (`progress restored: ...
-    1 heroic fast kill(s) on record`). At 0, nothing is logged and
-    `heroicKill=x1` stays.
+    The line ends `boss health (largest x100) = +W world(s); every
+    monster is now +R world(s) up.` `laststand_wave 75`: the `wave 75:`
+    line shows `raised=+R` and a `world=` R higher than without the fast
+    kill. A slow fight logs `no change`. A mod reload keeps it (`progress
+    restored: ... 1 heroic fast kill(s) on record`). At 0, nothing is
+    logged and `raised=+0` stays.
 93. **Hatred gold by wave** (schema 43): `laststand_wave 50`, take a
     curse and open shards until one rolls gold. The log shows `hatred:
     shard opened at wave 50; dream dust base 2500, gold base 2500`, and the
@@ -1067,7 +1067,7 @@ Each answer still needs to be seen working:
 96. **Heroic fast kill on by default** (schema 45): a new config shows
     `Heroic fast kill: seconds for all bosses` at 90 (15 per boss in schema
     45, 90 per boss from 48), and the `wave 50:` line
-    shows `heroicKill=x1`. After a fast kill the log has `heroic fast
+    shows `raised=+0`. After a fast kill the log has `heroic fast
     kill: ...` with no settings change. Old config files are moved to
     `.old`.
 97. **Lobby button only in its own mode:** load Last Stand and Dream Arena
@@ -1131,7 +1131,7 @@ Each answer still needs to be seen working:
     fast kill: seconds for all bosses` 90 and `Heroic fast kill: largest
     step` 100. Kill the wave 50 bosses in well under 90 s of burst: the log
     shows `(target 90 s); this step xS` with S = 90 / P, at most 100, and
-    wave 75's bosses show `heroicKill=xS`.
+    wave 75 shows `raised=+R` above 0.
 107. **Environments on heroic waves from 100:** a new config shows
     `Environments on heroic boss waves from wave` 100. `laststand_wave 50`
     never logs an environment; `laststand_wave 125` a few times logs one
@@ -1168,12 +1168,12 @@ Each answer still needs to be seen working:
     announces it instead of 200.
 113. **Pace follows the players** (heroic fast kill only since schema
     53): in co-op, A bursts the wave 50 bosses alone (`heroic fast kill:
-    ... now have xS`); A leaves before wave 75: wave 75 logs `pace: wave 75
-    gives heroic bosses x1 of xS health for the players here`,
-    `heroicKill=x1` and `heroicWorld=` equal to `world=`. A rejoins: the
-    next boss wave logs `xS of xS` and the higher `heroicWorld=` again.
-    With both dealing about half, the leave gives about the step for twice
-    the projection. A death or a slow wave never lowers it. A mod reload
+    ... every monster is now +R world(s) up`); A leaves before wave 51:
+    wave 51 logs `pace: wave 51 raises every monster +0 of +R world(s) for
+    the players here` and `raised=+0`. A rejoins: the next wave logs `+R
+    of +R` and `raised=+R` again. With both dealing about half, the leave
+    gives the worlds for half the step (a smaller +A, 0 only if the step
+    falls to x1). A death or a slow wave never lowers it. A mod reload
     keeps it (`progress restored: ... N heroic fast kill(s) on record`).
 114. **World scaling** (schema 53): a new config shows, on the Monsters
     page under "World scaling", `Worlds per step` 1, `Waves per step` 25,
@@ -1194,16 +1194,16 @@ Each answer still needs to be seen working:
     multiplier. Waves 25, 50, 75 and 100 log `heroic=1` to `heroic=4`,
     wave 250 and later `heroic=10`. Each boss drops 2 Corrupted Chaos
     shrines (`dropped 2 Corrupted Chaos reward(s)`). Without a fast kill
-    `heroicWorld=` equals `world=`, and a wave 100 boss's `maxHealth=` is
+    the line shows `raised=+0`, and a wave 100 boss's `maxHealth=` is
     about 9× a world 1 boss of the same type (world 4.96, Nightmare, solo).
-116. **Heroic fast kill as a world raise** (schema 53): kill the wave 25
-    boss well under 90 s of burst. The log's step is 90 / P (at most 100),
-    chat says "Your best burst would kill all of this wave's heroic bosses
-    in Xs, faster than 90s. Heroic bosses now return from a stronger
-    world, with xM health.", and on wave 50 `heroicWorld=` is above
-    `world=` while mobs keep `world=`. The bosses' `maxHealth=` is about M
-    times a run without the fast kill, and their damage rises less than
-    that. On wave 50 with two bosses of very different health, P counts
+116. **Heroic fast kill as a world raise for every monster** (schema 53):
+    kill the wave 25 boss well under 90 s of burst. The log's
+    step is 90 / P (at most 100) and `= +W world(s)`. From wave 26 every
+    wave logs `raised=+W` and a `world=` W higher than the schedule, and
+    a regular monster and a miniboss have clearly more `maxHealth` than in
+    a run without the fast kill. Gold per kill, loot levels and shop
+    prices stay as without it. The wave 50 bosses' damage rises less than
+    their health. On wave 50 with two bosses of very different health, P counts
     their summed health. A step never goes past ×100.
 117. **Fast clear gone** (schema 53): one-shot most of a wave from wave 30
     on: no `fast clear:` log line, no red fast clear chat line, no Fast
@@ -1244,12 +1244,15 @@ Each answer still needs to be seen working:
     run.` once at world gen, and no `had lost` warning follows in camp.
     Untick all worlds: runs use `Arena room` again. Continue a saved run:
     same room as before, no new pick.
-125. **Heroic difficulty after a fast kill:** fast-kill the wave 25 or 50
-    heroic bosses. The red chat line ends with "heroic difficulty H now,
-    while other monsters stay at D. It shows on the next heroic wave." with
-    H well above D. Waves in between show only "Difficulty: D"; the next
-    heroic wave shows "heroic bosses H'" near H plus the waves' rise, and
-    its `wave N:` log line has `heroicWorld=` above `world=`.
+125. **Difficulty after a fast kill:** fast-kill the wave 25 or 50
+    heroic bosses. The red chat line ends with "Difficulty rises from A to
+    B for every monster." with B above A. The next wave's chat line says
+    "Difficulty: B'" with B' about B plus the schedule's rise for one wave
+    (0.04), and its `wave N:` log line shows `raised=+R` with R about B − A
+    (plus any earlier raise). In co-op, when a player who did the damage
+    leaves, the next wave logs a `pace:` line with a smaller raise and
+    "Difficulty:" drops by the same amount; when they rejoin, the next
+    wave's `pace:` line and "Difficulty:" are back up.
 
 ## Conventions
 
