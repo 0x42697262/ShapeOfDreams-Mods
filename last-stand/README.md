@@ -24,7 +24,8 @@ essences and turns what you collect into upgrades.
 - **Clear too fast and it hits back:** from wave 30, if 80% of a wave's
   monsters die within 1 s of their first hit, every later wave's monsters
   get double health and damage, stacking with each fast clear (heroic
-  bosses take half the stacks).
+  bosses take half the stacks). If the player who earned it leaves, it
+  goes back down, and returns when they rejoin.
 - **Minibosses** come every 10 waves, then several at once.
 - **Heroic bosses**, the game's real zone bosses, enter at waves 50 and
   100, then every 25 waves (125, 150, 175…). Each boss wave brings one

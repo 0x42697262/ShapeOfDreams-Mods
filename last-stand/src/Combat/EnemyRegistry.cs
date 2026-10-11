@@ -102,7 +102,7 @@ internal sealed class EnemyRegistry
 			_firstHitAt[entity] = now;
 		}
 
-		Hit?.Invoke(new EnemyHit(tier, entity.netId, info.damage.amount, entity.maxHealth, now));
+		Hit?.Invoke(new EnemyHit(tier, entity.netId, info.damage.amount, entity.maxHealth, now, OwnerOf(info.actor)));
 	}
 
 	private void OnDeath(Entity entity, EnemyTier tier, EventInfoKill kill)
@@ -117,11 +117,12 @@ internal sealed class EnemyRegistry
 			: 0;
 		_firstHitAt.Remove(entity);
 
-		DewPlayer killer = kill.actor != null && kill.actor.firstEntity != null
-			? kill.actor.firstEntity.owner
-			: null;
+		Died?.Invoke(new EnemyDeath(tier, entity.agentPosition, OwnerOf(kill.actor), sinceFirstHit));
+	}
 
-		Died?.Invoke(new EnemyDeath(tier, entity.agentPosition, killer, sinceFirstHit));
+	private static DewPlayer OwnerOf(Actor actor)
+	{
+		return actor != null && actor.firstEntity != null ? actor.firstEntity.owner : null;
 	}
 
 	private void Prune(double now)

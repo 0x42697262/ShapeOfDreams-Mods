@@ -143,8 +143,9 @@ boss would last at that rate. A fight shorter than the window uses its own
 length (first heroic hit to last), so a 2 s kill reads as 2 s, not 5. If
 the projection is under the target, every later heroic boss's health is
 multiplied by `target ÷ projection`, at most `Heroic fast kill: largest
-step` (×50, ×10 before schema 51) per wave: at 90, a 30 s projection gives ×3. It never goes back
-down and compounds (×3 then ×2 is ×6), and a projection at or over the
+step` (×50, ×10 before schema 51) per wave: at 90, a 30 s projection gives ×3. It goes back
+down only when a player who earned it leaves ([Fast clear and fast kill
+follow the players](pace-by-player.md)), and compounds (×3 then ×2 is ×6), and a projection at or over the
 target changes nothing, so it settles at the target. Holding back doesn't
 help: the only way to keep the burst low is to deal low damage the whole
 fight while the boss hits at ×8.
@@ -156,8 +157,8 @@ applies after. Only Last Stand's own heroic spawns count: the boss's
 helpers and a boss it summons (Erebos) aren't heroic tier. It's measured
 at the wave's clear rather than at the boss's death, so the killing hit
 is always in. A skipped wave and a wave resumed after a mod reload aren't
-measured; the multiplier is saved with the wave progress, so a reload
-keeps it. With the setting back at 0 the earned multiplier stops applying.
+measured; the record behind the multiplier is saved with the wave
+progress, so a reload keeps it. With the setting back at 0 the earned multiplier stops applying.
 
 Logs: `heroic fast kill: wave 50's heroic bosses took 41,203,118 damage in
 their best 5 s, a kill in 2.1 s per boss at that rate (target 90 s); this

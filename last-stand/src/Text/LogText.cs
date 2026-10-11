@@ -105,12 +105,18 @@ internal static class LogText
 	}
 
 	public static string ProgressRestored(int wave, bool inProgress, int adopted, int fastClears,
-		double heroicKillMultiplier)
+		int heroicFastKills)
 	{
 		return (inProgress
 			? $"progress restored: wave {wave} is still being fought, {adopted} monster(s) on the field taken over"
 			: $"progress restored: wave {wave} was cleared; wave {wave + 1} comes next") +
-		       $", {fastClears} fast clear(s) so far, heroic bosses x{heroicKillMultiplier:0.##} health from fast kills.";
+		       $", {fastClears} fast clear(s) and {heroicFastKills} heroic fast kill(s) on record.";
+	}
+
+	public static string PaceForRoster(int wave, int stacks, int fastClears, double heroicKill, double heroicKillEveryone)
+	{
+		return $"pace: wave {wave} counts {stacks} of {fastClears} fast clear(s) and heroic bosses x{heroicKill:0.##} " +
+		       $"of x{heroicKillEveryone:0.##} health for the players here.";
 	}
 
 	public static string LuckChoicesRenewed(int wave)

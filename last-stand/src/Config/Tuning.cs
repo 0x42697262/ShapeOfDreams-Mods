@@ -6,6 +6,8 @@ internal static class Tuning
 {
 	public const string RunKeySeparator = ":";
 
+	public const string RoundTripNumberFormat = "R";
+
 	public const string ProgressInProgressFlag = "1";
 
 	public const string ProgressBetweenWavesFlag = "0";

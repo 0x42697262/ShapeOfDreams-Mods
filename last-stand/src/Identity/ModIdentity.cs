@@ -16,5 +16,15 @@ internal static partial class ModIdentity
 
 	public const string ProgressSlot = Tag + ".Progress";
 
+	public const string ProgressPaceFormat = "pace";
+
+	public const string NoPlayerKey = "x";
+
+	public const string SteamPlayerKeyPrefix = "s";
+
+	public const string ProfilePlayerKeyPrefix = "g";
+
+	public const string NetPlayerKeyPrefix = "n";
+
 	public const string SoloButtonName = DisplayName + " Button" + OwnedSuffix;
 }

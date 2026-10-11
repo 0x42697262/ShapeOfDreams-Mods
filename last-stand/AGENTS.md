@@ -1202,6 +1202,17 @@ Each answer still needs to be seen working:
     The log has `milestone: wave N announces …`. Waves 99, 101, 201 and 301
     send none, and a mod reload mid-wave doesn't repeat it. Change `First
     empowered wave` to 150: wave 150 announces it instead of 200.
+113. **Pace follows the players:** in co-op with `Fast clear: from wave`
+    at 1, let player A fast-clear waves 1 and 2 alone (B only watches):
+    wave 3's line shows `fastClear=x4`. A leaves; wave 4
+    logs `pace: wave 4 counts 0 of 2 fast clear(s)` and `fastClear=x1`.
+    A rejoins: the next wave logs `counts 2 of 2` and `fastClear=x4`.
+    Heroic: A bursts the wave 50 boss alone (`heroic fast kill: ... now
+    have xS`); A leaves before wave 100: wave 100 logs `heroic bosses x1
+    of xS` and `heroicKill=x1`. With both dealing about half, the leave
+    gives about the step for twice the projection. A death or a slow wave
+    never lowers either. A mod reload keeps it (`progress restored: ...
+    N fast clear(s) and M heroic fast kill(s) on record`).
 
 ## Conventions
 

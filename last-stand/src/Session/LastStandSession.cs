@@ -333,8 +333,8 @@ internal sealed class LastStandSession
 		}
 
 		int previous = wave - 1;
-		_waves.Resume(previous, false, _now, _waves.FastClearStacks, _waves.HeroicKillMultiplier);
-		ProgressStore.Save(_arenaNode, previous, false, _waves.FastClearStacks, _waves.HeroicKillMultiplier);
+		_waves.Resume(previous, false, _now, _waves.Pace);
+		ProgressStore.Save(_arenaNode, previous, false, _waves.Pace);
 		Log.Info(LogText.JumpedToWave(wave));
 	}
 
@@ -393,14 +393,12 @@ internal sealed class LastStandSession
 
 		Shrines.Place(arena, _settings);
 
-		if (ProgressStore.TryLoad(node, out int wave, out bool inProgress, out int fastClears,
-			    out double heroicKillMultiplier))
+		if (ProgressStore.TryLoad(node, out int wave, out bool inProgress, out PaceLedger pace))
 		{
 			int adopted = inProgress ? EnemyAdoption.AdoptSurvivors(_enemies) : 0;
-			_waves.Resume(wave, inProgress, now + _settings.Waves.IntermissionSeconds, fastClears,
-				heroicKillMultiplier);
+			_waves.Resume(wave, inProgress, now + _settings.Waves.IntermissionSeconds, pace);
 			ApplyGoldPrices(wave);
-			Log.Info(LogText.ProgressRestored(wave, inProgress, adopted, fastClears, heroicKillMultiplier));
+			Log.Info(LogText.ProgressRestored(wave, inProgress, adopted, pace.FastClearCount, pace.HeroicKillCount));
 			return;
 		}
 
@@ -440,7 +438,7 @@ internal sealed class LastStandSession
 
 	private void OnWaveStarted(WavePlan plan)
 	{
-		ProgressStore.Save(_arenaNode, plan.Number, true, _waves.FastClearStacks, _waves.HeroicKillMultiplier);
+		ProgressStore.Save(_arenaNode, plan.Number, true, _waves.Pace);
 		_loot.OnWaveStarted();
 		Shrines.OnWaveStarted();
 		ApplyGoldPrices(plan.Number);
@@ -521,12 +519,12 @@ internal sealed class LastStandSession
 
 	private void OnFastCleared()
 	{
-		ProgressStore.Save(_arenaNode, _waves.CurrentWave, true, _waves.FastClearStacks, _waves.HeroicKillMultiplier);
+		ProgressStore.Save(_arenaNode, _waves.CurrentWave, true, _waves.Pace);
 	}
 
 	private void OnWaveCleared(int wave)
 	{
-		ProgressStore.Save(_arenaNode, wave, false, _waves.FastClearStacks, _waves.HeroicKillMultiplier);
+		ProgressStore.Save(_arenaNode, wave, false, _waves.Pace);
 		_loot.OnWaveCleared(wave, _settings.Loot);
 		Shrines.OnWaveCleared(wave, _settings.AscensionResetWaves);
 

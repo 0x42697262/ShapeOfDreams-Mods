@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 
 namespace LastStand.Waves;
 
@@ -8,6 +8,7 @@ internal sealed class FastClearWatch
 	private bool _watching;
 	private bool _triggered;
 	private int _needed;
+	private Dictionary<string, int> _instantKillsByPlayer = new Dictionary<string, int>();
 
 	public int InstantKills { get; private set; }
 
@@ -17,8 +18,6 @@ internal sealed class FastClearWatch
 
 	public bool Missed => _watching && !_triggered;
 
-	public int Stacks { get; private set; }
-
 	public void Start(int wave, int monsters, FastClearRule rule)
 	{
 		_rule = rule;
@@ -27,9 +26,15 @@ internal sealed class FastClearWatch
 		_needed = rule.KillsNeeded(monsters);
 		InstantKills = 0;
 		Deaths = 0;
+		_instantKillsByPlayer = new Dictionary<string, int>();
 	}
 
-	public bool OnKill(double secondsSinceFirstHit)
+	public FastClearRecord Record()
+	{
+		return new FastClearRecord(_needed, _instantKillsByPlayer);
+	}
+
+	public bool OnKill(double secondsSinceFirstHit, string killer)
 	{
 		if (!_watching)
 		{
@@ -43,24 +48,18 @@ internal sealed class FastClearWatch
 		}
 
 		InstantKills++;
+		_instantKillsByPlayer[killer] = _instantKillsByPlayer.TryGetValue(killer, out int kills) ? kills + 1 : 1;
 		if (_triggered || InstantKills < _needed)
 		{
 			return false;
 		}
 
 		_triggered = true;
-		Stacks++;
 		return true;
 	}
 
 	public void Cancel()
 	{
 		_watching = false;
-	}
-
-	public void Reset(int stacks)
-	{
-		_watching = false;
-		Stacks = Math.Max(0, stacks);
 	}
 }

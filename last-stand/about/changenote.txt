@@ -12,6 +12,7 @@
 [*]New: from wave 125, each heroic boss enters at a random moment up to 60 s after the wave's first spawn instead of last (or after the last monster if spawning ends first). Set "Heroic boss entrance window (s)" to 0 to turn it off.
 [*]Dark urge now starts at wave 300 (was 176), and its notice is now red and shows its chance.
 [*]New: waves 100, 200 and 300 announce the rules that start there (hunters, empowered waves, dark urge) in a light blue chat line.
+[*]Fast clear and heroic fast kill raises now follow the players who earned them: if a player leaves, monsters drop back to what the others earned, and the raise returns when that player rejoins.
 [*]Hunters, fast clear and environments now have their own settings pages.
 [/list]
 

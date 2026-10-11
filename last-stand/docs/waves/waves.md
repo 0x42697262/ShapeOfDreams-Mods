@@ -128,7 +128,10 @@ works through these knobs, all using systems the game already syncs:
   until schema 44); one that dies from its first hit counts as 0 s. It carries
   over (from wave 30 by default, see below): clear wave 54 fast and wave 55 is doubled, wave 56 keeps that ×2
   (plus its normal per-wave growth) with no further doubling, until another
-  fast clear stacks a second ×2 (×4), and so on. Heroic bosses get a share
+  fast clear stacks a second ×2 (×4), and so on. Each stack belongs to
+  the players who made its instant kills: if they leave, it can drop, and
+  it comes back with them ([Fast clear and fast kill follow the
+  players](pace-by-player.md)). Heroic bosses get a share
   of it (`Fast clear: heroic bosses too`, on, and `Fast clear: heroic boss
   share (%)`, 50): each fast clear counts as half a stack for them, so the
   boss multiplier is `M ^ (stacks × 0.5)`. With ×2, 10 fast clears give
