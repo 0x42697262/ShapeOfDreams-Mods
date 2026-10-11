@@ -205,25 +205,40 @@ Hard rules for all code here, the library included.
   If more changes land before the upload, commit them on their own and
   keep the same version.
 - **Change note.** Rewrite the mod's `about/changenote.txt` for each
-  release; Last Stand's `WorkshopChangeNote` (now in the library) sends it
-  as the Workshop change note. It covers only what changed since the last
-  upload, written like a dev's patch notes, not a press release. The first
-  line is the version in bold, `[b]vX.Y.Z[/b]`, matching `modVer` (Last
-  Stand from v0.9.0 on; v0.8.0 went up without it). Then a Steam BBCode
-  `[list]` of one-line bullets, plain words, no reasons or mechanics (those
-  belong in `docs/`). Give the old value when a default changes. Start a
-  new feature with `New:` and, if it's on by default, say how to turn it
-  off in the same line. End with `Settings are reset with this update (old
-  file kept as .old).` when `ConfigSchema.Current` changed since the last
-  upload, then `Only the host needs to update.` Example (Last Stand v0.8.0,
-  with the version line added):
+  release; the library's `WorkshopChangeNote` tries to send it as the
+  Workshop change note (check the item's Change Notes page after the
+  upload, and paste it in by hand if it's missing). It covers only what
+  changed since the last upload, written like a dev's patch notes, not a
+  press release. The first line is the version in bold, `[b]vX.Y.Z[/b]`,
+  matching `modVer`. Then up to three sections, in this order and only the
+  ones with entries, each a bold heading on its own line followed by a
+  Steam BBCode `[list]` of one-line bullets:
+  - `[b]New[/b]`: new features. If one is on by default, say how to turn
+    it off in the same line.
+  - `[b]Updated[/b]`: changed behavior, defaults and removals. Give the
+    old value when a default changes.
+  - `[b]Fixed[/b]`: bug fixes, saying what was wrong.
+
+  Plain words, no reasons or mechanics (those belong in `docs/`). End with
+  `Settings are reset with this update (old file kept as .old).` when
+  `ConfigSchema.Current` changed since the last upload, then `Only the
+  host needs to update.` Example:
   ```
-  [b]v0.8.0[/b]
+  [b]v0.12.0[/b]
+
+  [b]New[/b]
   [list]
-  [*]Hatred Shard gold now scales with the wave and curse strength (50 per wave) instead of a flat 500.
-  [*]Curse kill goals keep growing after wave 48 and are no longer split between players.
-  [*]Fast clear's instant kill window is now 1s (was 0.5s).
-  [*]New: heroic fast kill. Kill a heroic boss too fast and the next ones get more health. Set "Heroic fast kill: seconds per boss" to 0 to turn it off.
+  [*]Random arena: each run picks a random world's boss room from the worlds you tick. Off by default.
+  [/list]
+
+  [b]Updated[/b]
+  [list]
+  [*]Monsters now climb 1 world every 10 waves (was every 25).
+  [/list]
+
+  [b]Fixed[/b]
+  [list]
+  [*]The Last Stand settings window opened from the lobby settings was dimmed and ignored clicks.
   [/list]
 
   Settings are reset with this update (old file kept as .old). Only the host needs to update.

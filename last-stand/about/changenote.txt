@@ -1,5 +1,6 @@
+[b]Updated[/b]
 [list]
-[*]Monsters now climb 1 world every 10 waves (was every 25). Change "Waves per step" to set it.
+[*]Monsters now climb 1 world every 10 waves (was every 25). Change "Waves per step" on the Monsters page to set it.
 [/list]
 
 Settings are reset with this update (old file kept as .old). Only the host needs to update.
