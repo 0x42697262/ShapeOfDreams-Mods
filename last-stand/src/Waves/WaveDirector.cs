@@ -245,6 +245,8 @@ internal sealed class WaveDirector
 	private void StartWave(WaveSettings settings, double now)
 	{
 		ApplyPlan(settings);
+		_plan.EarlyHeroicBossCount = WaveSchedule.EarlyHeroicBosses(_plan.HeroicBossCount, _plan.HeroicBossEarlyChance,
+			() => UnityEngine.Random.value);
 		_queue.Enqueue(_plan);
 		_bossHealth.StartWave();
 		_fastClear.Start(_plan.Number, _plan.TotalMonsters, settings.FastClear);

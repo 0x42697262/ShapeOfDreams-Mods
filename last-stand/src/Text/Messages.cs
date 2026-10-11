@@ -54,9 +54,15 @@ internal static class Messages
 			text += $", {plan.PainCount} Pain miniboss(es)";
 		}
 
-		if (plan.HeroicBossCount > 0)
+		int lateBosses = plan.HeroicBossCount - plan.EarlyHeroicBossCount;
+		if (plan.EarlyHeroicBossCount > 0)
 		{
-			text += $", and then {plan.HeroicBossCount} heroic boss(es)";
+			text += $", {plan.EarlyHeroicBossCount} heroic boss(es) right away";
+		}
+
+		if (lateBosses > 0)
+		{
+			text += $", and then {lateBosses} heroic boss(es)";
 		}
 
 		text += ".";

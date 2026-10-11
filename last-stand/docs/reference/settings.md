@@ -115,7 +115,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Spawn interval / spawns per batch | 0.5 s / 6 |
 | Scaling | Health / damage per wave | 10% / 10% |
 | | Steeper scaling from wave / late health / late damage per wave | 150 / 50% / 50% |
-| Empowered waves | First wave / every N waves / health and damage | 200 / 5 / ×2 |
+| Empowered waves | First wave / every N waves / health and damage | 200 / 10 / ×1.5 |
 | | Fast clear: instant kills / instant within (from the first hit) / stats from next wave (stacking) / from wave | 80% / 1 s / ×2 / 30 |
 | | Fast clear: heroic bosses too / heroic boss share | on / 50% |
 | | Starting monster level / waves per level | 1 / 4 |
@@ -124,6 +124,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Heroic bosses | First wave / every N waves / extra per boss wave / max | 50 / 50 / 1 / 10 |
 | | More often from wave / every N waves after that | 100 / 25 |
 | | Entrance delay | 3 s |
+| | May come early from wave / early chance per boss | 125 / 50% |
 | | Ability haste / more per later boss wave | +200 / +50 |
 | | Health / damage multiplier | ×5 / ×8 |
 | | Fast kill: seconds per boss / burst window / largest step | 90 s / 5 s / ×10 |

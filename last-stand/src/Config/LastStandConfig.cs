@@ -243,11 +243,11 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.EmpoweredIntervalLabel)]
 	[Description(ConfigText.EmpoweredIntervalDescription)]
-	public int empoweredIntervalWaves = 5;
+	public int empoweredIntervalWaves = 10;
 
 	[LabelText(ConfigText.EmpoweredMultiplierLabel)]
 	[Description(ConfigText.EmpoweredMultiplierDescription)]
-	public float empoweredStatMultiplier = 2f;
+	public float empoweredStatMultiplier = 1.5f;
 
 	[Header(ConfigText.ForeignHeader)]
 	[LabelText(ConfigText.ForeignFromWaveLabel)]
@@ -402,6 +402,14 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.HeroicBossDelayLabel)]
 	[Description(ConfigText.HeroicBossDelayDescription)]
 	public float heroicBossEntranceDelaySeconds = 3f;
+
+	[LabelText(ConfigText.HeroicBossEarlyFromWaveLabel)]
+	[Description(ConfigText.HeroicBossEarlyFromWaveDescription)]
+	public int heroicBossEarlyFromWave = 125;
+
+	[LabelText(ConfigText.HeroicBossEarlyChanceLabel)]
+	[Description(ConfigText.HeroicBossEarlyChanceDescription)]
+	public float heroicBossEarlyChancePercent = 50f;
 
 	[LabelText(ConfigText.HeroicBossAbilityHasteLabel)]
 	[Description(ConfigText.HeroicBossAbilityHasteDescription)]

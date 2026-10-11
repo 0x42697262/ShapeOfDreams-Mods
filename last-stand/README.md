@@ -16,7 +16,7 @@ essences and turns what you collect into upgrades.
 - A new wave starts **once the last one is cleared**, after a short break.
   Each wave is bigger and stronger than the last.
 - Every monster gets **more health and damage every wave**, and from wave
-  200 every 5th wave is **empowered**: double health and damage for every
+  200 every 10th wave is **empowered**: ×1.5 health and damage for every
   monster, bosses included.
 - **Curse to start** (difficulty option, off by default): no wave timer.
   Each wave waits until a player takes a curse at the Hatred Remnant, which
@@ -32,6 +32,8 @@ essences and turns what you collect into upgrades.
   Corrupted Chaos rewards, the kind Pain minibosses leave, and the stardust
   a boss kill gives in a normal run. Kill them too fast (under 90 s each at
   your best burst) and later heroic bosses come back with more health.
+  From wave 125 each one may storm in at the start of the wave instead of
+  last (50% chance per boss).
 - **Pain minibosses** change the rules while they live: every hero takes
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.

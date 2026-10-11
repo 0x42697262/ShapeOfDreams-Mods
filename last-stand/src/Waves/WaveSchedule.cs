@@ -59,6 +59,9 @@ internal static class WaveSchedule
 			PainCount = pain,
 			HeroicBossCount = heroic,
 			HeroicBossHaste = HeroicBossHaste(wave, settings),
+			HeroicBossEarlyChance = heroic > 0 && wave >= settings.HeroicBossEarlyFromWave
+				? settings.HeroicBossEarlyChance
+				: 0,
 			AmbientLevel = settings.StartingAmbientLevel + wavesSinceFirst / settings.WavesPerAmbientLevel,
 			MaxAlive = (int)Math.Round(
 				(settings.MaxAliveBase + settings.MaxAlivePerExtraPlayer * extraPlayers) * Math.Max(NoSurge, surgeScale)),
@@ -145,6 +148,20 @@ internal static class WaveSchedule
 	public static double BreakAfter(WavePlan plan, WaveSettings settings)
 	{
 		return plan != null && plan.HasBoss ? settings.BossIntermissionSeconds : settings.IntermissionSeconds;
+	}
+
+	public static int EarlyHeroicBosses(int bosses, double chance, Func<double> roll)
+	{
+		int early = 0;
+		for (int boss = 0; boss < bosses; boss++)
+		{
+			if (chance > 0 && roll() < chance)
+			{
+				early++;
+			}
+		}
+
+		return early;
 	}
 
 	public static double HeroicBossHaste(int wave, WaveSettings settings)

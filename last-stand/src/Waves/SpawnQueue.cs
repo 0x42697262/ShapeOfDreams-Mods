@@ -18,8 +18,9 @@ internal sealed class SpawnQueue
 
 	public void Enqueue(WavePlan plan)
 	{
-		_finale = plan.HeroicBossCount;
+		_finale = plan.HeroicBossCount - plan.EarlyHeroicBossCount;
 		_finaleAt = NotScheduled;
+		Add(EnemyTier.HeroicBoss, plan.EarlyHeroicBossCount);
 		Add(EnemyTier.Pain, plan.PainCount);
 		Add(EnemyTier.MiniBoss, plan.MiniBossCount);
 		AddMixed(EnemyTier.Hunter, plan.HunterCount, EnemyTier.Regular, plan.RegularCount);
@@ -27,9 +28,9 @@ internal sealed class SpawnQueue
 
 	public bool HasPending(EnemyTier tier)
 	{
-		if (tier == EnemyTier.HeroicBoss)
+		if (tier == EnemyTier.HeroicBoss && _finale > 0)
 		{
-			return _finale > 0;
+			return true;
 		}
 
 		foreach (EnemyTier pending in _pending)

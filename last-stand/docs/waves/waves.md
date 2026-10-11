@@ -15,7 +15,7 @@ normal break is used, because the cleared wave's plan didn't survive. The score 
 | 48 | Merged waves: at most 100 monsters and hunters, carrying the whole wave's strength; surges add 2 minibosses and 2 Pain minibosses | wave |
 | 2 | +10% health and +10% damage on every monster, stacking | wave |
 | 150 | The stacking step becomes +50% health and +50% damage | wave |
-| 200 | Empowered wave: ×2 health and damage on every monster, bosses included | 5 waves |
+| 200 | Empowered wave: ×1.5 health and damage on every monster, bosses included | 10 waves |
 | 10 | 3 monster types from other worlds join the pool | 5 waves |
 | 10 | Minibosses (1, 1, 2, 2… up to 10) | 10 waves |
 | 20 | Pain minibosses (1, 1, 2, 2… up to 3) | 20 waves |
@@ -46,14 +46,15 @@ works through these knobs, all using systems the game already syncs:
   with 6 minibosses: 454 monsters for one player (448 + 6), 678 for two.
   An earlier version stopped the growth at wave 110 (`Monster count stops
   growing at wave`); merged waves replaced that, and the setting is gone.
-- **Empowered waves:** from wave 200 (`First empowered wave`), every 5th
-  wave (`Empowered every N waves`: 200, 205, 210 …) gives every monster,
-  minibosses, Pain and heroic bosses included, ×2 health and damage
-  (`Empowered health and damage`, 1 = off). It multiplies with the fast
+- **Empowered waves:** from wave 200 (`First empowered wave`), every 10th
+  wave (`Empowered every N waves`: 200, 210, 220 …) gives every monster,
+  minibosses, Pain and heroic bosses included, ×1.5 health and damage
+  (`Empowered health and damage`, 1 = off). It was ×2 every 5 waves before
+  schema 49, which wiped parties too fast. It multiplies with the fast
   clear and merge multipliers (`WavePlan.EmpoweredMultiplier`, applied in
   `WaveDirector.Enhance`), on top of the per-wave bonus. These are also
   surge waves with the default surge interval. Chat's wave line says
-  "Empowered wave", and the log line shows `empowered=x2`.
+  "Empowered wave", and the log line shows `empowered=x1.5`.
 - **Merged waves:** merging starts at the wave where one player's normal
   count reaches 100 (`Merged wave size`): `6 + 2 × (wave − 1) ≥ 100`, wave
   48 with the defaults. Change the wave 1 count or the growth and the start

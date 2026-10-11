@@ -23,6 +23,20 @@ spawned. Then, after 3 more seconds, it enters with a chat notice and plays its
 own spawn animation (its `Spawn` ability). It spawns at a random spot like any
 monster, heads for the nearest hero, and counts toward clearing the wave.
 
+**Early bosses from wave 125.** From `Heroic bosses may come early from
+wave` (125), each heroic boss rolls `Heroic boss early chance (%)` (50%)
+when the wave starts. A boss that rolls early is queued ahead of every
+other spawn and enters with the wave's first batch, with the same chat
+notice and spawn animation but no extra delay; the rest still come last as
+above. So a 3-boss wave can open with 0 to 3 bosses. The roll is
+`WaveSchedule.EarlyHeroicBosses` (one roll per boss, passed in by the
+director), and the count lands in `WavePlan.EarlyHeroicBossCount`:
+`SpawnQueue` puts that many `HeroicBoss` entries at the front and keeps the
+rest as the finale. The log's `wave N:` line shows `earlyHeroic=`, and the
+chat wave line says "N heroic boss(es) right away". An early boss still
+gets the merged-wave health floor: the floor check runs every second and
+raises it as soon as the wave's first monsters are out.
+
 **Which boss.** A random one from `Heroic boss types`, by default the zone
 bosses of Forest, Dark Cave, Despair (Azurak), Sky, Snow Mountain and Lava
 Land. The Ink bosses are left out. They're a paired fight: White Night spawns
@@ -59,8 +73,8 @@ is ×5.9. So wave 50, Nightmare, world 4, solo, with the default ×5: Belphomet
 adds 85% of that (the game's `bossBonusHealthPercentagePerPlayer`): Infernus
 3.7M with 2, 5.4M with 3, 7.1M with 4. The wave factor is the same per-wave
 bonus as every monster's, +10% a wave and +50% from wave 150: ×10.9 at 100,
-×13.4 at 125, ×16.3 at 150, ×28.8 at 175, ×41.3 at 200 (×82.6 there, since
-wave 200 is also an [empowered wave](waves.md)).
+×13.4 at 125, ×16.3 at 150, ×28.8 at 175, ×41.3 at 200 (×62 there, since
+wave 200 is also an [empowered wave](waves.md), ×1.5).
 Measured at wave 124: Skoll 4,306,783 and Nyx 4,868,537, both exactly
 468.13 × base, as the formula gives.
 

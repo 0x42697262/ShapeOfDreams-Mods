@@ -1171,15 +1171,23 @@ Each answer still needs to be seen working:
     urge wave` 1 and chance 100), the chat line `A dark urge takes hold
     (20% chance per wave): …` is red (`#ff4d4d`) on the host and a vanilla
     client, with the configured chance.
-109. **Empowered waves** (schema 48): a new config shows `First empowered
-    wave` 200, `Empowered every N waves` 5 and `Empowered health and
-    damage (x)` 2. `laststand_wave 200`: the `wave 200:` line shows
-    `empowered=x2`, chat's wave line says "Empowered wave: every monster
-    has x2 health and damage", and every monster, Pain minibosses and
-    heroic bosses included, has about twice the health of the same kind at
-    wave 201 (`empowered=x1`).
-    Wave 205 is empowered again. Set the multiplier to 1: no empowered
-    text and `empowered=x1`.
+109. **Empowered waves** (schema 49): a new config shows `First empowered
+    wave` 200, `Empowered every N waves` 10 and `Empowered health and
+    damage (x)` 1.5. `laststand_wave 200`: the `wave 200:` line shows
+    `empowered=x1.5`, chat's wave line says "Empowered wave: every monster
+    has x1.5 health and damage", and every monster, Pain minibosses and
+    heroic bosses included, has about 1.5× the health of the same kind at
+    wave 201 (`empowered=x1`). Wave 205 isn't empowered, 210 is. Set the
+    multiplier to 1: no empowered text and `empowered=x1`.
+110. **Early heroic bosses** (schema 49): a new config shows `Heroic
+    bosses may come early from wave` 125 and `Heroic boss early chance
+    (%)` 50. `laststand_wave 100` always logs `earlyHeroic=0` and both
+    bosses come last. `laststand_wave 125` a few times: `earlyHeroic=` is
+    0 to 3, that many bosses enter (chat notice, spawn animation) with the
+    first monsters, chat says "N heroic boss(es) right away", and the rest
+    come after the last monster. Pain minibosses still spawn, the wave only
+    clears when every boss is dead, and the heroic fast kill still
+    measures. Chance 100: every boss is early; 0: none.
 
 ## Conventions
 

@@ -26,6 +26,10 @@ internal sealed class WavePlan
 
 	public int HeroicBossCount { get; set; }
 
+	public double HeroicBossEarlyChance { get; set; }
+
+	public int EarlyHeroicBossCount { get; set; }
+
 	public double HeroicBossHaste { get; set; }
 
 	public int AmbientLevel { get; set; }
