@@ -3,17 +3,31 @@
 An **environment** is one of the game's own room modifiers, picked at random
 from `Environment types`. Which waves get one:
 
-- **Any wave, by chance.** Every wave rolls `Environment chance (%)` (10% by
-  default) when it starts, wave 1 included.
+- **Waves 1-100, by chance.** Every wave rolls `Environment chance (%)`
+  (10% by default) when it starts, wave 1 included.
 - **Sure waves.** Waves 106, 116, 126 … (`First sure environment wave` 106,
   every 10 waves) always get one.
+- **From wave 101, a higher chance with a cap.** Every other wave rolls
+  `Late environment chance (%)` (50%), but a block of 10 waves (101-110,
+  111-120 …; `Late environment chance from wave` 101, `Late block size`
+  10) has at most 4 environment waves (`Late max environments per block`),
+  the sure wave included. A chance wave is only rolled while the block's
+  environments so far plus its sure waves still to come are under the cap,
+  so the sure wave always fits and at least 6 waves of every 10 keep their
+  hunter zone. Set the late chance to 0 to get only the sure waves.
 - **Never** on a heroic boss wave (49, 99, 124 …) or a Pain wave, and never
   after `Last environment wave` (0 by default, never stop).
 
-`WaveSchedule.EnvironmentChance` gives the wave's chance (0, the setting, or
-1 on a sure wave) and `WaveSchedule.Plan` compares it with a roll the
-director passes in (`UnityEngine.Random.value`), so the schedule stays plain
-logic. A wave resumed after a mod reload rolls again.
+The rule is plain logic: `EnvironmentRule.ChanceFor` gives the wave's
+chance (0, a setting, or 1 on a sure wave) from the block's count so far,
+`WaveSchedule.EnvironmentChance` adds the heroic and Pain exclusions, and
+`WaveSchedule.Plan` compares it with a roll the director passes in
+(`UnityEngine.Random.value`). The director keeps the count
+(`EnvironmentTally`): it counts a wave once, when its environment begins,
+and starts over in a new block or a new run. The count lives only in
+memory, so a mod reload mid-block starts it at 0, and a wave resumed after
+a reload rolls again. A sure wave that falls on a Pain or heroic wave gets
+no environment but still holds its place under the cap.
 
 The environment goes
 live when the wave starts and is removed when the wave is cleared, so the break

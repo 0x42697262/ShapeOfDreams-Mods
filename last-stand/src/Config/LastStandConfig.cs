@@ -454,6 +454,22 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.EnvironmentIntervalDescription)]
 	public int environmentIntervalWaves = 10;
 
+	[LabelText(ConfigText.EnvironmentLateFromWaveLabel)]
+	[Description(ConfigText.EnvironmentLateFromWaveDescription)]
+	public int environmentLateFromWave = 101;
+
+	[LabelText(ConfigText.EnvironmentLateChanceLabel)]
+	[Description(ConfigText.EnvironmentLateChanceDescription)]
+	public float environmentLateChancePercent = 50f;
+
+	[LabelText(ConfigText.EnvironmentLateMaxPerBlockLabel)]
+	[Description(ConfigText.EnvironmentLateMaxPerBlockDescription)]
+	public int environmentLateMaxPerBlock = 4;
+
+	[LabelText(ConfigText.EnvironmentLateBlockWavesLabel)]
+	[Description(ConfigText.EnvironmentLateBlockWavesDescription)]
+	public int environmentLateBlockWaves = 10;
+
 	[LabelText(ConfigText.EnvironmentUntilWaveLabel)]
 	[Description(ConfigText.EnvironmentUntilWaveDescription)]
 	public int environmentUntilWave;

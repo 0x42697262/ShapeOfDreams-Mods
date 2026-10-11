@@ -18,6 +18,8 @@ internal sealed class WaveDirector
 
 	private readonly ArenaEnvironment _environment = new ArenaEnvironment();
 
+	private readonly EnvironmentTally _environmentTally = new EnvironmentTally();
+
 	private readonly FriendlyFire _friendlyFire = new FriendlyFire();
 
 	private readonly SpawnPoints _spawnPoints = new SpawnPoints();
@@ -209,6 +211,7 @@ internal sealed class WaveDirector
 	{
 		_huntedZone.End();
 		_environment.End();
+		_environmentTally.Reset();
 		_friendlyFire.End();
 		_cycle = null;
 		_plan = null;
@@ -271,6 +274,7 @@ internal sealed class WaveDirector
 			return;
 		}
 
+		_environmentTally.Record(_plan.Number, settings.Environment.Block(_plan.Number));
 		string type = _environment.Current;
 		Log.Info(LogText.EnvironmentStarted(_plan.Number, type));
 		ChatNotices.Broadcast(Messages.EnvironmentStarted(LocalizedNames.Find(type) ?? type));
@@ -330,7 +334,7 @@ internal sealed class WaveDirector
 		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
 			_catalog.HeroicBossCount);
 		return WaveSchedule.Plan(_cycle.CurrentWave + 1, PlayerRoster.PlayerCount(), settings, content,
-				WaveSchedule.NoEnvironmentRoll)
+				WaveSchedule.NoEnvironmentRoll, 0)
 			.FullStrengthMonsters;
 	}
 
@@ -338,8 +342,9 @@ internal sealed class WaveDirector
 	{
 		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
 			_catalog.HeroicBossCount);
-		_plan = WaveSchedule.Plan(_cycle.CurrentWave, PlayerRoster.PlayerCount(), settings, content,
-			UnityEngine.Random.value);
+		int wave = _cycle.CurrentWave;
+		_plan = WaveSchedule.Plan(wave, PlayerRoster.PlayerCount(), settings, content, UnityEngine.Random.value,
+			_environmentTally.CountIn(settings.Environment.Block(wave)));
 		_plan.FastClearMultiplier = settings.FastClear.MultiplierFor(_fastClear.Stacks);
 		_plan.HeroicFastClearMultiplier = settings.FastClear.HeroicBossMultiplierFor(_fastClear.Stacks);
 		_plan.HeroicKillMultiplier = settings.HeroicFastKill.MultiplierFor(_heroicFastKill.Multiplier);

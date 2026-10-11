@@ -12,16 +12,12 @@ internal static class WaveSchedule
 
 	private const int NoHuntLevel = 0;
 
-	private const int NoLastEnvironmentWave = 0;
-
 	private const double Everyone = 1;
-
-	private const double Certain = 1;
 
 	public const double NoEnvironmentRoll = 1;
 
 	public static WavePlan Plan(int wave, int players, WaveSettings settings, WaveContent content,
-		double environmentRoll)
+		double environmentRoll, int environmentsInBlock)
 	{
 		int extraPlayers = Math.Max(0, players - SoloPlayers);
 		int wavesSinceFirst = wave - FirstOfTier;
@@ -40,7 +36,7 @@ internal static class WaveSchedule
 		int pain = Scaled(wave, settings.Pain, settings.PainOccurrencesPerExtra, settings.MaxPain)
 		           + merge.ExtraPain(wave, surge);
 		int heroic = content.HeroicBossTypes > 0 ? HeroicBosses(wave, settings) : 0;
-		double environmentChance = EnvironmentChance(wave, settings, pain, heroic);
+		double environmentChance = EnvironmentChance(wave, settings, pain, heroic, environmentsInBlock);
 		bool environment = environmentChance > 0 && environmentRoll <= environmentChance;
 		int huntLevel = environment ? NoHuntLevel : HuntLevel(wave, hunterStart, settings);
 
@@ -77,16 +73,15 @@ internal static class WaveSchedule
 		};
 	}
 
-	public static double EnvironmentChance(int wave, WaveSettings settings, int pain, int heroic)
+	public static double EnvironmentChance(int wave, WaveSettings settings, int pain, int heroic,
+		int environmentsInBlock)
 	{
-		bool beforeLast = settings.EnvironmentUntilWave == NoLastEnvironmentWave ||
-		                  wave <= settings.EnvironmentUntilWave;
-		if (!beforeLast || pain > 0 || heroic > 0 || settings.EnvironmentTypes.Count == 0)
+		if (pain > 0 || heroic > 0 || settings.EnvironmentTypes.Count == 0)
 		{
 			return 0;
 		}
 
-		return settings.Environments.IsOn(wave) ? Certain : settings.EnvironmentChance;
+		return settings.Environment.ChanceFor(wave, environmentsInBlock);
 	}
 
 	private static int ForeignTypesUnlocked(int wave, WaveSettings settings, int total)

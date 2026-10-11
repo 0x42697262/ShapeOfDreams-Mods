@@ -111,11 +111,7 @@ internal sealed class WaveSettings
 
 	public HatredStrengthType DarkUrgeStrength { get; set; }
 
-	public Cadence Environments { get; set; }
-
-	public double EnvironmentChance { get; set; }
-
-	public int EnvironmentUntilWave { get; set; }
+	public EnvironmentRule Environment { get; set; }
 
 	public IReadOnlyList<string> EnvironmentTypes { get; set; }
 }

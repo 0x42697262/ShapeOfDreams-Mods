@@ -139,6 +139,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Chance grows from wave / every monster a Mirage from wave | 130 / 149 |
 | Dark urge | First wave / chance / curse strength | 176 / 20% / Potent (25% damage between players) |
 | Environments | Chance per wave / first sure wave / every N waves / last wave (0 = never stop) | 10% / 106 / 10 / 0 |
+| | Late chance from wave / late chance / late max per block / late block size | 101 / 50% / 4 / 10 |
 | | Types | 21 room modifiers (checkboxes; none checked means none) |
 | Item drops | Monster item drops | off |
 | | Monster items per player per wave | 1 |

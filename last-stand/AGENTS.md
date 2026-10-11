@@ -1132,8 +1132,13 @@ Each answer still needs to be seen working:
     (`laststand_wave N` a few times) about 1 wave in 10 logs `environment:
     wave N brings RoomMod_…`, wave 1 included, and never wave 49 or 99
     (heroic) or a Pain wave (20, 40 …). Waves 106, 116 … always get one.
-    About 1 in 10 of the other waves from 101 get one too, with `huntLevel=0`
-    and no artillery. Set the chance to 0: only 106, 116 … get one.
+102. **Late environment cap:** a new config shows `Late environment chance
+    (%)` 50, `Late max environments per block` 4 and `Late block size` 10.
+    Play waves 101-120 (`laststand_wave 101`, then `laststand_next` each wave): each block 101-110
+    and 111-120 has at most 4 `environment: wave N brings` lines, the sure
+    wave (106, 116) always among them; those waves log `huntLevel=0` with no
+    artillery, the rest are hunter zones. Set the late chance to 0: only
+    106 and 116 get one.
 
 ## Conventions
 

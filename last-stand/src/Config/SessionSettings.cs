@@ -193,9 +193,10 @@ internal sealed class SessionSettings
 			FriendlyFireChance = ToChance(config.friendlyFireChancePercent),
 			DarkUrgeStrength = StrengthFrom(config.darkUrgeStrength),
 
-			Environments = CadenceFrom(config.environmentFromWave, config.environmentIntervalWaves),
-			EnvironmentChance = ToChance(config.environmentChancePercent),
-			EnvironmentUntilWave = config.environmentUntilWave,
+			Environment = new EnvironmentRule(CadenceFrom(config.environmentFromWave, config.environmentIntervalWaves),
+				ToChance(config.environmentChancePercent), Math.Max(Tuning.FirstWave, config.environmentLateFromWave),
+				ToChance(config.environmentLateChancePercent), config.environmentLateMaxPerBlock,
+				config.environmentLateBlockWaves, config.environmentUntilWave),
 			EnvironmentTypes = KnownChoices(config.environmentTypes, ChoiceSet.Environments),
 		};
 	}

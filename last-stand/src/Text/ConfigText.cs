@@ -685,8 +685,8 @@ internal static class ConfigText
 	public const string EnvironmentChanceLabel = "Environment chance (%)";
 
 	public const string EnvironmentChanceDescription =
-		"Chance per wave of an environment: a random room effect that lasts until the wave is cleared. " +
-		"Never on heroic boss or Pain waves.";
+		"Chance per wave of an environment before the late chance starts: a random room effect that lasts " +
+		"until the wave is cleared. Never on heroic boss or Pain waves.";
 
 	public const string EnvironmentFromWaveLabel = "First sure environment wave";
 
@@ -695,6 +695,25 @@ internal static class ConfigText
 	public const string EnvironmentIntervalLabel = "Waves between sure environments";
 
 	public const string EnvironmentIntervalDescription = "Sure environment every N waves.";
+
+	public const string EnvironmentLateFromWaveLabel = "Late environment chance from wave";
+
+	public const string EnvironmentLateFromWaveDescription =
+		"From this wave the late chance and the cap below replace the first chance.";
+
+	public const string EnvironmentLateChanceLabel = "Late environment chance (%)";
+
+	public const string EnvironmentLateChanceDescription = "Chance per wave from the late wave on.";
+
+	public const string EnvironmentLateMaxPerBlockLabel = "Late max environments per block";
+
+	public const string EnvironmentLateMaxPerBlockDescription =
+		"Most environment waves per block, sure ones included, so the rest keep their hunter zone.";
+
+	public const string EnvironmentLateBlockWavesLabel = "Late block size (waves)";
+
+	public const string EnvironmentLateBlockWavesDescription =
+		"Blocks start at the late wave: 101-110, 111-120 … by default.";
 
 	public const string EnvironmentUntilWaveLabel = "Last environment wave";
 
