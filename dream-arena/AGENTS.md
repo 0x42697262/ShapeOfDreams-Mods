@@ -20,8 +20,6 @@ same repo, and the model for this mod's design. The plumbing both need
 (settings window, lobby option and button, mode checks, config reset, chat
 and log helpers, Workshop change notes, the mod lifecycle, the arena basics)
 is in [`library/`](../library/README.md); use it from there.
-[`library/DISCREPANCIES.md`](../library/DISCREPANCIES.md) lists how the two
-mods' copies were merged and what one mod has that the other could use.
 
 Last Stand's `AGENTS.md` holds most confirmed game API facts. Check there
 before decompiling something again.

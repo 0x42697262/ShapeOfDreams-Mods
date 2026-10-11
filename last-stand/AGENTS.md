@@ -55,8 +55,6 @@ the same repo. The plumbing both need (settings window, lobby option and
 button, mode checks, config reset, chat and log helpers, Workshop change
 notes, the mod lifecycle, the arena basics) is in
 [`library/`](../library/README.md); use it from there.
-[`library/DISCREPANCIES.md`](../library/DISCREPANCIES.md) lists how the two
-mods' copies were merged and what one mod has that the other could use.
 
 **Do not copy** Dream Arena's lucid-dream, game-modifier or PvE suppression.
 Last Stand keeps all of those vanilla. The one exception is *room* modifiers

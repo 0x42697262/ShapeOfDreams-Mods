@@ -153,8 +153,7 @@ Hard rules for all code here, the library included.
     classes, `ModEntry` overrides), never through a mod type referenced
     from the library.
   - `check.sh` fails on new duplicated code (six or more identical lines
-    in two files). `library/DISCREPANCIES.md` lists how earlier copies were
-    settled and what one mod has that the other could use.
+    in two files).
 - **Separation of concerns.** Each type has one job. Keep these apart:
   - **Harmony patches** are thin. They hook the game and hand off to a
     service. They hold no rules or state.

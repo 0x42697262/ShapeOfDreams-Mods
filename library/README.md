@@ -108,6 +108,3 @@ the loader skips abstract types and attaches the concrete subclass.
 - The code rules in the root `AGENTS.md` apply. Shared text goes in
   `library/src/Text`, shared constants in `SharedTuning`, game identifiers
   in `SharedGameNames`.
-
-[`DISCREPANCIES.md`](DISCREPANCIES.md) lists how the two mods' copies were
-merged, and what one mod has that the other could use.
