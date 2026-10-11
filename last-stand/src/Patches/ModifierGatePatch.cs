@@ -1,6 +1,5 @@
 using System;
 using HarmonyLib;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -11,7 +10,7 @@ internal static class ModifierGatePatch
 	[HarmonyPrefix]
 	private static bool Prefix(ZoneManager __instance, int nodeIndex, ModifierData mod, ref int __result)
 	{
-		if (!LastStandMode.IsHosting() || LastStandMod.Current?.Session?.AllowsModifier(__instance, nodeIndex, mod.type) != false)
+		if (!ModMode.IsHosting() || LastStandMod.Current?.Session?.AllowsModifier(__instance, nodeIndex, mod.type) != false)
 		{
 			return true;
 		}

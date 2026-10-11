@@ -1,5 +1,4 @@
 using HarmonyLib;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -9,7 +8,7 @@ internal static class ChaosRarityPatch
 	[HarmonyPostfix]
 	private static void Postfix(Shrine_Chaos __instance)
 	{
-		if (LastStandMode.IsHosting())
+		if (ModMode.IsHosting())
 		{
 			LastStandMod.Current?.Session?.RerollChaos(__instance);
 		}

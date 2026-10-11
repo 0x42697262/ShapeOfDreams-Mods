@@ -1,6 +1,5 @@
 using System;
 using HarmonyLib;
-using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
 using LastStand.UI;

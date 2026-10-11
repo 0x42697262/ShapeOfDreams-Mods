@@ -66,7 +66,7 @@ internal sealed class SessionSettings
 			ChatRestart = config.chatRestart,
 			SkipTravelVote = config.skipTravelVote,
 			ForceArenaRoom = config.forceArenaRoom,
-			ArenaRoom = string.IsNullOrWhiteSpace(config.arenaRoom) ? GameNames.DefaultArenaRoom : config.arenaRoom.Trim(),
+			ArenaRoom = string.IsNullOrWhiteSpace(config.arenaRoom) ? SharedGameNames.DefaultArenaRoom : config.arenaRoom.Trim(),
 			PlainArena = config.plainArena,
 			StripRoomModifiers = config.stripRoomModifiers,
 			SkipCutscenes = config.skipCutscenes,

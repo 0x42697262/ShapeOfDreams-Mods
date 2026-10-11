@@ -416,20 +416,31 @@ The ones that matter for almost every mod:
 Game types live in the **global namespace** (the decompiled `ModBehaviour.cs`
 has no `namespace` line), so no `using` is needed for them.
 
-Last Stand's `LastStand.csproj` is the template plus four changes, found by
+Last Stand's project started as the template plus a few changes, found by
 diffing the two files (strip `\r` first; the template has Windows line
 endings):
 
 ```sh
-diff <(tr -d '\r' < Mods/ModTemplate/TestMod.csproj) <(tr -d '\r' < LastStand.csproj)
+diff <(tr -d '\r' < Mods/ModTemplate/TestMod.csproj) <(tr -d '\r' < MyMod.csproj)
 ```
 
+Those settings now live in `Directory.Build.props` at the repository root,
+shared by every mod, so `LastStand.csproj` is one line
+(`<Project Sdk="Microsoft.NET.Sdk" />`). Compared with the template, the
+props file has:
+
 - `LangVersion latest` (file-scoped namespaces);
-- `RootNamespace LastStand`;
+- `RootNamespace $(MSBuildProjectName)` (`LastStand`);
 - `UnityEngine.AIModule`, for `NavMesh.SamplePosition` and `NavMeshPath`
   when it places shrines on the arena floor (`src/Arena/EdgePlacement.cs`);
 - `UnityEngine.UIModule` and `UnityUIExtensions`, added for the settings
-  window's UI code.
+  window's UI code;
+- `Sirenix.Serialization`, and `com.rlabrecque.steamworks.net` for the
+  Workshop change note's patch on `SteamUGC`;
+- `GameDir` pointing at the Steam install instead of `..\..`, since the
+  project no longer sits in `Mods/`;
+- `<Compile Include="$(LibraryDir)**/*.cs" />`, which compiles the shared
+  library (`library/src`) into each mod's own DLL.
 
 **Where else this applies.**
 
@@ -601,7 +612,8 @@ Other facts the excerpt settles:
   yours that the first references by its original name would not match the
   renamed copy (inferred from the rename; not tested). Last Stand ships a
   single assembly and uses only libraries the game already loads (Harmony,
-  Newtonsoft, Mirror, UniTask).
+  Newtonsoft, Mirror, UniTask). The code it shares with Dream Arena
+  (`library/src`) is compiled into that one DLL, not shipped as a second.
 - **A pattern that matches non-DLL files logs an error.** `bin/Debug/*` also
   matches the `.pdb` and `.deps.json`, and each produces
   `[DewMod] Unknown assembly type`. List the exact DLL path.
@@ -665,10 +677,12 @@ public void CallOnNetworkedManager<T>(Action<T> onStart) where T : NetworkedMana
 
 `InitManagerPatchItem` runs `onStart` at once if the manager already exists,
 and `NotifyManagerLifecycle` runs it again every time a manager of that type
-starts. Last Stand uses it to reset its session at the start of every game:
+starts. Last Stand uses it to reset its session at the start of every game
+(in the shared library's `ModEntry.Start`, which calls Last Stand's
+`OnGameStarted` override):
 
 ```csharp
-CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
+CallOnNetworkedManager<GameManager>(_ => OnGameStarted());
 ```
 
 `OnStartClient` runs on every client, the host included, so the callback
@@ -697,77 +711,94 @@ The same file also gives `MakeSureServer()`, `MakeSureInGame()` and
 ### 5.1 Wiring only
 
 Last Stand's `ModBehaviour` holds no game rules. It creates the session,
-hooks the game, guards the per-frame tick and tears everything down. Trimmed
-to the lifecycle:
+hooks the game, guards the per-frame tick and tears everything down. Dream
+Arena needs the same lifecycle, so it now lives in the shared library as an
+abstract base, `ModEntry` (`library/src/ModEntry.cs`), and `LastStandMod`
+only fills in the session. The loader skips the abstract base (section 4)
+and attaches the subclass. Trimmed to the lifecycle:
 
 ```csharp
-public class LastStandMod : ModBehaviour
+public abstract class ModEntry : ModBehaviour
 {
-	public LastStandConfig config = new LastStandConfig();
+	private readonly ErrorThrottle _tickErrors = new ErrorThrottle(SharedTuning.ErrorLogIntervalSeconds);
 
-	internal static LastStandMod Current { get; private set; }
+	internal static ModEntry Active { get; private set; }
 
-	internal LastStandSession Session { get; private set; }
-
-	private readonly ErrorThrottle _tickErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
-
-	private void Awake()
+	protected void Awake()
 	{
-		Current = this;
+		Active = this;
 	}
 
-	private void Start()
+	protected void Start()
 	{
 		instance.isAlteringGameplay = true;
-		Session = new LastStandSession(SessionSettings.From(config));
+		OnLoaded();
 		ChoiceFields.Register();
 		harmony.PatchAll();
-		CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
-		Log.Info(LogText.Loaded(mod.metadata.name, mod.metadata.modVer));
+		CallOnNetworkedManager<GameManager>(_ => OnGameStarted());
+		Log.Info(SharedLogText.Loaded(mod.metadata.name, mod.metadata.modVer));
 	}
 
-	private void Update()
+	protected void Update()
 	{
-		if (Session == null)
-		{
-			return;
-		}
-
 		try
 		{
-			Session.Tick(Time.time);
+			OnTick(Time.time);
 		}
 		catch (Exception e)
 		{
-			_tickErrors.Report(Time.time, LogText.TickFailed, e);
+			_tickErrors.Report(Time.time, ModText.TickFailed, e);
 		}
 	}
 
-	private void OnDestroy()
+	protected void OnDestroy()
 	{
-		Session?.Reset();
+		OnUnloading();
 		ConfigWindow.Close();
 		InjectedUi.RemoveAll();
 		LobbyModeOption.Detach();
 		ChoiceFields.Unregister();
 		harmony.UnpatchAll(harmony.Id);
-
-		if (Current == this)
+		if (Active == this)
 		{
-			Current = null;
+			Active = null;
 		}
 
-		Log.Info(LogText.Unloaded);
+		Log.Info(SharedLogText.Unloaded);
 	}
 
 	public override void LoadConfigsToDisk()
 	{
 		foreach (FieldInfo field in modConfigFields)
 		{
-			ConfigFile.ResetIfOutdated(GetModConfigFilePath(field));
+			ConfigFile.ResetIfOutdated(GetModConfigFilePath(field), ConfigSchemaVersion);
 		}
 
 		base.LoadConfigsToDisk();
+	}
+}
+
+public class LastStandMod : ModEntry
+{
+	public LastStandConfig config = new LastStandConfig();
+
+	internal static LastStandMod Current => Active as LastStandMod;
+
+	internal LastStandSession Session { get; private set; }
+
+	protected override void OnLoaded()
+	{
+		Session = new LastStandSession(SessionSettings.From(config));
+	}
+
+	protected override void OnTick(double now)
+	{
+		Session?.Tick(now);
+	}
+
+	protected override void OnUnloading()
+	{
+		Session?.Reset();
 	}
 }
 ```
@@ -776,13 +807,13 @@ Each line maps to a loader fact from section 4:
 
 | Line | Why it is there |
 |---|---|
-| `public LastStandConfig config` | A public field of a `ModConfig` subclass. The loader finds it through `modConfigFields` and loads it in step 3, before `Awake`. File: `<DataDir>/QuickSave/Mods/<id>/LastStandMod.config.json` (`GetModConfigFilePath`: `<Type>.<field>.json`). Details in `08-config-ui-and-commands.md` |
+| `public LastStandConfig config` | A public field of a `ModConfig` subclass. The loader finds it through `modConfigFields` and loads it in step 3, before `Awake`. File: `<DataDir>/QuickSave/Mods/<id>/LastStandMod.config.json` (`GetModConfigFilePath`: `<Type>.<field>.json`), so it stays a field of the subclass to keep that name. Details in `08-config-ui-and-commands.md` |
 | `LoadConfigsToDisk` override | Runs in step 3. It moves an outdated saved file aside before the base method loads it, because the base method loads the saved JSON over the defaults and would keep stale values forever |
-| `static Current`, set in `Awake` | Patches are static methods and need the live instance. Static is safe here because each reload gets a fresh copy of the static (new assembly). `OnDestroy` clears it only if it still points at itself |
+| `static Active`, set in `Awake` (`LastStandMod.Current` casts it) | Patches are static methods and need the live instance. Static is safe here because each reload gets a fresh copy of the static (new assembly). `OnDestroy` clears it only if it still points at itself |
 | `isAlteringGameplay = true` in `Start` | Code of conduct (section 8). Set at load time, long before any lobby exists |
-| `harmony.PatchAll()` | Applies every `[HarmonyPatch]` class in the calling assembly (Harmony finds it from the caller's stack frame) |
-| `try`/`catch` around the tick, with `ErrorThrottle` | Unity would catch an exception from `Update` itself, but it would recur and be logged once per frame. The throttle logs at most one every 5 s (`Tuning.ErrorLogIntervalSeconds`) with a count of suppressed repeats, and the session keeps its state instead of starting over |
-| `OnDestroy` in reverse order of setup | Undo game state first (`Session.Reset`), then UI, then global registrations, then patches |
+| `harmony.PatchAll()` | Applies every `[HarmonyPatch]` class in the calling assembly (Harmony finds it from the caller's stack frame), the library's patches included, since they are compiled into the same DLL |
+| `try`/`catch` around the tick, with `ErrorThrottle` | Unity would catch an exception from `Update` itself, but it would recur and be logged once per frame. The throttle logs at most one every 5 s (`SharedTuning.ErrorLogIntervalSeconds`) with a count of suppressed repeats, and the session keeps its state instead of starting over |
+| `OnDestroy` in reverse order of setup | Undo game state first (`OnUnloading`, which calls `Session.Reset`), then UI, then global registrations, then patches |
 
 The second behavior, `LastStandConsole : ModBehaviour`, only holds
 `[ConsoleCommand]` methods and reaches the session through
@@ -853,7 +884,8 @@ from the same behavior.
 ### 5.3 Teardown checklist
 
 Everything the loader doesn't undo (section 4.4) needs an owner. How Last
-Stand handles each kind:
+Stand handles each kind (all but `Session.Reset` now run in the shared
+library's `ModEntry.OnDestroy`):
 
 | You added | Undo in `OnDestroy` | Last Stand |
 |---|---|---|

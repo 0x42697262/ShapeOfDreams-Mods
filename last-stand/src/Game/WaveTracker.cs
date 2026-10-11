@@ -1,6 +1,5 @@
 using System;
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Text;
 using Mirror;
 
@@ -10,7 +9,7 @@ internal sealed class WaveTracker
 {
 	private const int Unknown = -1;
 
-	private readonly ErrorThrottle _errors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
+	private readonly ErrorThrottle _errors = new ErrorThrottle(SharedTuning.ErrorLogIntervalSeconds);
 	private Quest_Limbo _quest;
 	private string _shown;
 	private int _labeledConnections = Unknown;

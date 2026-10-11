@@ -1,6 +1,5 @@
 using HarmonyLib;
 using DreamArena.Arena;
-using DreamArena.Mode;
 
 namespace DreamArena.Patches;
 
@@ -10,7 +9,7 @@ internal static class PlainArenaStartServerPatch
 	[HarmonyPostfix]
 	private static void Postfix(Room __instance)
 	{
-		if (__instance != null && ArenaMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.PlainArena == true
+		if (__instance != null && ModMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.PlainArena == true
 		    && ArenaLocator.CurrentPhase() == Phase.Arena)
 		{
 			PlainArena.Prepare(__instance);

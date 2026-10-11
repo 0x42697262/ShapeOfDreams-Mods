@@ -11,7 +11,7 @@ if [ "${1:-}" = "--update-baseline" ]; then
   exit
 fi
 
-sources="$(for mod in $(sod_mods); do printf '%s/src ' "$mod"; done)"
+sources="library/src $(for mod in $(sod_mods); do printf '%s/src ' "$mod"; done)"
 failed=0
 
 echo "== comments"

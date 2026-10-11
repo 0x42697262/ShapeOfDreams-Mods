@@ -1,7 +1,6 @@
 using System;
 using HarmonyLib;
 using LastStand.Game;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -11,7 +10,7 @@ internal static class HeroicBossDeathPatch
 	[HarmonyPrefix]
 	private static bool Prefix(BossMonster __instance, EventInfoKill info)
 	{
-		if (!LastStandMode.IsHosting() || LastStandMod.Current?.Session?.OwnsHeroicBoss(__instance) != true)
+		if (!ModMode.IsHosting() || LastStandMod.Current?.Session?.OwnsHeroicBoss(__instance) != true)
 		{
 			return true;
 		}

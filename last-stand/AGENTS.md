@@ -1,7 +1,9 @@
 # AGENTS.md: Last Stand
 
-Working notes for anyone, human or agent, building this mod. The design lives
-in [`docs/`](docs/README.md), one topic per file. Open the table of contents
+Working notes for anyone, human or agent, building this mod. Read the root
+[`AGENTS.md`](../AGENTS.md) first: the code and working rules, the build
+scripts and the shared library live there. The design lives in
+[`docs/`](docs/README.md), one topic per file. Open the table of contents
 and read only the files for the area you're changing.
 
 ## Status
@@ -37,7 +39,8 @@ Stand fills it in: a prefix on `DewMod.UpdateItem` reads
 `about/changenote.txt` from the uploaded folder when the item is Last
 Stand's own (same id as the loaded mod), and a prefix on
 `SteamUGC.SubmitItemUpdate` puts it in place of the `null`
-(`WorkshopChangeNotePatches`, `WorkshopChangeNote`). `SubmitItemUpdate`
+(`WorkshopUploadPatch`, `WorkshopSubmitPatch` and `WorkshopChangeNote`,
+now in the shared library, so every mod gets them). `SubmitItemUpdate`
 runs before the method's first `await`, so it happens inside the same
 call; a finalizer clears the note afterwards. These patches work outside
 Last Stand mode, since uploads happen from the title screen. `pack.sh`
@@ -47,22 +50,12 @@ appears on the item's Change Notes page.
 
 ## Sister project
 
-[Dream Arena](../dream-arena) is a host-only PvP mode for the same game, built
-the same way. Much of Last Stand's plumbing exists there and should be adapted,
-not reinvented:
-
-| Need | Dream Arena source |
-|---|---|
-| One boss room for every node | `src/ArenaRules.cs`, `src/Patches/WorldGenPatch.cs` |
-| Room loads cleared, lit, no entry trigger | `src/Patches/PlainArenaPatch.cs` |
-| Boss removal, moving players into the arena | `src/ArenaStage.cs` |
-| Arena center (`pathablePivot` of the biggest section) | `src/ArenaSpawn.cs` |
-| Skipping intro cutscenes | `src/Patches/RoundStartPatch.cs` |
-| Spawning memories and essences | `src/CampShops.cs`, `src/ShopCatalog.cs` |
-| Fixing unsynced shrine limits | `src/Patches/CampRemnantPatch.cs` |
-| Chat notices and chat commands | `src/MatchRestart.cs`, `src/Patches/ChatRestartPatch.cs` |
-| Lobby settings window | `src/ArenaConfigWindow.cs` |
-| Config | `src/DreamArenaConfig.cs` |
+[Dream Arena](../dream-arena) is a host-only PvP mode for the same game, in
+the same repo. The plumbing both need (settings window, lobby option and
+button, mode checks, config reset, chat and log helpers, Workshop change
+notes, the mod lifecycle) is in [`library/`](../library/README.md); use it
+from there. [`library/DISCREPANCIES.md`](../library/DISCREPANCIES.md) lists
+what the two mods still carry in their own copies (the arena basics).
 
 **Do not copy** Dream Arena's lucid-dream, game-modifier or PvE suppression.
 Last Stand keeps all of those vanilla. The one exception is *room* modifiers
@@ -70,11 +63,10 @@ on arena nodes. Like Dream Arena, Last Stand strips them, and it also blocks
 new ones (`ModifierGate`), because they put shrines, props, rifts and
 minibosses into the arena.
 
-**Hidden test command.** `LastStandConsole.Cmd_TestBoss` (spawns a weak heroic
-boss for testing) is kept but not registered. `DewMod` only registers methods
-that carry `[ConsoleCommand]`, so to use it again, put back
-`[ConsoleCommand(CommandText.TestBossDescription, CommandText.TestBoss)]` on
-both overloads.
+**Test boss command.** `laststand_testboss [type]`
+(`LastStandConsole.Cmd_TestBoss`) spawns a weak heroic boss for testing. It
+is registered (`DewMod` registers every method with `[ConsoleCommand]`) and,
+like every cheat, does nothing unless `Allow cheat commands` is on.
 
 ## Hard constraints
 
@@ -974,8 +966,9 @@ Each answer still needs to be seen working:
 78. **Chat colors:** "Wave N cleared. The next wave arrives in …" (and the
     curse-to-start version) is green (`#5ad45a`), the fast-clear line red,
     every other Last Stand notice orange, on the host and a vanilla client.
-79. **Lobby button host-only:** host a lobby with the mod; the settings panel
-    has the **Last Stand** button. A friend with the mod loaded joins: their
+79. **Lobby button host-only:** host a Last Stand lobby with the mod; the
+    settings panel has the **Last Stand** button (see check 97 for other
+    modes). A friend with the mod loaded joins: their
     settings panel has no Last Stand button, and nothing else of the mod
     shows or runs on their side.
 80. **Config command host-only:** the friend from check 79 runs
@@ -1112,113 +1105,22 @@ Each answer still needs to be seen working:
     Stand** button and no Dream Arena button. Host a Dream Arena lobby:
     only the **Dream Arena** button. Host a Shape of Dreams lobby: neither.
     Each time the panel opens it checks again.
+98. **Shared library build:** after the move to `library/`, the log shows
+    `[LastStand] loaded: Last Stand v…` once, the settings live in the same
+    file as before (`QuickSave/Mods/<id>/LastStandMod.config.json`, not
+    reset), the lobby button, settings window (all pages, Apply, Cancel,
+    Escape), the gear screen's dropdowns and checklists, settings notices in
+    chat, the Create Lobby option (preselected, lobby name with the world)
+    and the solo button all work as before. A mod reload leaves one button
+    and one window; unloading logs `[LastStand] unloaded.` With Dream Arena
+    loaded too, each log line carries its own mod's prefix.
 
 ## Conventions
 
-### Code rules
-
-These are hard rules for all code in this repo.
-
-- **No comments.** No `//`, `/* */` or XML doc comments in the codebase. Code
-  explains itself through names, small types and small methods. The *why*
-  (which game system a choice relies on, why it reaches clients) goes in the
-  topic's file under `docs/` or this file instead. Dream Arena's code is commented. Strip its
-  comments when adapting it.
-- **No magic strings or hard-coded values.** Every number, duration, limit,
-  type or prefab name, room name, chat command and chat text lives in exactly
-  one named place:
-  - Tunable values (wave length, caps, drop chances, scaling curves) go in
-    config (`LastStandConfig`), with defaults set there. Fixed internal
-    constants go in `Tuning`.
-  - Fixed game identifiers that can't be a `typeof` or `nameof` (private
-    method names, room names, modifier names) go in `GameNames`. Prefer
-    `typeof`, `nameof` and generic APIs such as `Dew.CreateActor<T>` when
-    the member is public.
-  - Text goes in `src/Text`: `Messages` for chat, `TrackerText` for the quest
-    tracker's progress, `ConfigText` for the config screen, `LogText` for the log and
-    `CommandText` for console commands.
-  - Plain `0`, `1`, `null` and `string.Empty` are fine where their meaning is
-    obvious.
-- **Separation of concerns.** Each type has one job. Keep these apart:
-  - **Harmony patches** are thin. They hook the game and hand off to a
-    service. They hold no rules or state.
-  - **Game rules** (wave schedule, scaling, loot rolls, pain stacking) are
-    plain logic that doesn't touch Unity or networking, so they can be read and
-    tested alone.
-  - **Game adapters** wrap the game's API (spawning, pickups, shrines, quests,
-    chat). Rules call adapters and never the game directly.
-  - **Config, lifecycle and UI** each have their own types. The `ModBehaviour`
-    only wires things together and tears them down.
-- **DDIA design.** Follow the principles of *Designing Data-Intensive
-  Applications*:
-  - **Reliability.** The host is the server, so a fault there breaks the run
-    for everyone. Fail safe: if a room isn't ready or a lookup fails, retry on a
-    throttled timer or skip, and never throw from per-frame code or a patch.
-    Every effect is undone on unload.
-  - **Scalability.** Bound per-frame work. Cap enemies and pickups alive, use
-    `.softInstance`, cache lookups, and scale load by player count.
-  - **Maintainability**, the main focus:
-    - *Operability:* clear, throttled log lines with a fixed prefix, so a
-      problem can be found in `Player.log`.
-    - *Simplicity:* the smallest design that works. No speculative
-      abstraction.
-    - *Evolvability:* new waves, enemy tiers, drops or settings are added
-      through config and data, not by editing control flow.
-  - **One source of truth** for state. The server's synced state is the record.
-    Don't keep a second copy that can drift from it.
-
-### Working rules
-
-- **American English** in code and docs.
-- **Don't commit** unless the user asks.
-- **Check changed C# files** with a clean build before reporting done, and
-  with LSP diagnostics if a C# language server is ever set up. Also check that
-  the diff has no comments and no new literals outside `src/Config`,
-  `src/Text`, `src/Identity` and `src/Game/GameNames.cs`. For example:
-  `grep -rn "//\|/\*" src` should print nothing.
-- **Bump `ConfigSchema.Current`** whenever a config default changes or a field
-  is renamed or removed. The game loads the saved JSON over the defaults, so
-  without a bump, players keep the old values. This happened once already:
-  the first build's file kept minibosses at wave 4, Pain every 3 waves and the
-  24-monster cap through several later changes.
-- **Version bumps are their own commit.** Code changes (with their docs and
-  checks) are committed first. The release is then one commit named
-  `vX.Y.Z` that only changes `modVer` in `about/metadata.json` and the
-  version line (and, if needed, the rest) of `about/changenote.txt`. Never
-  put code in it. Before 1.0, every release with features or fixes bumps
-  the minor version (0.7.0 to 0.8.0).
-  If more changes land before the upload, commit them on their own and
-  keep the same version.
-- **Change note.** Rewrite `about/changenote.txt` for each release (see
-  *Change notes* above for how it reaches Steam). It covers only what
-  changed since the last upload, written like a dev's patch notes, not a
-  press release. The first line is the version in bold, `[b]vX.Y.Z[/b]`,
-  matching `modVer` (from v0.9.0 on; v0.8.0 went up without it). Then a
-  Steam BBCode `[list]` of one-line bullets, plain words, no reasons or
-  mechanics (those belong in `docs/`). Give the old value when a default
-  changes. Start a new feature with `New:` and, if it's on
-  by default, say how to turn it off in the same line. End with
-  `Settings are reset with this update (old file kept as .old).` when
-  `ConfigSchema.Current` changed since the last upload, then `Only the
-  host needs to update.` Example (v0.8.0, with the version line added):
-  ```
-  [b]v0.8.0[/b]
-  [list]
-  [*]Hatred Shard gold now scales with the wave and curse strength (50 per wave) instead of a flat 500.
-  [*]Curse kill goals keep growing after wave 48 and are no longer split between players.
-  [*]Fast clear's instant kill window is now 1s (was 0.5s).
-  [*]New: heroic fast kill. Kill a heroic boss too fast and the next ones get more health. Set "Heroic fast kill: seconds per boss" to 0 to turn it off.
-  [/list]
-
-  Settings are reset with this update (old file kept as .old). Only the host needs to update.
-  ```
-- **Where things go:** new tunables go in `LastStandConfig` and are validated in
-  `SessionSettings.From`. Internal constants go in `Tuning`. Game identifiers
-  go in `GameNames`. Every string goes in `src/Text`. Patches only check
-  `LastStandMode` and call into the session.
-- **Keep `docs/` in step** with the code. With no comments in the code, the
-  docs are where the design and its reasons live. They describe how things
-  actually work, not just what they do. Update the topic's file, and add a
-  new file plus a line in `docs/README.md` for a new topic. The root
-  `README.md` is the player-facing overview; change it only when a feature
-  or default players see changes.
+The code rules and working rules are in the root [`AGENTS.md`](../AGENTS.md),
+*Conventions*. Last Stand's own places: tunables in `LastStandConfig`
+(validated in `SessionSettings.From`), constants in `Tuning`, game
+identifiers in `GameNames`, our names in `ModIdentity`, and text in
+`src/Text`: `Messages` for chat, `TrackerText` for the quest tracker,
+`ConfigText` for the config screen, `LogText` for the log, `CommandText`
+for console commands, and `ModText` for the library's contract.

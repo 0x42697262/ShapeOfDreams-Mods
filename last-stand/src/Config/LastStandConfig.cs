@@ -15,7 +15,7 @@ public class LastStandConfig : ModConfig
 	[PickOne(ChoiceSet.ArenaRooms)]
 	[LabelText(ConfigText.ArenaRoomLabel)]
 	[Description(ConfigText.ArenaRoomDescription)]
-	public string arenaRoom = GameNames.DefaultArenaRoom;
+	public string arenaRoom = SharedGameNames.DefaultArenaRoom;
 
 	[LabelText(ConfigText.StartingWorldLabel)]
 	[Description(ConfigText.StartingWorldDescription)]

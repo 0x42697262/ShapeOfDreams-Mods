@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 using DreamArena.Game;
-using DreamArena.Mode;
 using DreamArena.Text;
 using Mirror;
 
@@ -15,7 +14,7 @@ internal static class ChatRestartPatch
 	[HarmonyPostfix]
 	private static void Postfix(string content, NetworkConnectionToClient sender)
 	{
-		if (!ArenaMode.IsHosting() || content == null || sender == null
+		if (!ModMode.IsHosting() || content == null || sender == null
 		    || !string.Equals(content.Trim(), GameNames.RestartChatCommand, StringComparison.OrdinalIgnoreCase))
 		{
 			return;

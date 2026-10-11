@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using LastStand.Game;
-using LastStand.Identity;
-using LastStand.Mode;
 using LastStand.Text;
 using TMPro;
 using UnityEngine;
@@ -54,7 +52,7 @@ internal static class SoloModeButton
 		TextMeshProUGUI label = Follow(clone.transform, labelPath).GetComponent<TextMeshProUGUI>();
 		foreach (TextMeshProUGUI text in clone.GetComponentsInChildren<TextMeshProUGUI>(true))
 		{
-			text.text = text == label ? Messages.ModeName : Messages.ModeTooltip;
+			text.text = text == label ? ModText.ModeName : Messages.ModeTooltip;
 		}
 
 		Button button = clone.GetComponent<Button>();

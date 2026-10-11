@@ -6,25 +6,7 @@ internal static class SecondWind
 {
 	public static int Grant(int charges, float invulnerableSeconds)
 	{
-		int heroes = 0;
-		if (DewPlayer.gamePlayers == null)
-		{
-			return heroes;
-		}
-
-		foreach (DewPlayer player in DewPlayer.gamePlayers)
-		{
-			Hero hero = player != null ? player.hero : null;
-			if (hero.IsNullOrInactive())
-			{
-				continue;
-			}
-
-			Apply(hero, charges, invulnerableSeconds);
-			heroes++;
-		}
-
-		return heroes;
+		return PlayerRoster.ForEachHero(hero => Apply(hero, charges, invulnerableSeconds));
 	}
 
 	private static void Apply(Hero hero, int charges, float invulnerableSeconds)

@@ -66,7 +66,8 @@ Get-Content $log -Wait -Tail 50
 
 A busy run writes thousands of engine lines (asset unloads, EOS, transport,
 input). Give every line your mod writes one fixed prefix and filter on it.
-Last Stand's whole logging layer is three methods:
+Last Stand's whole logging layer is three methods (`Log`, now in the shared
+library, `library/src/Diagnostics/Log.cs`):
 
 ```csharp
 internal static class Log
@@ -249,29 +250,25 @@ original method's code, so it never runs.
 
 An exception in per-frame code prints once per frame: 60 traces a second
 bury everything else and slow the host. Last Stand wraps its per-frame tick
-and reports through a throttle:
+and reports through a throttle (both in the shared library's `ModEntry` and
+`ErrorThrottle`; `OnTick` is Last Stand's override that ticks the session):
 
 ```csharp
-private void Update()
+protected void Update()
 {
-	if (Session == null)
-	{
-		return;
-	}
-
 	try
 	{
-		Session.Tick(Time.time);
+		OnTick(Time.time);
 	}
 	catch (Exception e)
 	{
-		_tickErrors.Report(Time.time, LogText.TickFailed, e);
+		_tickErrors.Report(Time.time, ModText.TickFailed, e);
 	}
 }
 ```
 
 `ErrorThrottle.Report` logs at most once every 5 s
-(`Tuning.ErrorLogIntervalSeconds`) and counts what it dropped:
+(`SharedTuning.ErrorLogIntervalSeconds`) and counts what it dropped:
 
 ```csharp
 if (now < _nextAt)
@@ -280,7 +277,7 @@ if (now < _nextAt)
 	return;
 }
 
-Log.Error(_suppressed > 0 ? message + " " + Text.LogText.Suppressed(_suppressed) : message, exception);
+Log.Error(SharedLogText.WithSuppressed(message, _suppressed), exception);
 _suppressed = 0;
 _nextAt = now + _intervalSeconds;
 ```
@@ -593,8 +590,9 @@ the formula you read in the decompile.**
    not only the result, so a wrong result points at the wrong input.
 3. **`key=value`, stable wording, fixed prefix.** The line is grepped, diffed
    between runs and quoted in checks. Last Stand keeps every log string in
-   one file (`src/Text/LogText.cs`), so the docs and the checklist quote the
-   exact text.
+   one file (`src/Text/LogText.cs`; lines shared with Dream Arena are in the
+   library's `library/src/Text/SharedLogText.cs`), so the docs and the
+   checklist quote the exact text.
 4. **At the moment the value is final.** Stats change after spawn as the
    game adds its own bonuses. Log after the last writer.
 5. **Bounded.** Per decision, not per frame. Repeated errors are throttled
@@ -851,7 +849,7 @@ Two design points made these trustworthy:
 ```csharp
 private static bool CheatsAllowed()
 {
-	if (!LastStandMode.IsHosting())
+	if (!ModMode.IsHosting())
 	{
 		Log.Warn(LogText.NotHosting);
 		return false;
@@ -1012,8 +1010,9 @@ Maintenance rules:
 - **Newest items are the untested ones.** The status section says which
   range has been seen working.
 - **Log text is the contract.** Because every string lives in
-  `src/Text/LogText.cs`, changing a log line means updating the checks that
-  quote it. Grep the list for the old text.
+  `src/Text/LogText.cs` (or the library's `SharedLogText.cs`), changing a
+  log line means updating the checks that quote it. Grep the list for the
+  old text.
 
 **Where else this applies:** release notes (the checks of a release are its
 test plan); bug reports from players (ask for the log lines a check names);

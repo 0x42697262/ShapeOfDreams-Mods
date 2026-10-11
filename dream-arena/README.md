@@ -59,7 +59,8 @@ From the repository root, run `./build.sh dream-arena` (Debug, which
 runs `dotnet build` in the build container; plain `dotnet build` in this
 folder works too. The project finds the game's assemblies through `GameDir`
 in the root `Directory.Build.props` (the Steam install on Linux by default;
-override it with `-p:GameDir="<Shape of Dreams>"`). To load the build,
+override it with `-p:GameDir="<Shape of Dreams>"`) and compiles the shared
+[`library/`](../library/README.md) into `DreamArena.dll`. To load the build,
 this folder must be the game's `<Shape of Dreams>/Mods/DreamArena` (copied
 or mounted there).
 

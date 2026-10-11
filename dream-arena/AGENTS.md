@@ -1,7 +1,9 @@
 # AGENTS.md: Dream Arena
 
-Working notes for anyone, human or agent, building this mod. The design lives
-in [`docs/`](docs/README.md), one topic per file. Open the table of contents
+Working notes for anyone, human or agent, building this mod. Read the root
+[`AGENTS.md`](../AGENTS.md) first: the code and working rules, the build
+scripts and the shared library live there. The design lives in
+[`docs/`](docs/README.md), one topic per file. Open the table of contents
 and read only the files for the area you're changing.
 
 ## Status
@@ -13,18 +15,13 @@ were seen working before the refactor, and their logic was kept.
 
 ## Sister project
 
-[Last Stand](../last-stand) is a host-only wave mode for the same game, built
-the same way, and the model for this repo's design. Shared code that should
-stay in step:
-
-| Need | Last Stand source |
-|---|---|
-| Settings panel, window, dropdowns | `src/UI/SettingsPanel.cs`, `ConfigWindow.cs`, `ChoiceFields.cs` |
-| Lobby button, game-mode option | `src/UI/LobbyConfigButton.cs`, `LobbyModeOption.cs` |
-| Settings change notices | `src/UI/SettingsAnnouncer.cs`, `SettingChangeText.cs` |
-| Config schema reset | `src/Config/ConfigSchema.cs`, `ConfigFile.cs` |
-| Workshop change note | `src/Workshop/`, `src/Patches/WorkshopChangeNotePatches.cs` |
-| Packing | `pack.sh` |
+[Last Stand](../last-stand) is a host-only wave mode for the same game, in the
+same repo, and the model for this mod's design. The plumbing both need
+(settings window, lobby option and button, mode checks, config reset, chat
+and log helpers, Workshop change notes, the mod lifecycle) is in
+[`library/`](../library/README.md); use it from there.
+[`library/DISCREPANCIES.md`](../library/DISCREPANCIES.md) lists what the two
+mods still carry in their own copies (the arena basics).
 
 Last Stand's `AGENTS.md` holds most confirmed game API facts. Check there
 before decompiling something again.
@@ -118,24 +115,17 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
     raised to level 10.`) on the host and a vanilla client; a hero already
     above 10 keeps their level. At 0 nothing is raised. Old config files
     are moved to `.old`.
+17. **Shared library build:** after the move to `library/`, the log shows
+    `[DreamArena] loaded: Dream Arena v…` once, the lobby button, settings
+    window (all pages, Apply, Cancel, Escape), the gear screen's dropdowns,
+    settings notices in chat, and the Create Lobby option (not preselected,
+    lobby name `Dream Arena (PvP)`) work as before. Unloading logs
+    `[DreamArena] unloaded.`
 
 ## Conventions
 
-Same as Last Stand's: read its `AGENTS.md` "Conventions" section. In short:
-
-- **No comments** in code. The why goes in `docs/`.
-- **No magic values.** Tunables in `DreamArenaConfig` (validated in
-  `SessionSettings.From`), constants in `Tuning`, game identifiers in
-  `GameNames`, our own names in `ModIdentity`, every string in `src/Text`.
-  Plain `0`, `1`, `null` and `string.Empty` are fine.
-- **Thin patches** that check `ArenaMode` and call the session. Rules in
-  plain classes, game access in adapters, the `ModBehaviour` only wires.
-- **Fail safe** on the host: retry on a timer or skip, never throw from a
-  patch or per-frame code, undo every effect on unload.
-- **American English.** **Don't commit** unless asked.
-- **Bump `ConfigSchema.Current`** on any default change, rename or removal.
-- **Keep `docs/` in step**, and add a numbered in-game check here for each
-  change.
-- Check before reporting done: a clean build, `grep -rn "//\|/\*" src`
-  prints nothing, and no new literals outside `src/Config`, `src/Text`,
-  `src/Identity` and `src/Game/GameNames.cs`.
+The code rules and working rules are in the root [`AGENTS.md`](../AGENTS.md),
+*Conventions*. Dream Arena's own places: tunables in `DreamArenaConfig`
+(validated in `SessionSettings.From`), constants in `Tuning`, game
+identifiers in `GameNames`, our names in `ModIdentity`, every string in
+`src/Text` (`ModText` for the library's contract).

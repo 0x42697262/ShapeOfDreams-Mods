@@ -8,26 +8,13 @@ namespace LastStand.Text;
 
 internal static class LogText
 {
-	public const string Unloaded = "unloaded.";
-
-	public const string ModeOptionFailed = "could not add the Last Stand game mode option.";
-
 	public const string SoloButtonFailed = "could not add the Last Stand solo button.";
-
-	public const string LobbyButtonFailed =
-		"could not add the Last Stand settings button to the lobby; use the laststand_config console command.";
-
-	public const string ConfigSaveFailed = "could not save the Last Stand config.";
-
-	public const string ConfigApplied = "config applied and saved.";
 
 	public const string ConfigHostOnly =
 		"laststand_config: you joined someone else's lobby, and only the host's settings apply. " +
 		"The window opens on the title screen or when you host.";
 
 	public const string HeroSoulFailed = "hero soul: could not clear a knocked-out hero's soul.";
-
-	public const string TickFailed = "session tick failed; the session keeps its wave and carries on.";
 
 	public const string JumpNotPossible = "laststand_wave: only works in the arena, with a wave of 1 or more.";
 
@@ -59,8 +46,6 @@ internal static class LogText
 
 	public const string NotHosting = "only the host of a Last Stand run can do that.";
 
-	public const string GoalRemoved = "removed the run's Shape of Dreams goal; Last Stand has no destination.";
-
 	public const string TrackerStarted = "wave tracker: started in the quest tracker.";
 
 	public const string TrackerAdopted = "wave tracker: took over the quest left from before.";
@@ -73,8 +58,6 @@ internal static class LogText
 
 	public const string SkipNotPossible = "skip: only works while fighting in the arena.";
 
-	public const string SettingChangeFailed = "settings: a change handler failed.";
-
 	public const string TestBossAlreadyAlive = "test boss: one is already alive.";
 
 	public const string TestBossNoHero = "test boss: no living host hero to spawn near.";
@@ -86,19 +69,6 @@ internal static class LogText
 	public static string HeroSoulRemoved(int node)
 	{
 		return $"hero soul: removed one from node {node}; knocked-out heroes are revived at the next wave instead.";
-	}
-
-	public const string ChangeNoteMissing =
-		"workshop: no about/changenote.txt in the uploaded folder; the update goes up without a change note.";
-
-	public static string ChangeNoteFailed(string error)
-	{
-		return $"workshop: could not read about/changenote.txt ({error}); the update goes up without a change note.";
-	}
-
-	public static string ChangeNoteAttached(int length)
-	{
-		return $"workshop: attached about/changenote.txt ({length} characters) as the update's change note.";
 	}
 
 	public const string ArenaMusicMissing =
@@ -122,11 +92,6 @@ internal static class LogText
 	public static string MapNodesHidden(int count, int kept)
 	{
 		return $"world map: hid {count} node(s); only the camp and the arena (node {kept}) are shown.";
-	}
-
-	public static string WithSuppressed(string message, int count)
-	{
-		return count > 0 ? $"{message} ({count} more like it were not logged.)" : message;
 	}
 
 	public static string SpawnFailed(EnemyTier tier)
@@ -295,11 +260,6 @@ internal static class LogText
 			: $"cheat: gave {heroes} hero(es) Second Wind x{charges} ({seconds:0.#} s invulnerable).";
 	}
 
-	public static string SettingChanged(string line)
-	{
-		return $"settings: {line}";
-	}
-
 	public static string DreamStatuesMoved(int statues)
 	{
 		return $"cheat: moved {statues} Pure Dream statue(s) to random spots in reach.";
@@ -386,17 +346,6 @@ internal static class LogText
 	public static string PainZoneStarted()
 	{
 		return "pain zone: Aura of Pain environment added to the arena.";
-	}
-
-	public static string ConfigReset(int schemaVersion, string backupPath)
-	{
-		return $"saved config is from an older version; reset to version {schemaVersion} defaults. " +
-		       $"Old file kept at {backupPath}.";
-	}
-
-	public static string Loaded(string name, string version)
-	{
-		return $"loaded: {name} v{version}.";
 	}
 
 	public static string ArenaRoomApplied(string room, int nodes)

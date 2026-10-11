@@ -1,0 +1,9 @@
+global using SodLib;
+global using SodLib.Config;
+global using SodLib.Diagnostics;
+global using SodLib.Game;
+global using SodLib.Identity;
+global using SodLib.Mode;
+global using SodLib.Text;
+global using SodLib.UI;
+global using SodLib.Workshop;

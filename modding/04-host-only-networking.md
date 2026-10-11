@@ -1452,7 +1452,7 @@ The same guard sits on every restore path: putting the hunt level back,
 restoring `goldCostMultiplier` to 1, destroying the tracker quest,
 destroying curses. If the server is gone, the objects are gone with it, and
 skipping the write is correct. Patches get the same treatment:
-`LastStandMode.IsHosting()` includes `NetworkServer.active`, so a patch that
+`ModMode.IsHosting()` includes `NetworkServer.active`, so a patch that
 fires during teardown does nothing. More on unload-safe lifecycles is in
 `07-mod-architecture.md`.
 

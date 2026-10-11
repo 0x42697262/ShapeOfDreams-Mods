@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using LastStand.Arena;
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
 using UnityEngine;

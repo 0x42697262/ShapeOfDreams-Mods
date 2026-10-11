@@ -1,5 +1,4 @@
 using HarmonyLib;
-using LastStand.Mode;
 using LastStand.Session;
 
 namespace LastStand.Patches;
@@ -10,7 +9,7 @@ internal static class KillGoldPatch
 	[HarmonyPostfix]
 	private static void Postfix(ref int __result)
 	{
-		if (__result <= 0 || !LastStandMode.IsHosting())
+		if (__result <= 0 || !ModMode.IsHosting())
 		{
 			return;
 		}

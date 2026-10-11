@@ -44,7 +44,7 @@ remnants' `maxUseCountPerPlayer` is the example in this mod).
 
 ## A client who has the mod too
 
-The mode is decided by the host. `ArenaMode.IsHosting()` is true only with
+The mode is decided by the host. `ModMode.IsHosting()` is true only with
 `NetworkServer.active` and the lobby's settings save key equal to
 `dreamarena_pvp`; every patch and the whole session check it (or
 `NetworkServer.active`) first. A client with the mod loaded therefore runs

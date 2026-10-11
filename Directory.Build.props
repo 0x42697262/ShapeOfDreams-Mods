@@ -11,6 +11,7 @@
 
     <GameDir Condition="'$(GameDir)' == ''">$(HOME)/.local/share/Steam/steamapps/common/Shape of Dreams</GameDir>
     <GameManagedDir>$(GameDir)/Shape of Dreams_Data/Managed</GameManagedDir>
+    <LibraryDir>$(MSBuildThisFileDirectory)library/src/</LibraryDir>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -27,6 +28,10 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(LibraryDir)**/*.cs" Link="library/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="mscorlib">

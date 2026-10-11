@@ -4,16 +4,6 @@ namespace DreamArena.Text;
 
 internal static class ConfigText
 {
-	public const string WindowTitle = "Dream Arena";
-
-	public const string WindowNote = "Settings apply to this lobby. Only the host needs the mod.";
-
-	public const string LobbyButton = "Dream Arena";
-
-	public const string ApplyButton = "Apply";
-
-	public const string CancelButton = "Cancel";
-
 	public const string TeamsHeader = "Teams";
 
 	public const string FlowHeader = "Match flow";
@@ -157,63 +147,4 @@ internal static class ConfigText
 	public const string RemoveRunGoalDescription =
 		"Removes the Shape of Dreams goal from the quest tracker, for every player.";
 
-	public const string PrimusWorld = "Primus";
-
-	public const string ForestWorld = "Forest";
-
-	public const string DarkCaveWorld = "Dark Cave";
-
-	public const string DespairWorld = "Despair";
-
-	public const string SkyWorld = "Sky";
-
-	public const string SnowMountainWorld = "Snow Mountain";
-
-	public const string LavaLandWorld = "Lava Land";
-
-	public const string InkWorld = "Ink";
-
-	public static string ChoiceLabel(string name, string detail)
-	{
-		return name == null ? detail : $"{name} ({detail})";
-	}
-
-	public static string UnknownChoiceLabel(string value)
-	{
-		return $"{value} (not in the list)";
-	}
-
-	public static string PageTitle(SettingsPage page)
-	{
-		switch (page)
-		{
-			case SettingsPage.Arena:
-				return "Arena";
-			case SettingsPage.Camp:
-				return "Camp";
-			case SettingsPage.Heroes:
-				return "Heroes";
-			case SettingsPage.Rules:
-				return "Rules";
-			default:
-				return "Match";
-		}
-	}
-
-	public static string PageSubtitle(SettingsPage page)
-	{
-		switch (page)
-		{
-			case SettingsPage.Arena:
-				return "Where the fights happen and how players arrive.";
-			case SettingsPage.Camp:
-				return "Free remnants and a training dummy between rounds.";
-			case SettingsPage.Heroes:
-				return "Levels, health and revives.";
-			case SettingsPage.Rules:
-				return "What PvE content is kept out.";
-			default:
-				return "Teams, the run's end and restarts.";
-		}
-	}
 }

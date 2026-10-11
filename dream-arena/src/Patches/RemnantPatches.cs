@@ -1,7 +1,6 @@
 using HarmonyLib;
 using DreamArena.Camp;
 using DreamArena.Game;
-using DreamArena.Mode;
 using Mirror;
 
 namespace DreamArena.Patches;
@@ -11,7 +10,7 @@ internal static class RemnantHooks
 	public static void Offer(ChoiceShrine remnant, DewPlayer player)
 	{
 		Session.DreamArenaSession session = DreamArenaMod.Current?.Session;
-		if (ArenaMode.IsHosting() && session?.Settings != null)
+		if (ModMode.IsHosting() && session?.Settings != null)
 		{
 			RemnantChoices.Offer(remnant, player, session.Remnants, session.Settings.RemnantMemoryLevel,
 				session.Settings.RemnantEssenceQuality);
@@ -55,7 +54,7 @@ internal static class RemnantChoosePatch
 	{
 		__state = default;
 		DewPlayer player = sender?.GetPlayer();
-		if (ArenaMode.IsHosting() && RemnantChoices.TryReadChoice(__instance, index, player, out string item))
+		if (ModMode.IsHosting() && RemnantChoices.TryReadChoice(__instance, index, player, out string item))
 		{
 			__state = new Pending { Player = player, Item = item, UsesBefore = __instance.GetUseCountByPlayer(player) };
 		}

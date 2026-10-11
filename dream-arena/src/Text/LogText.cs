@@ -6,28 +6,11 @@ namespace DreamArena.Text;
 
 internal static class LogText
 {
-	public const string Unloaded = "unloaded.";
-
-	public const string TickFailed = "session tick failed.";
-
-	public const string ModeOptionFailed = "could not add the PvP Arena game mode option.";
-
-	public const string LobbyButtonFailed =
-		"could not add the Dream Arena settings button to the lobby; use the arena console command.";
-
-	public const string ConfigSaveFailed = "could not save the Dream Arena config.";
-
-	public const string ConfigApplied = "config applied and saved.";
-
 	public const string ConfigHostOnly =
 		"arena: you joined someone else's lobby, and only the host's settings apply. The window opens on " +
 		"the title screen or when you host.";
 
 	public const string NotHosting = "only the host of a PvP Arena run can do that.";
-
-	public const string SettingChangeFailed = "settings: a change handler failed.";
-
-	public const string GoalRemoved = "removed the run's Shape of Dreams goal; the arena has no destination.";
 
 	public const string RulesRestored = "stock game rules restored.";
 
@@ -40,40 +23,6 @@ internal static class LogText
 	public const string ScanNoHero = "scan: no living hero to measure relations from.";
 
 	public const string ScanNoAnchor = "scan: no arena anchor in this room.";
-
-	public const string ChangeNoteMissing =
-		"workshop: no about/changenote.txt in the uploaded folder; the update goes up without a change note.";
-
-	public static string Loaded(string name, string version)
-	{
-		return $"loaded: {name} v{version}.";
-	}
-
-	public static string ConfigReset(int schemaVersion, string backupPath)
-	{
-		return $"saved config is from an older version; reset to version {schemaVersion} defaults. " +
-		       $"Old file kept at {backupPath}.";
-	}
-
-	public static string ChangeNoteFailed(string error)
-	{
-		return $"workshop: could not read about/changenote.txt ({error}); the update goes up without a change note.";
-	}
-
-	public static string ChangeNoteAttached(int length)
-	{
-		return $"workshop: attached about/changenote.txt ({length} characters) as the update's change note.";
-	}
-
-	public static string WithSuppressed(string message, int count)
-	{
-		return count > 0 ? $"{message} ({count} more like it were not logged.)" : message;
-	}
-
-	public static string SettingChanged(string line)
-	{
-		return $"settings: {line}";
-	}
 
 	public static string SessionStarted(TeamMode mode)
 	{

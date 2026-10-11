@@ -1,6 +1,5 @@
 using System;
 using LastStand.Arena;
-using LastStand.Diagnostics;
 using LastStand.Text;
 using Mirror;
 

@@ -1,6 +1,5 @@
 using DreamArena.Arena;
 using DreamArena.Config;
-using DreamArena.Diagnostics;
 using DreamArena.Game;
 using DreamArena.Text;
 

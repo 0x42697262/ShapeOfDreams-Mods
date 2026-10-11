@@ -1,5 +1,4 @@
 using HarmonyLib;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -9,7 +8,7 @@ internal static class SkipTravelVotePatch
 	[HarmonyPrefix]
 	private static bool Prefix(ref bool __result)
 	{
-		if (!LastStandMode.IsHosting())
+		if (!ModMode.IsHosting())
 		{
 			return true;
 		}

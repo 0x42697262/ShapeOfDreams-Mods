@@ -2,10 +2,8 @@ using System;
 using LastStand.Arena;
 using LastStand.Combat;
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Loot;
-using LastStand.Mode;
 using LastStand.Text;
 using LastStand.Waves;
 using LastStand.Well;
@@ -95,7 +93,7 @@ internal sealed class LastStandSession
 	{
 		_now = now;
 
-		if (!LastStandMode.IsHosting())
+		if (!ModMode.IsHosting())
 		{
 			if (_phase != SessionPhase.Inactive)
 			{
@@ -364,7 +362,7 @@ internal sealed class LastStandSession
 
 	public string Describe()
 	{
-		return LogText.Status(LastStandMode.IsSelected(), NetworkServer.active, _phase.ToString(),
+		return LogText.Status(ModMode.IsSelected(), NetworkServer.active, _phase.ToString(),
 			_waves.CurrentWave, _waves.WaveInProgress, _waves.SecondsUntilNextWave(_now), _enemies.Occupied(_now),
 			_waves.PendingSpawns, _loot.DescribeTally());
 	}

@@ -1,33 +1,20 @@
-using System;
+namespace SodLib.Identity;
 
-namespace LastStand.Identity;
-
-internal static class ModIdentity
+internal static partial class ModIdentity
 {
 	public const string Tag = "LastStand";
 
+	public const string DisplayName = "Last Stand";
+
 	public const string SaveKey = "laststand";
+
+	public const string LobbyModeValue = "LastStand_Mode";
+
+	public static readonly bool PreselectInLobby = true;
 
 	public const string StartingGoldSlot = Tag + ".StartingGold";
 
 	public const string ProgressSlot = Tag + ".Progress";
 
-	public const string ChangeNoteFile = "changenote.txt";
-
-	public const string LobbyModeValue = "LastStand_Mode";
-
-	public const string LogPrefix = "[" + Tag + "] ";
-
-	public const string OwnedSuffix = " (" + Tag + ")";
-
-	public const string SoloButtonName = "Last Stand Button" + OwnedSuffix;
-
-	public const string LobbyButtonName = "Last Stand Settings Button" + OwnedSuffix;
-
-	public const string ConfigWindowName = "Last Stand Config" + OwnedSuffix;
-
-	public static bool IsOurs(string objectName)
-	{
-		return objectName != null && objectName.EndsWith(OwnedSuffix, StringComparison.Ordinal);
-	}
+	public const string SoloButtonName = DisplayName + " Button" + OwnedSuffix;
 }

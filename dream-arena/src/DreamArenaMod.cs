@@ -1,112 +1,44 @@
-using System;
-using System.Reflection;
 using DreamArena.Config;
-using DreamArena.Diagnostics;
 using DreamArena.Session;
-using DreamArena.Text;
-using DreamArena.UI;
-using UnityEngine;
 
 namespace DreamArena;
 
-public class DreamArenaMod : ModBehaviour
+public class DreamArenaMod : ModEntry
 {
 	public DreamArenaConfig config = new DreamArenaConfig();
 
-	internal static DreamArenaMod Current { get; private set; }
+	internal static DreamArenaMod Current => Active as DreamArenaMod;
 
 	internal DreamArenaSession Session { get; private set; }
 
-	private readonly ErrorThrottle _tickErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
+	internal override ModConfig Config => config;
 
-	private readonly SettingsAnnouncer _settingsAnnouncer = new SettingsAnnouncer();
+	protected override int ConfigSchemaVersion => ConfigSchema.Current;
 
-	private void Awake()
+	protected override void OnLoaded()
 	{
-		Current = this;
-	}
-
-	private void Start()
-	{
-		instance.isAlteringGameplay = true;
 		Session = new DreamArenaSession();
 		Session.UseSettings(SessionSettings.From(config));
-		ChoiceFields.Register();
-		harmony.PatchAll();
-		CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
-		Log.Info(LogText.Loaded(mod.metadata.name, mod.metadata.modVer));
 	}
 
-	private void Update()
+	protected override void OnTick(double now)
 	{
-		if (Session == null)
-		{
-			return;
-		}
-
-		try
-		{
-			Session.Tick(Time.time);
-		}
-		catch (Exception e)
-		{
-			_tickErrors.Report(Time.time, LogText.TickFailed, e);
-		}
+		Session?.Tick(now);
 	}
 
-	private void OnDestroy()
+	protected override void OnSettingsChanged()
 	{
-		Session?.Shutdown();
-		ConfigWindow.Close();
-		InjectedUi.RemoveAll();
-		LobbyModeOption.Detach();
-		ChoiceFields.Unregister();
-		harmony.UnpatchAll(harmony.Id);
-
-		if (Current == this)
-		{
-			Current = null;
-		}
-
-		Log.Info(LogText.Unloaded);
-	}
-
-	public override void LoadConfigsToDisk()
-	{
-		foreach (FieldInfo field in modConfigFields)
-		{
-			ConfigFile.ResetIfOutdated(GetModConfigFilePath(field));
-		}
-
-		base.LoadConfigsToDisk();
-		_settingsAnnouncer.Remember(config);
-	}
-
-	internal void ApplyConfig(DreamArenaConfig edited)
-	{
-		edited.CopyTo(config);
-		try
-		{
-			SaveConfigsToDisk();
-			Log.Info(LogText.ConfigApplied);
-		}
-		catch (Exception e)
-		{
-			Log.Error(LogText.ConfigSaveFailed, e);
-		}
-
-		OnConfigChanged();
-	}
-
-	public override void OnConfigChanged()
-	{
-		_settingsAnnouncer.Announce(config);
 		Session?.UseSettings(SessionSettings.From(config));
 	}
 
-	private void OnGameManagerStarted(GameManager game)
+	protected override void OnGameStarted()
 	{
 		Session?.Reset();
 		Session?.UseSettings(SessionSettings.From(config));
+	}
+
+	protected override void OnUnloading()
+	{
+		Session?.Shutdown();
 	}
 }

@@ -2,26 +2,6 @@ namespace DreamArena.Game;
 
 internal static class GameNames
 {
-	public const string ModAboutFolder = "about";
-
-	public const string PrimusArenaRoom = "Room_Primus_Boss_0";
-
-	public const string ForestArenaRoom = "Room_Forest_Boss_0";
-
-	public const string DarkCaveArenaRoom = "Room_DarkCave_Boss_0";
-
-	public const string DespairArenaRoom = "Room_Despair_Boss_0";
-
-	public const string SkyArenaRoom = "Room_Sky_Boss_0";
-
-	public const string SnowMountainArenaRoom = "Room_SnowMountain_Boss_0";
-
-	public const string LavaLandArenaRoom = "Room_LavaLand_Boss_0";
-
-	public const string InkArenaRoom = "Room_Ink_Boss_0";
-
-	public const string DefaultArenaRoom = PrimusArenaRoom;
-
 	public const string Treant = "Mon_Forest_Treant";
 
 	public const string SpiderWarrior = "Mon_Forest_SpiderWarrior";
@@ -53,20 +33,6 @@ internal static class GameNames
 	public const string DivineAnimal = "Mon_Ink_DivineAnimal";
 
 	public const string DefaultDummyMonster = Treant;
-
-	public const string LocalizedNameSuffix = "_Name";
-
-	public const string LobbySettingsStart = "Start";
-
-	public const string LobbySettingsEnable = "OnEnable";
-
-	public const string CreateLobbyShow = "OnShow";
-
-	public const string CreateLobbyUpdateState = "UpdateUIState";
-
-	public const string CreateLobbyState = "_state";
-
-	public const string GenerateWorld = "GenerateWorld_Imp";
 
 	public const string ClearVoteState = "ClearVoteState";
 

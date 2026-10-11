@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using LastStand.Combat;
-using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
 using LastStand.Waves;

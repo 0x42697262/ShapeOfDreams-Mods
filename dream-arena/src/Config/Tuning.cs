@@ -2,12 +2,6 @@ namespace DreamArena.Config;
 
 internal static class Tuning
 {
-	public const double ErrorLogIntervalSeconds = 5;
-
-	public const int MaxSettingChangesInChat = 6;
-
-	public const float GoalCheckSeconds = 1f;
-
 	public const float NoMonsters = 0f;
 
 	public const float NormalMonsters = 1f;

@@ -1314,12 +1314,13 @@ ready connections changes (`08-config-ui-and-commands.md`).
 Chat notices from a host-only mod are free text: the host builds the
 string, and clients print it. They aren't translated per client. To name a
 game thing in its proper words, look up its key on the host. Last Stand's
-helper:
+helper (`LocalizedNames`, now in the shared library,
+`library/src/Game/LocalizedNames.cs`):
 
 ```csharp
 public static string Find(string typeName)
 {
-	return DewLocalization.TryGetUIValue(typeName + GameNames.LocalizedNameSuffix, out string localized)
+	return DewLocalization.TryGetUIValue(typeName + SharedGameNames.LocalizedNameSuffix, out string localized)
 		? localized
 		: null;
 }

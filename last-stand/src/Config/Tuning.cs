@@ -14,8 +14,6 @@ internal static class Tuning
 
 	public const float CampRiftRetrySeconds = 1f;
 
-	public const float GoalCheckSeconds = 1f;
-
 	public const float MidJoinCheckSeconds = 1f;
 
 	public const float ArenaMusicCheckSeconds = 1f;
@@ -84,12 +82,6 @@ internal static class Tuning
 
 	public const float TestBossDistance = 8f;
 
-	public const char ListSeparator = ',';
-
-	public const string ListJoiner = ", ";
-
-	public const double ErrorLogIntervalSeconds = 5;
-
 	public const int EdgeDirections = 72;
 
 	public const float EdgeMarchStep = 1f;
@@ -113,8 +105,6 @@ internal static class Tuning
 	public const float PlayableStepMeters = 1f;
 
 	public const int PureDreamSpotAttempts = 10;
-
-	public const int MaxSettingChangesInChat = 6;
 
 	public const float GameDefaultReviveHealth = -1f;
 

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using DreamArena.Config;
-using DreamArena.Diagnostics;
 using DreamArena.Text;
 using Mirror;
 

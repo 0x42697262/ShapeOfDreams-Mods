@@ -1,5 +1,4 @@
 using HarmonyLib;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -9,6 +8,6 @@ internal static class RoomClearPatch
 	[HarmonyPrefix]
 	private static bool Prefix()
 	{
-		return !LastStandMode.IsHosting() || LastStandMod.Current?.Session?.AllowsRoomClear() != false;
+		return !ModMode.IsHosting() || LastStandMod.Current?.Session?.AllowsRoomClear() != false;
 	}
 }

@@ -36,5 +36,5 @@ For working notes, hard constraints and the in-game test list, see
 | [Settings](reference/settings.md) | Every setting, its page and default, the settings window, change notices, the config schema |
 | [Console commands](reference/console-commands.md) | Every `arena*` command |
 | [Networking](reference/networking.md) | What reaches vanilla clients, what can't, and a client who has the mod too |
-| [Code layout](reference/code-layout.md) | Folders, the session, and where new code goes |
+| [Code layout](reference/code-layout.md) | Folders, the session, the shared library, and where new code goes |
 | [Releasing](reference/releasing.md) | Versions, packing, the Workshop upload and change notes |

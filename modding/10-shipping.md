@@ -135,6 +135,12 @@ uploader:
    `about/changenote.txt` from `item.path`, so the pack script copies it
    into the pack. Steam renders BBCode in change notes.
 
+Both mods share this code: `WorkshopChangeNote` and the two patches below
+are in the shared library (`library/src/Workshop/WorkshopChangeNote.cs`,
+`library/src/Patches/WorkshopChangeNotePatches.cs`). With both mods loaded
+each mod's copy patches the uploader, and step 3 keeps each to its own
+item.
+
 ```csharp
 [HarmonyPatch(typeof(DewMod), nameof(DewMod.UpdateItem))]
 internal static class WorkshopUploadPatch
@@ -247,23 +253,24 @@ same for Dream Arena). The same steps work for any code mod:
 3. **Recreate the pack from scratch.** `rm -rf dist/<Name>`, then
    `mkdir -p dist/<Name>/about`. Nothing from an earlier pack survives.
 4. **Copy the allow-list.** The DLL to the root; `icon.png`, `preview.png`,
-   `description.txt` to `about/`; `publishedfileid.txt` if the source has
-   one. An allow-list (copy these files) is safer than a deny-list (copy
+   `description.txt` to `about/`; `publishedfileid.txt` and
+   `changenote.txt` if the source has them. An allow-list (copy these files) is safer than a deny-list (copy
    everything except these): a new file in the repo can't leak into a
    release by accident. If the mod has `overrides/`, add it here.
 5. **Rewrite `assemblies`.**
    ```sh
    sed -E 's|"assemblies": *\[[^]]*\]|"assemblies": [ "'"$name"'.dll" ]|' \
-     "$root/about/metadata.json" > "$out/about/metadata.json"
+     "$mod_dir/about/metadata.json" > "$out/about/metadata.json"
    grep -q "\"$name.dll\"" "$out/about/metadata.json" || { echo "..." >&2; exit 1; }
    ```
    The `grep` is the check: if the source JSON is ever reformatted so the
    regex misses, the script stops instead of shipping a pack that points
    at `bin/Debug/...` and loads nothing.
-6. **Print the result.** `find . -type f | sort` inside the pack. For Last
-   Stand it's six files:
+6. **Print the result.** `find . -type f | sort` inside the pack, then the
+   change note. For Last Stand it's seven files:
    ```
    LastStand.dll
+   about/changenote.txt
    about/description.txt
    about/icon.png
    about/metadata.json
@@ -271,8 +278,8 @@ same for Dream Arena). The same steps work for any code mod:
    about/publishedfileid.txt
    ```
 
-`.gitignore` covers `bin/`, `obj/` and `dist/`, so the pack is never committed,
-while `about/` (including `publishedfileid.txt`) is.
+The repository's `.gitignore` covers `bin/`, `obj/` and `dist/`, so the pack
+is never committed, while `about/` (including `publishedfileid.txt`) is.
 
 ### Where else this applies
 
@@ -481,8 +488,9 @@ after every rebuild.
 - **`modVer`** is a `ModMetadata` field, but nothing in `Dew.Core` or
   `Dew.UI` reads it (`grep -rn modVer` finds only the declaration). It's for
   people. Log it on start so a player's `Player.log` tells you which build
-  they ran. Last Stand does this in `Start`:
-  `Log.Info(LogText.Loaded(mod.metadata.name, mod.metadata.modVer))`.
+  they ran. Last Stand does this in `Start` (the shared library's
+  `ModEntry`):
+  `Log.Info(SharedLogText.Loaded(mod.metadata.name, mod.metadata.modVer))`.
   Bump it with every upload.
 - **`supportedGameVer`** is in the template's JSON but is not a field of
   `ModMetadata`; `JsonUtility` ignores unknown keys, and no code checks game
@@ -499,8 +507,8 @@ after every rebuild.
 official docs: every server-side mod that alters gameplay must set
 `instance.isAlteringGameplay = true`, which adds the MOD icon to the lobby
 and a notice to joining clients. Last Stand sets it first thing in
-`Start`. A mod with an `overrides/` folder gets it automatically in
-`DewMod.Load`.
+`Start` (the shared library's `ModEntry`). A mod with an `overrides/`
+folder gets it automatically in `DewMod.Load`.
 
 ### Rules that affect a release
 
@@ -526,11 +534,12 @@ From the official Code of Conduct and the Modding Terms of Service:
 `ModBehaviour.LoadConfigsToDisk` loads the saved JSON *over* the field
 initializers, so changing a default in code does nothing for anyone who
 already has a config file. Last Stand stores a `[HideInInspector] int
-schemaVersion = ConfigSchema.Current` in its config and overrides
-`LoadConfigsToDisk` to move an outdated file to `<file>.old` before the base
-call writes fresh defaults. Every release that changes a default, renames
-or removes a field bumps `ConfigSchema.Current`. The mechanism is described
-in `08-config-ui-and-commands.md`.
+schemaVersion = ConfigSchema.Current` in its config, and the shared
+library's `ModEntry` overrides `LoadConfigsToDisk` to move an outdated file
+to `<file>.old` before the base call writes fresh defaults. Every release
+that changes a default, renames or removes a field bumps
+`ConfigSchema.Current`. The mechanism is described in
+`08-config-ui-and-commands.md`.
 
 ---
 

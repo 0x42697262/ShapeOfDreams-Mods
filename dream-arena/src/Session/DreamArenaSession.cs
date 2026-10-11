@@ -1,11 +1,9 @@
 using DreamArena.Arena;
 using DreamArena.Camp;
 using DreamArena.Config;
-using DreamArena.Diagnostics;
 using DreamArena.Game;
 using DreamArena.Heroes;
 using DreamArena.Match;
-using DreamArena.Mode;
 using DreamArena.Pvp;
 using DreamArena.Text;
 using Mirror;
@@ -47,7 +45,7 @@ internal sealed class DreamArenaSession
 
 	public void Tick(double now)
 	{
-		if (!ArenaMode.IsHosting() || NetworkedManagerBase<GameManager>.softInstance == null)
+		if (!ModMode.IsHosting() || NetworkedManagerBase<GameManager>.softInstance == null)
 		{
 			if (_active)
 			{
@@ -150,7 +148,7 @@ internal sealed class DreamArenaSession
 	public string Describe()
 	{
 		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
-		return LogText.Status(ArenaMode.IsSelected(), _active, _phase.Current, Settings.TeamMode,
+		return LogText.Status(ModMode.IsSelected(), _active, _phase.Current, Settings.TeamMode,
 			DewPlayer.allHumanPlayers.Count, game != null && game.isGameOverEnabled, _restartVote.Pending);
 	}
 

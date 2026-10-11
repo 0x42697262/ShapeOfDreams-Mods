@@ -1,5 +1,4 @@
 using DreamArena.Config;
-using DreamArena.Diagnostics;
 using DreamArena.Text;
 
 namespace DreamArena.Match;

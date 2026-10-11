@@ -2,7 +2,6 @@ using System;
 using LastStand.Arena;
 using LastStand.Combat;
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
 using UnityEngine;
@@ -28,7 +27,7 @@ internal sealed class WaveDirector
 
 	private readonly BossHealthFloor _bossHealth = new BossHealthFloor();
 
-	private readonly ErrorThrottle _spawnErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
+	private readonly ErrorThrottle _spawnErrors = new ErrorThrottle(SharedTuning.ErrorLogIntervalSeconds);
 
 	private readonly MonsterSpawner _spawner;
 

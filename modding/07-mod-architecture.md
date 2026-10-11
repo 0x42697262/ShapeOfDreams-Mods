@@ -85,37 +85,39 @@ This snippet sets four architectural facts:
 ### 2.2 Last Stand's `ModBehaviour`
 
 `src/LastStandMod.cs` holds no rules. It builds the session, hooks the game
-and tears everything down:
+and tears everything down. The lifecycle is the same for Dream Arena, so it
+lives in the shared library's abstract `ModEntry`
+(`library/src/ModEntry.cs`), which `LastStandMod` subclasses:
 
 ```csharp
-private void Start()
+protected void Start()
 {
     instance.isAlteringGameplay = true;
-    Session = new LastStandSession(SessionSettings.From(config));
+    OnLoaded();
     ChoiceFields.Register();
     harmony.PatchAll();
-    CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
-    Log.Info(LogText.Loaded(mod.metadata.name, mod.metadata.modVer));
+    CallOnNetworkedManager<GameManager>(_ => OnGameStarted());
+    Log.Info(SharedLogText.Loaded(mod.metadata.name, mod.metadata.modVer));
 }
 
-private void Update()
+protected void Update()
 {
-    if (Session == null) return;
-    try { Session.Tick(Time.time); }
-    catch (Exception e) { _tickErrors.Report(Time.time, LogText.TickFailed, e); }
+    try { OnTick(Time.time); }
+    catch (Exception e) { _tickErrors.Report(Time.time, ModText.TickFailed, e); }
 }
 
-private void OnDestroy()
+protected void OnDestroy()
 {
-    Session?.Reset();
+    OnUnloading();
     ConfigWindow.Close();
     InjectedUi.RemoveAll();
     LobbyModeOption.Detach();
     ChoiceFields.Unregister();
     harmony.UnpatchAll(harmony.Id);
-    if (Current == this) Current = null;
-    Log.Info(LogText.Unloaded);
+    if (Active == this) Active = null;
+    Log.Info(SharedLogText.Unloaded);
 }
+```
 
 private void OnGameManagerStarted(GameManager game)
 {
@@ -124,7 +126,7 @@ private void OnGameManagerStarted(GameManager game)
 }
 ```
 
-(Shown compressed; the real file uses one statement per line.)
+(Shown compressed; the real files use one statement per line.)
 
 `isAlteringGameplay = true` is required for any server-side gameplay mod by
 the official modding rules. It shows the MOD icon on the lobby.
@@ -164,17 +166,21 @@ Last Stand's `src/` is split by concern (`docs/reference/code-layout.md`):
 
 | Folder | Concern |
 |---|---|
-| `LastStandMod.cs`, `LastStandConsole.cs` | Entry point and console commands |
-| `Mode/` | Whether the mode is selected, and selecting it |
+| `LastStandMod.cs`, `LastStandConsole.cs` | Entry point (a `ModEntry` subclass) and console commands |
+| `ModHooks.cs`, `Identity/` | What the shared library needs from Last Stand: dropdown choices, lobby name, tag, save key, object names |
 | `Session/` | Run phases (camp, arriving, fighting), arrival, cross-reload progress |
 | `Waves/` | Wave schedule, cycle, spawn queue (plain logic) and the director |
 | `Combat/`, `Loot/`, `Well/`, `Arena/` | Feature services, their rules and their adapters |
 | `Game/` | Thin wrappers over game APIs, and `GameNames` |
-| `Config/` | Raw config, validated snapshot, schema, `Tuning` |
-| `Text/` | Every string: chat, tracker, config screen, log, commands |
-| `Diagnostics/` | `Log` and `ErrorThrottle` |
-| `UI/` | Injected buttons, settings window, field builders |
+| `Config/` | Raw config, validated snapshot, schema version, `Tuning` |
+| `Text/` | Every string: chat, tracker, config screen, log, commands, and `ModText` for the library |
+| `UI/` | The solo button |
 | `Patches/` | Harmony hooks, each only handing off |
+
+What both mods need (`Log` and `ErrorThrottle`, the mode check and selecting
+the mode, the settings window and field builders, the lobby buttons, the
+Workshop change note) lives in the shared library, `library/src` (see
+`library/README.md`), and is compiled into the same DLL.
 
 The folders are by feature. The rules that matter are by **layer**. To place
 a piece of code, ask four questions in order:
@@ -203,7 +209,7 @@ internal static class KillGoldPatch
     [HarmonyPostfix]
     private static void Postfix(ref int __result)
     {
-        if (__result <= 0 || !LastStandMode.IsHosting()) return;
+        if (__result <= 0 || !ModMode.IsHosting()) return;
         LastStandSession session = LastStandMod.Current?.Session;
         if (session != null) __result = session.CapKillGold(__result);
     }
@@ -219,7 +225,7 @@ internal static class RoomClearPatch
     [HarmonyPrefix]
     private static bool Prefix()
     {
-        return !LastStandMode.IsHosting() || LastStandMod.Current?.Session?.AllowsRoomClear() != false;
+        return !ModMode.IsHosting() || LastStandMod.Current?.Session?.AllowsRoomClear() != false;
     }
 }
 ```
@@ -245,7 +251,7 @@ pattern:
 [HarmonyPrefix]
 private static bool Prefix(Se_HeroKnockedOut __instance)
 {
-    if (!LastStandMode.IsHosting()) return true;
+    if (!ModMode.IsHosting()) return true;
     try { HeroSouls.Suppress(__instance); }
     catch (Exception e) { Log.Error(LogText.HeroSoulFailed, e); }
     return false;
@@ -368,11 +374,11 @@ Every adapter in Last Stand follows the same checklist:
 4. Compare before writing, and log only on change.
 5. Have an undo, and track whether there is anything to undo (`_applied`).
 
-Other adapters: `ChatNotices.Broadcast` (one `ChatManager.Message` of type
-`Raw`), `PlayerRoster` (gold, dust, levels, live heroes), `MonsterStrength`
-(ambient level), `WaveTracker` (the quest tracker line), `ArenaModifier` (add
-and remove one room modifier by id), `UseCountPin` (the shrine's private
-synced use counts).
+Other adapters: `ChatNotices.Broadcast` (shared library; one
+`ChatManager.Message` of type `Raw`), `PlayerRoster` (gold, dust, levels,
+live heroes), `MonsterStrength` (ambient level), `WaveTracker` (the quest
+tracker line), `ArenaModifier` (add and remove one room modifier by id),
+`UseCountPin` (the shrine's private synced use counts).
 
 ### 3.4 Services and the session
 
@@ -501,8 +507,9 @@ Other options fail at least one requirement:
 
 ### 4.2 The implementation
 
-Selecting the mode (`src/Mode/ModeSelection.cs`) writes the key into the start
-settings that both the solo button and the lobby's `PlayGame` use:
+Selecting the mode (`ModeSelection`, now in the shared library,
+`library/src/Mode/ModeSelection.cs`) writes the key into the start settings
+that both the solo button and the lobby's `PlayGame` use:
 
 ```csharp
 public static void Select(DewNetworkStartSettings settings)
@@ -512,7 +519,8 @@ public static void Select(DewNetworkStartSettings settings)
 }
 ```
 
-Checking it (`src/Mode/LastStandMode.cs`):
+Checking it (`ModMode`, `library/src/Mode/ModMode.cs`; each mod's DLL has its
+own copy, comparing with its own `ModIdentity.SaveKey`):
 
 ```csharp
 public static bool IsSelected()
@@ -542,9 +550,9 @@ a save.
 
 ### 5.1 One `Update`, one `Tick(now)`
 
-Last Stand has exactly one `Update`, in `LastStandMod`, and it calls
-`Session.Tick(Time.time)`. Every service receives `now` as a parameter.
-Benefits:
+Last Stand has exactly one `Update`, in `ModEntry` (which `LastStandMod`
+subclasses), and it calls `Session.Tick(Time.time)` through `OnTick`. Every
+service receives `now` as a parameter. Benefits:
 
 - One place controls order: the tracker updates after the wave state, and
   shrines update after the director.
@@ -558,7 +566,7 @@ Benefits:
 live in `LastStandSession.Tick`:
 
 ```csharp
-if (!LastStandMode.IsHosting())
+if (!ModMode.IsHosting())
 {
     if (_phase != SessionPhase.Inactive) Reset();
     return;
@@ -646,7 +654,7 @@ Every timed check in Last Stand uses the same gate, each with its interval in
 |---|---|---|
 | `ArenaArrival` | `ArrivalRetrySeconds` 0.5 s | Find the arena layout, stage heroes |
 | `CampRift` | `CampRiftRetrySeconds` 1 s | Point the camp rift at the arena node |
-| `RunGoal` | `GoalCheckSeconds` 1 s | Remove the vanilla run goal quest |
+| `RunGoal` (shared library) | `SharedTuning.GoalCheckSeconds` 1 s | Remove the vanilla run goal quest |
 | `StartingWorld` | `WorldCheckSeconds` 1 s | Apply the starting world index |
 | `WaveTracker` | `TrackerRefreshSeconds` 1 s | Write the tracker's progress string |
 | `ArenaShrines` | `ShrinePinSeconds` 1 s | Re-pin shrine use counts and locks |
@@ -743,7 +751,8 @@ What happens when you do:
   load, a death handler or a UI callback aborts halfway.
 
 The fix for `Update` is one try/catch around the tick, with a throttle on the
-log. `src/Diagnostics/ErrorThrottle.cs`:
+log. `ErrorThrottle`, now in the shared library
+(`library/src/Diagnostics/ErrorThrottle.cs`):
 
 ```csharp
 internal sealed class ErrorThrottle
@@ -755,7 +764,7 @@ internal sealed class ErrorThrottle
     public void Report(double now, string message, Exception exception)
     {
         if (now < _nextAt) { _suppressed++; return; }
-        Log.Error(_suppressed > 0 ? message + " " + Text.LogText.Suppressed(_suppressed) : message, exception);
+        Log.Error(SharedLogText.WithSuppressed(message, _suppressed), exception);
         _suppressed = 0;
         _nextAt = now + _intervalSeconds;
     }
@@ -763,7 +772,7 @@ internal sealed class ErrorThrottle
 ```
 
 The first error gets logged in full, and then at most one every
-`Tuning.ErrorLogIntervalSeconds` (5 s), with a count of the ones skipped:
+`SharedTuning.ErrorLogIntervalSeconds` (5 s), with a count of the ones skipped:
 `(N more like it were not logged.)`. The tick's message says what still
 works: `session tick failed; the session keeps its wave and carries on.`.
 This only holds because the tick is written to be **restartable**. Each step
@@ -801,14 +810,14 @@ its undo and the place that calls the undo. Last Stand's:
 | Effect | Undo | Called from |
 |---|---|---|
 | Harmony patches | `harmony.UnpatchAll(harmony.Id)` | `OnDestroy` |
-| `GameManager.goldCostMultiplier` (shared by every gold price) | `GoldPrices.Restore()` to `Tuning.VanillaGoldCostMultiplier` | `StopFight` ← `Reset` ← `OnDestroy`, and on leaving the arena |
+| `GameManager.goldCostMultiplier` (shared by every gold price) | `GoldPrices.Restore()` to `Tuning.VanillaGoldCostMultiplier` | `StopFight` ← `Reset` ← `OnUnloading` ← `OnDestroy`, and on leaving the arena |
 | `ZoneManager.currentHuntLevel` | `HuntedZone.End()` puts the previous level back | wave end, `WaveDirector.Reset` |
 | Room modifiers added to the arena node | `ArenaModifier.Remove()` | wave end, `WaveDirector.Reset` |
 | The wave tracker quest | `WaveTracker.Remove()` destroys it | `Session.Reset` |
-| Injected title and lobby buttons | `InjectedUi.RemoveAll()` finds them by name suffix | `OnDestroy` |
-| The lobby dropdown option | `LobbyModeOption.Detach()` | `OnDestroy` |
-| Entries inserted into `DewGUI.fieldBuilders` | `ChoiceFields.Unregister()` | `OnDestroy` |
-| The settings window | `ConfigWindow.Close()` | `OnDestroy` |
+| Injected title and lobby buttons | `InjectedUi.RemoveAll()` finds them by name suffix | `ModEntry.OnDestroy` (library) |
+| The lobby dropdown option | `LobbyModeOption.Detach()` | `ModEntry.OnDestroy` (library) |
+| Entries inserted into `DewGUI.fieldBuilders` | `ChoiceFields.Unregister()` | `ModEntry.OnDestroy` (library) |
+| The settings window | `ConfigWindow.Close()` | `ModEntry.OnDestroy` (library) |
 
 Three techniques make the inventory reliable:
 
@@ -914,8 +923,6 @@ in the runtime, not in your assembly. Store a `string` there and the next
 assembly can read it. `src/Session/ProgressStore.cs`:
 
 ```csharp
-private const string Slot = "LastStand.Progress";
-
 public static string CurrentRunKey()
 {
     GameManager game = NetworkedManagerBase<GameManager>.softInstance;
@@ -930,11 +937,12 @@ public static void Save(int node, int wave, bool inProgress, int fastClears)
     string run = CurrentRunKey();
     if (run == null) return;
     string data = string.Join("|", run, node, wave, inProgress ? "1" : "0", fastClears);
-    AppDomain.CurrentDomain.SetData(Slot, data);
+    AppDomain.CurrentDomain.SetData(ModIdentity.ProgressSlot, data);
 }
 ```
 
-(The real code uses named constants and `InvariantCulture` for every number.)
+(The real code uses named constants and `InvariantCulture` for every number.
+`ModIdentity.ProgressSlot` is `"LastStand.Progress"`.)
 
 The design choices:
 
@@ -952,7 +960,8 @@ The design choices:
   `FieldCountWithoutFastClears` (4), so a slot written by the older build
   still loads.
 
-`StartingBonus` uses a second slot, `"LastStand.StartingGold"`, holding the
+`StartingBonus` uses a second slot, `ModIdentity.StartingGoldSlot`
+(`"LastStand.StartingGold"`), holding the
 `GameManager` instance id of the run that was already paid. A reload in camp
 doesn't grant the starting gold twice. A restart creates a new `GameManager`,
 so it does grant it again.
@@ -1053,10 +1062,10 @@ miss a copy.
 | Kind | Home | Example |
 |---|---|---|
 | Player-tunable value | `Config/LastStandConfig.cs` field with its default | `public int startingGold = 100;` |
-| Fixed internal constant | `Config/Tuning.cs` | `ArrivalRetrySeconds = 0.5f`, `ErrorLogIntervalSeconds = 5`, `VanillaGoldCostMultiplier = 1f` |
-| Game identifier that can't be `typeof`/`nameof` | `Game/GameNames.cs` | `EntityOnDeath = "OnDeath"`, `ShrineUseCounts = "_useCountByPlayer"`, `GenerateWorld = "GenerateWorld_Imp"`, `PrimusArenaRoom = "Room_Primus_Boss_0"` |
-| The mod's own identity | `Identity/ModIdentity.cs` | `SaveKey = "laststand"`, `LogPrefix = "[LastStand] "`, `OwnedSuffix` |
-| Chat text | `Text/Messages.cs` | `Notice("A heroic boss enters the arena!")` |
+| Fixed internal constant | `Config/Tuning.cs` (`library/src/Config/SharedTuning.cs` for both mods) | `ArrivalRetrySeconds = 0.5f`, `VanillaGoldCostMultiplier = 1f`; shared: `ErrorLogIntervalSeconds = 5` |
+| Game identifier that can't be `typeof`/`nameof` | `Game/GameNames.cs` (`library/src/Game/SharedGameNames.cs` for both mods) | `EntityOnDeath = "OnDeath"`, `ShrineUseCounts = "_useCountByPlayer"`; shared: `GenerateWorld = "GenerateWorld_Imp"`, `PrimusArenaRoom = "Room_Primus_Boss_0"` |
+| The mod's own identity | `Identity/ModIdentity.cs` (the library's half adds the derived names) | `Tag = "LastStand"`, `SaveKey = "laststand"`; derived: `LogPrefix = "[LastStand] "`, `OwnedSuffix` |
+| Chat text | `Text/Messages.cs` (`library/src/Text/SharedMessages.cs` for the shared formatting) | `SharedMessages.Notice("A heroic boss enters the arena!")` |
 | Quest tracker text | `Text/TrackerText.cs` | `WaveRunning(wave, left)` |
 | Config screen text | `Text/ConfigText.cs` | labels and descriptions used in attributes |
 | Log text | `Text/LogText.cs` | `TickFailed`, `WaveStarted(plan)` |
@@ -1079,7 +1088,9 @@ grep -rln '"' src | grep -v "src/Config\|src/Text\|src/Identity\|src/Game/GameNa
 ```
 
 (The second is a coarse first pass; read its hits, since a file outside those
-folders may legitimately use `string.Empty`.)
+folders may legitimately use `string.Empty`.) The repository's `./check.sh`
+runs both over every mod and `library/src` (where `SharedGameNames.cs` is
+also allowed), plus the build.
 
 ### 9.1 The schema version: when defaults change
 
@@ -1104,16 +1115,20 @@ public class LastStandConfig : ModConfig
 public override void LoadConfigsToDisk()
 {
     foreach (FieldInfo field in modConfigFields)
-        ConfigFile.ResetIfOutdated(GetModConfigFilePath(field));
+        ConfigFile.ResetIfOutdated(GetModConfigFilePath(field), ConfigSchemaVersion);
     base.LoadConfigsToDisk();
 }
 ```
 
-`ConfigFile.ResetIfOutdated` parses the file with `JObject`. If
-`schemaVersion` isn't an integer equal to `ConfigSchema.Current`, or the file
-doesn't parse, it copies the file to `<path>.old`, deletes it, and logs
-`ConfigReset`. The base loader then writes fresh defaults. `[HideInInspector]`
-keeps the field off the settings screen.
+The override is in the shared library's `ModEntry`, and `ConfigFile` is in
+`library/src/Config/ConfigFile.cs`. `LastStandMod` supplies
+`ConfigSchemaVersion => ConfigSchema.Current`; `ConfigSchema` in
+`src/Config/` holds only that number. `ConfigFile.ResetIfOutdated` parses
+the file with `JObject`. If `schemaVersion` isn't an integer equal to
+`ConfigSchema.Current`, or the file doesn't parse, it copies the file to
+`<path>.old`, deletes it, and logs `SharedLogText.ConfigReset`. The base
+loader then writes fresh defaults. `[HideInInspector]` keeps the field off
+the settings screen.
 
 The rule: **bump `ConfigSchema.Current` whenever a default changes or a field
 is renamed or removed.** The player's custom values are kept in `.old`.
@@ -1202,7 +1217,7 @@ Example: a room environment that lasts one wave, every 10 waves from wave 6.
 
 1. One file in `Patches/`. Use `typeof`/`nameof` for public members and
    `GameNames` for the rest.
-2. First line: `LastStandMode.IsHosting()`, falling back to vanilla.
+2. First line: `ModMode.IsHosting()`, falling back to vanilla.
 3. Call one session method. Put the decision in a rule and the effect in an
    adapter.
 4. If the call can throw into fragile code, wrap it and log.

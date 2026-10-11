@@ -1,5 +1,4 @@
 using System;
-using LastStand.Diagnostics;
 using LastStand.Text;
 
 namespace LastStand.Combat;

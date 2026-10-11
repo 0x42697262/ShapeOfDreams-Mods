@@ -1,7 +1,5 @@
 using System;
 using System.Globalization;
-using LastStand.Diagnostics;
-using LastStand.Identity;
 using LastStand.Text;
 
 namespace LastStand.Game;

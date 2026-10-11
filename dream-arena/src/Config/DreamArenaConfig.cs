@@ -1,6 +1,5 @@
 using DreamArena.Game;
 using DreamArena.Text;
-using DreamArena.UI;
 using UnityEngine;
 
 namespace DreamArena.Config;
@@ -42,7 +41,7 @@ public class DreamArenaConfig : ModConfig
 	[PickOne(ChoiceSet.ArenaRooms)]
 	[LabelText(ConfigText.ArenaRoomLabel)]
 	[Description(ConfigText.ArenaRoomDescription)]
-	public string arenaRoom = GameNames.DefaultArenaRoom;
+	public string arenaRoom = SharedGameNames.DefaultArenaRoom;
 
 	[LabelText(ConfigText.PlainArenaLabel)]
 	[Description(ConfigText.PlainArenaDescription)]

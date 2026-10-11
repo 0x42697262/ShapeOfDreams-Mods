@@ -16,12 +16,14 @@ The game's mod manager uploads the whole mod folder
 (`SteamUGC.SetItemContent(item.path)`), so never upload from the repo: it
 would ship `.git`, `src/`, `obj/` and the docs. From the repository root,
 run `./build.sh dream-arena Release`, then `./pack.sh dream-arena`. It
-writes `dream-arena/dist/DreamArena/` with only `DreamArena.dll` and
-`about/`, with `metadata.json` pointed at `DreamArena.dll`.
+writes `dream-arena/dist/DreamArena/` with only `DreamArena.dll` (the
+shared library is compiled into it) and `about/`, with `metadata.json`
+pointed at `DreamArena.dll`.
 
 Only one folder with the mod's id may be in `Mods/` at a time
 (`IdConflict`), so for the upload point the `dreamarena` incus device at
-`dist/DreamArena`, upload, then point it back at the repo.
+`dream-arena/dist/DreamArena`, upload, then point it back at
+`dream-arena/`.
 
 The first upload creates the item (Private) and writes
 `about/publishedfileid.txt` into the uploaded folder; the game reads it to
@@ -33,11 +35,13 @@ Public again.
 
 Write the release's note in `about/changenote.txt` (Workshop BBCode) before
 packing, and commit it with the release. `pack.sh` copies it into the pack
-and prints it. On upload, `WorkshopChangeNotePatches` (a prefix and
-finalizer on `DewMod.UpdateItem`, and a prefix on
-`SteamUGC.SubmitItemUpdate`) swap it in as the update's change note, only
-for this mod's id. The log says `workshop: attached about/changenote.txt
-(N characters) ...`, or that there was none.
+and prints it. On upload, the shared library's `WorkshopUploadPatch` (a
+prefix and finalizer on `DewMod.UpdateItem`) and `WorkshopSubmitPatch` (a
+prefix on `SteamUGC.SubmitItemUpdate`), in
+`library/src/Patches/WorkshopChangeNotePatches.cs`, swap it in as the
+update's change note through `WorkshopChangeNote`, only for this mod's id.
+The log says `workshop: attached about/changenote.txt (N characters) ...`,
+or that there was none.
 
 ## Updates reach players how
 

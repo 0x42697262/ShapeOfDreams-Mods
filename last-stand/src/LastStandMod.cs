@@ -1,111 +1,43 @@
-using System;
-using System.Reflection;
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Session;
-using LastStand.Text;
-using LastStand.UI;
-using UnityEngine;
 
 namespace LastStand;
 
-public class LastStandMod : ModBehaviour
+public class LastStandMod : ModEntry
 {
 	public LastStandConfig config = new LastStandConfig();
 
-	internal static LastStandMod Current { get; private set; }
+	internal static LastStandMod Current => Active as LastStandMod;
 
 	internal LastStandSession Session { get; private set; }
 
-	private readonly ErrorThrottle _tickErrors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
+	internal override ModConfig Config => config;
 
-	private readonly SettingsAnnouncer _settingsAnnouncer = new SettingsAnnouncer();
+	protected override int ConfigSchemaVersion => ConfigSchema.Current;
 
-	private void Awake()
+	protected override void OnLoaded()
 	{
-		Current = this;
-	}
-
-	private void Start()
-	{
-		instance.isAlteringGameplay = true;
 		Session = new LastStandSession(SessionSettings.From(config));
-		ChoiceFields.Register();
-		harmony.PatchAll();
-		CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
-		Log.Info(LogText.Loaded(mod.metadata.name, mod.metadata.modVer));
 	}
 
-	private void Update()
+	protected override void OnTick(double now)
 	{
-		if (Session == null)
-		{
-			return;
-		}
-
-		try
-		{
-			Session.Tick(Time.time);
-		}
-		catch (Exception e)
-		{
-			_tickErrors.Report(Time.time, LogText.TickFailed, e);
-		}
+		Session?.Tick(now);
 	}
 
-	private void OnDestroy()
+	protected override void OnSettingsChanged()
 	{
-		Session?.Reset();
-		ConfigWindow.Close();
-		InjectedUi.RemoveAll();
-		LobbyModeOption.Detach();
-		ChoiceFields.Unregister();
-		harmony.UnpatchAll(harmony.Id);
-
-		if (Current == this)
-		{
-			Current = null;
-		}
-
-		Log.Info(LogText.Unloaded);
-	}
-
-	public override void LoadConfigsToDisk()
-	{
-		foreach (FieldInfo field in modConfigFields)
-		{
-			ConfigFile.ResetIfOutdated(GetModConfigFilePath(field));
-		}
-
-		base.LoadConfigsToDisk();
-		_settingsAnnouncer.Remember(config);
-	}
-
-	internal void ApplyConfig(LastStandConfig edited)
-	{
-		edited.CopyTo(config);
-		try
-		{
-			SaveConfigsToDisk();
-			Log.Info(LogText.ConfigApplied);
-		}
-		catch (Exception e)
-		{
-			Log.Error(LogText.ConfigSaveFailed, e);
-		}
-
-		OnConfigChanged();
-	}
-
-	public override void OnConfigChanged()
-	{
-		_settingsAnnouncer.Announce(config);
 		Session?.UseSettings(SessionSettings.From(config));
 	}
 
-	private void OnGameManagerStarted(GameManager game)
+	protected override void OnGameStarted()
 	{
 		Session?.Reset();
 		Session?.UseSettings(SessionSettings.From(config));
+	}
+
+	protected override void OnUnloading()
+	{
+		Session?.Reset();
 	}
 }

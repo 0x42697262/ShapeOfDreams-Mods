@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Text;
 using UnityEngine;
 using UnityEngine.AI;

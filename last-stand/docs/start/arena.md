@@ -22,7 +22,8 @@ so the party travels at once. The synced `GameSettingsManager.enableVotes` is
 left alone on purpose: the lobby saves it as the host's preference, so
 clearing it would carry into normal runs.
 
-Both are taken from Dream Arena.
+Both came from Dream Arena. The camp rift is now shared code in the
+library; the vote skip (`SkipTravelVotePatch`) is still Last Stand's own.
 
 ## The arena room
 

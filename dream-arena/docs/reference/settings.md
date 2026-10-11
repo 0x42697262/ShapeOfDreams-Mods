@@ -4,16 +4,23 @@ The host changes them in two places: the **Dream Arena** button in the
 lobby's settings panel (or the `arena` console command), and the mod
 manager's config screen. The lobby window edits a copy; **Apply** saves it
 and applies it live, **Cancel** or Escape drops the edits. The button shows
-only for the host (`NetworkServer.active`, checked each time the panel
-opens): a client with the mod loaded doesn't get it, since their settings
-would only edit their own file and never reach the host's run. For the same
+only for the host of a Dream Arena lobby (`ModMode.IsHosting()`:
+`NetworkServer.active` and the synced `GameSettingsManager.gameSettingsSaveKey`
+is Dream Arena's), checked each time the panel opens (the game shows the
+panel with `SetActive`, so its `OnEnable` runs every time). A client with
+the mod loaded doesn't get it, since their settings would only edit their
+own file and never reach the host's run. A Shape of Dreams or Last Stand
+lobby doesn't get it either: with both mods loaded, only the selected
+mode's button shows. An earlier version checked `NetworkServer.active`
+alone, so both buttons appeared in every lobby. For the same
 reason `arena` refuses on a connected client. The mod manager's own screen
 belongs to the game and can't be hidden; it only edits that player's file.
 
 ## Layout
 
-Both places show the same panel (shared with Last Stand): a sidebar of pages
-on the left and the selected page on the right. A page has a title and a
+Both places show the same panel (from the shared library, `library/src/UI`,
+also used by Last Stand): a sidebar of pages on the left and the selected
+page on the right. A page has a title and a
 one-line summary, then its settings in grouped cards. Each row has a label
 and a short gray description on the left and the control on the right.
 `DreamArenaConfig` overrides `ModConfig.BuildWidgets`, which the mod
@@ -23,10 +30,11 @@ manager's screen calls, and builds `SettingsPanel` there. Pages come from
 **Names are picked, not typed.** `Arena room` and `Dummy monster` are
 dropdowns. Fields marked `[PickOne]` are claimed by an entry put at the
 front of the game's public `DewGUI.fieldBuilders` list (`ChoiceFields`,
-lists in `ConfigChoices`). Labels use the game's own `<type>_Name` text with
-the world in brackets. The value is still the plain asset name, and a saved
-name that isn't in the list shows as an extra option rather than being
-changed.
+lists in `ConfigChoices`, with the arena rooms from the library's
+`SharedChoices.ArenaRooms`). Labels use the game's own `<type>_Name` text
+with the world in brackets. The value is still the plain asset name, and a
+saved name that isn't in the list shows as an extra option rather than
+being changed.
 
 ## Every setting
 
@@ -70,20 +78,23 @@ lobby's game mode is the switch (see [Networking](networking.md)).
 Every applied change is announced in chat, so the players see what the host
 changed: `[Dream Arena] Host changed Team mode: FreeForAll -> TwoTeams`. Both
 places end in `ModBehaviour.OnConfigChanged()` with the new values in
-`config`, so `SettingsAnnouncer` keeps a clone of the last applied config
-(taken in `LoadConfigsToDisk`) and diffs it there. Bools read on/off, floats
-up to 3 decimals, rooms and monsters by their game name. Each change is
-logged (`settings: ...`); chat gets the first 6, then `...and N more
-setting(s) changed.`. Chat goes out only while hosting a PvP Arena session.
+`config` (the library's `ModEntry` overrides it), so `SettingsAnnouncer`
+keeps a clone of the last applied config (taken in `LoadConfigsToDisk`) and
+diffs it there. Bools read on/off, floats up to 3 decimals, rooms and
+monsters by their game name. Each change is logged (`settings: ...`); chat
+gets the first 6 (`SharedTuning.MaxSettingChangesInChat`), then `...and N
+more setting(s) changed.`. Chat goes out only while hosting a PvP Arena
+session.
 
 ## Config file and schema
 
 Settings persist to
 `<persistentDataPath>/QuickSave/Mods/com.0x42697262.dreamarena/DreamArenaMod.config.json`.
 The game loads the saved JSON over the defaults, so a changed default would
-never reach a player who has the file. `ConfigFile.ResetIfOutdated` compares
-the file's `schemaVersion` with `ConfigSchema.Current` before loading, and if
-it's older (or missing) moves it to `.old` and lets the game write fresh
+never reach a player who has the file. `ConfigFile.ResetIfOutdated` (shared
+library, called from `ModEntry.LoadConfigsToDisk`) compares the file's
+`schemaVersion` with `ConfigSchema.Current` before loading, and if it's
+older (or missing) moves it to `.old` and lets the game write fresh
 defaults, logging `saved config is from an older version ...`.
 
 Bump `ConfigSchema.Current` whenever a default changes or a field is renamed

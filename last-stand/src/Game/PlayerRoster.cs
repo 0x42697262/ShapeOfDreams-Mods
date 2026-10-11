@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -89,6 +90,11 @@ internal static class PlayerRoster
 
 	public static int SetHeroLevel(int level)
 	{
+		return ForEachHero(hero => hero.Status.level = Mathf.Clamp(level, MinimumHeroLevel, hero.maxLevel));
+	}
+
+	public static int ForEachHero(Action<Hero> action)
+	{
 		int heroes = 0;
 		if (DewPlayer.gamePlayers == null)
 		{
@@ -103,7 +109,7 @@ internal static class PlayerRoster
 				continue;
 			}
 
-			hero.Status.level = Mathf.Clamp(level, MinimumHeroLevel, hero.maxLevel);
+			action(hero);
 			heroes++;
 		}
 

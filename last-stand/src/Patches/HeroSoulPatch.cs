@@ -1,8 +1,6 @@
 using System;
 using HarmonyLib;
 using LastStand.Combat;
-using LastStand.Diagnostics;
-using LastStand.Mode;
 using LastStand.Text;
 
 namespace LastStand.Patches;
@@ -13,7 +11,7 @@ internal static class HeroSoulPatch
 	[HarmonyPrefix]
 	private static bool Prefix(Se_HeroKnockedOut __instance)
 	{
-		if (!LastStandMode.IsHosting())
+		if (!ModMode.IsHosting())
 		{
 			return true;
 		}

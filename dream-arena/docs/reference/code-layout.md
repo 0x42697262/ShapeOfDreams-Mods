@@ -1,26 +1,23 @@
 # Code layout
 
-Same architecture as Last Stand (the sister project): a thin `ModBehaviour`,
+Same architecture as Last Stand (the sister project): a thin entry point,
 one session that owns every subsystem, thin patches, plain rules, game
 adapters, and every literal in one named place.
 
 ```
 src/
-  DreamArenaMod.cs        ModBehaviour: config, lifecycle, settings notices
+  DreamArenaMod.cs        ModEntry subclass: the config, the session, five overrides
   DreamArenaConsole.cs    console commands
+  ModHooks.cs             dropdown choices and the lobby name, for the library
   Session/
     DreamArenaSession.cs  owns every subsystem; start, tick, stop, reset
-  Mode/
-    ArenaMode.cs          IsSelected / IsHosting (the save-key mode flag)
-    ModeSelection.cs      writes the mode into the lobby's start settings
   Config/
     DreamArenaConfig.cs   the settings (pages, groups, labels)
     SessionSettings.cs    validated snapshot every subsystem reads
     Tuning.cs             fixed internal constants
     ConfigChoices.cs      dropdown lists
-    ConfigSchema.cs, ConfigFile.cs  reset outdated config files
-    ConfigFields.cs, SettingChange.cs  visible fields, before/after diffs
-    TeamMode.cs, SettingsPage.cs, ChoiceSet.cs, Choice.cs, *Attribute.cs
+    ConfigSchema.cs       the config schema version (Current)
+    TeamMode.cs, SettingsPage.cs, ChoiceSet.cs
   Pvp/
     TeamRule.cs           who is an enemy of whom (plain logic)
     Relations.cs          writes the relation SyncLists
@@ -32,7 +29,6 @@ src/
     HeroStaging.cs        the arrival ring
     PlainArena.cs         cleared, lit loading
     PveSweep.cs           removes PvE from the arena
-    Phase.cs
   Camp/
     CampRift.cs           direct rift
     CampRemnants.cs       builds the ring, tracks taken items
@@ -52,21 +48,29 @@ src/
     BuildWipe.cs          wipes and restores builds
   Game/
     GameNames.cs          game identifiers that can't be typeof/nameof
-    ChatNotices.cs        broadcast and per-player chat
-    RunGoal.cs            removes the run goal
-    LocalizedNames.cs     game display names
   Patches/                thin Harmony patches, one concern per file
-  UI/                     settings panel and window, lobby button and mode option, change notices
-  Text/                   ConfigText, Messages, LogText, CommandText
+  Text/                   ConfigText, Messages, LogText, CommandText, ModText
   Identity/ModIdentity.cs our names, tags and keys
-  Diagnostics/            Log, ErrorThrottle, ArenaScan
-  Workshop/               change note attached on upload
+  Diagnostics/            ArenaScan
 ```
 
-`Config/`, `Identity/`, `UI/` (shared with Last Stand: `SettingsPanel`,
-`ConfigWindow`, `ChoiceFields`, `LobbyConfigButton`, `LobbyModeOption`,
-`SettingsAnnouncer`), `Mode/`, `Workshop/` and `Diagnostics/Log` were adapted
-from Last Stand. When fixing a bug in one of them, check the other repo.
+## Shared library
+
+The plumbing both mods need lives in `library/src` (namespace `SodLib`) and
+is compiled into `DreamArena.dll`; see the
+[library README](../../../library/README.md). That covers the lifecycle
+(`ModEntry`: load, tick with throttled errors, unload cleanup, the config
+reset on a schema change, Apply and the settings notices), the mode check
+(`ModMode`) and selecting the mode, the settings window and panel with its
+dropdown fields, the lobby dropdown option and settings button, UI cleanup,
+`Log`, `ErrorThrottle`, `ChatNotices`, `RunGoal`, `LocalizedNames`, the
+Workshop change note, and shared text, game names and tuning. A fix there
+reaches both mods; build both (`./check.sh`).
+
+Dream Arena plugs in through the contract files: `Identity/ModIdentity.cs`,
+`Text/ModText.cs`, `ModHooks.cs`, `DreamArenaMod.cs` (the `ModEntry`
+subclass) and `Config/ConfigSchema.cs` (`Current` only; the file check is
+`ConfigFile.ResetIfOutdated` in the library).
 
 ## Where new code goes
 
@@ -74,7 +78,7 @@ from Last Stand. When fixing a bug in one of them, check the other repo.
   `[Description]` from `ConfigText`), validated in `SessionSettings.From`,
   read only from `SessionSettings`.
 - A constant: `Tuning`. A game identifier: `GameNames`. Text: `src/Text`.
-- A hook into the game: a patch that checks `ArenaMode` and calls the
+- A hook into the game: a patch that checks `ModMode` and calls the
   session or a service. No rules or state in patches.
 - Anything that runs per frame: a subsystem ticked by the session, on a
   timer, with `.softInstance`.

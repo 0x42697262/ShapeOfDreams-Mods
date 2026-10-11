@@ -357,7 +357,7 @@ change it. Rules (patch mechanics in `03-hooking-with-harmony.md`):
    `false` skips the original; use it only to block, and only under your
    mode's condition.
 6. **Gate every patch** on "my mode is on and I am the server". In Last
-   Stand that is `LastStandMode.IsHosting()`, which is
+   Stand that is `ModMode.IsHosting()` (shared library), which is
    `NetworkServer.active && settings.gameSettingsSaveKey == SaveKey`.
 
 ### Step 5. Write it in its layers
@@ -569,7 +569,7 @@ internal static class ArenaShrineUsePatch
 	[HarmonyPostfix]
 	private static void Postfix(Shrine __instance, Entity entity)
 	{
-		if (LastStandMode.IsHosting())
+		if (ModMode.IsHosting())
 		{
 			LastStandMod.Current?.Session?.OnShrineUsed(__instance, entity);
 		}

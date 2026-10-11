@@ -68,5 +68,5 @@ For working notes, hard constraints and the in-game test list, see
 |---|---|
 | [Settings](reference/settings.md) | The settings window, config versioning and every default |
 | [Console commands](reference/console-commands.md) | Every `laststand_*` command |
-| [Code layout](reference/code-layout.md) | What each `src/` folder does |
+| [Code layout](reference/code-layout.md) | What each `src/` folder does, and what comes from the shared library |
 | [Networking](reference/networking.md) | Host-only design and what clients see |

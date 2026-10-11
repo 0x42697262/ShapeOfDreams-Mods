@@ -1,7 +1,4 @@
 using HarmonyLib;
-using DreamArena.Diagnostics;
-using DreamArena.Identity;
-using DreamArena.Mode;
 using Mirror;
 
 namespace DreamArena.Patches;
@@ -12,7 +9,7 @@ internal static class RunEndPatch
 	[HarmonyPrefix]
 	private static bool Prefix()
 	{
-		return !(ArenaMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.NeverEndRun == true);
+		return !(ModMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.NeverEndRun == true);
 	}
 }
 
@@ -22,7 +19,7 @@ internal static class SkipTravelVotePatch
 	[HarmonyPrefix]
 	private static bool Prefix(ref bool __result)
 	{
-		if (!ArenaMode.IsHosting() || DreamArenaMod.Current?.Session?.Settings?.SkipTravelVote != true
+		if (!ModMode.IsHosting() || DreamArenaMod.Current?.Session?.Settings?.SkipTravelVote != true
 		    || DreamArenaMod.Current.Session.RestartVotePending)
 		{
 			return true;
@@ -39,7 +36,7 @@ internal static class LucidDreamAddPatch
 	[HarmonyPrefix]
 	private static bool Prefix()
 	{
-		return !(ArenaMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.RemoveLucidDreams == true);
+		return !(ModMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.RemoveLucidDreams == true);
 	}
 }
 
@@ -49,7 +46,7 @@ internal static class LucidDreamListPatch
 	[HarmonyPostfix]
 	private static void Postfix(GameSettingsManager __instance)
 	{
-		if (ArenaMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.RemoveLucidDreams == true)
+		if (ModMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.RemoveLucidDreams == true)
 		{
 			__instance.availableLucidDreams.Clear();
 		}

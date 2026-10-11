@@ -1,6 +1,5 @@
 using HarmonyLib;
 using LastStand.Game;
-using LastStand.Mode;
 using LastStand.Well;
 
 namespace LastStand.Patches;
@@ -11,7 +10,7 @@ internal static class HatredShardUsePatch
 	[HarmonyPrefix]
 	private static void Prefix(Shrine_Hatred_Reward __instance)
 	{
-		if (LastStandMode.IsHosting())
+		if (ModMode.IsHosting())
 		{
 			LastStandMod.Current?.Session?.OnHatredShardOpening(__instance);
 		}

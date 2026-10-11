@@ -1,6 +1,5 @@
 using HarmonyLib;
 using DreamArena.Arena;
-using DreamArena.Mode;
 
 namespace DreamArena.Patches;
 
@@ -10,7 +9,7 @@ internal static class CutscenePatch
 	[HarmonyPrefix]
 	private static bool Prefix()
 	{
-		return !(ArenaMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.SkipCutscenes == true);
+		return !(ModMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.SkipCutscenes == true);
 	}
 }
 
@@ -30,7 +29,7 @@ internal static class RoomPropsPatch
 	[HarmonyPrefix]
 	private static bool Prefix()
 	{
-		return !(ArenaMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.NoMonsters == true
+		return !(ModMode.IsHosting() && DreamArenaMod.Current?.Session?.Settings?.NoMonsters == true
 		                                && ArenaLocator.CurrentPhase() == Phase.Arena);
 	}
 }

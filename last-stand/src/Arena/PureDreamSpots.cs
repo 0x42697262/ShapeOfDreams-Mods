@@ -1,6 +1,5 @@
 using System;
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Text;
 using UnityEngine;
 
@@ -8,7 +7,7 @@ namespace LastStand.Arena;
 
 internal static class PureDreamSpots
 {
-	private static readonly ErrorThrottle Errors = new ErrorThrottle(Tuning.ErrorLogIntervalSeconds);
+	private static readonly ErrorThrottle Errors = new ErrorThrottle(SharedTuning.ErrorLogIntervalSeconds);
 
 	public static bool TryPick(Func<Vector3> roll, out Vector3 spot)
 	{

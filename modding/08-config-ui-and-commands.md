@@ -104,7 +104,7 @@ Last Stand declares one config on its main behaviour, so its file is
 `LastStandMod.config.json`:
 
 ```csharp
-public class LastStandMod : ModBehaviour
+public class LastStandMod : ModEntry
 {
     public LastStandConfig config = new LastStandConfig();
     ...
@@ -179,37 +179,47 @@ is set aside and the game writes fresh defaults.
 
 1. Add a hidden version field whose initializer is the current version:
    `[HideInInspector] public int schemaVersion = ConfigSchema.Current;`.
-2. Check the raw JSON before the game reads it:
+2. Keep the version in one place per mod. Last Stand's
+   `src/Config/ConfigSchema.cs` holds only the number:
    ```csharp
    internal static class ConfigSchema
    {
-       public const int Current = 40;
-
-       public static bool IsCurrent(string json)
-       {
-           JToken version = JObject.Parse(json)[nameof(LastStandConfig.schemaVersion)];
-           return version != null && version.Type == JTokenType.Integer && version.Value<int>() == Current;
-       }
+       public const int Current = 45;
    }
    ```
-3. Move an outdated or unreadable file aside:
+3. Check the raw JSON before the game reads it, and move an outdated or
+   unreadable file aside. Both mods do this with the shared library's
+   `ConfigFile` (`library/src/Config/ConfigFile.cs`), which gets the version
+   passed in:
    ```csharp
-   public static void ResetIfOutdated(string path)
+   public static void ResetIfOutdated(string path, int currentVersion)
    {
-       if (!File.Exists(path) || IsCurrent(path)) return;
+       if (!File.Exists(path) || IsCurrent(path, currentVersion)) return;
        string backup = path + BackupSuffix;          // ".old"
        File.Copy(path, backup, true);
        File.Delete(path);
-       Log.Warn(LogText.ConfigReset(ConfigSchema.Current, backup));
+       Log.Warn(SharedLogText.ConfigReset(currentVersion, backup));
+   }
+
+   private static bool IsCurrent(string path, int currentVersion)
+   {
+       try
+       {
+           JToken version = JObject.Parse(File.ReadAllText(path))[ModIdentity.ConfigVersionField];
+           return version != null && version.Type == JTokenType.Integer && version.Value<int>() == currentVersion;
+       }
+       catch (Exception) { return false; }
    }
    ```
 4. Hook it in by overriding the virtual loader, then call the base, which
-   now finds no file and writes defaults:
+   now finds no file and writes defaults. The override is in the shared
+   library's `ModEntry`; `LastStandMod` supplies
+   `ConfigSchemaVersion => ConfigSchema.Current`:
    ```csharp
    public override void LoadConfigsToDisk()
    {
        foreach (FieldInfo field in modConfigFields)
-           ConfigFile.ResetIfOutdated(GetModConfigFilePath(field));
+           ConfigFile.ResetIfOutdated(GetModConfigFilePath(field), ConfigSchemaVersion);
        base.LoadConfigsToDisk();
    }
    ```
@@ -218,7 +228,7 @@ Rules that come with it:
 
 - **Bump the version whenever a default changes or a field is renamed or
   removed.** Last Stand's repository rules make this mandatory, and the
-  version has reached 40.
+  version has reached 45.
 - The test is equality, not "older than". A file from a *newer* build
   (after a downgrade) is reset too, which is the safe direction.
 - A reset also discards settings the player changed on purpose. The `.old`
@@ -282,12 +292,14 @@ The snapshot is rebuilt at three points, and game code only ever sees a
 whole, valid snapshot:
 
 ```csharp
-private void Start()                       { Session = new LastStandSession(SessionSettings.From(config)); ... }
-public override void OnConfigChanged()     { Session?.UseSettings(SessionSettings.From(config)); }
-private void OnGameManagerStarted(GameManager game) { Session?.Reset(); Session?.UseSettings(SessionSettings.From(config)); }
+protected override void OnLoaded()          { Session = new LastStandSession(SessionSettings.From(config)); }
+protected override void OnSettingsChanged() { Session?.UseSettings(SessionSettings.From(config)); }
+protected override void OnGameStarted()     { Session?.Reset(); Session?.UseSettings(SessionSettings.From(config)); }
 ```
 
-`OnConfigChanged` is the game's virtual hook. The mod manager calls it
+These are `LastStandMod`'s overrides of the shared library's `ModEntry`,
+which calls them from `Start`, `OnConfigChanged` and the new-`GameManager`
+hook. `OnConfigChanged` is the game's virtual hook. The mod manager calls it
 after Apply (section 2.1), and Last Stand's own window calls it too.
 
 **Where else this applies**
@@ -455,18 +467,22 @@ public class FieldBuildResult
 Steps:
 
 1. **Mark the fields with your own attribute.** The condition receives the
-   `FieldInfo`, so it can test for anything:
+   `FieldInfo`, so it can test for anything. The attribute and the builders
+   (`ChoiceFields`) are in the shared library (`library/src/Config/`,
+   `library/src/UI/`); the attribute takes `object` so each mod passes its
+   own `ChoiceSet` enum, and the mod's `ModHooks.Choices(set)` returns the
+   list:
    ```csharp
    [AttributeUsage(AttributeTargets.Field)]
    internal sealed class PickOneAttribute : Attribute
    {
-       public PickOneAttribute(ChoiceSet set) { Set = set; }
-       public ChoiceSet Set { get; }
+       public PickOneAttribute(object set) { Set = (Enum)set; }
+       public Enum Set { get; }
    }
 
    [PickOne(ChoiceSet.ArenaRooms)]
    [LabelText(ConfigText.ArenaRoomLabel)]
-   public string arenaRoom = GameNames.DefaultArenaRoom;
+   public string arenaRoom = SharedGameNames.DefaultArenaRoom;
 
    [PickMany(ChoiceSet.HeroicBosses)]
    public string heroicBossTypes = ...;
@@ -494,7 +510,8 @@ Steps:
        DewGUI.fieldBuilders.RemoveAll(entry => entry.Item1 == PickOneCondition || entry.Item1 == PickManyCondition);
    }
    ```
-   `Register()` runs in `Start`, `Unregister()` in `OnDestroy`.
+   `Register()` runs in `Start`, `Unregister()` in `OnDestroy` (both in the
+   shared library's `ModEntry`).
 4. **Build from the game's widget prefabs.** `DewGUI` exposes them as
    properties that call `Resources.Load` each time: `widgetDropdown`
    (`TMP_Dropdown`), `widgetToggleCheck` (`UI_Toggle`), `widgetTextLabel`,
@@ -516,7 +533,7 @@ Steps:
        if (!string.IsNullOrEmpty(current) && !values.Contains(current))
        {
            values.Add(current);
-           labels.Add(ConfigText.UnknownChoiceLabel(current));
+           labels.Add(SharedConfigText.UnknownChoiceLabel(current));
        }
        dropdown.ClearOptions();
        dropdown.AddOptions(labels);
@@ -565,15 +582,17 @@ widget existed still load, the JSON avoids the list-reuse problem from
 ### 2.4 Labels the player understands
 
 The choice data is a fixed table of `(asset name, detail)` pairs in one
-file (`ConfigChoices`). The visible label comes from the game's own
-localized name where one exists (`<type>_Name`, see
+file (`ConfigChoices`, which takes the 8 arena rooms from the shared
+library's `SharedChoices.ArenaRooms`). The visible label comes from the
+game's own localized name where one exists (`<type>_Name`, see
 `05-assets-and-data.md`) plus a short detail such as the world. The saved
 value is always the asset name, so a language change never affects the file.
 
 ### 2.5 Replacing the whole layout: override `BuildWidgets`
 
 The stock screen is one long column. Last Stand has about 135 fields, so
-it overrides the virtual method and builds a sidebar of pages instead:
+it overrides the virtual method and builds a sidebar of pages instead, with
+the shared library's `SettingsPanel` (`library/src/UI/SettingsPanel.cs`):
 
 ```csharp
 public override void BuildWidgets(Transform parent, out SafeAction onChanged, out SafeAction requestUpdate)
@@ -607,7 +626,8 @@ For this to work in the mod manager:
 
 The mod manager's screen is reachable only with Developer Mode on. Last
 Stand opens the same panel from a lobby button (section 3) and a console
-command, in a window it builds itself:
+command, in a window it builds itself (`ConfigWindow`, now in the shared
+library, `library/src/UI/ConfigWindow.cs`):
 
 ```csharp
 UI_Window window = UnityEngine.Object.Instantiate(DewGUI.widgetWindow, DewGUI.canvasTransform);
@@ -615,18 +635,19 @@ window.isDraggable = true;
 window.enableBackdrop = true;
 _current = window.gameObject.AddComponent<ConfigWindow>();
 ...
-_draft = (LastStandConfig)mod.config.Clone();
+_draft = config.Clone();
 SettingsPanel.Build(_draft, content.transform, ConfigWindowLayout.PageHeight, out SafeAction _, out SafeAction _);
 ```
 
-Apply follows the same order as the game's screen:
+Apply follows the same order as the game's screen (`ModEntry.ApplyConfig`,
+reached through `ModHooks.ApplyConfig`):
 
 ```csharp
-internal void ApplyConfig(LastStandConfig edited)
+internal void ApplyConfig(ModConfig edited)
 {
-    edited.CopyTo(config);
-    try { SaveConfigsToDisk(); Log.Info(LogText.ConfigApplied); }
-    catch (Exception e) { Log.Error(LogText.ConfigSaveFailed, e); }
+    edited.CopyTo(Config);
+    try { SaveConfigsToDisk(); Log.Info(SharedLogText.ConfigApplied); }
+    catch (Exception e) { Log.Error(SharedLogText.ConfigSaveFailed, e); }
     OnConfigChanged();
 }
 ```
@@ -698,17 +719,18 @@ What the three classes gave:
   is one object that is toggled on and off, so `OnEnable` runs on every
   open and `Start` only once, after the first `OnEnable`. Last Stand
   postfixes both and makes the work idempotent, so the order and the
-  number of calls don't matter:
+  number of calls don't matter (`LobbySettingsPatch`, now in the shared
+  library, `library/src/Patches/`):
   ```csharp
   [HarmonyPatch(typeof(UI_Lobby_SettingsWindow))]
   internal static class LobbySettingsPatch
   {
       [HarmonyPostfix]
-      [HarmonyPatch(GameNames.LobbySettingsStart)]       // "Start"
+      [HarmonyPatch(SharedGameNames.LobbySettingsStart)]       // "Start"
       private static void Start_Postfix(UI_Lobby_SettingsWindow __instance) { TryInject(__instance); }
 
       [HarmonyPostfix]
-      [HarmonyPatch(GameNames.LobbySettingsEnable)]      // "OnEnable"
+      [HarmonyPatch(SharedGameNames.LobbySettingsEnable)]      // "OnEnable"
       private static void OnEnable_Postfix(UI_Lobby_SettingsWindow __instance) { TryInject(__instance); }
   }
   ```
@@ -730,7 +752,7 @@ injected object needs a name you can find again:
 
 ```csharp
 public const string OwnedSuffix = " (" + Tag + ")";
-public const string LobbyButtonName = "Last Stand Settings Button" + OwnedSuffix;
+public const string LobbyButtonName = DisplayName + " Settings Button" + OwnedSuffix;
 
 public static bool IsOurs(string objectName)
 {
@@ -738,19 +760,21 @@ public static bool IsOurs(string objectName)
 }
 ```
 
-`Ensure` looks for the object first and only creates it when missing:
+`LobbyConfigButton.Ensure` (shared library) looks for the object first and
+only creates it when missing:
 
 ```csharp
+bool show = ModMode.IsHosting();
 Transform existing = panel.Find(ModIdentity.LobbyButtonName);
 if (existing != null)
 {
-    existing.gameObject.SetActive(NetworkServer.active);
+    existing.gameObject.SetActive(show);
     return;
 }
-if (!NetworkServer.active) return;
+if (!show) return;
 Button button = Object.Instantiate(DewGUI.widgetButton, panel);
 button.name = ModIdentity.LobbyButtonName;
-button.GetComponentInChildren<TMP_Text>(includeInactive: true).text = ConfigText.LobbyButton;
+button.GetComponentInChildren<TMP_Text>(includeInactive: true).text = ModIdentity.DisplayName;
 button.onClick.AddListener(ConfigWindow.Toggle);
 ```
 
@@ -829,9 +853,11 @@ you host:
 - `NetworkClient.active && !NetworkServer.active`: you joined someone else.
 - Neither: title screen.
 
-The lobby button is created only with `NetworkServer.active`, and an
-existing one is hidden when it's false. The `laststand_config` command
-refuses only in the joined case, so it still works on the title screen:
+The lobby button is created only when `ModMode.IsHosting()` is true
+(`NetworkServer.active`, and the lobby's mode is this mod's), and an
+existing one is hidden otherwise, so with two mods loaded only the selected
+mode's button shows. The `laststand_config` command refuses only in the
+joined case, so it still works on the title screen:
 
 ```csharp
 if (NetworkClient.active && !NetworkServer.active)
@@ -921,7 +947,8 @@ tells you where a mode lives and what survives a restart.
 Result: a custom save key is a mode flag the game already keeps for you.
 It is set from the start settings, synced, saved with the run, carried
 through restarts, and keeps its own lobby preferences. Last Stand uses
-`"laststand"` with no added game modifiers, and asks only that field:
+`"laststand"` with no added game modifiers, and asks only that field
+(`ModMode`, now in the shared library, `library/src/Mode/ModMode.cs`):
 
 ```csharp
 public static bool IsSelected()
@@ -934,7 +961,7 @@ public static bool IsHosting() { return NetworkServer.active && IsSelected(); }
 ```
 
 No separate "enabled" flag exists that could drift from the game's state.
-Every patch begins with `if (!LastStandMode.IsHosting()) return;`.
+Every patch begins with `if (!ModMode.IsHosting()) return;`.
 
 ### 4.2 The solo button
 
@@ -986,13 +1013,16 @@ ManagerBase<TransitionManager>.softInstance.PlayGame(settings);
 when the index changes, including when you set `value` from code.
 
 1. **Postfix `OnShow`**, which has just rebuilt the list. Add the option,
-   subscribe, and select it:
+   subscribe, and select it (`LobbyModeOption`, now in the shared library,
+   `library/src/UI/LobbyModeOption.cs`; only a mod whose
+   `ModIdentity.PreselectInLobby` is true selects itself, which Last Stand
+   does):
    ```csharp
    Detach();
-   view.gameModeDropdown.AddOption(Messages.ModeName, ModIdentity.LobbyModeValue);
+   view.gameModeDropdown.AddOption(ModText.ModeName, ModIdentity.LobbyModeValue);
    _view = view;
    view.gameModeDropdown.onValueChanged += (Action<object>)OnModeChanged;
-   view.gameModeDropdown.value = ModIdentity.LobbyModeValue;
+   if (ModIdentity.PreselectInLobby) view.gameModeDropdown.value = ModIdentity.LobbyModeValue;
    ```
 2. **Expect the game's handler to run first.** It was subscribed in
    `Awake`, so it sees an unknown value. It takes the `else` branch, which
@@ -1002,13 +1032,13 @@ when the index changes, including when you set `value` from code.
    so the selection is set again each time:
    ```csharp
    private static readonly FieldInfo StateField =
-       AccessTools.Field(typeof(UI_Title_CreateLobbyView), GameNames.CreateLobbyState);   // "_state"
+       AccessTools.Field(typeof(UI_Title_CreateLobbyView), SharedGameNames.CreateLobbyState);   // "_state"
 
    public static void Sync(UI_Title_CreateLobbyView view)
    {
        bool selected = ModIdentity.LobbyModeValue.Equals(view.gameModeDropdown.value as string);
        if (selected && view.gameModeDescriptionText != null)
-           view.gameModeDescriptionText.text = Messages.ModeDescription;
+           view.gameModeDescriptionText.text = ModText.ModeDescription;
        if (!(StateField?.GetValue(view) is DewNetworkStartSettings state)) return;
        if (selected) ModeSelection.Select(state); else ModeSelection.Deselect(state);
    }
@@ -1129,7 +1159,7 @@ Last Stand uses two levels:
 ```csharp
 private static bool CheatsAllowed()
 {
-    if (!LastStandMode.IsHosting())
+    if (!ModMode.IsHosting())
     {
         Log.Warn(LogText.NotHosting);
         return false;
@@ -1210,7 +1240,8 @@ client doesn't have your strings, so it would show `ui.!<your text>`.
 announcement in `CurseStatusEffect` and ping messages in `PingManager` are
 both `Raw`.
 
-Last Stand's whole chat adapter:
+Last Stand's chat adapter, `ChatNotices` (now in the shared library,
+`library/src/Game/ChatNotices.cs`, which also has `Tell` for one player):
 
 ```csharp
 internal static class ChatNotices
@@ -1228,17 +1259,20 @@ internal static class ChatNotices
 }
 ```
 
-Colors are TMP rich-text tags built in one place, with a fixed prefix so
-players can tell mod lines from game lines:
+Colors are TMP rich-text tags built in one place (`SharedMessages`, in the
+shared library), with a fixed prefix so players can tell mod lines from
+game lines. Each mod gives its own notice color (Last Stand's
+`ModText.NoticeColor` is `#e8a33d`):
 
 ```csharp
-private const string NoticeColor = "#e8a33d";
-private const string WarningColor = "#ff4d4d";
-private const string SuccessColor = "#5ad45a";
+public const string WarningColor = "#ff4d4d";
+public const string SuccessColor = "#5ad45a";
+
+public static string Notice(string text) { return Colored(ModText.NoticeColor, text); }
 
 private static string Colored(string color, string text)
 {
-    return $"<color={color}>[{ModeName}] {text}</color>";
+    return $"<color={color}>[{ModIdentity.DisplayName}] {text}</color>";
 }
 ```
 
@@ -1438,13 +1472,14 @@ The design that follows, step by step:
 
 The same discovery removed the run's goal. `PlayGameManager` starts
 `Quest_ShapeOfDreams` on the server, and `GameMod_Limbo` simply destroys
-it. Last Stand does the same, checking once a second:
+it. Last Stand does the same, checking once a second (`RunGoal`, now in
+the shared library, `library/src/Game/RunGoal.cs`):
 
 ```csharp
 if (quests != null && quests.TryGetQuest(out Quest_ShapeOfDreams goal) && !goal.IsNullOrInactive())
 {
     goal.Destroy();
-    Log.Info(LogText.GoalRemoved);
+    Log.Info(SharedLogText.GoalRemoved);
 }
 ```
 

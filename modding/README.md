@@ -2,12 +2,14 @@
 
 This is a technical guide to building mods for **Shape of Dreams**, written
 while building the **Last Stand** mod. Paths such as `src/...` and `docs/...`
-are Last Stand's, under [`last-stand/`](../last-stand/). It does not walk through Last Stand's
-code. It teaches the methods: how to get the game's code out of its DLLs,
-how to find the one method that matters among thousands, how to prove
-whether a value reaches a player who doesn't have your mod, how to pick a
-hook, how to drive the game's own systems, and how to keep a mod alive
-through reloads, restarts and real play.
+are Last Stand's, under [`last-stand/`](../last-stand/). Paths under
+`library/src/...` are the shared library that Last Stand and Dream Arena
+both compile in ([`library/`](../library/README.md)). It does not walk
+through Last Stand's code. It teaches the methods: how to get the game's
+code out of its DLLs, how to find the one method that matters among
+thousands, how to prove whether a value reaches a player who doesn't have
+your mod, how to pick a hook, how to drive the game's own systems, and how
+to keep a mod alive through reloads, restarts and real play.
 
 Every chapter works the same way. It explains a technique, applies it step
 by step to a real problem met while building Last Stand (with the commands,

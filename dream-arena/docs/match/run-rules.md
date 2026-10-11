@@ -56,7 +56,7 @@ created before it.
 
 ## The run goal
 
-With `No run goal` on, `RunGoal` (shared with Last Stand) destroys the
+With `No run goal` on, `RunGoal` (in the shared library) destroys the
 `Quest_ShapeOfDreams` that `PlayGameManager.OnStartClient` starts for new
 runs. It checks once a second until it finds it. Quests are actors, so the
 destruction syncs and the goal disappears for every player.

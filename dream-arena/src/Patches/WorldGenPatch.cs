@@ -3,7 +3,7 @@ using DreamArena.Game;
 
 namespace DreamArena.Patches;
 
-[HarmonyPatch(typeof(ZoneManager), GameNames.GenerateWorld)]
+[HarmonyPatch(typeof(ZoneManager), SharedGameNames.GenerateWorld)]
 internal static class WorldGenPatch
 {
 	[HarmonyPostfix]

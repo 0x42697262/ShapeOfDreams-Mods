@@ -1,5 +1,4 @@
 using HarmonyLib;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -9,7 +8,7 @@ internal static class ArenaShrineUsePatch
 	[HarmonyPostfix]
 	private static void Postfix(Shrine __instance, Entity entity)
 	{
-		if (LastStandMode.IsHosting())
+		if (ModMode.IsHosting())
 		{
 			LastStandMod.Current?.Session?.OnShrineUsed(__instance, entity);
 		}

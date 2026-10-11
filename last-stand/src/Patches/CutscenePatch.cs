@@ -1,6 +1,5 @@
 using HarmonyLib;
 using LastStand.Arena;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -10,6 +9,6 @@ internal static class CutscenePatch
 	[HarmonyPrefix]
 	private static bool Prefix()
 	{
-		return !(LastStandMode.IsHosting() && ArenaLocator.IsInArenaNode());
+		return !(ModMode.IsHosting() && ArenaLocator.IsInArenaNode());
 	}
 }

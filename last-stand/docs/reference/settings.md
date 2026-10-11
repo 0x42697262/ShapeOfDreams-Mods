@@ -4,9 +4,15 @@ The host can change them in two places: the **Last Stand** button in the
 lobby's settings panel (or the `laststand_config` console command), and the
 mod manager's config screen. The lobby window edits a copy, and **Apply**
 saves it and applies it live; **Cancel** or Escape drops the edits. The
-button shows only for the host (`NetworkServer.active`, checked each time the
-panel opens): a client who also has the mod loaded doesn't get it, since its
-settings would only edit their own file and never reach the host's run. For
+button shows only for the host of a Last Stand lobby (`ModMode.IsHosting()`:
+`NetworkServer.active` and the synced `GameSettingsManager.gameSettingsSaveKey`
+is Last Stand's), checked each time the panel opens (the game shows the
+panel with `SetActive`, so its `OnEnable` runs every time). A client who
+also has the mod loaded doesn't get it, since its settings would only edit
+their own file and never reach the host's run. A Shape of Dreams or Dream
+Arena lobby doesn't get it either: with both mods loaded, only the selected
+mode's button shows. An earlier version checked `NetworkServer.active`
+alone, so both buttons appeared in every lobby. For
 the same reason `laststand_config` refuses on a connected client and logs
 `only the host's settings apply`. The mod manager's own config screen
 belongs to the game and can't be hidden; it only edits that player's file.
@@ -15,9 +21,10 @@ belongs to the game and can't be hidden; it only edits that player's file.
 in the lobby (or mid-run) see what the host changed:
 `[Last Stand] Host changed Boss music: on -> off`. Both places end in
 `ModBehaviour.OnConfigChanged()` after the new values are in `config` (the
-lobby window through `LastStandMod.ApplyConfig`, the mod manager after
+lobby window through `ModEntry.ApplyConfig`, the mod manager after
 copying its working copy back), so `SettingsAnnouncer` keeps a clone of the
-last applied config (taken in `LoadConfigsToDisk`) and diffs it there:
+last applied config (taken in `LoadConfigsToDisk`) and diffs it there. All
+of this is the shared library's (`library/src`), used by both mods:
 - `SettingChange.Between` compares every field the settings panel shows
   (`ConfigFields.Visible`: public or `[SerializeField]`, not
   `[HideInInspector]`, so `schemaVersion` never shows).
@@ -27,10 +34,10 @@ last applied config (taken in `LoadConfigsToDisk`) and diffs it there:
   choice's own text). Checkbox lists show counts and what moved:
   `Environment types: 21 -> 20 picked, removed Toxic Area`.
 - Each change is logged (`settings: ...`). Chat gets the first 6
-  (`Tuning.MaxSettingChangesInChat`), then `...and N more setting(s)
+  (`SharedTuning.MaxSettingChangesInChat`), then `...and N more setting(s)
   changed.`, so a Reset to defaults doesn't flood it.
 - Chat goes out only while hosting a Last Stand session
-  (`LastStandMode.IsHosting()`: server active, Last Stand selected). A
+  (`ModMode.IsHosting()`: server active, Last Stand selected). A
   client changing their own file, or anyone on the title screen, only gets
   the log lines. Notices are raw chat messages, so vanilla clients read
   them too.

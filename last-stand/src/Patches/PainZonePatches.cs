@@ -1,7 +1,6 @@
 using System;
 using HarmonyLib;
 using LastStand.Game;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -11,7 +10,7 @@ internal static class PainZoneCreatePatch
 	[HarmonyPrefix]
 	private static bool Prefix(RoomMod_CorruptedChaos_AuraOfPain __instance)
 	{
-		if (!LastStandMode.IsHosting() || LastStandMod.Current?.Session?.OwnsPainZone(__instance) != true)
+		if (!ModMode.IsHosting() || LastStandMod.Current?.Session?.OwnsPainZone(__instance) != true)
 		{
 			return true;
 		}
@@ -27,7 +26,7 @@ internal static class PainZoneDestroyPatch
 	[HarmonyPrefix]
 	private static bool Prefix(RoomMod_CorruptedChaos_AuraOfPain __instance)
 	{
-		if (!LastStandMode.IsHosting() || LastStandMod.Current?.Session?.OwnsPainZone(__instance) != true)
+		if (!ModMode.IsHosting() || LastStandMod.Current?.Session?.OwnsPainZone(__instance) != true)
 		{
 			return true;
 		}

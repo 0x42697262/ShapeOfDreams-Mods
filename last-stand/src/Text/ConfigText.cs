@@ -286,32 +286,6 @@ internal static class ConfigText
 
 	public const string ArenaRoomDescription = "Boss room used as the arena. Applies next run.";
 
-	public const string PrimusWorld = "Primus";
-
-	public const string ForestWorld = "Forest";
-
-	public const string DarkCaveWorld = "Dark Cave";
-
-	public const string DespairWorld = "Despair";
-
-	public const string SkyWorld = "Sky";
-
-	public const string SnowMountainWorld = "Snow Mountain";
-
-	public const string LavaLandWorld = "Lava Land";
-
-	public const string InkWorld = "Ink";
-
-	public const string WindowTitle = "Last Stand";
-
-	public const string WindowNote = "Host only. Clients don't need the mod.";
-
-	public const string ApplyButton = "Apply";
-
-	public const string CancelButton = "Cancel";
-
-	public const string LobbyButton = "Last Stand";
-
 	public const string FirstWaveDelayLabel = "First wave delay (s)";
 
 	public const string FirstWaveDelayDescription = "Seconds from arrival to wave 1.";
@@ -773,55 +747,4 @@ internal static class ConfigText
 
 	public const string MeteoricLifeDetail = "random sizes, exploding corpses";
 
-	public static string PageTitle(SettingsPage page)
-	{
-		switch (page)
-		{
-			case SettingsPage.Shrines:
-				return "Shrines";
-			case SettingsPage.Waves:
-				return "Waves";
-			case SettingsPage.Monsters:
-				return "Monsters";
-			case SettingsPage.Bosses:
-				return "Bosses";
-			case SettingsPage.Events:
-				return "Events";
-			case SettingsPage.Rewards:
-				return "Rewards";
-			default:
-				return "General";
-		}
-	}
-
-	public static string PageSubtitle(SettingsPage page)
-	{
-		switch (page)
-		{
-			case SettingsPage.Shrines:
-				return "What stands on the edge ring, and what it costs.";
-			case SettingsPage.Waves:
-				return "Pace, size and spawning.";
-			case SettingsPage.Monsters:
-				return "Scaling, other worlds, hunters and Mirage skins.";
-			case SettingsPage.Bosses:
-				return "Minibosses, Pain minibosses and heroic bosses.";
-			case SettingsPage.Events:
-				return "Environments and dark urge.";
-			case SettingsPage.Rewards:
-				return "Item drops, gold, dream dust and chaos rarity.";
-			default:
-				return "Arena, difficulty and the basics.";
-		}
-	}
-
-	public static string ChoiceLabel(string name, string detail)
-	{
-		return name == null ? detail : $"{name} ({detail})";
-	}
-
-	public static string UnknownChoiceLabel(string value)
-	{
-		return $"{value} (not in the list)";
-	}
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using LastStand.Diagnostics;
 using LastStand.Game;
 using LastStand.Text;
 

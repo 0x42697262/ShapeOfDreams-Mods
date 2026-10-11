@@ -1,5 +1,4 @@
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Text;
 using LastStand.Waves;
 

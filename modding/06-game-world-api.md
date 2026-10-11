@@ -75,12 +75,14 @@ that runs at once if the manager exists, and again every time one starts.
 `DewMod.NotifyManagerLifecycle(GetType(), enable: true)`, and `OnStopClient`
 calls it with `false`. The `Action onStart, Action onCleanup` overload and the
 `Func<T, Action>` overload give a cleanup that runs when the manager stops.
-Last Stand resets its whole session per run this way:
+Last Stand resets its whole session per run this way (the call is in the
+shared library's `ModEntry.Start`; `OnGameStarted` is Last Stand's
+override):
 
 ```csharp
-CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
+CallOnNetworkedManager<GameManager>(_ => OnGameStarted());
 
-private void OnGameManagerStarted(GameManager game)
+protected override void OnGameStarted()
 {
     Session?.Reset();
     Session?.UseSettings(SessionSettings.From(config));
@@ -1029,9 +1031,9 @@ hero's soul modifiers from every node.
 
 ```csharp
 foreach (Hero hero in actors.allHeroes.ToArray())
-    if (hero.isActive && hero.isKnockedOut
+    if (hero != null && hero.isActive && hero.isKnockedOut
         && hero.Status.TryGetStatusEffect(out Se_HeroKnockedOut knockedOut))
-        knockedOut.Revive();
+        knockedOut.Revive(healthRatio);
 ```
 
 Only when `Dew.GetAliveHeroCount() > 0`. With everyone down, the game's own

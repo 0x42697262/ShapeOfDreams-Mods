@@ -2,7 +2,6 @@ using System;
 using HarmonyLib;
 using LastStand.Arena;
 using LastStand.Game;
-using LastStand.Mode;
 using UnityEngine;
 
 namespace LastStand.Patches;
@@ -13,7 +12,7 @@ internal static class PureDreamSpotPatch
 	[HarmonyPrefix]
 	private static bool Prefix(RoomMod_PureDream __instance, ref Vector3 __result)
 	{
-		if (!LastStandMode.IsHosting() || !ArenaLocator.IsInArenaNode())
+		if (!ModMode.IsHosting() || !ArenaLocator.IsInArenaNode())
 		{
 			return true;
 		}

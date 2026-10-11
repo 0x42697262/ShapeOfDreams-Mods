@@ -1,6 +1,4 @@
 using DreamArena.Config;
-using DreamArena.Diagnostics;
-using DreamArena.Identity;
 using DreamArena.Text;
 using Mirror;
 using UnityEngine;

@@ -1,8 +1,6 @@
 using DreamArena.Diagnostics;
 using DreamArena.Heroes;
-using DreamArena.Mode;
 using DreamArena.Text;
-using DreamArena.UI;
 using Mirror;
 
 namespace DreamArena;
@@ -81,7 +79,7 @@ public class DreamArenaConsole : ModBehaviour
 
 	private static bool Hosting()
 	{
-		if (ArenaMode.IsHosting())
+		if (ModMode.IsHosting())
 		{
 			return true;
 		}

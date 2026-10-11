@@ -1,5 +1,4 @@
 using HarmonyLib;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
@@ -9,7 +8,7 @@ internal static class PlainArenaStartServerPatch
 	[HarmonyPostfix]
 	private static void Postfix(Room __instance)
 	{
-		if (LastStandMode.IsHosting())
+		if (ModMode.IsHosting())
 		{
 			LastStandMod.Current?.Session?.PlainArena.Prepare(__instance);
 		}
@@ -22,7 +21,7 @@ internal static class PlainArenaStartRoomPatch
 	[HarmonyPostfix]
 	private static void Postfix(Room __instance)
 	{
-		if (LastStandMode.IsHosting())
+		if (ModMode.IsHosting())
 		{
 			LastStandMod.Current?.Session?.PlainArena.AfterStart(__instance);
 		}

@@ -1,16 +1,15 @@
 using HarmonyLib;
 using LastStand.Game;
-using LastStand.Mode;
 
 namespace LastStand.Patches;
 
-[HarmonyPatch(typeof(ZoneManager), GameNames.GenerateWorld)]
+[HarmonyPatch(typeof(ZoneManager), SharedGameNames.GenerateWorld)]
 internal static class WorldGenPatch
 {
 	[HarmonyPostfix]
 	private static void Postfix()
 	{
-		if (LastStandMode.IsHosting())
+		if (ModMode.IsHosting())
 		{
 			LastStandMod.Current?.Session?.ApplyArenaRoom();
 		}

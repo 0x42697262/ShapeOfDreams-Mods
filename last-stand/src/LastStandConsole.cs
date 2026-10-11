@@ -1,7 +1,5 @@
 using LastStand.Config;
-using LastStand.Diagnostics;
 using LastStand.Game;
-using LastStand.Mode;
 using LastStand.Text;
 using LastStand.UI;
 using Mirror;
@@ -24,7 +22,7 @@ public class LastStandConsole : ModBehaviour
 	[ConsoleCommand(CommandText.NextWaveDescription, CommandText.NextWave)]
 	public void Cmd_NextWave()
 	{
-		if (!LastStandMode.IsHosting())
+		if (!ModMode.IsHosting())
 		{
 			Log.Warn(LogText.NotHosting);
 			return;
@@ -36,7 +34,7 @@ public class LastStandConsole : ModBehaviour
 	[ConsoleCommand(CommandText.WaveDescription, CommandText.Wave)]
 	public void Cmd_Wave(int wave)
 	{
-		if (!LastStandMode.IsHosting())
+		if (!ModMode.IsHosting())
 		{
 			Log.Warn(LogText.NotHosting);
 			return;
@@ -177,7 +175,7 @@ public class LastStandConsole : ModBehaviour
 
 	private static bool CheatsAllowed()
 	{
-		if (!LastStandMode.IsHosting())
+		if (!ModMode.IsHosting())
 		{
 			Log.Warn(LogText.NotHosting);
 			return false;

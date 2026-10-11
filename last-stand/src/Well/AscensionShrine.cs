@@ -1,4 +1,3 @@
-using LastStand.Diagnostics;
 using LastStand.Text;
 using LastStand.Waves;
 using UnityEngine;

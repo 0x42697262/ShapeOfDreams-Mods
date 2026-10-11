@@ -146,17 +146,19 @@ harmony.Patch(original, prefix: new HarmonyMethod(prefix));
 Use manual patching when the target is only known at runtime (a type found
 by name, a coroutine's `MoveNext`, an optional patch that should not abort
 the others). Otherwise attributes plus `PatchAll` keep each hook in its own
-small file, which is how Last Stand does it. Its entry point:
+small file, which is how Last Stand does it. Its entry point's `Start`,
+now in the shared library's `ModEntry` (`library/src/ModEntry.cs`), where
+`OnLoaded` is Last Stand's override that creates the session:
 
 ```csharp
-private void Start()
+protected void Start()
 {
     instance.isAlteringGameplay = true;
-    Session = new LastStandSession(SessionSettings.From(config));
+    OnLoaded();
     ChoiceFields.Register();
     harmony.PatchAll();
-    CallOnNetworkedManager<GameManager>(OnGameManagerStarted);
-    Log.Info(LogText.Loaded(mod.metadata.name, mod.metadata.modVer));
+    CallOnNetworkedManager<GameManager>(_ => OnGameStarted());
+    Log.Info(SharedLogText.Loaded(mod.metadata.name, mod.metadata.modVer));
 }
 ```
 
@@ -173,9 +175,9 @@ and your `OnDestroy` runs. **The loader does not unpatch for you.**
 manager cleanups. It has no Harmony call. So `OnDestroy` must:
 
 ```csharp
-private void OnDestroy()
+protected void OnDestroy()
 {
-    Session?.Reset();
+    OnUnloading();
     ...
     harmony.UnpatchAll(harmony.Id);
 }
@@ -218,7 +220,7 @@ internal static class SkipTravelVotePatch
     [HarmonyPrefix]
     private static bool Prefix(ref bool __result)
     {
-        if (!LastStandMode.IsHosting())
+        if (!ModMode.IsHosting())
         {
             return true;
         }
@@ -239,18 +241,19 @@ internal static class SkipTravelVotePatch
 - The **parameters** are matched by name against the original's parameters
   and a set of special names (section 3.6). The order does not matter.
 - One class can patch several methods of one type: put the type on the
-  class and the method name on each patch method. `CreateLobbyModePatch`:
+  class and the method name on each patch method. `CreateLobbyModePatch`
+  (in the shared library, `library/src/Patches/`):
 
   ```csharp
   [HarmonyPatch(typeof(UI_Title_CreateLobbyView))]
   internal static class CreateLobbyModePatch
   {
       [HarmonyPostfix]
-      [HarmonyPatch(GameNames.CreateLobbyShow)]
+      [HarmonyPatch(SharedGameNames.CreateLobbyShow)]
       private static void OnShow_Postfix(UI_Title_CreateLobbyView __instance) { ... }
 
       [HarmonyPostfix]
-      [HarmonyPatch(GameNames.CreateLobbyUpdateState)]
+      [HarmonyPatch(SharedGameNames.CreateLobbyUpdateState)]
       private static void UpdateUIState_Postfix(UI_Title_CreateLobbyView __instance) { ... }
   }
   ```
@@ -276,7 +279,7 @@ session says no:
 [HarmonyPrefix]
 private static bool Prefix()
 {
-    return !LastStandMode.IsHosting() || LastStandMod.Current?.Session?.AllowsRoomClear() != false;
+    return !ModMode.IsHosting() || LastStandMod.Current?.Session?.AllowsRoomClear() != false;
 }
 ```
 
@@ -348,7 +351,7 @@ internal static class KillGoldPatch
     [HarmonyPostfix]
     private static void Postfix(ref int __result)
     {
-        if (__result <= 0 || !LastStandMode.IsHosting())
+        if (__result <= 0 || !ModMode.IsHosting())
         {
             return;
         }
@@ -394,7 +397,7 @@ internal static class HatredShardUsePatch
     [HarmonyPrefix]
     private static void Prefix(Shrine_Hatred_Reward __instance)
     {
-        if (LastStandMode.IsHosting())
+        if (ModMode.IsHosting())
         {
             LastStandMod.Current?.Session?.OnHatredShardOpening(__instance);
         }
@@ -523,15 +526,14 @@ machine.
 ### 4.2 Private and protected members: one table of strings
 
 `nameof` does not compile on a member you can't access (`CS0122`), so
-`private` and `protected` targets need string names. Last Stand keeps every
-such name in one file, `src/Game/GameNames.cs`:
+`private` and `protected` targets need string names. Last Stand keeps its
+own in one file, `src/Game/GameNames.cs`:
 
 ```csharp
 internal static class GameNames
 {
     public const string CurseOnCreate = "OnCreate";
     public const string HatredDoCurse = "DoCurse";
-    public const string GenerateWorld = "GenerateWorld_Imp";
     public const string EntityOnDeath = "OnDeath";
     public const string ShrineUseCounts = "_useCountByPlayer";
     public const string ShrineOnUse = "OnUse";
@@ -541,10 +543,12 @@ internal static class GameNames
 }
 ```
 
-After a game update, that file is the checklist: each string is a name the
-compiler can't verify, so grep the new decompile for each one. Where a
-member is public, prefer `nameof` even inside this file
-(`nameof(RoomMod_AcceleratedTime)`).
+Names both mods use (`GenerateWorld_Imp`, the Create Lobby and lobby
+settings methods) are in the shared library's
+`library/src/Game/SharedGameNames.cs`. After a game update, those two files
+are the checklist: each string is a name the compiler can't verify, so grep
+the new decompile for each one. Where a member is public, prefer `nameof`
+even inside these files (`nameof(RoomMod_AcceleratedTime)`).
 
 ### 4.3 Overloads: give the argument types
 
@@ -925,7 +929,7 @@ internal static class ArenaShrineUsePatch
     [HarmonyPostfix]
     private static void Postfix(Shrine __instance, Entity entity)
     {
-        if (LastStandMode.IsHosting())
+        if (ModMode.IsHosting())
         {
             LastStandMod.Current?.Session?.OnShrineUsed(__instance, entity);
         }
@@ -1023,7 +1027,7 @@ sequence is unchanged for everything after it.
 [HarmonyPostfix]
 private static void Postfix(Shrine_Chaos __instance)
 {
-    if (LastStandMode.IsHosting())
+    if (ModMode.IsHosting())
     {
         LastStandMod.Current?.Session?.RerollChaos(__instance);
     }
@@ -1093,7 +1097,7 @@ internal static class CurseGoalPatch
     [HarmonyPostfix]
     private static void Postfix(CurseStatusEffect __instance)
     {
-        if (NetworkServer.active && LastStandMode.IsHosting())
+        if (NetworkServer.active && ModMode.IsHosting())
         {
             LastStandMod.Current?.Session?.OnCurseCreated(__instance);
         }
@@ -1267,7 +1271,7 @@ internal static class ModifierGatePatch
     [HarmonyPrefix]
     private static bool Prefix(ZoneManager __instance, int nodeIndex, ModifierData mod, ref int __result)
     {
-        if (!LastStandMode.IsHosting() || LastStandMod.Current?.Session?.AllowsModifier(__instance, nodeIndex, mod.type) != false)
+        if (!ModMode.IsHosting() || LastStandMod.Current?.Session?.AllowsModifier(__instance, nodeIndex, mod.type) != false)
         {
             return true;
         }
@@ -1436,7 +1440,7 @@ internal static class HeroicBossDeathPatch
     [HarmonyPrefix]
     private static bool Prefix(BossMonster __instance, EventInfoKill info)
     {
-        if (!LastStandMode.IsHosting() || LastStandMod.Current?.Session?.OwnsHeroicBoss(__instance) != true)
+        if (!ModMode.IsHosting() || LastStandMod.Current?.Session?.OwnsHeroicBoss(__instance) != true)
         {
             return true;
         }
@@ -1516,10 +1520,13 @@ instance state anyway.
 
 ### 7.2 Guard: "am I the server, and is my mode on?"
 
-Every patch runs for every call in every context (1.2). Last Stand's guard:
+Every patch runs for every call in every context (1.2). Last Stand's guard,
+`ModMode`, now in the shared library (`library/src/Mode/ModMode.cs`); each
+mod's DLL compiles its own copy, which compares with that mod's
+`ModIdentity.SaveKey`:
 
 ```csharp
-internal static class LastStandMode
+internal static class ModMode
 {
     public static bool IsSelected()
     {
@@ -1557,7 +1564,7 @@ and log with a throttle if it can repeat:
 [HarmonyPrefix]
 private static bool Prefix(Se_HeroKnockedOut __instance)
 {
-    if (!LastStandMode.IsHosting())
+    if (!ModMode.IsHosting())
     {
         return true;
     }
@@ -1581,10 +1588,11 @@ section 6.1).
 
 ### 7.4 Idempotence
 
-A hook can fire more often than the event you care about. `LobbySettingsPatch`
-patches both `Start` and `OnEnable` of `UI_Lobby_SettingsWindow`, so the
-injection runs on every opening; `LobbyConfigButton.Ensure` checks for its
-own button (named with a fixed suffix) before creating one. A death handler
+A hook can fire more often than the event you care about.
+`LobbySettingsPatch` (shared library) patches both `Start` and `OnEnable` of
+`UI_Lobby_SettingsWindow`, so the injection runs on every opening;
+`LobbyConfigButton.Ensure` checks for its own button (named with a fixed
+suffix) before creating one. A death handler
 can see the same entity twice (a kill and a cleanup). Write handlers so a
 second call changes nothing.
 
