@@ -10,17 +10,25 @@ internal sealed class SpawnQueue
 	private const double NotScheduled = -1;
 
 	private readonly List<EnemyTier> _released = new List<EnemyTier>();
+	private readonly Queue<double> _bossEntrances = new Queue<double>();
 	private double _nextReleaseAt;
+	private double _firstReleaseAt = NotScheduled;
 	private int _finale;
 	private double _finaleAt = NotScheduled;
 
-	public int PendingCount => _pending.Count + _finale;
+	public int PendingCount => _pending.Count + _finale + _bossEntrances.Count;
 
-	public void Enqueue(WavePlan plan)
+	public void Enqueue(WavePlan plan, IReadOnlyList<double> bossEntranceSeconds)
 	{
-		_finale = plan.HeroicBossCount - plan.EarlyHeroicBossCount;
+		_bossEntrances.Clear();
+		foreach (double seconds in bossEntranceSeconds)
+		{
+			_bossEntrances.Enqueue(seconds);
+		}
+
+		_finale = plan.HeroicBossCount - _bossEntrances.Count;
 		_finaleAt = NotScheduled;
-		Add(EnemyTier.HeroicBoss, plan.EarlyHeroicBossCount);
+		_firstReleaseAt = NotScheduled;
 		Add(EnemyTier.Pain, plan.PainCount);
 		Add(EnemyTier.MiniBoss, plan.MiniBossCount);
 		AddMixed(EnemyTier.Hunter, plan.HunterCount, EnemyTier.Regular, plan.RegularCount);
@@ -28,7 +36,7 @@ internal sealed class SpawnQueue
 
 	public bool HasPending(EnemyTier tier)
 	{
-		if (tier == EnemyTier.HeroicBoss && _finale > 0)
+		if (tier == EnemyTier.HeroicBoss && (_finale > 0 || _bossEntrances.Count > 0))
 		{
 			return true;
 		}
@@ -54,6 +62,7 @@ internal sealed class SpawnQueue
 			return _released;
 		}
 
+		ReleaseBossesDue(now);
 		if (now < _nextReleaseAt)
 		{
 			return _released;
@@ -69,6 +78,10 @@ internal sealed class SpawnQueue
 		if (_released.Count > 0)
 		{
 			_nextReleaseAt = now + intervalSeconds;
+			if (_firstReleaseAt == NotScheduled)
+			{
+				_firstReleaseAt = now;
+			}
 		}
 
 		return _released;
@@ -78,13 +91,27 @@ internal sealed class SpawnQueue
 	{
 		_pending.Clear();
 		_released.Clear();
+		_bossEntrances.Clear();
 		_nextReleaseAt = 0;
+		_firstReleaseAt = NotScheduled;
 		_finale = 0;
 		_finaleAt = NotScheduled;
 	}
 
+	private void ReleaseBossesDue(double now)
+	{
+		while (_firstReleaseAt != NotScheduled && _bossEntrances.Count > 0 &&
+		       now >= _firstReleaseAt + _bossEntrances.Peek())
+		{
+			_bossEntrances.Dequeue();
+			_released.Add(EnemyTier.HeroicBoss);
+		}
+	}
+
 	private void ReleaseFinale(double now, double delaySeconds)
 	{
+		_finale += _bossEntrances.Count;
+		_bossEntrances.Clear();
 		if (_finale == 0)
 		{
 			return;

@@ -403,13 +403,13 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HeroicBossDelayDescription)]
 	public float heroicBossEntranceDelaySeconds = 3f;
 
-	[LabelText(ConfigText.HeroicBossEarlyFromWaveLabel)]
-	[Description(ConfigText.HeroicBossEarlyFromWaveDescription)]
-	public int heroicBossEarlyFromWave = 125;
+	[LabelText(ConfigText.HeroicBossWindowFromWaveLabel)]
+	[Description(ConfigText.HeroicBossWindowFromWaveDescription)]
+	public int heroicBossWindowFromWave = 125;
 
-	[LabelText(ConfigText.HeroicBossEarlyChanceLabel)]
-	[Description(ConfigText.HeroicBossEarlyChanceDescription)]
-	public float heroicBossEarlyChancePercent = 50f;
+	[LabelText(ConfigText.HeroicBossWindowSecondsLabel)]
+	[Description(ConfigText.HeroicBossWindowSecondsDescription)]
+	public float heroicBossWindowSeconds = 60f;
 
 	[LabelText(ConfigText.HeroicBossAbilityHasteLabel)]
 	[Description(ConfigText.HeroicBossAbilityHasteDescription)]

@@ -108,15 +108,16 @@ internal static class ConfigText
 
 	public const string MaxHeroicBossesDescription = "Heroic boss cap per wave.";
 
-	public const string HeroicBossEarlyFromWaveLabel = "Heroic bosses may come early from wave";
+	public const string HeroicBossWindowFromWaveLabel = "Heroic bosses enter mid-wave from wave";
 
-	public const string HeroicBossEarlyFromWaveDescription =
-		"From this wave each heroic boss can enter with the wave's first spawns instead of after the last monster.";
+	public const string HeroicBossWindowFromWaveDescription =
+		"From this wave each heroic boss enters at a random moment while the wave's monsters spawn, not last.";
 
-	public const string HeroicBossEarlyChanceLabel = "Heroic boss early chance (%)";
+	public const string HeroicBossWindowSecondsLabel = "Heroic boss entrance window (s)";
 
-	public const string HeroicBossEarlyChanceDescription =
-		"Chance per heroic boss to enter first. 0 = always last, 100 = always first.";
+	public const string HeroicBossWindowSecondsDescription =
+		"Each boss enters a random 0 to N s after the wave's first spawn. If the monsters finish spawning " +
+		"first, it enters after the last one. 0 = always last.";
 
 	public const string HeroicBossDelayLabel = "Heroic boss entrance delay (s)";
 

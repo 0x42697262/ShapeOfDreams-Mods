@@ -1179,15 +1179,17 @@ Each answer still needs to be seen working:
     heroic bosses included, has about 1.5× the health of the same kind at
     wave 201 (`empowered=x1`). Wave 205 isn't empowered, 210 is. Set the
     multiplier to 1: no empowered text and `empowered=x1`.
-110. **Early heroic bosses** (schema 49): a new config shows `Heroic
-    bosses may come early from wave` 125 and `Heroic boss early chance
-    (%)` 50. `laststand_wave 100` always logs `earlyHeroic=0` and both
-    bosses come last. `laststand_wave 125` a few times: `earlyHeroic=` is
-    0 to 3, that many bosses enter (chat notice, spawn animation) with the
-    first monsters, chat says "N heroic boss(es) right away", and the rest
-    come after the last monster. Pain minibosses still spawn, the wave only
-    clears when every boss is dead, and the heroic fast kill still
-    measures. Chance 100: every boss is early; 0: none.
+110. **Mid-wave heroic bosses** (schema 50): a new config shows `Heroic
+    bosses enter mid-wave from wave` 125 and `Heroic boss entrance window
+    (s)` 60. `laststand_wave 100` logs `heroicWindow=0s` and both bosses
+    come after the last monster. `laststand_wave 125` logs
+    `heroicWindow=60s`, chat says "3 heroic boss(es) at any moment", and
+    the bosses enter one by one at different times while monsters are
+    still spawning (chat notice and spawn animation each), none before the
+    first monster. Kill fast so spawning ends early: the bosses still
+    waiting enter about 3 s after the last monster. The wave only clears
+    when every boss is dead, and the heroic fast kill still measures.
+    Window 0: every boss comes last.
 111. **Sidebar names on one line** (library): in the settings panel
     "Environments" sits on one line at the same size as "Fast clear", and
     no page name wraps or is cut off.

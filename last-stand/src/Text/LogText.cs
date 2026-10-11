@@ -353,7 +353,7 @@ internal static class LogText
 		return $"wave {plan.Number}: regular={plan.RegularCount} surge={plan.IsSurge} hunter={plan.HunterCount} " +
 		       $"merged={plan.UnmergedMobCount}/x{plan.MergeMultiplier:0.##} " +
 		       $"miniboss={plan.MiniBossCount} pain={plan.PainCount} heroic={plan.HeroicBossCount} " +
-		       $"earlyHeroic={plan.EarlyHeroicBossCount} " +
+		       $"heroicWindow={plan.HeroicBossWindowSeconds:0}s " +
 		       $"heroicHaste={plan.HeroicBossHaste:0} " +
 		       $"ambient={plan.AmbientLevel} " +
 		       $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " +

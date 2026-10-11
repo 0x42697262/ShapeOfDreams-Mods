@@ -124,7 +124,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Heroic bosses | First wave / every N waves / extra per boss wave / max | 50 / 50 / 1 / 10 |
 | | More often from wave / every N waves after that | 100 / 25 |
 | | Entrance delay | 3 s |
-| | May come early from wave / early chance per boss | 125 / 50% |
+| | Enter mid-wave from wave / entrance window | 125 / 60 s |
 | | Ability haste / more per later boss wave | +200 / +50 |
 | | Health / damage multiplier | ×5 / ×8 |
 | | Fast kill: seconds per boss / burst window / largest step | 90 s / 5 s / ×10 |

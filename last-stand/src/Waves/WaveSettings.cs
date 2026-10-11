@@ -75,9 +75,9 @@ internal sealed class WaveSettings
 
 	public int MaxHeroicBosses { get; set; }
 
-	public int HeroicBossEarlyFromWave { get; set; }
+	public int HeroicBossWindowFromWave { get; set; }
 
-	public double HeroicBossEarlyChance { get; set; }
+	public double HeroicBossWindowSeconds { get; set; }
 
 	public double HeroicBossEntranceDelaySeconds { get; set; }
 

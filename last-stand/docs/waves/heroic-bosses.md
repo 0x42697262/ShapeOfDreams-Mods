@@ -23,19 +23,29 @@ spawned. Then, after 3 more seconds, it enters with a chat notice and plays its
 own spawn animation (its `Spawn` ability). It spawns at a random spot like any
 monster, heads for the nearest hero, and counts toward clearing the wave.
 
-**Early bosses from wave 125.** From `Heroic bosses may come early from
-wave` (125), each heroic boss rolls `Heroic boss early chance (%)` (50%)
-when the wave starts. A boss that rolls early is queued ahead of every
-other spawn and enters with the wave's first batch, with the same chat
-notice and spawn animation but no extra delay; the rest still come last as
-above. So a 3-boss wave can open with 0 to 3 bosses. The roll is
-`WaveSchedule.EarlyHeroicBosses` (one roll per boss, passed in by the
-director), and the count lands in `WavePlan.EarlyHeroicBossCount`:
-`SpawnQueue` puts that many `HeroicBoss` entries at the front and keeps the
-rest as the finale. The log's `wave N:` line shows `earlyHeroic=`, and the
-chat wave line says "N heroic boss(es) right away". An early boss still
-gets the merged-wave health floor: the floor check runs every second and
-raises it as soon as the wave's first monsters are out.
+**Mid-wave entrances from wave 125.** From `Heroic bosses enter mid-wave
+from wave` (125), each heroic boss gets a random entrance time when the
+wave starts: 0 to `Heroic boss entrance window (s)` (60) seconds after the
+wave's first spawn, rolled separately per boss. When its time comes it
+enters with the usual chat notice and spawn animation, while the wave's
+monsters are still arriving. If the monsters all finish spawning before a
+boss's time, that boss enters after the last one instead, 3 s later, as
+before wave 125. So a boss always enters between the wave's first and last
+spawn (or right after the last). A window of 0 keeps every boss last.
+
+Why seconds and not a share of the wave: how long spawning takes isn't
+known when the wave starts, since the alive cap (35) makes new monsters
+wait for kills. A fast party finishes spawning sooner, so more bosses fall
+through to the end; a slow one meets them mid-wave.
+
+`WaveSchedule.HeroicBossEntranceSeconds` rolls the times (one roll per
+boss, passed in by the director, sorted), and `SpawnQueue` holds them: it
+notes the time of the first release and lets each boss out once its offset
+has passed, outside the alive cap, like the finale. When the last monster
+has been released, any boss still waiting joins the finale. The log's
+`wave N:` line shows `heroicWindow=60s` (0 before wave 125), and the chat
+wave line says "N heroic boss(es) at any moment". An entering boss still
+gets the merged-wave health floor: the floor check runs every second.
 
 **Which boss.** A random one from `Heroic boss types`, by default the zone
 bosses of Forest, Dark Cave, Despair (Azurak), Sky, Snow Mountain and Lava

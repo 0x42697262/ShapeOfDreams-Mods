@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace LastStand.Waves;
 
@@ -59,8 +60,8 @@ internal static class WaveSchedule
 			PainCount = pain,
 			HeroicBossCount = heroic,
 			HeroicBossHaste = HeroicBossHaste(wave, settings),
-			HeroicBossEarlyChance = heroic > 0 && wave >= settings.HeroicBossEarlyFromWave
-				? settings.HeroicBossEarlyChance
+			HeroicBossWindowSeconds = heroic > 0 && wave >= settings.HeroicBossWindowFromWave
+				? settings.HeroicBossWindowSeconds
 				: 0,
 			AmbientLevel = settings.StartingAmbientLevel + wavesSinceFirst / settings.WavesPerAmbientLevel,
 			MaxAlive = (int)Math.Round(
@@ -150,18 +151,21 @@ internal static class WaveSchedule
 		return plan != null && plan.HasBoss ? settings.BossIntermissionSeconds : settings.IntermissionSeconds;
 	}
 
-	public static int EarlyHeroicBosses(int bosses, double chance, Func<double> roll)
+	public static List<double> HeroicBossEntranceSeconds(int bosses, double windowSeconds, Func<double> roll)
 	{
-		int early = 0;
-		for (int boss = 0; boss < bosses; boss++)
+		List<double> entrances = new List<double>();
+		if (windowSeconds <= 0)
 		{
-			if (chance > 0 && roll() < chance)
-			{
-				early++;
-			}
+			return entrances;
 		}
 
-		return early;
+		for (int boss = 0; boss < bosses; boss++)
+		{
+			entrances.Add(roll() * windowSeconds);
+		}
+
+		entrances.Sort();
+		return entrances;
 	}
 
 	public static double HeroicBossHaste(int wave, WaveSettings settings)

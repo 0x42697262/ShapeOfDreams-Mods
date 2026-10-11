@@ -32,8 +32,8 @@ essences and turns what you collect into upgrades.
   Corrupted Chaos rewards, the kind Pain minibosses leave, and the stardust
   a boss kill gives in a normal run. Kill them too fast (under 90 s each at
   your best burst) and later heroic bosses come back with more health.
-  From wave 125 each one may storm in at the start of the wave instead of
-  last (50% chance per boss).
+  From wave 125 each one storms in at a random moment while the wave's
+  monsters are still spawning, not last.
 - **Pain minibosses** change the rules while they live: every hero takes
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.
