@@ -1,6 +1,6 @@
 [list]
 [*]New: world scaling. Monster stats now follow the game's own world scaling instead of +10% health and damage per wave (+50% from wave 150): 1 world higher every 25 waves, and from wave 200 1 world every 2 waves. Loot, gold and prices stay at the run's world. Set "Worlds per step" and "Faster: worlds per step" to 0 to turn it off.
-[*]The wave's chat line now says which world the monsters fight like (and the heroic bosses, on boss waves).
+[*]The wave's chat line now ends with "Difficulty: X.X", the world the monsters fight at (and the heroic bosses', on boss waves).
 [*]Removed fast clear: clearing a wave fast no longer raises monster health and damage, and the Fast clear settings page is gone.
 [*]Removed empowered waves (were x1.5 health and damage every 10 waves from wave 200). Wave 200 now announces the faster world rise instead.
 [*]Heroic bosses now come every 25 waves from wave 25 (was 50, 100, then every 25), one more each boss wave: 1 at 25, 2 at 50, 3 at 75 … up to 10 from wave 250 (was 300).

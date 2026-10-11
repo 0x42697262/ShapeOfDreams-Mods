@@ -1182,7 +1182,7 @@ Each answer still needs to be seen working:
     shows `world=1` at wave 1, `world=2` at 26, `world=5` at 101,
     `world=8.96` at 200 and `world=13.96` at 210, and no `health=`,
     `damage=`, `empowered=` or `fastClear=`. Chat's wave line ends with
-    "Monsters fight like world X.X". A wave 26 regular monster has about
+    "Difficulty: 2.0". A wave 26 regular monster has about
     1.7× the max health it would have at world 1 at the same monster level
     (Nightmare). Gold prices, loot and the
     top-right label stay at the run's world. Starting world 5: wave 26 shows

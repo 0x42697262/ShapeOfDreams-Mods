@@ -42,7 +42,7 @@ can sit higher after a [fast kill](../waves/heroic-bosses.md)):
 |---|---|---|---|---|---|---|---|---|---|---|
 | Monster world | 1 | 2 | 3 | 5 | 7 | 9 | 14 | 19 | 34 | 59 |
 
-The chat line of every wave says "Monsters fight like world X.X", and the
+The chat line of every wave ends with "Difficulty: X.X" (the monster world), and the
 `wave N:` log line shows `world=`.
 
 The index also moves everything else the game ties to the world number:

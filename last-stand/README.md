@@ -19,7 +19,7 @@ essences and turns what you collect into upgrades.
   they fight like one world higher every 25 waves, a little more each
   wave, and from wave 200 one world higher every 2 waves. Only their
   stats climb; loot, gold and prices stay at the run's world. The wave's
-  chat line tells you which world they fight like.
+  chat line shows it as "Difficulty: X.X", the world they fight at.
 - **Curse to start** (difficulty option, off by default): no wave timer.
   Each wave waits until a player takes a curse at the Hatred Remnant, which
   curses every player, each with a different curse.

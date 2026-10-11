@@ -69,8 +69,8 @@ internal static class Messages
 		}
 
 		text += plan.HeroicBossCount > 0
-			? $" Monsters fight like world {plan.MonsterWorld:0.#}, heroic bosses like world {plan.HeroicBossWorld:0.#}."
-			: $" Monsters fight like world {plan.MonsterWorld:0.#}.";
+			? $" Difficulty: {plan.MonsterWorld:0.0}, heroic bosses {plan.HeroicBossWorld:0.0}."
+			: $" Difficulty: {plan.MonsterWorld:0.0}.";
 
 		if (plan.NewForeignTypes)
 		{

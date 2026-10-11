@@ -166,8 +166,8 @@ works through these knobs, all using systems the game already syncs:
   their own raise from the heroic fast kill (see [Heroic
   bosses](heroic-bosses.md)).
 
-  Chat's wave line ends with "Monsters fight like world X.X" (and
-  "heroic bosses like world Y.Y" on a heroic wave), and the `wave N:` log
+  Chat's wave line ends with "Difficulty: X.X", the monster world (and
+  "Difficulty: X.X, heroic bosses Y.Y" on a heroic wave), and the `wave N:` log
   line shows `world=` and `heroicWorld=`. Both count from the run's real
   world, so with `Starting world` 5, wave 26 is world 6.
 
