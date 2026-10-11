@@ -209,10 +209,11 @@ Hard rules for all code here, the library included.
   Workshop change note (check the item's Change Notes page after the
   upload, and paste it in by hand if it's missing). It covers only what
   changed since the last upload, written like a dev's patch notes, not a
-  press release. The first line is the version in bold, `[b]vX.Y.Z[/b]`,
-  matching `modVer`. The next line is a one-sentence summary of the
-  release in plain text, so two bold lines never sit right on top of each
-  other. Then up to three sections, in this order and only the
+  press release. The first line is the version as a heading,
+  `[h2]vX.Y.Z[/h2]`, matching `modVer`, so it stands apart from the bold
+  section names below it. A one-sentence plain summary may follow on the
+  next line for a big release; skip it for a small one. Then up to three
+  sections, in this order and only the
   ones with entries, each a bold heading on its own line followed by a
   Steam BBCode `[list]` of one-line bullets:
   - `[b]New[/b]`: new features. If one is on by default, say how to turn
@@ -226,9 +227,7 @@ Hard rules for all code here, the library included.
   `ConfigSchema.Current` changed since the last upload, then `Only the
   host needs to update.` Example:
   ```
-  [b]v0.12.0[/b]
-  A random arena option, faster monster climb and a lobby fix.
-
+  [h2]v0.12.0[/h2]
   [b]New[/b]
   [list]
   [*]Random arena: each run picks a random world's boss room from the worlds you tick. Off by default.
