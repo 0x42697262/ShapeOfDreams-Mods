@@ -74,9 +74,10 @@ only the camp and the arena, see [Camp](../camp/camp.md)). The requester
 counts as agreeing, Tab agrees, Esc cancels. The command runs on the host,
 and its only test is `ZoneManager.ShouldVoteOnTravel()`: a vote when the
 lobby's `Enable votes` is on and two or more heroes stand, otherwise
-straight travel. The library's `TravelVotePatch` (a prefix on it) asks the
-mod through its `SkipTravelVote` override; Dream Arena answers no, so the
-game's rule applies, and `-restart` uses the same rule. Last Stand answers
+straight travel. The library's `TravelVotes` asks the mod through its
+`SkipTravelVote` override every frame and, on a yes, sets the method's
+`forceVoteForDebug` field to false; Dream Arena answers no, so the field is
+left alone and the game's rule applies, and `-restart` uses the same rule. Last Stand answers
 yes and never votes. The synced `GameSettingsManager.enableVotes` is left
 alone on purpose: the lobby saves it as the host's preference, so changing
 it would carry into normal runs.

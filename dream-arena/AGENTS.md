@@ -147,6 +147,9 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
 23. **Arena room kept** (library): with `Force arena room` on, the rift out
     of camp lands in the chosen boss room; if anything removed it, the log
     shows `arena room: an arena node had lost ...; applied it again.`
+24. **Rift vote still on** (library, `TravelVotes`): with two players
+    standing and `Enable votes` on, the camp rift still starts a vote; no
+    `travel votes: off` line in the log.
 
 ## Conventions
 

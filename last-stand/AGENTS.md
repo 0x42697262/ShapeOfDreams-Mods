@@ -336,7 +336,8 @@ These were checked in the decompiled code.
 - **Camp rift.** `Rift_RoomExit.nextNodeIndex` is a SyncVar. When it is set, the
   rift's interaction confirms and calls `CmdTravelToNode` instead of opening
   the world map. `ZoneManager.ShouldVoteOnTravel()` is the host's only test for
-  turning a travel into a world-map vote.
+  turning a travel into a world-map vote, and it returns the public, unsynced
+  `forceVoteForDebug` first when that's set (`TravelVotes` uses it).
 - **Hunters.** `Se_HunterBuff` sets `Monster.isHunter`, doubles population
   cost, adds speed, attack speed and haste, enables shadow walk and turns off
   gold and exp drops. `RoomMonsters` gives it to normal spawns by
@@ -1231,6 +1232,11 @@ Each answer still needs to be seen working:
 122. **Version line** (library): at the start of the camp, chat shows
     "Last Stand v0.9.0" in light blue, once, and the log shows `version:
     announced v0.9.0 in chat.` Continuing a saved run shows it again.
+123. **No travel vote, no Harmony** (library): host with 2+ players, both
+    standing, `Enable votes` on in the lobby. A client takes the camp rift:
+    no vote, everyone travels to the boss arena at once. The log shows
+    `travel votes: off on the host for this run` once. Unload the mod in a
+    normal run afterward: votes come back.
 
 ## Conventions
 

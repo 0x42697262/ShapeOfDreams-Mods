@@ -53,6 +53,7 @@ public abstract class ModEntry : ModBehaviour
 		try
 		{
 			OnTick(Time.time);
+			TravelVotes.Tick(ModMode.IsHosting() && SkipsTravelVote());
 		}
 		catch (Exception e)
 		{
@@ -63,6 +64,7 @@ public abstract class ModEntry : ModBehaviour
 	protected void OnDestroy()
 	{
 		OnUnloading();
+		TravelVotes.Release();
 		ConfigWindow.Close();
 		InjectedUi.RemoveAll();
 		LobbyModeOption.Detach();

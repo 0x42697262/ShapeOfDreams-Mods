@@ -46,10 +46,15 @@ now leads straight to node N.` It also hides the other world-map nodes
 
 In multiplayer, a confirmed travel normally still goes to a vote, which opens
 the world map for everyone with a 6-second countdown. The host decides that
-in `ZoneManager.ShouldVoteOnTravel()`. The library's `TravelVotePatch` asks
-the mod through its `SkipTravelVote` override; Last Stand's answers yes
-(there's only the one rift, always to the arena), so it returns false and the
-party travels at once. Dream Arena answers no and keeps the vote. The synced
+in `ZoneManager.ShouldVoteOnTravel()`, whose first test is the public,
+unsynced `forceVoteForDebug` field. Every frame the library's `TravelVotes`
+asks the mod through its `SkipTravelVote` override; Last Stand's answers yes
+(there's only the one rift, always to the arena), so on the host it sets
+`forceVoteForDebug = false` and the party travels at once. It used to be a
+Harmony prefix on `ShouldVoteOnTravel`, which didn't take effect in a
+multiplayer run where a client's rift opened a vote; the field needs no patch.
+Log, once per run: `travel votes: off on the host for this run`. Unloading
+the mod sets the field back to null. Dream Arena answers no and keeps the vote. The synced
 `GameSettingsManager.enableVotes` is left alone on purpose: the lobby saves
 it as the host's preference, so clearing it would carry into normal runs.
 
