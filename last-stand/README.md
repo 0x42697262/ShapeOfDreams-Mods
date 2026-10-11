@@ -12,7 +12,9 @@ essences and turns what you collect into upgrades.
 ## Features
 
 - One arena, no travel. The fight happens in a boss room with the boss
-  removed, to that room's own boss music, for every player.
+  removed, to that room's own boss music, for every player. Primus's boss
+  room by default; the host can pick another world's, or turn on
+  **Random arena** to get a random world's boss room each run.
 - A new wave starts **once the last one is cleared**, after a short break.
   Each wave is bigger and stronger than the last.
 - Monsters get **stronger every wave by the game's own world scaling**:

@@ -117,7 +117,7 @@ internal sealed class LastStandSession
 			_version.Tick();
 			if (_campRift.Tick(now))
 			{
-				ArenaRooms.EnsureApplied(_settings.ArenaRoom, _settings.StripRoomModifiers);
+				ArenaRooms.EnsureApplied(_settings.ArenaRooms, _settings.StripRoomModifiers);
 			}
 
 			return;
@@ -291,7 +291,7 @@ internal sealed class LastStandSession
 
 	public void ApplyArenaRoom()
 	{
-		ArenaRooms.Apply(_settings.ArenaRoom, _settings.StripRoomModifiers);
+		ArenaRooms.Apply(_settings.ArenaRooms, _settings.StripRoomModifiers);
 	}
 
 	public bool AllowsModifier(ZoneManager zones, int nodeIndex, string modifierType)

@@ -17,6 +17,15 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.ArenaRoomDescription)]
 	public string arenaRoom = SharedGameNames.DefaultArenaRoom;
 
+	[LabelText(ConfigText.RandomArenaRoomLabel)]
+	[Description(ConfigText.RandomArenaRoomDescription)]
+	public bool randomArenaRoom;
+
+	[PickMany(ChoiceSet.ArenaRooms)]
+	[LabelText(ConfigText.RandomArenaRoomsLabel)]
+	[Description(ConfigText.RandomArenaRoomsDescription)]
+	public string randomArenaRooms = SharedGameNames.AllArenaRooms;
+
 	[LabelText(ConfigText.StartingWorldLabel)]
 	[Description(ConfigText.StartingWorldDescription)]
 	public int startingWorld = 1;

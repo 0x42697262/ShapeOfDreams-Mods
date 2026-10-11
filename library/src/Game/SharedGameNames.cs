@@ -20,6 +20,10 @@ internal static class SharedGameNames
 
 	public const string DefaultArenaRoom = PrimusArenaRoom;
 
+	public const string AllArenaRooms =
+		PrimusArenaRoom + ", " + ForestArenaRoom + ", " + DarkCaveArenaRoom + ", " + DespairArenaRoom + ", " +
+		SkyArenaRoom + ", " + SnowMountainArenaRoom + ", " + LavaLandArenaRoom + ", " + InkArenaRoom;
+
 	public const string CreateLobbyShow = "OnShow";
 
 	public const string CreateLobbyState = "_state";

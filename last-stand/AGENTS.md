@@ -1237,6 +1237,13 @@ Each answer still needs to be seen working:
     no vote, everyone travels to the boss arena at once. The log shows
     `travel votes: off on the host for this run` once. Unload the mod in a
     normal run afterward: votes come back.
+124. **Random arena** (off by default): with it off, every run lands in
+    `Arena room`. Turn on `Random arena`, tick Forest and Snow Mountain only,
+    and start a few runs: each lands in one of those two boss rooms, the log
+    shows `arena room: picked '<room>' at random from 2 room(s) for this
+    run.` once at world gen, and no `had lost` warning follows in camp.
+    Untick all worlds: runs use `Arena room` again. Continue a saved run:
+    same room as before, no new pick.
 
 ## Conventions
 

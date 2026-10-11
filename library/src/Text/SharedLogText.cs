@@ -55,6 +55,11 @@ internal static class SharedLogText
 		return $"version: announced v{version} in chat.";
 	}
 
+	public static string ArenaRoomPicked(string room, int choices)
+	{
+		return $"arena room: picked '{room}' at random from {choices} room(s) for this run.";
+	}
+
 	public static string ArenaRoomRestored(string room)
 	{
 		return $"arena room: an arena node had lost '{room}' before the camp rift opened; applied it again.";

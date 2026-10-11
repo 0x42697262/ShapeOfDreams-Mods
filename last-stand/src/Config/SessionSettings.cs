@@ -10,7 +10,7 @@ internal sealed class SessionSettings
 {
 	private const int MinimumStep = 1;
 
-	public string ArenaRoom { get; }
+	public IReadOnlyList<string> ArenaRooms { get; }
 
 	public double FirstWaveDelaySeconds { get; }
 
@@ -62,7 +62,7 @@ internal sealed class SessionSettings
 
 	public LootSettings Loot { get; }
 
-	private SessionSettings(string arenaRoom, double firstWaveDelaySeconds, bool showWaveInQuestTracker, int startingWorld,
+	private SessionSettings(IReadOnlyList<string> arenaRooms, double firstWaveDelaySeconds, bool showWaveInQuestTracker, int startingWorld,
 		bool dreamWell, bool altarOfCleansing, bool shrineOfAscension, bool mawOfDoom, bool shrineOfDestiny,
 		int destinyClaimsPerWave, bool hatredRemnant, int hatredDreamDustPerWave, int hatredGoldPerWave,
 		bool reminiscenceOfLuck, CurseSettings curses, Cadence ascensionResetWaves, GoldPriceRule goldPrices,
@@ -86,7 +86,7 @@ internal sealed class SessionSettings
 		StartingDreamDust = startingDreamDust;
 		CheatCommands = cheatCommands;
 		MaxKillGoldPerPlayer = maxKillGoldPerPlayer;
-		ArenaRoom = arenaRoom;
+		ArenaRooms = arenaRooms;
 		FirstWaveDelaySeconds = firstWaveDelaySeconds;
 		ShowWaveInQuestTracker = showWaveInQuestTracker;
 		StartingWorld = startingWorld;
@@ -99,7 +99,7 @@ internal sealed class SessionSettings
 
 	public static SessionSettings From(LastStandConfig config)
 	{
-		return new SessionSettings(config.arenaRoom, Math.Max(0f, config.firstWaveDelaySeconds),
+		return new SessionSettings(ArenaRoomsFrom(config), Math.Max(0f, config.firstWaveDelaySeconds),
 			config.showWaveInQuestTracker, Math.Max(Tuning.MinStartingWorld, config.startingWorld), config.dreamWell,
 			config.altarOfCleansing, config.shrineOfAscension, config.mawOfDoom, config.shrineOfDestiny,
 			Math.Max(Tuning.MinimumDestinyClaims, config.destinyClaimsPerWave),
@@ -265,6 +265,14 @@ internal sealed class SessionSettings
 			itemRarityFloor: ToChance(Math.Max(0f, config.itemRarityFloorPercent)),
 			freeLeftoverItems: config.freeLeftoverItemsAtWaveEnd,
 			itemDrops: config.monsterItemDrops);
+	}
+
+	private static IReadOnlyList<string> ArenaRoomsFrom(LastStandConfig config)
+	{
+		IReadOnlyList<string> picked = config.randomArenaRoom
+			? KnownChoices(config.randomArenaRooms, ChoiceSet.ArenaRooms)
+			: null;
+		return picked != null && picked.Count > 0 ? picked : new[] { config.arenaRoom };
 	}
 
 	private static IReadOnlyList<string> ListFrom(string text)

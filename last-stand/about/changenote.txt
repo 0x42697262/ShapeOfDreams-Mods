@@ -8,6 +8,7 @@
 [*]Heroic bosses no longer get x5 health and x8 damage, or at least 20x the toughest monster's health on merged waves. They fight at the wave's world like every other monster.
 [*]Heroic fast kill now times all of a wave's heroic bosses together: "Heroic fast kill: seconds for all bosses" is 90 (was 90 per boss). A fast kill now sends later heroic bosses from a stronger world, so their damage rises with their health.
 [*]Heroic fast kill's largest step is now x100 (was x50).
+[*]New: Random arena. Each run picks a random world's boss room from the worlds you tick. Off by default.
 [*]New: the camp posts the mod's version in chat at the start of each run.
 [*]Fixed: the Last Stand button in the multiplayer lobby settings opened a window that ignored clicks.
 [*]Fixed: in multiplayer the rift out of camp could lead to a normal combat room instead of the boss arena, and its rift then started a travel vote.

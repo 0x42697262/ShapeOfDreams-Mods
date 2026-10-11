@@ -60,8 +60,8 @@ controls themselves still come from `DewGUI.fieldBuilders`, so the dropdown
 and checklist builders below work in both.
 
 **Nothing has to be typed except numbers.** `Arena room` is a dropdown of the
-8 boss rooms, and `Heroic boss types` and `Environment types` are lists of
-checkboxes. With no boss checked, any boss can come; with no environment
+8 boss rooms, and `Random arena: worlds`, `Heroic boss types` and
+`Environment types` are lists of checkboxes. With no boss checked, any boss can come; with no environment
 checked, none comes. A saved environment name that isn't in the list is
 ignored, so the config file can't add anything else. Both are still saved as
 plain asset names, so old config files keep working. A saved name that isn't
@@ -86,6 +86,8 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Group | Setting | Default |
 |---|---|---|
 | Arena | Arena room | Primus (dropdown) |
+| | Random arena | off |
+| | Random arena: worlds | all 8 (checkboxes) |
 | | Plain arena (no room modifiers) | on |
 | | Boss music (the arena room's own) | on |
 | | Show wave in quest tracker | on |

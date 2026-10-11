@@ -26,7 +26,7 @@ Hold one boss arena against waves that never stop. Every wave is bigger and stro
 [/list]
 
 [h2]Fully configurable[/h2]
-The host can tune almost everything from the [b]Last Stand[/b] button in the lobby's settings panel: arena room, wave size and pace, scaling, bosses, shrines, environments, item drops and more.
+The host can tune almost everything from the [b]Last Stand[/b] button in the lobby's settings panel: arena room (or a random world's boss room each run), wave size and pace, scaling, bosses, shrines, environments, item drops and more.
 
 [h2]Good to know[/h2]
 [list]

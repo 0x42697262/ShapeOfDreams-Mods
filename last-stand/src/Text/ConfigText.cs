@@ -307,7 +307,19 @@ internal static class ConfigText
 
 	public const string ArenaRoomLabel = "Arena room";
 
-	public const string ArenaRoomDescription = "Boss room used as the arena. Applies next run.";
+	public const string ArenaRoomDescription =
+		"Boss room used as the arena while Random arena is off. Applies next run.";
+
+	public const string RandomArenaRoomLabel = "Random arena";
+
+	public const string RandomArenaRoomDescription =
+		"Each run picks its arena at random from the worlds ticked below instead of using Arena room. It's " +
+		"always a world's boss room, kept for the whole run. Off by default. Applies next run.";
+
+	public const string RandomArenaRoomsLabel = "Random arena: worlds";
+
+	public const string RandomArenaRoomsDescription =
+		"Worlds whose boss room a random arena can be. None ticked = Arena room.";
 
 	public const string FirstWaveDelayLabel = "First wave delay (s)";
 

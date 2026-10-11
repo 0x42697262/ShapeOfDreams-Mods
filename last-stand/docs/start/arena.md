@@ -16,6 +16,21 @@ node is any node but the camp (`ArenaLocator.IsArenaNode`). Log: `arena
 room '<room>' applied to N node(s); M room modifier(s) removed.`, or `could
 not apply arena room '<room>'.` if it throws.
 
+**Random arena** (off by default). With `Random arena` on, the session
+passes the boss rooms ticked in `Random arena: worlds` (all 8 by default;
+none ticked, or Random arena off, means just `Arena room`) to
+`ArenaRooms.Apply`. It's still always a boss room, so the arena center
+(`Room_BossArena`), the shut exit rift and the boss music work the same as
+with a fixed room. The pick is stateless: `ArenaRooms.RoomFor` first looks
+for an arena node whose `roomOverride` is already one of the allowed rooms
+and keeps it; only when none is does it pick one with `UnityEngine.Random`.
+So the synced node list is the record: the once-a-second camp check, a mod
+reload and a continued run all keep the run's room instead of rolling a new
+one, and a quest's special room on a node is replaced like before. Log on a
+fresh pick from two or more rooms: `arena room: picked '<room>' at random
+from N room(s) for this run.` before the usual `arena room '<room>'
+applied ...` line.
+
 World generation isn't the only chance. Each time `CampRift` runs its
 once-a-second camp check, `ArenaRooms.EnsureApplied` looks at every arena
 node again and, if any has lost the boss room (seen once in a multiplayer
