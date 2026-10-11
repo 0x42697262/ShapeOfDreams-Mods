@@ -18,7 +18,7 @@ from `Environment types`. Which waves get one:
   zone. This stage starts with the hunter zones, so moving `First hunter
   wave` moves it too.
 - **Heroic boss waves** get none before wave 100 (`Environments on heroic
-  boss waves from wave`), so wave 50 has none; from 100 on (100, 125, 150 …)
+  boss waves from wave`), so waves 25, 50 and 75 have none; from 100 on (100, 125, 150 …)
   they roll like any other wave.
 - **Never** on a Pain wave (20, 40 … 100, 120 …): the Aura of Pain is a main
   modifier too, and only one fits. Never after `Last environment wave` (0
@@ -121,7 +121,7 @@ stopped animator, set once by RPC. So a leftover statue is recognized as a
 use.
 
 In the Lava Land boss room the statues are Infernus (the room's pool is
-the boss), and Last Stand counts a broken one as a heroic boss: 3
+the boss), and Last Stand counts a broken one as a heroic boss: 2
 Corrupted Chaos and the boss stardust each (`HeroicBosses.Owns` claims any
 supported `BossMonster` in the arena node, a fallback for bosses alive
 across a mod reload). That's kept as a feature for now.

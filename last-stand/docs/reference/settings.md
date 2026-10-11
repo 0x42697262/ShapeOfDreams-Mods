@@ -44,7 +44,7 @@ of this is the shared library's (`library/src`), used by both mods:
 
 **Layout.** Both places show the same panel, laid out like a system settings
 app: a sidebar of pages on the left (General, Shrines, Waves, Monsters,
-Hunters, Fast clear, Bosses, Environments, Events, Rewards) and the selected page on the right. A page has a
+Hunters, Bosses, Environments, Events, Rewards) and the selected page on the right. A page has a
 title and a one-line summary, then its settings in grouped cards (for
 example Timing, Wave size and Spawning on Waves). Each row has the label
 and a short gray description on the left and the control on the right;
@@ -109,27 +109,23 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Extra player share | 0.5 |
 | | Surge every N waves / monster multiplier | 5 / 2 |
 | | Merged wave size (merging starts where one player's count reaches it) / merged surges: extra minibosses / extra Pain minibosses | 100 (wave 48) / 2 / 2 |
-| | Merged waves: miniboss health / heroic boss health (× the toughest monster, at least) | 5 / 20 |
+| | Merged waves: miniboss health (× the toughest monster, at least) | 5 |
 | | Max monsters alive / per extra player | 35 / 0 |
 | | Min spawn distance from heroes | 8 m |
 | | Spawn interval / spawns per batch | 0.5 s / 6 |
-| Scaling | Health / damage per wave | 10% / 10% |
-| | Steeper scaling from wave / late health / late damage per wave | 150 / 50% / 50% |
-| Empowered waves | First wave / every N waves / health and damage | 200 / 10 / ×1.5 |
-| | Fast clear: instant kills / instant within (from the first hit) / stats from next wave (stacking) / from wave | 80% / 1 s / ×2 / 30 |
-| | Fast clear: heroic bosses too / heroic boss share | on / 50% |
+| World scaling | Worlds per step / waves per step | 1 / 25 |
+| | Faster world rise from wave (0 = never) / faster: worlds per step / faster: waves per step | 200 / 1 / 2 |
 | | Starting monster level / waves per level | 1 / 4 |
 | | Starting world (vanilla world scaling) | 1 |
 | Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 10 |
-| Heroic bosses | First wave / every N waves / extra per boss wave / max | 50 / 50 / 1 / 10 |
+| Heroic bosses | First wave / every N waves / extra per boss wave / max | 25 / 25 / 1 / 10 |
 | | More often from wave / every N waves after that | 100 / 25 |
 | | Entrance delay | 3 s |
 | | Enter mid-wave from wave / entrance window | 125 / 60 s |
 | | Ability haste / more per later boss wave | +200 / +50 |
-| | Health / damage multiplier | ×5 / ×8 |
-| | Fast kill: seconds per boss / burst window / largest step | 90 s / 5 s / ×50 |
+| | Fast kill: seconds for all bosses / burst window / largest step | 90 s / 5 s / ×100 |
 | | Types | 6 zone bosses (checkboxes; none checked means all) |
-| | Corrupted Chaos rewards / dust / gold / item multiplier | 3 / 1000 / 200 / 2 |
+| | Corrupted Chaos rewards / dust / gold / item multiplier | 2 / 1000 / 200 / 2 |
 | | Heroic boss stardust (vanilla boss-kill amount) | on |
 | Pain | First wave / every N waves / waves per extra / max | 20 / 20 / 2 / 3 |
 | | Damage per second per boss | 1% |

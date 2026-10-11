@@ -1,22 +1,24 @@
 # Heroic bosses
 
 "Heroic boss" is the game's name for a zone boss (`BossMonster`). Last Stand
-brings them in as the last enemy of a wave: at waves 50 and 100 (`First
-heroic boss wave` 50, every 50), then, from wave 100 (`Heroic bosses more
-often from wave`), every 25 waves counted on from 100 (`Heroic boss every N
-waves, later`): 125, 150, 175, 200…
+brings them in as the last enemy of a wave: from wave 25 (`First heroic boss
+wave` 25), every 25 waves (`Heroic boss every N waves` 25): 25, 50, 75,
+100, 125…
 
-| Wave | 50 | 100 | 125 | 150 | 175 | 200 | 250 | 275 |
+| Wave | 25 | 50 | 75 | 100 | 125 | 150 | 200 | 250 |
 |---|---|---|---|---|---|---|---|---|
-| Heroic bosses | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 9 |
+| Heroic bosses | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 |
 
 Each boss wave brings one more boss than the last (`Extra heroic bosses
 per boss wave`, 1): the count is `1 + occurrence × extra`, where
-`occurrence` is the boss wave's index (0 for wave 50), capped at 10
-(`Max heroic bosses per wave`) from wave 300. The schedule is a
-`ShiftingCadence`: the early cadence up to the switch wave, then the later
-interval continuing from the last early boss wave, and its `Occurrence`
-counts boss waves across both.
+`occurrence` is the boss wave's index (0 for wave 25), capped at 10
+(`Max heroic bosses per wave`) from wave 250. The schedule is a
+`ShiftingCadence`: the early cadence up to the switch wave (`Heroic bosses
+more often from wave`, 100), then the later interval (`Heroic boss every N
+waves, later`, 25) continuing from the last early boss wave, and its
+`Occurrence` counts boss waves across both. With both intervals at 25 the
+switch changes nothing; it's there for a host who wants a slow start
+(until schema 53 the defaults were 50, 100, then every 25).
 
 **Entrance.** The boss waits until every monster and miniboss of its wave has
 spawned. Then, after 3 more seconds, it enters with a chat notice and plays its
@@ -44,8 +46,7 @@ notes the time of the first release and lets each boss out once its offset
 has passed, outside the alive cap, like the finale. When the last monster
 has been released, any boss still waiting joins the finale. The log's
 `wave N:` line shows `heroicWindow=60s` (0 before wave 125), and the chat
-wave line says "N heroic boss(es) at any moment". An entering boss still
-gets the merged-wave health floor: the floor check runs every second.
+wave line says "N heroic boss(es) at any moment".
 
 **Which boss.** A random one from `Heroic boss types`, by default the zone
 bosses of Forest, Dark Cave, Despair (Azurak), Sky, Snow Mountain and Lava
@@ -59,112 +60,107 @@ many are left. There is always at least one: if no box is checked, or none
 of the checked types can be used, the boss is picked from the whole list of
 six, and the log says so.
 
-**Strength: vanilla boss scaling times a multiplier, faster skills.** It
-spawns at the current monster level and gets the game's own boss scaling for
-the [starting world](../start/starting-world.md), difficulty and player count, the same
-per-wave bonus as everything else, and then ×5 health (`Heroic boss health
-multiplier`) and ×8 attack damage and ability power (`Heroic boss damage
-multiplier`). The game multiplies stat bonuses together
-(`DewMath.MultiplyPercentageBonuses`), so a `+(M − 1) × 100%` bonus is
-exactly ×M whatever else the boss has.
+**Strength: the wave's world plus a heroic raise, faster skills.** It
+spawns at the current monster level and gets the game's own boss scaling
+for the run's world, difficulty and player count. Then, like every other
+monster, it gets the difference up to a higher world (see [Waves](waves.md),
+*Strength, by world*), on the game's boss curve: the wave's world plus
+the heroic raise from fast kills below (0 until the party kills them too
+fast). So its health and damage are exactly a vanilla heroic boss's at
+that world. There are no flat boss multipliers any more (×5 health and ×8
+damage until schema 53), and no merged-wave health floor (20× the
+toughest monster until schema 53).
 
-Once waves merge (wave 48 by default), a heroic boss also has a health
-floor of 20× the toughest monster in its wave (`Merged waves: heroic boss
-health`); below it, it gets one more bonus up to the floor. See
-[Waves](waves.md).
+With the defaults, from world 1 and before any fast kill: wave 25 fights
+at about world 2, 50 at 3, 100 at 5, 150 at 7, 200 at 9 and 250 at 34.
+Against a world 1 boss that's about ×1.7 health at wave 25, ×9.6 at 100
+and ×74 at world 10 (boss health table in [Waves](waves.md)). Base health
+(prefabs; bosses gain nothing per level): Belphomet 8,000, Seeker 8,800,
+Skoll 9,200, Infernus 9,600, Nyx 10,400, Azurak 13,200. Each extra player
+adds 85% of the boss's health (the game's
+`bossBonusHealthPercentagePerPlayer`) and +11% damage. The numbers measured
+before schema 53 (about 2M health at wave 50 on Nightmare world 4) came
+from the ×5 multiplier and the old per-wave bonus and no longer apply.
 
-Health is `base × world × difficulty × (1 + 0.85 × (players − 1)) × wave ×
-multiplier`. Base health (prefabs; bosses gain nothing per level): Belphomet
-8,000, Seeker 8,800, Skoll 9,200, Infernus 9,600, Nyx 10,400, Azurak
-13,200. World 4 is ×3.96 health on Normal, ×6.19 on Hard and ×7.04 on
-Nightmare (difficulty's world factor and its flat health bonus), and wave 50
-is ×5.9. So wave 50, Nightmare, world 4, solo, with the default ×5: Belphomet
-1.66M, Infernus 1.99M, Azurak 2.75M, about 2M on average. Each extra player
-adds 85% of that (the game's `bossBonusHealthPercentagePerPlayer`): Infernus
-3.7M with 2, 5.4M with 3, 7.1M with 4. The wave factor is the same per-wave
-bonus as every monster's, +10% a wave and +50% from wave 150: ×10.9 at 100,
-×13.4 at 125, ×16.3 at 150, ×28.8 at 175, ×41.3 at 200 (×62 there, since
-wave 200 is also an [empowered wave](waves.md), ×1.5).
-Measured at wave 124: Skoll 4,306,783 and Nyx 4,868,537, both exactly
-468.13 × base, as the formula gives.
-
-Damage is the ability's AD/AP ratio × the boss's attack damage or ability
-power. Players add only the game's +11% per extra player. Nightmare world 4
-at wave 50 is ×44.7 on that (×5.74 world, +32% Nightmare, ×5.9 wave), times
-the multiplier. Reading the prefab ratios undercounts: at wave 124 with ×8,
-Skoll's `AuraBlade` hit for 302k (8.3 × its ability power) and Nyx's
-`PillarOfStars` for 161k (4.3 ×), about 134k and 71k at wave 50.
-
-The log measures both: `heroic boss: wave N <type> maxHealth=… attackDamage=…`
-when the multiplier is applied, and `biggest hit on a hero …` (after armor,
-shields included) with the ability's type when the boss dies.
+The log gives the real stats: `heroic boss: wave N <type> maxHealth=…
+attackDamage=…` one frame after the spawn, and `biggest hit on a hero …`
+(after armor, shields included) with the ability's type when the boss
+dies. The chat wave line says "heroic bosses like world Y.Y", and the
+`wave N:` log line shows `heroicWorld=`.
 It also gets ability haste, so it uses its patterns more often: +200 at
-wave 50 (`Heroic boss ability haste`), then +50 more on each later boss wave
-(`Heroic boss haste per later boss wave`): 250 at 100, 300 at 125, 350 at
-150, 450 at 200. Boss waves come twice as often after wave 100, so haste
-grows twice as fast there too.
+wave 25 (`Heroic boss ability haste`), then +50 more on each later boss wave
+(`Heroic boss haste per later boss wave`): 250 at 50, 300 at 75, 350 at
+100, 550 at 200.
 The wave's haste is worked out with the rest of the wave plan and shows in the
 log as `heroicHaste=`. The game turns haste into cooldown
 (`AbilityTrigger.GetCooldownTimeMultiplierByAbilityHaste`) as
 `1 / (1 + haste / 100)`, down to its own floor. This applies to every boss
-ability that allows cooldown reduction. Haste is a normal synced stat. That's applied one frame after the
-spawn, once the game's difficulty bonus is in, and it keeps the boss at full
-health. 50× was tried first: a wave 49 boss had about 23 million health and
-lost only a quarter of it in five minutes of nonstop fighting. 10× damage was
-also too much.
+ability that allows cooldown reduction. Haste is a normal synced stat. It's
+applied one frame after the spawn, once the game's difficulty bonus is in.
 
-**Fast kills raise the next boss.** Fast clear (see [Waves](waves.md))
-watches mobs, and a boss wave's mobs say nothing about how fast the boss
-itself dies. So heroic bosses have their own check, `Heroic fast kill:
-seconds per boss`, 90 by default: no heroic boss should die faster than
-90 seconds of the party's best damage. At the default `Starting world` 1 a
-strong party melts heroic bosses; from a starting world of about 4 their
-vanilla zone scaling mostly keeps up, so it rarely fires there. A host
-whose party wants to one-shot bosses sets it to 0 (off). It was 0 by
-default until schema 45, and 15 until schema 48.
+**Fast kills raise the next boss.** Heroic bosses have a check of their
+own, `Heroic fast kill: seconds for all bosses`, 90 by default: killing
+all of a wave's heroic bosses together shouldn't take less than 90
+seconds of the party's best damage. Mobs aren't watched any more (fast
+clear was removed in schema 53); they just follow the wave's world. A
+host whose party wants to one-shot bosses sets it to 0 (off). It was 0 by
+default until schema 45, 15 until schema 48, and counted per boss until
+schema 53.
 
 It measures the party's best burst, not the fight's length. A timer from
 the first hit to the death can be beaten by stalling (hit once, wait,
 then burst) and runs on through a boss's immune phases and its walks out
 of reach. Instead, every damage event on a heroic boss
-(`EntityEvent_OnTakeDamage`, which `EnemyRegistry` already hooks for fast
-clear and now reports as `EnemyRegistry.Hit`) adds its amount to a
-sliding window of `Heroic fast kill: burst window (s)` (5).
-`HeroicFastKillWatch` keeps the heaviest window. In `Actor.cs` the event's
-`damage.amount` is the health removed plus what a shield absorbed, and a
-hit blocked by damage immunity fires `EntityEvent_OnDamageNegatedByImmunity`
-and returns before it, so immune time adds nothing. Each hit counts at most
-the boss's max health, so one huge overkill hit can't count for more than
-a whole boss.
+(`EntityEvent_OnTakeDamage`, which `EnemyRegistry` hooks and reports as
+`EnemyRegistry.Hit`) adds its amount to a sliding window of `Heroic fast
+kill: burst window (s)` (5). `HeroicFastKillWatch` keeps the heaviest
+window. In `Actor.cs` the event's `damage.amount` is the health removed
+plus what a shield absorbed, and a hit blocked by damage immunity fires
+`EntityEvent_OnDamageNegatedByImmunity` and returns before it, so immune
+time adds nothing. Each hit counts at most the boss's max health, so one
+huge overkill hit can't count for more than a whole boss.
 
 When the wave is cleared, the best window becomes a projected kill time:
-`window × average heroic max health ÷ best window damage`, the seconds one
-boss would last at that rate. A fight shorter than the window uses its own
-length (first heroic hit to last), so a 2 s kill reads as 2 s, not 5. If
-the projection is under the target, every later heroic boss's health is
-multiplied by `target ÷ projection`, at most `Heroic fast kill: largest
-step` (×50, ×10 before schema 51) per wave: at 90, a 30 s projection gives ×3. It goes back
-down only when a player who earned it leaves ([Fast clear and fast kill
-follow the players](pace-by-player.md)), and compounds (×3 then ×2 is ×6), and a projection at or over the
-target changes nothing, so it settles at the target. Holding back doesn't
-help: the only way to keep the burst low is to deal low damage the whole
-fight while the boss hits at ×8.
+`window × sum of the wave's heroic bosses' max health ÷ best window
+damage`, the seconds all of them together would last at that rate. Bosses
+with very different health count by their real health, with no average.
+A fight shorter than the window uses its own length (first heroic hit to
+last), so a 2 s kill reads as 2 s, not 5. If the projection is under the
+target, the step is `target ÷ projection`, at most `Heroic fast kill:
+largest step` (×100; ×50 until schema 53, ×10 before schema 51): at 90, a
+30 s projection gives ×3. Steps compound (×3 then ×2 is ×6), a projection
+at or over the target changes nothing, so it settles at the target, and
+it goes back down only when a player who earned it leaves ([Fast kill
+follows the players](pace-by-player.md)). Holding back doesn't help: the
+only way to keep the burst low is to deal low damage the whole fight.
 
-The multiplier goes on top of `Heroic boss health multiplier`
-(`WaveDirector.Enhance`, the delayed `MonsterEnhancer.Multiply`) and stacks
-with fast clear's heroic share; the 20× toughest-monster floor still
-applies after. Only Last Stand's own heroic spawns count: the boss's
-helpers and a boss it summons (Erebos) aren't heroic tier. It's measured
-at the wave's clear rather than at the boss's death, so the killing hit
-is always in. A skipped wave and a wave resumed after a mod reload aren't
-measured; the record behind the multiplier is saved with the wave
-progress, so a reload keeps it. With the setting back at 0 the earned multiplier stops applying.
+**The multiplier becomes a world.** The step product M is a health
+multiplier for later heroic bosses, but it's applied as a higher world,
+not a flat bonus. Each wave, when the plan is made, `WaveDirector`
+asks `WorldScaling.ExtraWorldsForBossHealth` for the world where the
+game's boss health curve is M times the curve at the wave's world: it
+doubles a search span from the wave's world until the curve passes the
+target, then bisects 40 times. The heroic bosses spawn at that world
+(`WavePlan.HeroicBossWorldRaise` on top of the wave's extra worlds), so
+their damage rises by the game's own boss damage curve too, which grows
+more slowly than health late. M stays relative to the wave's world, so
+the same ×3 is about 2 worlds up at world 3, 4 at world 10 and about 60
+at world 50, where the boss curve is linear. Mobs aren't raised.
+
+Only Last Stand's own heroic spawns count: the boss's helpers and a boss
+it summons (Erebos) aren't heroic tier. It's measured at the wave's clear
+rather than at the boss's death, so the killing hit is always in. A
+skipped wave and a wave resumed after a mod reload aren't measured; the
+record behind the multiplier is saved with the wave progress, so a reload
+keeps it. With the setting back at 0 the earned multiplier stops applying.
 
 Logs: `heroic fast kill: wave 50's heroic bosses took 41,203,118 damage in
-their best 5 s, a kill in 2.1 s per boss at that rate (target 90 s); this
-step x42.86 (largest x50), heroic bosses now have x42.86 health.`, or the
-same with `no change.`; every `wave N:` line shows `heroicKill=xM`. Chat
-says it in red.
+their best 5 s, all of them dead in 2.1 s at that rate (target 90 s); this
+step x42.86 (largest x100), heroic bosses now have x42.86 health.`, or the
+same with `no change.`; every `wave N:` line shows `heroicKill=xM`
+and `heroicWorld=`, above `world=` once M is over 1. Chat says it in red:
+"Your best burst would kill all of this wave's heroic bosses in Xs, faster
+than 90s. Heroic bosses now return from a stronger world, with xM health."
 
 **Full kit.** It's the real `BossMonster` with its own AI: the boss AI always
 targets the nearest hero, picks its ability pool (the hard pool where the zone
@@ -174,7 +170,7 @@ rolling pillars, Infernus's pillars, Nyx's phases. None of the default bosses
 needs objects from its own boss room. The entrance plays the boss's own spawn
 ability, which for some bosses also sets up its first skills.
 
-**Rewards never depend on chance.** Each boss drops 3 Corrupted Chaos
+**Rewards never depend on chance.** Each boss drops 2 Corrupted Chaos
 shrines, the same `Shrine_CorruptedChaos` Pain minibosses leave. They have no
 rarity, so the chaos reroll never touches them. A heroic boss is recognized even after the mod reloads mid-fight (auto-reload
 in developer mode): any supported `BossMonster` standing in the arena counts
@@ -220,8 +216,8 @@ once a second during the fight and clears the three boss values
 (`BeforeBossFight` to `AfterBossFight`), leaving `HostLoadingGame` alone. A
 player already waiting is let in on the next `LogicUpdate_MidJoin`.
 
-**Reward.** 3 `Shrine_CorruptedChaos` (`Heroic boss Corrupted Chaos
-rewards`). Each is one shrine that every player picks from separately, as with
+**Reward.** 2 `Shrine_CorruptedChaos` (`Heroic boss Corrupted Chaos
+rewards`; 3 until schema 53). Each is one shrine that every player picks from separately, as with
 Pain. An earlier version dropped 5 legendary `Shrine_Chaos` instead. The boss
 also drops 1000 dream dust and 200 bonus gold, and rolls the item table at ×2
 like a Pain miniboss.
@@ -235,14 +231,13 @@ chance is 0 for the `Boss` monster type). Now `BossStardust` drops the same
 amount at the boss with `PickupManager.DropStarDust`, the game's own call:
 orbs of `Shrine_Stardust`, and each orb's `OnUse` gives its amount to every
 player through `DewPlayer.GiveStardust` (a `ClientRpc` into each client's
-own profile), so a vanilla client gets it too. A heroic boss comes every 25
-to 50 waves, far less often than one per zone in a normal run, so this stays
-under the vanilla rate. The modding rules forbid granting exclusive items,
+own profile), so a vanilla client gets it too. Each heroic boss gives
+what one vanilla boss kill gives, no more. The modding rules forbid granting exclusive items,
 the ones you can't buy with stardust; stardust itself isn't one, and keeping
 it at the game's own boss-kill amount keeps to the reason the rule gives.
 Regular monsters and minibosses keep the game's tiny per-kill chance (0.1%
 and 0.2% for 5 stardust; hunters drop none). The log line reads `heroic
-boss: died, dropped 3 Corrupted Chaos reward(s) and N stardust.`
+boss: died, dropped 2 Corrupted Chaos reward(s) and N stardust.`
 
 Still drawn by every game: the boss health bar, and the kill counting toward
 each player's heroic boss stats.

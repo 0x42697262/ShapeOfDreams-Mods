@@ -11,8 +11,6 @@ internal static class WaveSchedule
 
 	private const double NoSurge = 1;
 
-	private const double Unchanged = 1;
-
 	private const int NoHuntLevel = 0;
 
 	public const int NoMaxHuntLevel = 0;
@@ -54,7 +52,6 @@ internal static class WaveSchedule
 			UnmergedMobCount = monsters,
 			MergeMultiplier = merge.StrengthFor(wave, monsters),
 			MiniBossHealthMultiple = merge.MiniBossHealthMultipleFor(wave),
-			HeroicBossHealthMultiple = merge.HeroicBossHealthMultipleFor(wave),
 			MiniBossCount = Scaled(wave, settings.MiniBosses, settings.MiniBossOccurrencesPerExtra,
 				settings.MaxMiniBosses) + merge.ExtraMiniBosses(wave, surge),
 			PainCount = pain,
@@ -66,10 +63,7 @@ internal static class WaveSchedule
 			AmbientLevel = settings.StartingAmbientLevel + wavesSinceFirst / settings.WavesPerAmbientLevel,
 			MaxAlive = (int)Math.Round(
 				(settings.MaxAliveBase + settings.MaxAlivePerExtraPlayer * extraPlayers) * Math.Max(NoSurge, surgeScale)),
-			HealthBonusPercent = StatBonus(wave, settings.HealthBonusPerWave, settings.LateHealthBonusPerWave,
-				settings.LateScalingFromWave),
-			DamageBonusPercent = StatBonus(wave, settings.DamageBonusPerWave, settings.LateDamageBonusPerWave,
-				settings.LateScalingFromWave),
+			ExtraWorlds = settings.World.ExtraWorlds(wave),
 			ForeignTypesUnlocked = foreign,
 			NewForeignTypes = foreign > ForeignTypesUnlocked(wave - FirstOfTier, settings, content.ForeignTypes),
 			HuntLevel = huntLevel,
@@ -77,7 +71,6 @@ internal static class WaveSchedule
 			NewMirageSkin = mirage > MirageSkinsUnlocked(wave - FirstOfTier, settings, content.MirageSkins),
 			MirageChance = mirage > 0 ? MirageChance(wave, settings) : 0,
 			HasEnvironment = environment,
-			EmpoweredMultiplier = settings.Empowered.IsOn(wave) ? settings.EmpoweredMultiplier : Unchanged,
 			FriendlyFireChance = wave >= settings.FriendlyFireFromWave && heroic == 0 ? settings.FriendlyFireChance : 0,
 		};
 	}
@@ -103,13 +96,6 @@ internal static class WaveSchedule
 	private static int MirageSkinsUnlocked(int wave, WaveSettings settings, int total)
 	{
 		return Math.Min(total, settings.Mirage.OccurrencesSoFar(wave));
-	}
-
-	public static double StatBonus(int wave, double perWave, double latePerWave, int lateFromWave)
-	{
-		int raises = Math.Max(0, wave - FirstOfTier);
-		int lateRaises = Math.Min(raises, Math.Max(0, wave - lateFromWave + FirstOfTier));
-		return perWave * (raises - lateRaises) + latePerWave * lateRaises;
 	}
 
 	public static double HunterShare(int wave, WaveSettings settings)

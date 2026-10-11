@@ -28,8 +28,6 @@ internal static partial class ModText
 				return "Monsters";
 			case SettingsPage.Hunters:
 				return "Hunters";
-			case SettingsPage.FastClear:
-				return "Fast clear";
 			case SettingsPage.Bosses:
 				return "Bosses";
 			case SettingsPage.Environments:
@@ -52,11 +50,9 @@ internal static partial class ModText
 			case SettingsPage.Waves:
 				return "Pace, size and spawning.";
 			case SettingsPage.Monsters:
-				return "Scaling, other worlds and Mirage skins.";
+				return "World scaling, other worlds and Mirage skins.";
 			case SettingsPage.Hunters:
 				return "Hunters and hunter zones.";
-			case SettingsPage.FastClear:
-				return "What clearing a wave too fast costs.";
 			case SettingsPage.Bosses:
 				return "Minibosses, Pain minibosses and heroic bosses.";
 			case SettingsPage.Environments:

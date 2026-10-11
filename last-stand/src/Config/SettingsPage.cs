@@ -7,7 +7,6 @@ internal enum SettingsPage
 	Waves,
 	Monsters,
 	Hunters,
-	FastClear,
 	Bosses,
 	Environments,
 	Events,

@@ -21,15 +21,12 @@ internal readonly struct MergeRule
 
 	public double MiniBossHealthMultiple { get; }
 
-	public double HeroicBossHealthMultiple { get; }
-
 	public bool IsOn => FromWave != Never && Cap > 0;
 
 	public MergeRule(int regularBase, int growthPerWave, int cap, int surgeMiniBosses, int surgePain,
-		double miniBossHealthMultiple, double heroicBossHealthMultiple)
+		double miniBossHealthMultiple)
 	{
 		MiniBossHealthMultiple = miniBossHealthMultiple;
-		HeroicBossHealthMultiple = heroicBossHealthMultiple;
 		Cap = cap;
 		FromWave = StartWave(regularBase, growthPerWave, cap);
 		SurgeMiniBosses = surgeMiniBosses;
@@ -76,9 +73,9 @@ internal readonly struct MergeRule
 		return Covers(wave) ? MiniBossHealthMultiple : 0;
 	}
 
-	public double HeroicBossHealthMultipleFor(int wave)
+	public static double RaiseBonus(double bonusPercent, double multiplier)
 	{
-		return Covers(wave) ? HeroicBossHealthMultiple : 0;
+		return (SharedTuning.PercentScale + bonusPercent) * multiplier - SharedTuning.PercentScale;
 	}
 
 	public static double ExtraPercentToReach(double health, double target)

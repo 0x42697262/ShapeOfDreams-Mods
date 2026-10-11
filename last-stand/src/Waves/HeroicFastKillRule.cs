@@ -6,29 +6,29 @@ internal readonly struct HeroicFastKillRule
 {
 	public const double NoChange = 1;
 
-	public double SecondsPerBoss { get; }
+	public double TargetSeconds { get; }
 
 	public double BurstSeconds { get; }
 
 	public double MaxStep { get; }
 
-	public bool IsOn => SecondsPerBoss > 0 && BurstSeconds > 0 && MaxStep > NoChange;
+	public bool IsOn => TargetSeconds > 0 && BurstSeconds > 0 && MaxStep > NoChange;
 
-	public HeroicFastKillRule(double secondsPerBoss, double burstSeconds, double maxStep)
+	public HeroicFastKillRule(double targetSeconds, double burstSeconds, double maxStep)
 	{
-		SecondsPerBoss = secondsPerBoss;
+		TargetSeconds = targetSeconds;
 		BurstSeconds = burstSeconds;
 		MaxStep = maxStep;
 	}
 
-	public double StepFor(double projectedSecondsPerBoss)
+	public double StepFor(double projectedSeconds)
 	{
-		if (!IsOn || projectedSecondsPerBoss >= SecondsPerBoss)
+		if (!IsOn || projectedSeconds >= TargetSeconds)
 		{
 			return NoChange;
 		}
 
-		return projectedSecondsPerBoss <= 0 ? MaxStep : Math.Min(MaxStep, SecondsPerBoss / projectedSecondsPerBoss);
+		return projectedSeconds <= 0 ? MaxStep : Math.Min(MaxStep, TargetSeconds / projectedSeconds);
 	}
 
 	public double MultiplierFor(double earned)

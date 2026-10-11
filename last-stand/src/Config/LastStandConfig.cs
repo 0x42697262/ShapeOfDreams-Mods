@@ -181,10 +181,6 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.MergedMiniBossHealthDescription)]
 	public float mergedMiniBossHealthMultiple = 5f;
 
-	[LabelText(ConfigText.MergedHeroicBossHealthLabel)]
-	[Description(ConfigText.MergedHeroicBossHealthDescription)]
-	public float mergedHeroicBossHealthMultiple = 20f;
-
 	[Header(ConfigText.SpawningHeader)]
 	[LabelText(ConfigText.MaxAliveBaseLabel)]
 	[Description(ConfigText.MaxAliveBaseDescription)]
@@ -208,25 +204,25 @@ public class LastStandConfig : ModConfig
 
 	[Page(SettingsPage.Monsters)]
 	[Header(ConfigText.ScalingHeader)]
-	[LabelText(ConfigText.HealthPerWaveLabel)]
-	[Description(ConfigText.HealthPerWaveDescription)]
-	public float healthBonusPercentPerWave = 10f;
+	[LabelText(ConfigText.WorldRiseLabel)]
+	[Description(ConfigText.WorldRiseDescription)]
+	public float worldRisePerStep = 1f;
 
-	[LabelText(ConfigText.DamagePerWaveLabel)]
-	[Description(ConfigText.DamagePerWaveDescription)]
-	public float damageBonusPercentPerWave = 10f;
+	[LabelText(ConfigText.WorldRiseStepLabel)]
+	[Description(ConfigText.WorldRiseStepDescription)]
+	public int worldRiseStepWaves = 25;
 
-	[LabelText(ConfigText.LateScalingFromWaveLabel)]
-	[Description(ConfigText.LateScalingFromWaveDescription)]
-	public int lateScalingFromWave = 150;
+	[LabelText(ConfigText.FasterWorldRiseFromWaveLabel)]
+	[Description(ConfigText.FasterWorldRiseFromWaveDescription)]
+	public int fasterWorldRiseFromWave = 200;
 
-	[LabelText(ConfigText.LateHealthPerWaveLabel)]
-	[Description(ConfigText.LateHealthPerWaveDescription)]
-	public float lateHealthBonusPercentPerWave = 50f;
+	[LabelText(ConfigText.FasterWorldRiseLabel)]
+	[Description(ConfigText.FasterWorldRiseDescription)]
+	public float fasterWorldRisePerStep = 1f;
 
-	[LabelText(ConfigText.LateDamagePerWaveLabel)]
-	[Description(ConfigText.LateDamagePerWaveDescription)]
-	public float lateDamageBonusPercentPerWave = 50f;
+	[LabelText(ConfigText.FasterWorldRiseStepLabel)]
+	[Description(ConfigText.FasterWorldRiseStepDescription)]
+	public int fasterWorldRiseStepWaves = 2;
 
 	[LabelText(ConfigText.StartingAmbientLevelLabel)]
 	[Description(ConfigText.StartingAmbientLevelDescription)]
@@ -235,19 +231,6 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.WavesPerAmbientLevelLabel)]
 	[Description(ConfigText.WavesPerAmbientLevelDescription)]
 	public int wavesPerAmbientLevel = 4;
-
-	[Header(ConfigText.EmpoweredHeader)]
-	[LabelText(ConfigText.EmpoweredFromWaveLabel)]
-	[Description(ConfigText.EmpoweredFromWaveDescription)]
-	public int empoweredFromWave = 200;
-
-	[LabelText(ConfigText.EmpoweredIntervalLabel)]
-	[Description(ConfigText.EmpoweredIntervalDescription)]
-	public int empoweredIntervalWaves = 10;
-
-	[LabelText(ConfigText.EmpoweredMultiplierLabel)]
-	[Description(ConfigText.EmpoweredMultiplierDescription)]
-	public float empoweredStatMultiplier = 1.5f;
 
 	[Header(ConfigText.ForeignHeader)]
 	[LabelText(ConfigText.ForeignFromWaveLabel)]
@@ -301,32 +284,6 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.MaxHuntLevelDescription)]
 	public int maxHuntLevel;
 
-	[Page(SettingsPage.FastClear)]
-	[Header(ConfigText.FastClearHeader)]
-	[LabelText(ConfigText.FastClearKillPercentLabel)]
-	[Description(ConfigText.FastClearKillPercentDescription)]
-	public float fastClearKillPercent = 80f;
-
-	[LabelText(ConfigText.FastClearFromWaveLabel)]
-	[Description(ConfigText.FastClearFromWaveDescription)]
-	public int fastClearFromWave = 30;
-
-	[LabelText(ConfigText.FastClearKillSecondsLabel)]
-	[Description(ConfigText.FastClearKillSecondsDescription)]
-	public float fastClearKillSeconds = 1f;
-
-	[LabelText(ConfigText.FastClearStatMultiplierLabel)]
-	[Description(ConfigText.FastClearStatMultiplierDescription)]
-	public float fastClearStatMultiplier = 2f;
-
-	[LabelText(ConfigText.FastClearHeroicBossesLabel)]
-	[Description(ConfigText.FastClearHeroicBossesDescription)]
-	public bool fastClearAffectsHeroicBosses = true;
-
-	[LabelText(ConfigText.FastClearHeroicBossPercentLabel)]
-	[Description(ConfigText.FastClearHeroicBossPercentDescription)]
-	public float fastClearHeroicBossPercent = 50f;
-
 	[Page(SettingsPage.Bosses)]
 	[Header(ConfigText.MiniBossHeader)]
 	[LabelText(ConfigText.MiniBossFromWaveLabel)]
@@ -377,11 +334,11 @@ public class LastStandConfig : ModConfig
 	[Header(ConfigText.HeroicBossHeader)]
 	[LabelText(ConfigText.HeroicBossFromWaveLabel)]
 	[Description(ConfigText.HeroicBossFromWaveDescription)]
-	public int heroicBossFromWave = 50;
+	public int heroicBossFromWave = 25;
 
 	[LabelText(ConfigText.HeroicBossIntervalLabel)]
 	[Description(ConfigText.HeroicBossIntervalDescription)]
-	public int heroicBossIntervalWaves = 50;
+	public int heroicBossIntervalWaves = 25;
 
 	[LabelText(ConfigText.HeroicBossFasterFromWaveLabel)]
 	[Description(ConfigText.HeroicBossFasterFromWaveDescription)]
@@ -419,14 +376,6 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HeroicBossHasteGrowthDescription)]
 	public float heroicBossAbilityHastePerBossWave = 50f;
 
-	[LabelText(ConfigText.HeroicBossHealthMultiplierLabel)]
-	[Description(ConfigText.HeroicBossHealthMultiplierDescription)]
-	public float heroicBossHealthMultiplier = 5f;
-
-	[LabelText(ConfigText.HeroicBossDamageMultiplierLabel)]
-	[Description(ConfigText.HeroicBossDamageMultiplierDescription)]
-	public float heroicBossDamageMultiplier = 8f;
-
 	[LabelText(ConfigText.HeroicFastKillSecondsLabel)]
 	[Description(ConfigText.HeroicFastKillSecondsDescription)]
 	public float heroicFastKillSeconds = 90f;
@@ -437,7 +386,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicFastKillMaxStepLabel)]
 	[Description(ConfigText.HeroicFastKillMaxStepDescription)]
-	public float heroicFastKillMaxStep = 50f;
+	public float heroicFastKillMaxStep = 100f;
 
 	[PickMany(ChoiceSet.HeroicBosses)]
 	[LabelText(ConfigText.HeroicBossTypesLabel)]
@@ -446,7 +395,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicBossChaosLabel)]
 	[Description(ConfigText.HeroicBossChaosDescription)]
-	public int heroicBossChaosRewards = 3;
+	public int heroicBossChaosRewards = 2;
 
 	[LabelText(ConfigText.HeroicBossStardustLabel)]
 	[Description(ConfigText.HeroicBossStardustDescription)]

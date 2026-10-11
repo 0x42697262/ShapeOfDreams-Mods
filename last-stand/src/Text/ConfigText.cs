@@ -20,7 +20,29 @@ internal static class ConfigText
 
 	public const string SpawningHeader = "Spawning";
 
-	public const string ScalingHeader = "Monster scaling";
+	public const string ScalingHeader = "World scaling";
+
+	public const string WorldRiseLabel = "Worlds per step";
+
+	public const string WorldRiseDescription =
+		"Monster stats follow the game's world scaling, starting at the run's world. Each step adds this " +
+		"many worlds, a little every wave. Stats only: prices and loot keep the run's world.";
+
+	public const string WorldRiseStepLabel = "Waves per step";
+
+	public const string WorldRiseStepDescription = "Waves the rise above takes. 25 = +1 world by wave 26.";
+
+	public const string FasterWorldRiseFromWaveLabel = "Faster world rise from wave";
+
+	public const string FasterWorldRiseFromWaveDescription = "From this wave the faster rise below is used. 0 = never.";
+
+	public const string FasterWorldRiseLabel = "Faster: worlds per step";
+
+	public const string FasterWorldRiseDescription = "Worlds added per faster step.";
+
+	public const string FasterWorldRiseStepLabel = "Faster: waves per step";
+
+	public const string FasterWorldRiseStepDescription = "Waves each faster step takes. 1 = every wave.";
 
 	public const string MiniBossHeader = "Minibosses";
 
@@ -35,23 +57,6 @@ internal static class ConfigText
 	public const string MirageHeader = "Mirage variants";
 
 	public const string EnvironmentHeader = "Environments";
-
-	public const string EmpoweredHeader = "Empowered waves";
-
-	public const string EmpoweredFromWaveLabel = "First empowered wave";
-
-	public const string EmpoweredFromWaveDescription = "First wave whose monsters all get the multiplier below.";
-
-	public const string EmpoweredIntervalLabel = "Empowered every N waves";
-
-	public const string EmpoweredIntervalDescription = "Waves between empowered waves.";
-
-	public const string EmpoweredMultiplierLabel = "Empowered health and damage (x)";
-
-	public const string EmpoweredMultiplierDescription =
-		"Health and damage multiplier for every monster of an empowered wave, bosses included. 1 = off.";
-
-	public const string FastClearHeader = "Fast clear";
 
 	public const string FriendlyFireHeader = "Dark urge";
 
@@ -80,7 +85,7 @@ internal static class ConfigText
 	public const string HeroicBossFromWaveLabel = "First heroic boss wave";
 
 	public const string HeroicBossFromWaveDescription =
-		"First heroic boss wave. Defaults: 50, 100, then every 25 (125, 150, 175…).";
+		"First heroic boss wave. Defaults: 25, then every 25 (50, 75, 100…).";
 
 	public const string HeroicBossIntervalLabel = "Heroic boss every N waves";
 
@@ -90,8 +95,7 @@ internal static class ConfigText
 	public const string HeroicBossFasterFromWaveLabel = "Heroic bosses more often from wave";
 
 	public const string HeroicBossFasterFromWaveDescription =
-		"From this wave, heroic bosses use the later interval, counted from the last boss wave (100 + 25 = " +
-		"125).";
+		"From this wave, heroic bosses use the later interval, counted from the last boss wave.";
 
 	public const string HeroicBossLateIntervalLabel = "Heroic boss every N waves, later";
 
@@ -101,8 +105,8 @@ internal static class ConfigText
 	public const string HeroicBossesPerBossWaveLabel = "Extra heroic bosses per boss wave";
 
 	public const string HeroicBossesPerBossWaveDescription =
-		"Each heroic boss wave brings this many more than the last. Defaults: 1 at 50, 2 at 100, 3 at 125, " +
-		"4 at 150.";
+		"Each heroic boss wave brings this many more than the last. Defaults: 1 at 25, 2 at 50, 3 at 75, " +
+		"4 at 100.";
 
 	public const string MaxHeroicBossesLabel = "Max heroic bosses per wave";
 
@@ -133,25 +137,15 @@ internal static class ConfigText
 	public const string HeroicBossHasteGrowthLabel = "Heroic boss haste per later boss wave";
 
 	public const string HeroicBossHasteGrowthDescription =
-		"Haste added per heroic boss wave after the first. 200 + 50: 200 at 49, 250 at 99, 300 at 124, " +
-		"350 at 149. 0 = flat.";
+		"Haste added per heroic boss wave after the first. 200 + 50: 200 at 25, 250 at 50, 300 at 75, " +
+		"350 at 100. 0 = flat.";
 
-	public const string HeroicBossHealthMultiplierLabel = "Heroic boss health multiplier";
-
-	public const string HeroicBossHealthMultiplierDescription =
-		"Heroic boss HP x this. Stacks with world, difficulty, co-op and wave scaling.";
-
-	public const string HeroicBossDamageMultiplierLabel = "Heroic boss damage multiplier";
-
-	public const string HeroicBossDamageMultiplierDescription =
-		"Heroic boss damage x this. Stacks with world, difficulty and wave scaling.";
-
-	public const string HeroicFastKillSecondsLabel = "Heroic fast kill: seconds per boss";
+	public const string HeroicFastKillSecondsLabel = "Heroic fast kill: seconds for all bosses";
 
 	public const string HeroicFastKillSecondsDescription =
-		"After a boss wave, the heroic bosses' best burst of damage is turned into a kill time per boss. " +
-		"Under this, later heroic bosses get more health in proportion: a 30 s kill at 90 gives x3. Never " +
-		"goes back down. 0 = off, for parties who want to one-shot bosses.";
+		"After a boss wave, the party's best burst is turned into the time to kill all of that wave's heroic " +
+		"bosses. Under this, later heroic bosses are raised worlds until it would take this long: a 30 s " +
+		"kill at 90 needs x3 health. Only drops when a player who earned it leaves. 0 = off.";
 
 	public const string HeroicFastKillBurstLabel = "Heroic fast kill: burst window (s)";
 
@@ -162,7 +156,8 @@ internal static class ConfigText
 	public const string HeroicFastKillMaxStepLabel = "Heroic fast kill: largest step";
 
 	public const string HeroicFastKillMaxStepDescription =
-		"Most one fast kill can multiply heroic boss health by, so a single burst doesn't overshoot.";
+		"Most one fast kill can multiply heroic boss health by (through their world), so a single burst " +
+		"doesn't overshoot.";
 
 	public const string HeroicBossTypesLabel = "Heroic boss types";
 
@@ -378,12 +373,6 @@ internal static class ConfigText
 		"Once waves merge, minibosses and Pain minibosses have at least this many times the max health of the " +
 		"toughest monster in the wave. 0 = off.";
 
-	public const string MergedHeroicBossHealthLabel = "Merged waves: heroic boss health (x toughest monster)";
-
-	public const string MergedHeroicBossHealthDescription =
-		"Once waves merge, heroic bosses have at least this many times the max health of the toughest monster " +
-		"in the wave. 0 = off.";
-
 	public const string ExtraPlayerShareLabel = "Extra player share";
 
 	public const string ExtraPlayerShareDescription =
@@ -410,62 +399,6 @@ internal static class ConfigText
 
 	public const string MinSpawnDistanceDescription =
 		"Monsters spawn anywhere in the room, never closer than this to a hero.";
-
-	public const string HealthPerWaveLabel = "Health per wave (%)";
-
-	public const string HealthPerWaveDescription = "Max health per wave, stacking. 10 = +100% at wave 11.";
-
-	public const string DamagePerWaveLabel = "Damage per wave (%)";
-
-	public const string DamagePerWaveDescription = "Attack and ability damage per wave, stacking.";
-
-	public const string LateScalingFromWaveLabel = "Steeper scaling from wave";
-
-	public const string LateScalingFromWaveDescription =
-		"From this wave, each wave adds the late values below instead. Earlier bonuses stay.";
-
-	public const string FastClearKillPercentLabel = "Fast clear: instant kills (%)";
-
-	public const string FastClearKillPercentDescription =
-		"When this share of a wave's monsters is killed instantly (see below), every later wave is tougher. " +
-		"0 = off.";
-
-	public const string FastClearFromWaveLabel = "Fast clear: from wave";
-
-	public const string FastClearFromWaveDescription =
-		"First wave that can count as a fast clear. Earlier waves never raise stats.";
-
-	public const string FastClearKillSecondsLabel = "Fast clear: instant within (s)";
-
-	public const string FastClearKillSecondsDescription =
-		"A monster counts as killed instantly when it dies within this long of the first hit it takes. 0 = off.";
-
-	public const string FastClearStatMultiplierLabel = "Fast clear: stats from next wave (x)";
-
-	public const string FastClearStatMultiplierDescription =
-		"Health and damage multiplier from the next wave on, stacking with each fast clear, on top of wave " +
-		"scaling. 1 = off.";
-
-	public const string FastClearHeroicBossesLabel = "Fast clear: heroic bosses too";
-
-	public const string FastClearHeroicBossesDescription =
-		"Heroic bosses also get tougher from fast clears, by the share below.";
-
-	public const string FastClearHeroicBossPercentLabel = "Fast clear: heroic boss share (%)";
-
-	public const string FastClearHeroicBossPercentDescription =
-		"Each fast clear counts this much for heroic bosses. At 50% with x2, 10 fast clears give x32 instead " +
-		"of x1024.";
-
-	public const string LateHealthPerWaveLabel = "Late health per wave (%)";
-
-	public const string LateHealthPerWaveDescription =
-		"Max health per wave from the steeper-scaling wave on.";
-
-	public const string LateDamagePerWaveLabel = "Late damage per wave (%)";
-
-	public const string LateDamagePerWaveDescription =
-		"Attack and ability damage per wave from the steeper-scaling wave on.";
 
 	public const string StartingAmbientLevelLabel = "Starting monster level";
 

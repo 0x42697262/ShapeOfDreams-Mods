@@ -8,6 +8,8 @@ internal static class Tuning
 
 	public const string RoundTripNumberFormat = "R";
 
+	public const int WorldOfZoneIndexZero = 1;
+
 	public const string ProgressInProgressFlag = "1";
 
 	public const string ProgressBetweenWavesFlag = "0";
@@ -55,8 +57,6 @@ internal static class Tuning
 	public const float MinimumPainDamage = 0.1f;
 
 	public const float PainTickSeconds = 0.1f;
-
-	public const float MinimumBossMultiplier = 0.1f;
 
 	public const float NoProcCoefficient = 0f;
 

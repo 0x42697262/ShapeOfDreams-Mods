@@ -4,6 +4,6 @@ internal enum Milestone
 {
 	Hunters,
 	HuntedEnvironments,
-	Empowered,
+	FasterWorlds,
 	DarkUrge,
 }

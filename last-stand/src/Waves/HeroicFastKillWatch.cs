@@ -23,7 +23,7 @@ internal sealed class HeroicFastKillWatch
 
 	public bool Measured => BestBurstDamage > 0 && _maxHealthByBoss.Count > 0;
 
-	public double ProjectedSecondsPerBoss => Measured ? BurstSeconds * AverageMaxHealth() / BestBurstDamage : 0;
+	public double ProjectedSeconds => Measured ? BurstSeconds * TotalMaxHealth() / BestBurstDamage : 0;
 
 	public void Start(bool active, double windowSeconds)
 	{
@@ -34,7 +34,7 @@ internal sealed class HeroicFastKillWatch
 
 	public HeroicFastKillRecord Record()
 	{
-		return new HeroicFastKillRecord(ProjectedSecondsPerBoss, new Dictionary<string, double>(_bestByPlayer));
+		return new HeroicFastKillRecord(ProjectedSeconds, new Dictionary<string, double>(_bestByPlayer));
 	}
 
 	public void OnHit(EnemyHit hit, string attacker)
@@ -89,7 +89,7 @@ internal sealed class HeroicFastKillWatch
 		_windowByPlayer[attacker] = (_windowByPlayer.TryGetValue(attacker, out double sum) ? sum : 0) + amount;
 	}
 
-	private double AverageMaxHealth()
+	private double TotalMaxHealth()
 	{
 		double total = 0;
 		foreach (double maxHealth in _maxHealthByBoss.Values)
@@ -97,7 +97,7 @@ internal sealed class HeroicFastKillWatch
 			total += maxHealth;
 		}
 
-		return total / _maxHealthByBoss.Count;
+		return total;
 	}
 
 	private readonly struct WindowHit

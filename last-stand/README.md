@@ -15,24 +15,23 @@ essences and turns what you collect into upgrades.
   removed, to that room's own boss music, for every player.
 - A new wave starts **once the last one is cleared**, after a short break.
   Each wave is bigger and stronger than the last.
-- Every monster gets **more health and damage every wave**, and from wave
-  200 every 10th wave is **empowered**: ×1.5 health and damage for every
-  monster, bosses included.
+- Monsters get **stronger every wave by the game's own world scaling**:
+  they fight like one world higher every 25 waves, a little more each
+  wave, and from wave 200 one world higher every 2 waves. Only their
+  stats climb; loot, gold and prices stay at the run's world. The wave's
+  chat line tells you which world they fight like.
 - **Curse to start** (difficulty option, off by default): no wave timer.
   Each wave waits until a player takes a curse at the Hatred Remnant, which
   curses every player, each with a different curse.
-- **Clear too fast and it hits back:** from wave 30, if 80% of a wave's
-  monsters die within 1 s of their first hit, every later wave's monsters
-  get double health and damage, stacking with each fast clear (heroic
-  bosses take half the stacks). If the player who earned it leaves, it
-  goes back down, and returns when they rejoin.
 - **Minibosses** come every 10 waves, then several at once.
-- **Heroic bosses**, the game's real zone bosses, enter at waves 50 and
-  100, then every 25 waves (125, 150, 175…). Each boss wave brings one
-  more: 1 at 50, 2 at 100, 3 at 125, 4 at 150, up to 10. Each drops 3
-  Corrupted Chaos rewards, the kind Pain minibosses leave, and the stardust
-  a boss kill gives in a normal run. Kill them too fast (under 90 s each at
-  your best burst) and later heroic bosses come back with more health.
+- **Heroic bosses**, the game's real zone bosses, enter every 25 waves
+  (25, 50, 75…). Each boss wave brings one more: 1 at 25, 2 at 50, 3 at
+  75, 4 at 100, up to 10. Each drops 2 Corrupted Chaos rewards, the kind
+  Pain minibosses leave, and the stardust a boss kill gives in a normal
+  run. Kill them too fast (all of a wave's bosses in under 90 s at your
+  best burst) and later heroic bosses come back from a stronger world. If
+  the player who earned that leaves, it goes back down, and returns when
+  they rejoin.
   From wave 125 each one storms in at a random moment while the wave's
   monsters are still spawning, not last.
 - **Pain minibosses** change the rules while they live: every hero takes

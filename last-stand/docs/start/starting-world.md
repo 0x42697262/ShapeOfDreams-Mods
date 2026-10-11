@@ -9,34 +9,41 @@ the run.
 **The default is world 1**, the same as vanilla's first world (Forest of
 Turbulence). The game adds its own world bonus to every monster in
 `DewDifficultySettings.ApplyDifficultyModifiers`, with a curve per kind
-(regular, miniboss, boss); Last Stand doesn't touch it. The only multiplier
-Last Stand adds is the per-wave bonus, and percentage stat bonuses multiply
-(`BonusStats` `+` uses `DewMath.MultiplyPercentageBonuses`), so a monster at
-world `N`, wave `W` has the game's world `N` bonus times the wave bonus.
+(regular, miniboss, boss); Last Stand doesn't touch it.
 
-Raising the world makes monsters stronger by the game's curves (at
-difficulty factor 1):
+**The run's world and the monsters' world are two numbers.** The run's
+world is this setting, and it stays put. Monster stats then climb from it
+on the game's own curves: each wave, Last Stand works out a higher world
+for the monsters (1 more every 25 waves, then 1 every 2 waves from wave
+200, smooth in between) and gives each monster the difference between
+the curve there and at the run's world as one stat bonus (see
+[Waves](../waves/waves.md), *Strength, by world*). Only health and damage
+follow the monsters' world; everything below follows the run's world. So
+a higher starting world shifts the whole monster climb up by the same
+number of worlds and also raises loot, gold and prices, while the wave
+climb on its own leaves those alone.
 
-| World | Regular health | Regular damage | Heroic boss health |
+What a world means (the game's curves on Nightmare, vs world 1):
+
+| World | Regular health | Regular damage | Boss health |
 |---|---|---|---|
-| 1 | ×1 | ×0.9 | ×1 |
-| 2 | ×1.7 | ×1.7 | ×1.7 |
-| 3 | ×3.3 | ×3.4 | ×3.1 |
-| 5 | ×9.5 | ×10 | ×9.6 |
-| 10 | ×45 | ×44 | ×63 |
+| 2 | ×1.7 | ×1.6 | ×1.7 |
+| 3 | ×3.3 | ×3.2 | ×3.1 |
+| 5 | ×9.5 | ×9.2 | ×9.6 |
+| 10 | ×51 | ×48 | ×74 |
+| 20 | ×297 | ×159 | ×678 |
+| 50 | ×1774 | ×492 | ×6457 |
 
-**Where the waves sit.** At world 1, the per-wave bonus alone (+10% a wave,
-+50% from wave 150) makes a wave as tough as these vanilla worlds:
+**Where the waves sit.** With the default world rise, monsters fight like
+this world (add `starting world − 1` for a higher start; heroic bosses
+can sit higher after a [fast kill](../waves/heroic-bosses.md)):
 
-| Wave | Monster health and damage | Like vanilla world |
-|---|---|---|
-| 10 | ×1.9 | 2 |
-| 30 | ×3.9 | 3 |
-| 50 | ×5.9 | 4 |
-| 100 | ×10.9 | 5 |
-| 150 | ×15.9 | 6 |
-| 200 | ×40.9 | 9 to 10 |
-| 300 | ×90.9 | 14 |
+| Wave | 1 | 26 | 51 | 101 | 150 | 200 | 210 | 220 | 250 | 300 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Monster world | 1 | 2 | 3 | 5 | 7 | 9 | 14 | 19 | 34 | 59 |
+
+The chat line of every wave says "Monsters fight like world X.X", and the
+`wave N:` log line shows `world=`.
 
 The index also moves everything else the game ties to the world number:
 - **Boss skills:** `ZoneManager` rolls some zone indexes for hard boss ability

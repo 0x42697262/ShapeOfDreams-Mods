@@ -68,10 +68,9 @@ internal static class Messages
 			text += $" They fight with the strength of {plan.UnmergedMobCount}: x{plan.MergeMultiplier:0.##} health and damage each.";
 		}
 
-		if (plan.IsEmpowered)
-		{
-			text += $" Empowered wave: every monster has x{plan.EmpoweredMultiplier:0.##} health and damage.";
-		}
+		text += plan.HeroicBossCount > 0
+			? $" Monsters fight like world {plan.MonsterWorld:0.#}, heroic bosses like world {plan.HeroicBossWorld:0.#}."
+			: $" Monsters fight like world {plan.MonsterWorld:0.#}.";
 
 		if (plan.NewForeignTypes)
 		{
@@ -111,8 +110,8 @@ internal static class Messages
 				return $"The hunt begins! From now on, hunters join every wave and artillery rains on the arena, growing stronger every {settings.HuntLevelStepWaves} waves.";
 			case Milestone.HuntedEnvironments:
 				return $"Environments now come on {environment.HuntedChance * SharedTuning.PercentScale:0}% of waves, at most {environment.MaxPerBlock} in every {environment.BlockWaves}, and replace the hunter zone when they do.";
-			case Milestone.Empowered:
-				return $"The monsters grow stronger! From now on, every {settings.Empowered.IntervalWaves} waves an empowered wave gives every monster, bosses included, x{settings.EmpoweredMultiplier:0.##} health and damage.";
+			case Milestone.FasterWorlds:
+				return $"The monsters grow stronger, faster! From now on, they climb {settings.World.FasterRisePerStep:0.##} world(s) every {settings.World.FasterStepWaves} wave(s) instead of {settings.World.RisePerStep:0.##} every {settings.World.StepWaves}.";
 			default:
 				return $"A dark urge stirs! From now on, each co-op wave without a heroic boss has a {settings.FriendlyFireChance * SharedTuning.PercentScale:0}% chance to turn heroes against each other until it's cleared.";
 		}
@@ -123,14 +122,9 @@ internal static class Messages
 		return SharedMessages.Notice($"{count} unclaimed memory or essence drop(s) on the ground are now free for anyone.");
 	}
 
-	public static string FastClear(int wave, int instantKills, int monsters, double seconds, double multiplier)
+	public static string HeroicFastKill(double projectedSeconds, double targetSeconds, double multiplier)
 	{
-		return SharedMessages.Warning($"{instantKills} of wave {wave}'s {monsters} monsters died within {seconds:0.##}s of their first hit. From wave {wave + 1} on, monsters hit back with x{multiplier:0.##} health and damage.");
-	}
-
-	public static string HeroicFastKill(double secondsPerBoss, double target, double multiplier)
-	{
-		return SharedMessages.Warning($"Your best burst would kill a heroic boss in {secondsPerBoss:0.#}s, faster than {target:0}s. Heroic bosses now return with x{multiplier:0.##} health.");
+		return SharedMessages.Warning($"Your best burst would kill all of this wave's heroic bosses in {projectedSeconds:0.#}s, faster than {targetSeconds:0}s. Heroic bosses now return from a stronger world, with x{multiplier:0.##} health.");
 	}
 
 	public static string ArenaReadyAwaitingCurse()

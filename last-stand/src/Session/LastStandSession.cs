@@ -68,7 +68,6 @@ internal sealed class LastStandSession
 
 		_waves.WaveStarted += OnWaveStarted;
 		_waves.WaveCleared += OnWaveCleared;
-		_waves.FastCleared += OnFastCleared;
 		_enemies.Died += OnEnemyDied;
 		_pain.GroupFell += _waves.RestoreHuntedZone;
 	}
@@ -398,7 +397,7 @@ internal sealed class LastStandSession
 			int adopted = inProgress ? EnemyAdoption.AdoptSurvivors(_enemies) : 0;
 			_waves.Resume(wave, inProgress, now + _settings.Waves.IntermissionSeconds, pace);
 			ApplyGoldPrices(wave);
-			Log.Info(LogText.ProgressRestored(wave, inProgress, adopted, pace.FastClearCount, pace.HeroicKillCount));
+			Log.Info(LogText.ProgressRestored(wave, inProgress, adopted, pace.HeroicKillCount));
 			return;
 		}
 
@@ -515,11 +514,6 @@ internal sealed class LastStandSession
 	public void OnShrineUsed(Shrine shrine, Entity user)
 	{
 		Shrines.OnUsed(shrine, user, _settings.DestinyClaimsPerWave);
-	}
-
-	private void OnFastCleared()
-	{
-		ProgressStore.Save(_arenaNode, _waves.CurrentWave, true, _waves.Pace);
 	}
 
 	private void OnWaveCleared(int wave)

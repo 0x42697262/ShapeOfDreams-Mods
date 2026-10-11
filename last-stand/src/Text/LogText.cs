@@ -104,19 +104,18 @@ internal static class LogText
 		return $"wave {wave} resumed after a reload; no new monsters are added to it.";
 	}
 
-	public static string ProgressRestored(int wave, bool inProgress, int adopted, int fastClears,
-		int heroicFastKills)
+	public static string ProgressRestored(int wave, bool inProgress, int adopted, int heroicFastKills)
 	{
 		return (inProgress
 			? $"progress restored: wave {wave} is still being fought, {adopted} monster(s) on the field taken over"
 			: $"progress restored: wave {wave} was cleared; wave {wave + 1} comes next") +
-		       $", {fastClears} fast clear(s) and {heroicFastKills} heroic fast kill(s) on record.";
+		       $", {heroicFastKills} heroic fast kill(s) on record.";
 	}
 
-	public static string PaceForRoster(int wave, int stacks, int fastClears, double heroicKill, double heroicKillEveryone)
+	public static string PaceForRoster(int wave, double heroicKill, double heroicKillEveryone)
 	{
-		return $"pace: wave {wave} counts {stacks} of {fastClears} fast clear(s) and heroic bosses x{heroicKill:0.##} " +
-		       $"of x{heroicKillEveryone:0.##} health for the players here.";
+		return $"pace: wave {wave} gives heroic bosses x{heroicKill:0.##} of x{heroicKillEveryone:0.##} health " +
+		       "for the players here.";
 	}
 
 	public static string LuckChoicesRenewed(int wave)
@@ -367,8 +366,7 @@ internal static class LogText
 		       $"heroicWindow={plan.HeroicBossWindowSeconds:0}s " +
 		       $"heroicHaste={plan.HeroicBossHaste:0} " +
 		       $"ambient={plan.AmbientLevel} " +
-		       $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " +
-		       $"empowered=x{plan.EmpoweredMultiplier:0.##} fastClear=x{plan.FastClearMultiplier:0.##} heroicFastClear=x{plan.HeroicFastClearMultiplier:0.##} " +
+		       $"world={plan.MonsterWorld:0.##} heroicWorld={plan.HeroicBossWorld:0.##} " +
 		       $"heroicKill=x{plan.HeroicKillMultiplier:0.##} " +
 		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +
 		       $"mirageChance={plan.MirageChance * SharedTuning.PercentScale:0}% " +
@@ -399,17 +397,11 @@ internal static class LogText
 		return $"blocked room modifier {modifierType} on arena node {nodeIndex}.";
 	}
 
-	public static string FastClearTriggered(int wave, int instantKills, int monsters, double seconds,
-		double multiplier, double heroicMultiplier)
-	{
-		return $"fast clear: wave {wave} had {instantKills} of {monsters} monster(s) die within {seconds:0.##} s of their first hit; from wave {wave + 1} monsters have x{multiplier:0.##} health and damage, heroic bosses x{heroicMultiplier:0.##}.";
-	}
-
 	public static string HeroicFastKill(int wave, double burstDamage, double burstSeconds, double projected,
 		double target, double step, double maxStep, double multiplier)
 	{
 		return $"heroic fast kill: wave {wave}'s heroic bosses took {burstDamage:N0} damage in their best " +
-		       $"{burstSeconds:0.#} s, a kill in {projected:0.#} s per boss at that rate (target {target:0.#} s); " +
+		       $"{burstSeconds:0.#} s, all of them dead in {projected:0.#} s at that rate (target {target:0.#} s); " +
 		       $"this step x{step:0.##} (largest x{maxStep:0.##}), heroic bosses now have x{multiplier:0.##} health.";
 	}
 
@@ -417,7 +409,7 @@ internal static class LogText
 		double target)
 	{
 		return $"heroic fast kill: wave {wave}'s heroic bosses took {burstDamage:N0} damage in their best " +
-		       $"{burstSeconds:0.#} s, a kill in {projected:0.#} s per boss at that rate (target {target:0.#} s); " +
+		       $"{burstSeconds:0.#} s, all of them dead in {projected:0.#} s at that rate (target {target:0.#} s); " +
 		       "no change.";
 	}
 
@@ -425,12 +417,6 @@ internal static class LogText
 	{
 		return $"heroic fast kill: wave {wave}'s heroic bosses died without a recorded hit; not measured.";
 	}
-
-	public static string FastClearMissed(int wave, int instantKills, int deaths, int needed, double seconds)
-	{
-		return $"fast clear: wave {wave} had {instantKills} of {deaths} death(s) within {seconds:0.##} s of the first hit; {needed} needed.";
-	}
-
 	public static string WaveCleared(int wave)
 	{
 		return $"wave {wave} cleared.";

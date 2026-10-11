@@ -1,20 +1,13 @@
-[b]v0.9.0[/b]
 [list]
-[*]The Last Stand button in the lobby settings now only shows in a Last Stand lobby, not in every lobby you host.
-[*]Environments now come by chance: waves 1-49 have a 10% chance of one, wave 1 included, never on heroic boss or Pain waves. Set "Environment chance (%)" to 0 to turn it off.
-[*]Waves 50-99 now always get an environment, except heroic boss and Pain waves. Set "Higher environment chance (%)" to lower it.
-[*]From wave 100 every wave has a 50% chance of an environment instead of its hunter zone, heroic boss waves included (not Pain waves), with at most 2 in every 10 waves (100-109, 110-119 …). Set "Hunter zone environment chance (%)" to 0 to turn it off.
-[*]No more fixed environment every 10 waves (was 6, 16, 26 …).
-[*]Hunters and hunter zones now start at wave 100 (was 101).
-[*]Hunt level now rises every 5 waves (was 10) and has no cap (was 6): level 1 at wave 100, 11 at 150, 21 at 200. Set "Max hunt level" above 0 to cap it again.
-[*]Heroic bosses now come at wave 50, 100, 125, 150, 175 … (was 49, 99, 124 …), one more boss each boss wave: 1, 2, 3, 4, 5 … (was one more every 50 waves).
-[*]Heroic fast kill target is now 90 s per boss (was 15 s), and one fast kill can raise boss health up to x50 (was x10).
-[*]New: empowered waves. From wave 200, every 10th wave gives every monster, bosses included, x1.5 health and damage. Set "Empowered health and damage (x)" to 1 to turn it off.
-[*]New: from wave 125, each heroic boss enters at a random moment up to 60 s after the wave's first spawn instead of last (or after the last monster if spawning ends first). Set "Heroic boss entrance window (s)" to 0 to turn it off.
-[*]Dark urge now starts at wave 300 (was 176), and its notice is now red and shows its chance.
-[*]New: waves 100, 200 and 300 announce the rules that start there (hunters, empowered waves, dark urge) in a light blue chat line.
-[*]Fast clear and heroic fast kill raises now follow the players who earned them: if a player leaves, monsters drop back to what the others earned, and the raise returns when that player rejoins.
-[*]Hunters, fast clear and environments now have their own settings pages.
+[*]New: world scaling. Monster stats now follow the game's own world scaling instead of +10% health and damage per wave (+50% from wave 150): 1 world higher every 25 waves, and from wave 200 1 world every 2 waves. Loot, gold and prices stay at the run's world. Set "Worlds per step" and "Faster: worlds per step" to 0 to turn it off.
+[*]The wave's chat line now says which world the monsters fight like (and the heroic bosses, on boss waves).
+[*]Removed fast clear: clearing a wave fast no longer raises monster health and damage, and the Fast clear settings page is gone.
+[*]Removed empowered waves (were x1.5 health and damage every 10 waves from wave 200). Wave 200 now announces the faster world rise instead.
+[*]Heroic bosses now come every 25 waves from wave 25 (was 50, 100, then every 25), one more each boss wave: 1 at 25, 2 at 50, 3 at 75 … up to 10 from wave 250 (was 300).
+[*]Heroic bosses drop 2 Corrupted Chaos rewards each (was 3).
+[*]Heroic bosses no longer get x5 health and x8 damage, or at least 20x the toughest monster's health on merged waves. They fight at the wave's world like every other monster.
+[*]Heroic fast kill now times all of a wave's heroic bosses together: "Heroic fast kill: seconds for all bosses" is 90 (was 90 per boss). A fast kill now sends later heroic bosses from a stronger world, so their damage rises with their health.
+[*]Heroic fast kill's largest step is now x100 (was x50).
 [/list]
 
 Settings are reset with this update (old file kept as .old). Only the host needs to update.

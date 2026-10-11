@@ -39,21 +39,7 @@ internal sealed class WaveSettings
 
 	public int WavesPerAmbientLevel { get; set; }
 
-	public double HealthBonusPerWave { get; set; }
-
-	public double DamageBonusPerWave { get; set; }
-
-	public int LateScalingFromWave { get; set; }
-
-	public double LateHealthBonusPerWave { get; set; }
-
-	public double LateDamageBonusPerWave { get; set; }
-
-	public Cadence Empowered { get; set; }
-
-	public double EmpoweredMultiplier { get; set; }
-
-	public FastClearRule FastClear { get; set; }
+	public WorldRule World { get; set; }
 
 	public HeroicFastKillRule HeroicFastKill { get; set; }
 
@@ -82,10 +68,6 @@ internal sealed class WaveSettings
 	public double HeroicBossEntranceDelaySeconds { get; set; }
 
 	public double HeroicBossAbilityHaste { get; set; }
-
-	public double HeroicBossHealthMultiplier { get; set; }
-
-	public double HeroicBossDamageMultiplier { get; set; }
 
 	public double HeroicBossHastePerBossWave { get; set; }
 

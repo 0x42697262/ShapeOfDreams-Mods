@@ -8,7 +8,7 @@ internal sealed class BossHealthFloor
 {
 	private static readonly EnemyTier[] MobTiers = { EnemyTier.Regular, EnemyTier.Hunter };
 
-	private static readonly EnemyTier[] BossTiers = { EnemyTier.MiniBoss, EnemyTier.Pain, EnemyTier.HeroicBoss };
+	private static readonly EnemyTier[] BossTiers = { EnemyTier.MiniBoss, EnemyTier.Pain };
 
 	private double _toughestMob;
 	private double _nextCheckAt;
@@ -46,9 +46,7 @@ internal sealed class BossHealthFloor
 
 		foreach (EnemyTier tier in BossTiers)
 		{
-			double multiple = tier == EnemyTier.HeroicBoss
-				? plan.HeroicBossHealthMultiple
-				: plan.MiniBossHealthMultiple;
+			double multiple = plan.MiniBossHealthMultiple;
 			if (multiple <= 0)
 			{
 				continue;

@@ -18,13 +18,21 @@ internal sealed class WavePlan
 
 	public double MiniBossHealthMultiple { get; set; }
 
-	public double HeroicBossHealthMultiple { get; set; }
-
 	public int MiniBossCount { get; set; }
 
 	public int PainCount { get; set; }
 
 	public int HeroicBossCount { get; set; }
+
+	public double ExtraWorlds { get; set; }
+
+	public double HeroicBossWorldRaise { get; set; }
+
+	public double MonsterWorld { get; set; }
+
+	public double HeroicBossWorld => MonsterWorld + HeroicBossWorldRaise;
+
+	public double HeroicKillMultiplier { get; set; } = 1;
 
 	public double HeroicBossWindowSeconds { get; set; }
 
@@ -33,18 +41,6 @@ internal sealed class WavePlan
 	public int AmbientLevel { get; set; }
 
 	public int MaxAlive { get; set; }
-
-	public double HealthBonusPercent { get; set; }
-
-	public double DamageBonusPercent { get; set; }
-
-	public double EmpoweredMultiplier { get; set; } = 1;
-
-	public double FastClearMultiplier { get; set; } = 1;
-
-	public double HeroicFastClearMultiplier { get; set; } = 1;
-
-	public double HeroicKillMultiplier { get; set; } = 1;
 
 	public int ForeignTypesUnlocked { get; set; }
 
@@ -64,9 +60,7 @@ internal sealed class WavePlan
 
 	public bool IsHunted => HuntLevel > 0;
 
-	public bool HasBossHealthFloor => MiniBossHealthMultiple > 0 || HeroicBossHealthMultiple > 0;
-
-	public bool IsEmpowered => EmpoweredMultiplier != 1;
+	public bool HasBossHealthFloor => MiniBossHealthMultiple > 0;
 
 	public bool IsMerged => MergeMultiplier != MergeRule.NoChange;
 

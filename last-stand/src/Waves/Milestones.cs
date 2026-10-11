@@ -19,9 +19,9 @@ internal static class Milestones
 			starting.Add(Milestone.HuntedEnvironments);
 		}
 
-		if (wave == settings.Empowered.FirstWave && settings.EmpoweredMultiplier != 1)
+		if (settings.World.HasFasterRise && wave == settings.World.FasterFromWave)
 		{
-			starting.Add(Milestone.Empowered);
+			starting.Add(Milestone.FasterWorlds);
 		}
 
 		if (wave == settings.FriendlyFireFromWave && settings.FriendlyFireChance > 0)

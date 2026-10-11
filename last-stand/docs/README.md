@@ -14,22 +14,22 @@ For working notes, hard constraints and the in-game test list, see
 |---|---|
 | [Picking the mode](start/picking-the-mode.md) | The solo button, the lobby dropdown option, and how the mode is remembered across restarts |
 | [Arena](start/arena.md) | Leaving camp with no world map, and how the boss room loads cleared, lit and plain |
-| [Starting world](start/starting-world.md) | The difficulty setting: which world's vanilla scaling the run uses |
+| [Starting world](start/starting-world.md) | The difficulty setting: the run's world, and how monster stats climb from it |
 | [Starting gold and dream dust](start/starting-gold-and-dust.md) | The one-time grant in camp |
 
 ## Waves and monsters
 
 | File | Covers |
 |---|---|
-| [Waves](waves/waves.md) | Wave size, clearing, breaks, the alive cap, per-wave scaling, minibosses |
+| [Waves](waves/waves.md) | Wave size, clearing, breaks, the alive cap, world scaling, minibosses |
 | [How monsters are spawned](waves/spawning.md) | Which game spawner each monster kind goes through |
 | [Monsters from other worlds](waves/other-worlds.md) | New monster types every 5 waves |
 | [Hunters and hunter zones](waves/hunters.md) | Hunters from wave 100, hunt levels and artillery |
 | [Mirage skins](waves/mirage-skins.md) | Skins from wave 30, every monster from 149 |
 | [Pain minibosses](waves/pain-minibosses.md) | The damage aura and Corrupted Chaos rewards |
-| [Heroic bosses](waves/heroic-bosses.md) | Zone bosses on waves 50, 100, 125…, their scaling and rewards |
+| [Heroic bosses](waves/heroic-bosses.md) | Zone bosses on waves 25, 50, 75…, their world, fast kill and rewards |
 | [Environments](waves/environments.md) | Room modifiers that last one wave |
-| [Fast clear and fast kill follow the players](waves/pace-by-player.md) | Why the raises shrink when the player who earned them leaves |
+| [Fast kill follows the players](waves/pace-by-player.md) | Why the heroic boss raise shrinks when the player who earned it leaves |
 | [Dark urge](waves/dark-urge.md) | The co-op curse that lets heroes hurt each other |
 | [Curse to start](waves/curse-to-start.md) | Difficulty option: each wave waits for a curse on everyone |
 

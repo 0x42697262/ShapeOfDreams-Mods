@@ -3,7 +3,7 @@
 The first wave starts 10 s after arrival. A wave is **cleared** when everything
 in it has spawned and died. The next wave starts 20 s after that, or 40 s after
 a wave that had a miniboss, a Pain miniboss or a heroic boss (10, 20, 30, 40,
-50, 60… and 125, 175…), so the party can use the well and pick up rewards. The pace is
+50, 60… and the heroic boss waves 25, 75, 125…), so the party can use the well and pick up rewards. The pace is
 set by how fast the party kills, not by a timer. The chat notice for a cleared
 wave gives the break that applies. After a mod reload between waves, the
 normal break is used, because the cleared wave's plan didn't survive. The score is the wave reached.
@@ -13,15 +13,14 @@ normal break is used, because the cleared wave's plan didn't survive. The score 
 | 1 | Regular monsters, 6 growing by 2 a wave | wave |
 | 5 | Surge: twice the regular monsters (hunters included) and alive cap | 5 waves |
 | 48 | Merged waves: at most 100 monsters and hunters, carrying the whole wave's strength; surges add 2 minibosses and 2 Pain minibosses | wave |
-| 2 | +10% health and +10% damage on every monster, stacking | wave |
-| 150 | The stacking step becomes +50% health and +50% damage | wave |
-| 200 | Empowered wave: ×1.5 health and damage on every monster, bosses included | 10 waves |
+| 1 | Monster stats follow the game's world scaling, rising 1 world every 25 waves, a little each wave | wave |
+| 200 | Faster world rise: 1 world every 2 waves | wave |
 | 10 | 3 monster types from other worlds join the pool | 5 waves |
 | 10 | Minibosses (1, 1, 2, 2… up to 10) | 10 waves |
 | 20 | Pain minibosses (1, 1, 2, 2… up to 3) | 20 waves |
 | 30 | The next stronger Mirage skin is unlocked | 10 waves |
 | 130 | Mirage chance grows from 20% to 100% at wave 149 | wave |
-| 50 | Heroic boss, last in the wave (1 at 50, 2 at 100, 3 at 125, 4 at 150… one more each boss wave, up to 10 from 300) | 50 waves, 25 from wave 100 |
+| 25 | Heroic boss, last in the wave (1 at 25, 2 at 50, 3 at 75, 4 at 100… one more each boss wave, up to 10 from 250) | 25 waves |
 | 100 | Hunters: 1/31 of the regular monsters, 2/31 at 101… all of them from 130 on | wave |
 | 100 | Hunter zone on every wave: falling artillery, hunt level 1 for 100–104, 2 for 105–109… no cap | wave |
 
@@ -51,23 +50,16 @@ works through these knobs, all using systems the game already syncs:
   neither the usual orange nor the red of warnings), right after the
   wave's own line. With the defaults: wave 100 announces the hunt
   (hunters, artillery, the hunt level's step) and the hunter zone
-  environment chance and cap, wave 200 the empowered waves, wave 300 the
-  dark urge and its chance. The waves come from the settings, not fixed
-  numbers: `Milestones.StartingAt` compares the wave with `First hunter
-  wave`, the empowered and dark urge start waves, and skips a rule that's
-  off (chance 0, multiplier 1). The values in the text are the current
-  settings. It's sent only when a wave starts, not when one is resumed
+  environment chance and cap, wave 200 the faster world rise ("The
+  monsters grow stronger, faster! From now on, they climb 1 world(s)
+  every 2 wave(s) instead of 1 every 25."), wave 300 the dark urge and
+  its chance. The waves come from the settings, not fixed numbers:
+  `Milestones.StartingAt` compares the wave with `First hunter wave`,
+  `Faster world rise from wave` and `First dark urge wave`, and skips a
+  rule that's off (chance 0, faster rise from wave 0). The values in the
+  text are the current settings. It's sent only when a wave starts, not when one is resumed
   after a reload; `laststand_wave 200` sends it. Log: `milestone: wave N
   announces …`.
-- **Empowered waves:** from wave 200 (`First empowered wave`), every 10th
-  wave (`Empowered every N waves`: 200, 210, 220 …) gives every monster,
-  minibosses, Pain and heroic bosses included, ×1.5 health and damage
-  (`Empowered health and damage`, 1 = off). It was ×2 every 5 waves before
-  schema 49, which wiped parties too fast. It multiplies with the fast
-  clear and merge multipliers (`WavePlan.EmpoweredMultiplier`, applied in
-  `WaveDirector.Enhance`), on top of the per-wave bonus. These are also
-  surge waves with the default surge interval. Chat's wave line says
-  "Empowered wave", and the log line shows `empowered=x1.5`.
 - **Merged waves:** merging starts at the wave where one player's normal
   count reaches 100 (`Merged wave size`): `6 + 2 × (wave − 1) ≥ 100`, wave
   48 with the defaults. Change the wave 1 count or the growth and the start
@@ -75,9 +67,9 @@ works through these knobs, all using systems the game already syncs:
   wave N, waves hold at 100 …` when the arena is ready). From then on a
   wave with more than 100 regular monsters and hunters spawns only 100,
   whatever the player count, and they carry the strength of the whole
-  count: health and damage × count / 100, on top of the per-wave bonus and
-  fast clear (multiplied, through `FastClearRule.Raise`, so the game's
-  additive stat bonuses don't dilute it). Wave 48 solo is exactly 100 (×1),
+  count: health and damage × count / 100, on top of the world scaling
+  (multiplied, through `MergeRule.RaiseBonus`, so the game's additive stat
+  bonuses don't dilute it). Wave 48 solo is exactly 100 (×1),
   for two players 150 → ×1.5; wave 50 solo is a surge of 208 → ×2.08; wave
   131 solo is 266 → ×2.66; wave 135 for two players is a surge of 822 →
   ×8.22. Before the start wave nothing merges, even when co-op or a surge
@@ -86,11 +78,12 @@ works through these knobs, all using systems the game already syncs:
   (`LootService`), so a merged wave pays what the full count would have;
   vanilla kill gold isn't. Minibosses, Pain minibosses and heroic bosses
   aren't merged and don't get the merge multiplier. Instead, once waves
-  merge, they have a health floor: at least 5× the max health of the
-  toughest regular monster or hunter in the wave for minibosses and Pain
-  minibosses (`Merged waves: miniboss health`), and 20× for heroic bosses
-  (`Merged waves: heroic boss health`). Without it, ×8 monsters would
-  leave the bosses weaker than the mobs around them. `BossHealthFloor`
+  merge, minibosses and Pain minibosses have a health floor: at least 5×
+  the max health of the toughest regular monster or hunter in the wave
+  (`Merged waves: miniboss health`). Without it, ×8 monsters would leave
+  them weaker than the mobs around them. Heroic bosses have no floor any
+  more (20× until schema 53): their world, raised by the heroic fast kill,
+  sets their health (see [Heroic bosses](heroic-bosses.md)). `BossHealthFloor`
   checks every 0.5 s during the wave: it remembers the highest max health
   any of the wave's monsters had, and raises any boss below its floor with
   one extra `maxHealthPercentage` bonus of `(floor / current − 1) × 100%`.
@@ -106,67 +99,82 @@ works through these knobs, all using systems the game already syncs:
   (`Merged surges: extra minibosses`) and 2 extra Pain minibosses (`Merged
   surges: extra Pain minibosses`), added after the usual caps. The Pain
   group puts the Pain zone in place of that wave's hunter zone while it
-  lives, and the wave's break is the 40 s boss break. Fast clear's instant
-  kill share counts the merged wave. Curse kill goals count the full
+  lives, and the wave's break is the 40 s boss break. Curse kill goals count the full
   wave, so they keep growing (see [Curses](../shrines/curses.md)). The chat line for
   the wave says `They fight with the strength of N: xM health and damage
   each.` and the `wave N:` log line shows `merged=N/xM` (`merged=N/x1` when
   nothing merged). The rule is `MergeRule`, plain logic used by
   `WaveSchedule`.
-- **Strength, per wave:** every spawned monster gets a stat bonus of +10% max
-  health and +10% attack and ability damage for each wave after the first. So
-  wave 11 is +100% health and +100% damage. From wave 150 (`Steeper scaling
-  from wave`) each wave adds +50% instead (`Late health / damage per wave`),
-  on top of what the earlier waves added: wave 149 is +1480%, wave 150
-  +1530%, wave 160 +2030%, wave 200 +4030% (`WaveSchedule.StatBonus`). This is a server-side
-  `StatBonus`, so clients see it through the synced stats.
-- **Fast clear:** if 80% of a wave's monsters (`Fast clear: instant kills
-  (%)`, rounded up, bosses included) are killed instantly, every monster
-  from the next wave on gets ×2 health and damage (`Fast clear: stats from
-  next wave (x)`). A monster is killed instantly when it dies within 1 s
-  of the first hit it takes (`Fast clear: instant within (s)`; 0.5 s
-  until schema 44); one that dies from its first hit counts as 0 s. It carries
-  over (from wave 30 by default, see below): clear wave 54 fast and wave 55 is doubled, wave 56 keeps that ×2
-  (plus its normal per-wave growth) with no further doubling, until another
-  fast clear stacks a second ×2 (×4), and so on. Each stack belongs to
-  the players who made its instant kills: if they leave, it can drop, and
-  it comes back with them ([Fast clear and fast kill follow the
-  players](pace-by-player.md)). Heroic bosses get a share
-  of it (`Fast clear: heroic bosses too`, on, and `Fast clear: heroic boss
-  share (%)`, 50): each fast clear counts as half a stack for them, so the
-  boss multiplier is `M ^ (stacks × 0.5)`. With ×2, 10 fast clears give
-  regular monsters ×1024 and heroic bosses ×32 (√1024). A team that can
-  clear that fast already deals enormous damage, and a full ×1024 boss
-  would be unkillable. At 0% or with the toggle off, bosses are left out.
-  Chat says so at once, in red instead of the usual orange (the "Wave N
-  cleared" line is green), and the log shows `fast clear: wave N had K of M
-  monster(s) die within 1 s of their first hit`; every `wave N:` line
-  shows `fastClear=xM`. A watched wave that misses logs how close it came
-  when it's cleared: `fast clear: wave N had K of D death(s) within 1 s
-  of the first hit; X needed`.
-  Each monster's wave bonus is raised to `(100 + bonus) × M − 100`: with
-  one fast clear, wave 21's +200% (3× base) becomes +500% (6× base),
-  exactly double (`FastClearRule.Raise`, applied per monster in
-  `WaveDirector.Enhance`). The game multiplies percentage stat bonuses
-  together (`BonusStats` `+` uses `DewMath.MultiplyPercentageBonuses`), so
-  a separate +100% bonus would also be ×2; raising the wave bonus does the
-  same in one bonus. Each of Last Stand's own
-  spawns records the time of its first `Entity.EntityEvent_OnTakeDamage`
-  (fired on the server, before the lethal hit's `Kill`), and
-  `EnemyRegistry.Died` reports the time from it to the death.
-  `FastClearWatch` counts the instant ones, and `laststand_skip` doesn't
-  count. The number of fast clears is saved
-  with the wave progress (`ProgressStore`), so a mod reload keeps it (log:
-  `progress restored: ... N fast clear(s) so far`). An earlier version
-  counted kills within 10 s of the wave's start. Spawning tops out at about
-  12 monsters a second, so big waves could never reach 80% in time however
-  hard players hit; time from the first hit doesn't depend on the spawn
-  rate, the wave size or the walk in. It also corrects itself: each ×2
-  makes monsters take longer to die, until waves stop counting. Any of the
-  three at 0 (or the multiplier at 1) turns it off. `Fast clear: from wave`
-  (default 30) is the first wave that's watched: waves 1 to 29 never
-  count, so the first possible doubling is wave 31. Stacks already earned
-  stay when it's raised mid-run.
+- **Strength, by world:** monster stats follow the game's own world (zone)
+  scaling, evaluated at a higher world than the run's, a little more each
+  wave. The run's real world (`ZoneManager.currentZoneIndex`, set once by
+  [Starting world](../start/starting-world.md)) never changes, so prices,
+  loot, gold, XP and Mirage tiers stay at the run's world; only monster
+  health and damage climb. `WorldRule.ExtraWorlds(wave)` gives the extra
+  worlds:
+
+  `Worlds per step × (min(wave, F) − 1) / Waves per step` +
+  `Faster: worlds per step × (wave − F) / Faster: waves per step`,
+
+  where F is `Faster world rise from wave` (the second part counts only
+  from F on; 0 turns it off). It's smooth, not a jump every step: with the
+  defaults (1 world per 25 waves, then from wave 200 1 world per 2 waves)
+  wave 2 is 0.04 worlds up and wave 26 exactly 1.
+
+  | Wave | 1 | 26 | 51 | 101 | 150 | 200 | 210 | 220 | 250 | 300 |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | Monsters fight like world (from world 1) | 1 | 2 | 3 | 5 | 7 | 9 | 14 | 19 | 34 | 59 |
+
+  What a world means, from the game's curves (Nightmare, vs world 1):
+
+  | World | Regular health | Regular damage | Boss health |
+  |---|---|---|---|
+  | 2 | ×1.7 | ×1.6 | ×1.7 |
+  | 3 | ×3.3 | ×3.2 | ×3.1 |
+  | 5 | ×9.5 | ×9.2 | ×9.6 |
+  | 8 | ×29 | ×27 | ×36 |
+  | 10 | ×51 | ×48 | ×74 |
+  | 15 | ×144 | ×104 | ×273 |
+  | 20 | ×297 | ×159 | ×678 |
+  | 30 | ×751 | ×270 | ×2347 |
+  | 50 | ×1774 | ×492 | ×6457 |
+  | 100 | ×4332 | ×1046 | ×16731 |
+
+  The curves are cubic, then linear: damage goes linear past scaled index
+  8, regular health past 20 and boss health past 30. So one world more is
+  ×1.7 to ×2.0 early, about ×1.3 around world 10, ×1.1 around world 20 to
+  25 and ×1.03 around world 50. This is why the rise speeds up at wave 200:
+  at 1 world per 25 waves, late waves would barely get stronger. At 1 world
+  per 2 waves from world 9, each wave adds about +14% health and +11%
+  damage at first, about +6% and +3.5% by world 20, and about +2% and
+  +1.5% by world 40.
+
+  How it's applied (`WorldScaling`, the game adapter): the game already
+  gives every monster its real world's scaling when it spawns. For each
+  of Last Stand's spawns, `WaveDirector.Enhance` asks the game's curve for
+  that monster's kind at the real world and at the real world plus the
+  extra worlds (`GameManager.GetRegular/MiniBoss/BossMonsterHealthMultiplierByScaling`
+  and the matching damage functions; minibosses and Pain minibosses use
+  the miniboss curve, heroic bosses the boss curve, everything else the
+  regular one), and adds the difference as one server-side `StatBonus` of
+  `(raised ÷ real − 1) × 100%` to max health and to attack damage and
+  ability power. The game multiplies percentage stat bonuses together
+  (`BonusStats` `+` uses `DewMath.MultiplyPercentageBonuses`), so the
+  monster ends up exactly at the raised world's scaling, and clients see
+  it through the synced stats. Merged-wave strength multiplies mobs on
+  top (`MergeRule.RaiseBonus`). Heroic bosses use the wave's world plus
+  their own raise from the heroic fast kill (see [Heroic
+  bosses](heroic-bosses.md)).
+
+  Chat's wave line ends with "Monsters fight like world X.X" (and
+  "heroic bosses like world Y.Y" on a heroic wave), and the `wave N:` log
+  line shows `world=` and `heroicWorld=`. Both count from the run's real
+  world, so with `Starting world` 5, wave 26 is world 6.
+
+  This replaced, in schema 53, a flat bonus of +10% health and damage per
+  wave (+50% from wave 150), the empowered waves (×1.5 every 10 waves from
+  200) and fast clear (×2 health and damage on every later wave when 80%
+  of a wave died within 1 s of its first hit).
 - **Strength, slowly:** the game's ambient level, `GameManager.SetAmbientLevel`,
   sets the level monsters spawn at. It rises by one every 4 waves
   (`Waves per monster level`).
