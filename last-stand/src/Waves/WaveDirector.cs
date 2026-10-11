@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using LastStand.Arena;
 using LastStand.Combat;
 using LastStand.Config;
@@ -254,9 +255,22 @@ internal sealed class WaveDirector
 
 		Log.Info(LogText.WaveStarted(_plan));
 		ChatNotices.Broadcast(Messages.WaveStarted(_plan));
+		AnnounceMilestones(settings);
 		BeginEnvironment(settings);
 		BeginFriendlyFire(settings, now);
 		WaveStarted?.Invoke(_plan);
+	}
+
+	private void AnnounceMilestones(WaveSettings settings)
+	{
+		List<Milestone> starting = Milestones.StartingAt(_plan.Number, settings);
+		if (starting.Count == 0)
+		{
+			return;
+		}
+
+		Log.Info(LogText.MilestonesAnnounced(_plan.Number, starting));
+		ChatNotices.Broadcast(Messages.Milestones(starting, settings));
 	}
 
 	private void ResumePlan(WaveSettings settings, double now)

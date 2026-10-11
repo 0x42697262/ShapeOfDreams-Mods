@@ -8,6 +8,8 @@ internal static class SharedMessages
 
 	public const string SuccessColor = "#5ad45a";
 
+	public const string AnnouncementColor = "#8fd3ff";
+
 	public const string SettingOn = "on";
 
 	public const string SettingOff = "off";
@@ -27,6 +29,11 @@ internal static class SharedMessages
 	public static string Warning(string text)
 	{
 		return Colored(WarningColor, text);
+	}
+
+	public static string Announcement(string text)
+	{
+		return Colored(AnnouncementColor, text);
 	}
 
 	public static string SettingChangeLine(string name, string before, string after)

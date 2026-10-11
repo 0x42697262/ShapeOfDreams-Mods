@@ -91,6 +91,33 @@ internal static class Messages
 		return SharedMessages.Notice(text);
 	}
 
+	public static string Milestones(List<Milestone> milestones, WaveSettings settings)
+	{
+		List<string> sentences = new List<string>();
+		foreach (Milestone milestone in milestones)
+		{
+			sentences.Add(MilestoneText(milestone, settings));
+		}
+
+		return SharedMessages.Announcement(string.Join(" ", sentences));
+	}
+
+	private static string MilestoneText(Milestone milestone, WaveSettings settings)
+	{
+		EnvironmentRule environment = settings.Environment;
+		switch (milestone)
+		{
+			case Milestone.Hunters:
+				return $"The hunt begins! From now on, hunters join every wave and artillery rains on the arena, growing stronger every {settings.HuntLevelStepWaves} waves.";
+			case Milestone.HuntedEnvironments:
+				return $"Environments now come on {environment.HuntedChance * SharedTuning.PercentScale:0}% of waves, at most {environment.MaxPerBlock} in every {environment.BlockWaves}, and replace the hunter zone when they do.";
+			case Milestone.Empowered:
+				return $"The monsters grow stronger! From now on, every {settings.Empowered.IntervalWaves} waves an empowered wave gives every monster, bosses included, x{settings.EmpoweredMultiplier:0.##} health and damage.";
+			default:
+				return $"A dark urge stirs! From now on, each co-op wave without a heroic boss has a {settings.FriendlyFireChance * SharedTuning.PercentScale:0}% chance to turn heroes against each other until it's cleared.";
+		}
+	}
+
 	public static string LeftoverItemsFreed(int count)
 	{
 		return SharedMessages.Notice($"{count} unclaimed memory or essence drop(s) on the ground are now free for anyone.");

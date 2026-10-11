@@ -348,6 +348,11 @@ internal static class LogText
 		return $"arena ready: {heroes} hero(es) staged at {center}.";
 	}
 
+	public static string MilestonesAnnounced(int wave, List<Milestone> milestones)
+	{
+		return $"milestone: wave {wave} announces {string.Join(", ", milestones)}.";
+	}
+
 	public static string WaveStarted(WavePlan plan)
 	{
 		return $"wave {plan.Number}: regular={plan.RegularCount} surge={plan.IsSurge} hunter={plan.HunterCount} " +

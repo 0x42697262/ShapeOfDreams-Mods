@@ -1194,6 +1194,14 @@ Each answer still needs to be seen working:
 111. **Sidebar names on one line** (library): in the settings panel
     "Environments" sits on one line at the same size as "Fast clear", and
     no page name wraps or is cut off.
+112. **Milestone announcements:** `laststand_wave 100`, `200` and `300`
+    each send, right after the wave's line, one light blue chat line
+    (`#8fd3ff`, not orange or red) on the host and a vanilla client:
+    100 "The hunt begins! …" plus the environment chance and cap, 200 "The
+    monsters grow stronger! … x1.5 …", 300 "A dark urge stirs! … 20% …".
+    The log has `milestone: wave N announces …`. Waves 99, 101, 201 and 301
+    send none, and a mod reload mid-wave doesn't repeat it. Change `First
+    empowered wave` to 150: wave 150 announces it instead of 200.
 
 ## Conventions
 

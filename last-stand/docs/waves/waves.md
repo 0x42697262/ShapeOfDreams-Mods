@@ -46,6 +46,19 @@ works through these knobs, all using systems the game already syncs:
   with 6 minibosses: 454 monsters for one player (448 + 6), 678 for two.
   An earlier version stopped the growth at wave 110 (`Monster count stops
   growing at wave`); merged waves replaced that, and the setting is gone.
+- **Milestone announcements:** the wave where a new rule starts gets one
+  extra chat line in light blue (`SharedMessages.Announcement`, `#8fd3ff`,
+  neither the usual orange nor the red of warnings), right after the
+  wave's own line. With the defaults: wave 100 announces the hunt
+  (hunters, artillery, the hunt level's step) and the hunter zone
+  environment chance and cap, wave 200 the empowered waves, wave 300 the
+  dark urge and its chance. The waves come from the settings, not fixed
+  numbers: `Milestones.StartingAt` compares the wave with `First hunter
+  wave`, the empowered and dark urge start waves, and skips a rule that's
+  off (chance 0, multiplier 1). The values in the text are the current
+  settings. It's sent only when a wave starts, not when one is resumed
+  after a reload; `laststand_wave 200` sends it. Log: `milestone: wave N
+  announces …`.
 - **Empowered waves:** from wave 200 (`First empowered wave`), every 10th
   wave (`Empowered every N waves`: 200, 210, 220 …) gives every monster,
   minibosses, Pain and heroic bosses included, ×1.5 health and damage
