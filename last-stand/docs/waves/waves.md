@@ -3,7 +3,7 @@
 The first wave starts 10 s after arrival. A wave is **cleared** when everything
 in it has spawned and died. The next wave starts 20 s after that, or 40 s after
 a wave that had a miniboss, a Pain miniboss or a heroic boss (10, 20, 30, 40,
-49, 50, 60…), so the party can use the well and pick up rewards. The pace is
+50, 60… and 125, 175…), so the party can use the well and pick up rewards. The pace is
 set by how fast the party kills, not by a timer. The chat notice for a cleared
 wave gives the break that applies. After a mod reload between waves, the
 normal break is used, because the cleared wave's plan didn't survive. The score is the wave reached.
@@ -15,12 +15,13 @@ normal break is used, because the cleared wave's plan didn't survive. The score 
 | 48 | Merged waves: at most 100 monsters and hunters, carrying the whole wave's strength; surges add 2 minibosses and 2 Pain minibosses | wave |
 | 2 | +10% health and +10% damage on every monster, stacking | wave |
 | 150 | The stacking step becomes +50% health and +50% damage | wave |
+| 200 | Empowered wave: ×2 health and damage on every monster, bosses included | 5 waves |
 | 10 | 3 monster types from other worlds join the pool | 5 waves |
 | 10 | Minibosses (1, 1, 2, 2… up to 10) | 10 waves |
 | 20 | Pain minibosses (1, 1, 2, 2… up to 3) | 20 waves |
 | 30 | The next stronger Mirage skin is unlocked | 10 waves |
 | 130 | Mirage chance grows from 20% to 100% at wave 149 | wave |
-| 49 | Heroic boss, last in the wave (1 at 49, 2 at 99 and 124, 3 at 149 and 174, 4 at 199…, up to 10 from 499) | 50 waves, 25 from wave 100 |
+| 50 | Heroic boss, last in the wave (1 at 50, 2 at 100, 3 at 125, 4 at 150… one more each boss wave, up to 10 from 300) | 50 waves, 25 from wave 100 |
 | 100 | Hunters: 1/31 of the regular monsters, 2/31 at 101… all of them from 130 on | wave |
 | 100 | Hunter zone on every wave: falling artillery, hunt level 1 for 100–104, 2 for 105–109… no cap | wave |
 
@@ -45,6 +46,14 @@ works through these knobs, all using systems the game already syncs:
   with 6 minibosses: 454 monsters for one player (448 + 6), 678 for two.
   An earlier version stopped the growth at wave 110 (`Monster count stops
   growing at wave`); merged waves replaced that, and the setting is gone.
+- **Empowered waves:** from wave 200 (`First empowered wave`), every 5th
+  wave (`Empowered every N waves`: 200, 205, 210 …) gives every monster,
+  minibosses, Pain and heroic bosses included, ×2 health and damage
+  (`Empowered health and damage`, 1 = off). It multiplies with the fast
+  clear and merge multipliers (`WavePlan.EmpoweredMultiplier`, applied in
+  `WaveDirector.Enhance`), on top of the per-wave bonus. These are also
+  surge waves with the default surge interval. Chat's wave line says
+  "Empowered wave", and the log line shows `empowered=x2`.
 - **Merged waves:** merging starts at the wave where one player's normal
   count reaches 100 (`Merged wave size`): `6 + 2 × (wave − 1) ≥ 100`, wave
   48 with the defaults. Change the wave 1 count or the growth and the start

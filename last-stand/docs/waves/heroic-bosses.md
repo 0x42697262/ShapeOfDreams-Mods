@@ -1,19 +1,22 @@
 # Heroic bosses
 
 "Heroic boss" is the game's name for a zone boss (`BossMonster`). Last Stand
-brings them in as the last enemy of a wave: at waves 49 and 99, then, from
-wave 100 (`Heroic bosses more often from wave`), every 25 waves counted on
-from 99 (`Heroic boss every N waves, later`): 124, 149, 174, 199…
+brings them in as the last enemy of a wave: at waves 50 and 100 (`First
+heroic boss wave` 50, every 50), then, from wave 100 (`Heroic bosses more
+often from wave`), every 25 waves counted on from 100 (`Heroic boss every N
+waves, later`): 125, 150, 175, 200…
 
-| Wave | 49 | 99 | 124 | 149 | 174 | 199 | 249 | 499 |
+| Wave | 50 | 100 | 125 | 150 | 175 | 200 | 250 | 275 |
 |---|---|---|---|---|---|---|---|---|
-| Heroic bosses | 1 | 2 | 2 | 3 | 3 | 4 | 5 | 10 |
+| Heroic bosses | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 9 |
 
-The count is `1 + (wave − 49) / 50` (`Heroic boss step`), capped at 10, so it
-still grows every 50 waves; the shorter interval only adds boss waves in
-between. The schedule is a `ShiftingCadence`: the early cadence up to the
-switch wave, then the later interval continuing from the last early boss
-wave.
+Each boss wave brings one more boss than the last (`Extra heroic bosses
+per boss wave`, 1): the count is `1 + occurrence × extra`, where
+`occurrence` is the boss wave's index (0 for wave 50), capped at 10
+(`Max heroic bosses per wave`) from wave 300. The schedule is a
+`ShiftingCadence`: the early cadence up to the switch wave, then the later
+interval continuing from the last early boss wave, and its `Occurrence`
+counts boss waves across both.
 
 **Entrance.** The boss waits until every monster and miniboss of its wave has
 spawned. Then, after 3 more seconds, it enters with a chat notice and plays its
@@ -50,30 +53,31 @@ Health is `base × world × difficulty × (1 + 0.85 × (players − 1)) × wave 
 multiplier`. Base health (prefabs; bosses gain nothing per level): Belphomet
 8,000, Seeker 8,800, Skoll 9,200, Infernus 9,600, Nyx 10,400, Azurak
 13,200. World 4 is ×3.96 health on Normal, ×6.19 on Hard and ×7.04 on
-Nightmare (difficulty's world factor and its flat health bonus), and wave 49
-is ×5.8. So wave 49, Nightmare, world 4, solo, with the default ×5: Belphomet
-1.63M, Infernus 1.96M, Azurak 2.70M, about 2M on average. Each extra player
+Nightmare (difficulty's world factor and its flat health bonus), and wave 50
+is ×5.9. So wave 50, Nightmare, world 4, solo, with the default ×5: Belphomet
+1.66M, Infernus 1.99M, Azurak 2.75M, about 2M on average. Each extra player
 adds 85% of that (the game's `bossBonusHealthPercentagePerPlayer`): Infernus
-3.6M with 2, 5.3M with 3, 7.0M with 4. The wave factor is the same per-wave
-bonus as every monster's, +10% a wave and +50% from wave 150: ×10.8 at 99,
-×13.3 at 124, ×15.8 at 149, ×16.3 at 150, ×28.3 at 174, ×40.8 at 199.
+3.7M with 2, 5.4M with 3, 7.1M with 4. The wave factor is the same per-wave
+bonus as every monster's, +10% a wave and +50% from wave 150: ×10.9 at 100,
+×13.4 at 125, ×16.3 at 150, ×28.8 at 175, ×41.3 at 200 (×82.6 there, since
+wave 200 is also an [empowered wave](waves.md)).
 Measured at wave 124: Skoll 4,306,783 and Nyx 4,868,537, both exactly
 468.13 × base, as the formula gives.
 
 Damage is the ability's AD/AP ratio × the boss's attack damage or ability
 power. Players add only the game's +11% per extra player. Nightmare world 4
-at wave 49 is ×43.9 on that (×5.74 world, +32% Nightmare, ×5.8 wave), times
+at wave 50 is ×44.7 on that (×5.74 world, +32% Nightmare, ×5.9 wave), times
 the multiplier. Reading the prefab ratios undercounts: at wave 124 with ×8,
 Skoll's `AuraBlade` hit for 302k (8.3 × its ability power) and Nyx's
-`PillarOfStars` for 161k (4.3 ×), about 132k and 70k at wave 49.
+`PillarOfStars` for 161k (4.3 ×), about 134k and 71k at wave 50.
 
 The log measures both: `heroic boss: wave N <type> maxHealth=… attackDamage=…`
 when the multiplier is applied, and `biggest hit on a hero …` (after armor,
 shields included) with the ability's type when the boss dies.
 It also gets ability haste, so it uses its patterns more often: +200 at
-wave 49 (`Heroic boss ability haste`), then +50 more on each later boss wave
-(`Heroic boss haste per later boss wave`): 250 at 99, 300 at 124, 350 at
-149, 450 at 199. Boss waves come twice as often after wave 100, so haste
+wave 50 (`Heroic boss ability haste`), then +50 more on each later boss wave
+(`Heroic boss haste per later boss wave`): 250 at 100, 300 at 125, 350 at
+150, 450 at 200. Boss waves come twice as often after wave 100, so haste
 grows twice as fast there too.
 The wave's haste is worked out with the rest of the wave plan and shows in the
 log as `heroicHaste=`. The game turns haste into cooldown
@@ -88,11 +92,12 @@ also too much.
 **Fast kills raise the next boss.** Fast clear (see [Waves](waves.md))
 watches mobs, and a boss wave's mobs say nothing about how fast the boss
 itself dies. So heroic bosses have their own check, `Heroic fast kill:
-seconds per boss`, 15 by default. At the default `Starting world` 1 a
+seconds per boss`, 90 by default: no heroic boss should die faster than
+90 seconds of the party's best damage. At the default `Starting world` 1 a
 strong party melts heroic bosses; from a starting world of about 4 their
 vanilla zone scaling mostly keeps up, so it rarely fires there. A host
 whose party wants to one-shot bosses sets it to 0 (off). It was 0 by
-default until schema 45.
+default until schema 45, and 15 until schema 48.
 
 It measures the party's best burst, not the fight's length. A timer from
 the first hit to the death can be beaten by stalling (hit once, wait,
@@ -114,7 +119,7 @@ boss would last at that rate. A fight shorter than the window uses its own
 length (first heroic hit to last), so a 2 s kill reads as 2 s, not 5. If
 the projection is under the target, every later heroic boss's health is
 multiplied by `target ÷ projection`, at most `Heroic fast kill: largest
-step` (×10) per wave: at 15, a 5 s projection gives ×3. It never goes back
+step` (×10) per wave: at 90, a 30 s projection gives ×3. It never goes back
 down and compounds (×3 then ×2 is ×6), and a projection at or over the
 target changes nothing, so it settles at the target. Holding back doesn't
 help: the only way to keep the burst low is to deal low damage the whole
@@ -130,9 +135,9 @@ is always in. A skipped wave and a wave resumed after a mod reload aren't
 measured; the multiplier is saved with the wave progress, so a reload
 keeps it. With the setting back at 0 the earned multiplier stops applying.
 
-Logs: `heroic fast kill: wave 49's heroic bosses took 41,203,118 damage in
-their best 5 s, a kill in 2.1 s per boss at that rate (target 15 s); this
-step x7.14 (largest x10), heroic bosses now have x7.14 health.`, or the
+Logs: `heroic fast kill: wave 50's heroic bosses took 41,203,118 damage in
+their best 5 s, a kill in 2.1 s per boss at that rate (target 90 s); this
+step x10 (largest x10), heroic bosses now have x10 health.`, or the
 same with `no change.`; every `wave N:` line shows `heroicKill=xM`. Chat
 says it in red.
 

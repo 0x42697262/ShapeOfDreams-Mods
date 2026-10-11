@@ -36,6 +36,21 @@ internal static class ConfigText
 
 	public const string EnvironmentHeader = "Environments";
 
+	public const string EmpoweredHeader = "Empowered waves";
+
+	public const string EmpoweredFromWaveLabel = "First empowered wave";
+
+	public const string EmpoweredFromWaveDescription = "First wave whose monsters all get the multiplier below.";
+
+	public const string EmpoweredIntervalLabel = "Empowered every N waves";
+
+	public const string EmpoweredIntervalDescription = "Waves between empowered waves.";
+
+	public const string EmpoweredMultiplierLabel = "Empowered health and damage (x)";
+
+	public const string EmpoweredMultiplierDescription =
+		"Health and damage multiplier for every monster of an empowered wave, bosses included. 1 = off.";
+
 	public const string FastClearHeader = "Fast clear";
 
 	public const string FriendlyFireHeader = "Dark urge";
@@ -65,7 +80,7 @@ internal static class ConfigText
 	public const string HeroicBossFromWaveLabel = "First heroic boss wave";
 
 	public const string HeroicBossFromWaveDescription =
-		"First heroic boss wave. Defaults: 49, 99, then every 25 (124, 149, 174…).";
+		"First heroic boss wave. Defaults: 50, 100, then every 25 (125, 150, 175…).";
 
 	public const string HeroicBossIntervalLabel = "Heroic boss every N waves";
 
@@ -75,19 +90,19 @@ internal static class ConfigText
 	public const string HeroicBossFasterFromWaveLabel = "Heroic bosses more often from wave";
 
 	public const string HeroicBossFasterFromWaveDescription =
-		"From this wave, heroic bosses use the later interval, counted from the last boss wave (99 + 25 = " +
-		"124).";
+		"From this wave, heroic bosses use the later interval, counted from the last boss wave (100 + 25 = " +
+		"125).";
 
 	public const string HeroicBossLateIntervalLabel = "Heroic boss every N waves, later";
 
 	public const string HeroicBossLateIntervalDescription =
 		"Waves between heroic boss waves from the switch wave on.";
 
-	public const string HeroicBossStepLabel = "Waves per extra heroic boss";
+	public const string HeroicBossesPerBossWaveLabel = "Extra heroic bosses per boss wave";
 
-	public const string HeroicBossStepDescription =
-		"+1 boss every this many waves after the first. Defaults: 1 at 49, 2 at 99 and 124, 3 at 149 and " +
-		"174, 4 at 199.";
+	public const string HeroicBossesPerBossWaveDescription =
+		"Each heroic boss wave brings this many more than the last. Defaults: 1 at 50, 2 at 100, 3 at 125, " +
+		"4 at 150.";
 
 	public const string MaxHeroicBossesLabel = "Max heroic bosses per wave";
 
@@ -124,7 +139,7 @@ internal static class ConfigText
 
 	public const string HeroicFastKillSecondsDescription =
 		"After a boss wave, the heroic bosses' best burst of damage is turned into a kill time per boss. " +
-		"Under this, later heroic bosses get more health in proportion: a 5 s kill at 15 gives x3. Never " +
+		"Under this, later heroic bosses get more health in proportion: a 30 s kill at 90 gives x3. Never " +
 		"goes back down. 0 = off, for parties who want to one-shot bosses.";
 
 	public const string HeroicFastKillBurstLabel = "Heroic fast kill: burst window (s)";
@@ -688,15 +703,7 @@ internal static class ConfigText
 
 	public const string EnvironmentChanceDescription =
 		"Chance per wave of an environment before the higher chance starts: a random room effect that lasts " +
-		"until the wave is cleared. Never on heroic boss or Pain waves.";
-
-	public const string EnvironmentFromWaveLabel = "First sure environment wave";
-
-	public const string EnvironmentFromWaveDescription = "First wave that always gets an environment.";
-
-	public const string EnvironmentIntervalLabel = "Waves between sure environments";
-
-	public const string EnvironmentIntervalDescription = "Sure environment every N waves.";
+		"until the wave is cleared. Never on Pain waves.";
 
 	public const string EnvironmentHighFromWaveLabel = "Higher environment chance from wave";
 
@@ -715,12 +722,17 @@ internal static class ConfigText
 	public const string EnvironmentHuntedMaxPerBlockLabel = "Hunter zone: max environments per block";
 
 	public const string EnvironmentHuntedMaxPerBlockDescription =
-		"Most environment waves per block, sure ones included, so the rest keep their hunter zone.";
+		"Most environment waves per block, so the rest keep their hunter zone.";
 
 	public const string EnvironmentHuntedBlockWavesLabel = "Hunter zone: block size (waves)";
 
 	public const string EnvironmentHuntedBlockWavesDescription =
 		"Blocks start at the first hunter wave: 100-109, 110-119 … by default.";
+
+	public const string EnvironmentOnHeroicFromWaveLabel = "Environments on heroic boss waves from wave";
+
+	public const string EnvironmentOnHeroicFromWaveDescription =
+		"Before this wave, heroic boss waves never get an environment.";
 
 	public const string EnvironmentUntilWaveLabel = "Last environment wave";
 

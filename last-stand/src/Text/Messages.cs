@@ -66,6 +66,11 @@ internal static class Messages
 			text += $" They fight with the strength of {plan.UnmergedMobCount}: x{plan.MergeMultiplier:0.##} health and damage each.";
 		}
 
+		if (plan.IsEmpowered)
+		{
+			text += $" Empowered wave: every monster has x{plan.EmpoweredMultiplier:0.##} health and damage.";
+		}
+
 		if (plan.NewForeignTypes)
 		{
 			text += " Monsters from another world join the hunt.";
@@ -119,9 +124,9 @@ internal static class Messages
 		return SharedMessages.Success($"Wave {wave} cleared. The next wave arrives in {secondsUntilNextWave} s.");
 	}
 
-	public static string FriendlyFireStarted()
+	public static string FriendlyFireStarted(double chance)
 	{
-		return SharedMessages.Notice("A dark urge takes hold: every hero is cursed until this wave is cleared.");
+		return SharedMessages.Warning($"A dark urge takes hold ({chance * SharedTuning.PercentScale:0}% chance per wave): every hero is cursed and can hurt the others until this wave is cleared.");
 	}
 
 	public static string FriendlyFireEnded()

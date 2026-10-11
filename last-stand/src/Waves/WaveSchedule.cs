@@ -10,6 +10,8 @@ internal static class WaveSchedule
 
 	private const double NoSurge = 1;
 
+	private const double Unchanged = 1;
+
 	private const int NoHuntLevel = 0;
 
 	public const int NoMaxHuntLevel = 0;
@@ -71,6 +73,7 @@ internal static class WaveSchedule
 			NewMirageSkin = mirage > MirageSkinsUnlocked(wave - FirstOfTier, settings, content.MirageSkins),
 			MirageChance = mirage > 0 ? MirageChance(wave, settings) : 0,
 			HasEnvironment = environment,
+			EmpoweredMultiplier = settings.Empowered.IsOn(wave) ? settings.EmpoweredMultiplier : Unchanged,
 			FriendlyFireChance = wave >= settings.FriendlyFireFromWave && heroic == 0 ? settings.FriendlyFireChance : 0,
 		};
 	}
@@ -78,12 +81,13 @@ internal static class WaveSchedule
 	public static double EnvironmentChance(int wave, WaveSettings settings, int pain, int heroic,
 		int environmentsInBlock)
 	{
-		if (pain > 0 || heroic > 0 || settings.EnvironmentTypes.Count == 0)
+		EnvironmentRule rule = settings.Environment;
+		if (pain > 0 || (heroic > 0 && !rule.AllowsHeroic(wave)) || settings.EnvironmentTypes.Count == 0)
 		{
 			return 0;
 		}
 
-		return settings.Environment.ChanceFor(wave, environmentsInBlock);
+		return rule.ChanceFor(wave, environmentsInBlock);
 	}
 
 	private static int ForeignTypesUnlocked(int wave, WaveSettings settings, int total)
@@ -157,7 +161,7 @@ internal static class WaveSchedule
 			return 0;
 		}
 
-		return Math.Min(settings.MaxHeroicBosses, FirstOfTier + (wave - bosses.FirstWave) / settings.HeroicBossStepWaves);
+		return Math.Min(settings.MaxHeroicBosses, FirstOfTier + bosses.Occurrence(wave) * settings.HeroicBossesPerBossWave);
 	}
 
 	private static int Scaled(int wave, Cadence cadence, int occurrencesPerExtra, int max)

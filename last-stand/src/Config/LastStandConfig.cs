@@ -236,6 +236,19 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.WavesPerAmbientLevelDescription)]
 	public int wavesPerAmbientLevel = 4;
 
+	[Header(ConfigText.EmpoweredHeader)]
+	[LabelText(ConfigText.EmpoweredFromWaveLabel)]
+	[Description(ConfigText.EmpoweredFromWaveDescription)]
+	public int empoweredFromWave = 200;
+
+	[LabelText(ConfigText.EmpoweredIntervalLabel)]
+	[Description(ConfigText.EmpoweredIntervalDescription)]
+	public int empoweredIntervalWaves = 5;
+
+	[LabelText(ConfigText.EmpoweredMultiplierLabel)]
+	[Description(ConfigText.EmpoweredMultiplierDescription)]
+	public float empoweredStatMultiplier = 2f;
+
 	[Header(ConfigText.ForeignHeader)]
 	[LabelText(ConfigText.ForeignFromWaveLabel)]
 	[Description(ConfigText.ForeignFromWaveDescription)]
@@ -364,7 +377,7 @@ public class LastStandConfig : ModConfig
 	[Header(ConfigText.HeroicBossHeader)]
 	[LabelText(ConfigText.HeroicBossFromWaveLabel)]
 	[Description(ConfigText.HeroicBossFromWaveDescription)]
-	public int heroicBossFromWave = 49;
+	public int heroicBossFromWave = 50;
 
 	[LabelText(ConfigText.HeroicBossIntervalLabel)]
 	[Description(ConfigText.HeroicBossIntervalDescription)]
@@ -378,9 +391,9 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.HeroicBossLateIntervalDescription)]
 	public int heroicBossLateIntervalWaves = 25;
 
-	[LabelText(ConfigText.HeroicBossStepLabel)]
-	[Description(ConfigText.HeroicBossStepDescription)]
-	public int heroicBossStepWaves = 50;
+	[LabelText(ConfigText.HeroicBossesPerBossWaveLabel)]
+	[Description(ConfigText.HeroicBossesPerBossWaveDescription)]
+	public int heroicBossesAddedPerBossWave = 1;
 
 	[LabelText(ConfigText.MaxHeroicBossesLabel)]
 	[Description(ConfigText.MaxHeroicBossesDescription)]
@@ -408,7 +421,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicFastKillSecondsLabel)]
 	[Description(ConfigText.HeroicFastKillSecondsDescription)]
-	public float heroicFastKillSeconds = 15f;
+	public float heroicFastKillSeconds = 90f;
 
 	[LabelText(ConfigText.HeroicFastKillBurstLabel)]
 	[Description(ConfigText.HeroicFastKillBurstDescription)]
@@ -457,25 +470,21 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.EnvironmentHighChanceDescription)]
 	public float environmentHighChancePercent = 100f;
 
-	[LabelText(ConfigText.EnvironmentFromWaveLabel)]
-	[Description(ConfigText.EnvironmentFromWaveDescription)]
-	public int environmentFromWave = 106;
-
-	[LabelText(ConfigText.EnvironmentIntervalLabel)]
-	[Description(ConfigText.EnvironmentIntervalDescription)]
-	public int environmentIntervalWaves = 10;
-
 	[LabelText(ConfigText.EnvironmentHuntedChanceLabel)]
 	[Description(ConfigText.EnvironmentHuntedChanceDescription)]
 	public float environmentHuntedChancePercent = 50f;
 
 	[LabelText(ConfigText.EnvironmentHuntedMaxPerBlockLabel)]
 	[Description(ConfigText.EnvironmentHuntedMaxPerBlockDescription)]
-	public int environmentHuntedMaxPerBlock = 4;
+	public int environmentHuntedMaxPerBlock = 2;
 
 	[LabelText(ConfigText.EnvironmentHuntedBlockWavesLabel)]
 	[Description(ConfigText.EnvironmentHuntedBlockWavesDescription)]
 	public int environmentHuntedBlockWaves = 10;
+
+	[LabelText(ConfigText.EnvironmentOnHeroicFromWaveLabel)]
+	[Description(ConfigText.EnvironmentOnHeroicFromWaveDescription)]
+	public int environmentOnHeroicFromWave = 100;
 
 	[LabelText(ConfigText.EnvironmentUntilWaveLabel)]
 	[Description(ConfigText.EnvironmentUntilWaveDescription)]

@@ -144,6 +144,8 @@ internal sealed class SessionSettings
 			LateScalingFromWave = Math.Max(Tuning.FirstWave, config.lateScalingFromWave),
 			LateHealthBonusPerWave = Math.Max(0f, config.lateHealthBonusPercentPerWave),
 			LateDamageBonusPerWave = Math.Max(0f, config.lateDamageBonusPercentPerWave),
+			Empowered = CadenceFrom(config.empoweredFromWave, config.empoweredIntervalWaves),
+			EmpoweredMultiplier = Math.Max(Tuning.MinimumBossMultiplier, config.empoweredStatMultiplier),
 			FastClear = new FastClearRule(Math.Max(0f, config.fastClearKillPercent) / SharedTuning.PercentScale,
 				Math.Max(0f, config.fastClearKillSeconds), Math.Max(0f, config.fastClearStatMultiplier),
 				Math.Max(Tuning.FirstWave, config.fastClearFromWave),
@@ -164,7 +166,7 @@ internal sealed class SessionSettings
 
 			HeroicBosses = new ShiftingCadence(CadenceFrom(config.heroicBossFromWave, config.heroicBossIntervalWaves),
 				config.heroicBossFasterFromWave, Math.Max(MinimumStep, config.heroicBossLateIntervalWaves)),
-			HeroicBossStepWaves = Math.Max(MinimumStep, config.heroicBossStepWaves),
+			HeroicBossesPerBossWave = Math.Max(0, config.heroicBossesAddedPerBossWave),
 			MaxHeroicBosses = Math.Max(0, config.maxHeroicBossesPerWave),
 			HeroicBossEntranceDelaySeconds = Math.Max(0f, config.heroicBossEntranceDelaySeconds),
 			HeroicBossAbilityHaste = Math.Max(0f, config.heroicBossAbilityHaste),
@@ -193,11 +195,11 @@ internal sealed class SessionSettings
 			FriendlyFireChance = ToChance(config.friendlyFireChancePercent),
 			DarkUrgeStrength = StrengthFrom(config.darkUrgeStrength),
 
-			Environment = new EnvironmentRule(CadenceFrom(config.environmentFromWave, config.environmentIntervalWaves),
-				ToChance(config.environmentChancePercent), Math.Max(Tuning.FirstWave, config.environmentHighFromWave),
+			Environment = new EnvironmentRule(ToChance(config.environmentChancePercent), Math.Max(Tuning.FirstWave, config.environmentHighFromWave),
 				ToChance(config.environmentHighChancePercent), Math.Max(Tuning.FirstWave, config.hunterFromWave),
 				ToChance(config.environmentHuntedChancePercent), config.environmentHuntedMaxPerBlock,
-				config.environmentHuntedBlockWaves, config.environmentUntilWave),
+				config.environmentHuntedBlockWaves, Math.Max(Tuning.FirstWave, config.environmentOnHeroicFromWave),
+				config.environmentUntilWave),
 			EnvironmentTypes = KnownChoices(config.environmentTypes, ChoiceSet.Environments),
 		};
 	}

@@ -24,7 +24,8 @@ re-checks once a second for a player who joins mid-wave. When the wave is
 cleared it destroys the curses it gave, which completes their quests ("curse
 lifted") and takes the neutral relations back. Any leftover Hidden Dark Urge
 with `dontRemoveOnKnockOut` (only Last Stand makes those, e.g. one restored
-from a save) is removed when the arena loads. Chat also says when it starts
+from a save) is removed when the arena loads. Chat also says when it starts,
+in red with its chance ("A dark urge takes hold (20% chance per wave): …"),
 and when it fades.
 
 **Counted once.** The curse applies its multiplier in both the attacker's

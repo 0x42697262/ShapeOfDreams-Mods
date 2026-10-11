@@ -291,7 +291,7 @@ internal sealed class WaveDirector
 
 		_friendlyFire.Begin(settings.DarkUrgeStrength, now);
 		Log.Info(LogText.FriendlyFireStarted(_plan.Number, settings.DarkUrgeStrength.ToString()));
-		ChatNotices.Broadcast(Messages.FriendlyFireStarted());
+		ChatNotices.Broadcast(Messages.FriendlyFireStarted(_plan.FriendlyFireChance));
 	}
 
 	private void EndFriendlyFire()
@@ -479,7 +479,8 @@ internal sealed class WaveDirector
 			return;
 		}
 
-		double multiplier = tier == EnemyTier.HeroicBoss ? plan.HeroicFastClearMultiplier : plan.FastClearMultiplier;
+		double multiplier = (tier == EnemyTier.HeroicBoss ? plan.HeroicFastClearMultiplier : plan.FastClearMultiplier) *
+		                    plan.EmpoweredMultiplier;
 		if (tier.IsMob())
 		{
 			multiplier *= plan.MergeMultiplier;

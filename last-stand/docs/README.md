@@ -27,7 +27,7 @@ For working notes, hard constraints and the in-game test list, see
 | [Hunters and hunter zones](waves/hunters.md) | Hunters from wave 100, hunt levels and artillery |
 | [Mirage skins](waves/mirage-skins.md) | Skins from wave 30, every monster from 149 |
 | [Pain minibosses](waves/pain-minibosses.md) | The damage aura and Corrupted Chaos rewards |
-| [Heroic bosses](waves/heroic-bosses.md) | Zone bosses on waves 49, 99…, their scaling and rewards |
+| [Heroic bosses](waves/heroic-bosses.md) | Zone bosses on waves 50, 100, 125…, their scaling and rewards |
 | [Environments](waves/environments.md) | Room modifiers that last one wave |
 | [Dark urge](waves/dark-urge.md) | The co-op curse that lets heroes hurt each other |
 | [Curse to start](waves/curse-to-start.md) | Difficulty option: each wave waits for a curse on everyone |

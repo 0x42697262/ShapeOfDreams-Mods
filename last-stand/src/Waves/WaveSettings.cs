@@ -49,6 +49,10 @@ internal sealed class WaveSettings
 
 	public double LateDamageBonusPerWave { get; set; }
 
+	public Cadence Empowered { get; set; }
+
+	public double EmpoweredMultiplier { get; set; }
+
 	public FastClearRule FastClear { get; set; }
 
 	public HeroicFastKillRule HeroicFastKill { get; set; }
@@ -67,7 +71,7 @@ internal sealed class WaveSettings
 
 	public ShiftingCadence HeroicBosses { get; set; }
 
-	public int HeroicBossStepWaves { get; set; }
+	public int HeroicBossesPerBossWave { get; set; }
 
 	public int MaxHeroicBosses { get; set; }
 

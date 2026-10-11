@@ -8,32 +8,33 @@ from `Environment types`. Which waves get one:
 - **Waves 50-99, every wave.** From `Higher environment chance from wave`
   (50) the chance is `Higher environment chance (%)` (100), so every wave
   without a heroic boss or Pain gets one.
-- **Sure waves.** Waves 106, 116, 126 … (`First sure environment wave` 106,
-  every 10 waves) always get one.
-- **Hunter zone waves, a lower chance with a cap.** From the first hunter
-  wave (`First hunter wave`, 100) every other wave rolls `Hunter zone
-  environment chance (%)` (50%), but a block of 10 waves (100-109, 110-119
-  …; `Hunter zone: block size` 10) has at most 4 environment waves
-  (`Hunter zone: max environments per block`), the sure wave included,
-  because each one takes that wave's hunter zone. A chance wave is only
-  rolled while the block's environments so far plus its sure waves still
-  to come are under the cap, so the sure wave always fits and at least 6
-  waves of every 10 keep their hunter zone. Set the chance to 0 to get only
-  the sure waves. This stage starts with the hunter zones, so moving
-  `First hunter wave` moves it too.
-- **Never** on a heroic boss wave (49, 99, 124 …) or a Pain wave, and never
-  after `Last environment wave` (0 by default, never stop).
+- **Hunter zone waves, half the time with a cap.** From the first hunter
+  wave (`First hunter wave`, 100) every wave is a hunter zone and rolls
+  `Hunter zone environment chance (%)` (50%), but a block of 10 waves
+  (100-109, 110-119 …; `Hunter zone: block size` 10) has at most 2
+  environment waves (`Hunter zone: max environments per block`), because
+  each one takes that wave's hunter zone. Once a block has 2, its other
+  waves roll nothing, so at least 8 waves of every 10 keep their hunter
+  zone. This stage starts with the hunter zones, so moving `First hunter
+  wave` moves it too.
+- **Heroic boss waves** get none before wave 100 (`Environments on heroic
+  boss waves from wave`), so wave 50 has none; from 100 on (100, 125, 150 …)
+  they roll like any other wave.
+- **Never** on a Pain wave (20, 40 … 100, 120 …): the Aura of Pain is a main
+  modifier too, and only one fits. Never after `Last environment wave` (0
+  by default, never stop).
+
+There are no sure environment waves any more (106, 116 … until schema 48).
 
 The rule is plain logic: `EnvironmentRule.ChanceFor` gives the wave's
-chance (0, a setting, or 1 on a sure wave) from the block's count so far,
+chance (0 or a setting) from the block's count so far,
 `WaveSchedule.EnvironmentChance` adds the heroic and Pain exclusions, and
 `WaveSchedule.Plan` compares it with a roll the director passes in
 (`UnityEngine.Random.value`). The director keeps the count
 (`EnvironmentTally`): it counts a wave once, when its environment begins,
 and starts over in a new block or a new run. The count lives only in
 memory, so a mod reload mid-block starts it at 0, and a wave resumed after
-a reload rolls again. A sure wave that falls on a Pain or heroic wave gets
-no environment but still holds its place under the cap.
+a reload rolls again.
 
 The environment goes
 live when the wave starts and is removed when the wave is cleared, so the break
@@ -42,13 +43,13 @@ when it fades. All of these are main modifiers, like the hunter zone and the
 Aura of Pain, and the game keeps only one main modifier per room, so adding
 one would replace the other:
 
-- **From wave 100 the environment replaces the hunter zone.** Waves 106,
-  116, 126 …, and any later wave that rolls one, get an environment and no
+- **From wave 100 the environment replaces the hunter zone.** A wave that
+  rolls one gets an environment and no
   hunter zone (`WaveSchedule.Plan` sets their hunt level to 0), so no artillery and no hunter stat bonus. Hunters
   still make up their usual share of the wave, and the hunt level of the next
   hunter zone wave is the same as without the environment.
 - **A wave with Pain minibosses never gets one,** since the Aura of Pain
-  is a main modifier too. Heroic boss waves never get one either.
+  is a main modifier too.
 
 It's added the same way as the hunter zone: `ZoneManager.AddModifier` on the
 arena node, through `ModifierGate.AddOwn` so the plain-arena gate lets it

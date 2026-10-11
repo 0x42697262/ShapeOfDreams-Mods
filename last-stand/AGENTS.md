@@ -627,7 +627,7 @@ Each answer still needs to be seen working:
     that the hunter zone comes back after a Pain group falls mid-zone.
 21. **Top-right label:** the host and a vanilla client see the same stock
     label (`1. <first world>`, or the room's own name), never the wave.
-22. **Heroic bosses:** at wave 49 the boss enters 3 s after the last monster
+22. **Heroic bosses:** at wave 50 the boss enters 3 s after the last monster
     spawns, plays its spawn animation, counts toward the wave, and drops 3
     Corrupted Chaos rewards (the Pain kind). There's no time pause, no rift and no boss soul.
     Its health and damage are vanilla boss scaling plus the wave bonus, it uses its skills about three times as often, and every default boss uses its patterns and helpers. Pillars and
@@ -688,14 +688,14 @@ Each answer still needs to be seen working:
     `loot:` log lines show common, rare, epic and legendary about equally,
     and Pain minibosses and heroic bosses get there by wave 47.
 36. **Heroic boss haste grows:** the `wave N:` log line shows `heroicHaste=200`
-    at wave 49, 250 at 99, 300 at 124 and 350 at 149, and later bosses use their skills
+    at wave 50, 250 at 100, 300 at 125 and 350 at 150, and later bosses use their skills
     visibly more often.
 37. **Hunters from wave 100:** the catalog log line says `hunters start at
     wave 100, every monster is a hunter from wave 130`. Wave 101 logs about
     2/31 of its monsters as `hunter=` and a hunter zone at hunt level 1; the
     share grows every wave, wave 115 is about half, and from
-    130 the line shows `regular=0`. Every wave from 101 except 106, 116 …
-    shows a hunt level (`huntLevel=1` for 100–104, 2 for 105–109…, see check 105)
+    130 the line shows `regular=0`. Every wave from 100 without an
+    environment shows a hunt level (`huntLevel=1` for 100–104, 2 for 105–109…, see check 105)
     and has artillery,
     and the breaks between waves have none. Hunters arrive mixed through the wave, not
     all at the start. Check the host's frame rate with 300+ hunters.
@@ -703,12 +703,12 @@ Each answer still needs to be seen working:
     can cleanse several items in a row, pays the shown gold price and gets the
     dream dust back. After a mod reload there's still just one altar.
 39. **Breaks:** "wave N cleared" says 20 s after a normal wave and 40 s after
-    waves 10, 20, 49, 50 and so on.
+    waves 10, 20, 30 and so on, and heroic boss waves such as 125.
 40. **Leftover items:** in co-op, let an item reserved for someone else lie
     until the wave is cleared. It becomes visible and can be picked up by
     anyone, chat says so, and it stays visible after the revive.
 41. **No heroic boss types checked:** uncheck every box. The log says
-    `picking from the whole list`, and wave 49 still has a heroic boss.
+    `picking from the whole list`, and wave 50 still has a heroic boss.
 42. **Shrine of Ascension:** It stands by the edge of the arena
     (a new spot each run), reachable on foot, not inside a wall or off the
     floor. Each player gets four uses ("uses left" counts down on the host
@@ -754,10 +754,12 @@ Each answer still needs to be seen working:
 49. **Game over late in a run:** lose during a wave from 101 on (a hunter
     zone wave). The log shows no `session tick failed` and no
     `InitSyncObject` exception, and the restart into the next run is clean.
-50. **Heroic boss waves:** the `wave N:` log line shows `heroic=1` at wave
-    49, `heroic=2` at 99 and 124, `heroic=3` at 149 and 174 and `heroic=4`
-    at 199, and that many bosses enter. Waves 74, 100, 125 and 150 have
-    none. `laststand_wave 124` is the quickest check of the switch.
+50. **Heroic boss waves** (schema 48): the `wave N:` log line shows
+    `heroic=1` at wave 50, `heroic=2` at 100, `heroic=3` at 125, `heroic=4`
+    at 150, `heroic=5` at 175 and `heroic=6` at 200, and that many bosses
+    enter. Waves 49, 75, 99 and 124 have none. `laststand_wave 125` is the
+    quickest check of the switch. `Extra heroic bosses per boss wave` 2:
+    wave 125 shows `heroic=5`.
 51. **Mirage fills up from wave 130:** the `wave N:` log line shows
     `mirageChance=20%` at 129, `24%` at 130, `60%` at 139 and `100%` from 149.
     From 149 every hunter wears a skin (Lesser monsters excepted), the host's
@@ -802,13 +804,12 @@ Each answer still needs to be seen working:
     not split by players (×1, ×1.25, ×1.75 by strength; see check 94). The curse quest on the host and on a vanilla
     client shows a kill count (never rooms) from the start, counts down with
     kills, and the curse ends at 0.
-57. **Environments:** waves 106, 116 … each log `environment:
-    wave N brings RoomMod_…` and chat names it; other waves get one only by
-    chance (check 101). The effect shows for the
+57. **Environments:** a wave that gets one (checks 101-103, 107) logs
+    `environment: wave N brings RoomMod_…` and chat names it. The effect shows for the
     host and a vanilla client, and stops when the wave is cleared (log
     `environment: … removed`, chat "… fades"). The next wave has no leftover
     status effects, hazards or slowed music (Gravity Training). Try
-    `laststand_wave 106` several times to see different ones.
+    `laststand_wave 70` several times to see different ones.
 58. **Hazards in a cleared arena:** Crimson Flame Demon, Gaze of the Abyss,
     Hazardous Weather, Giant Ink Drop and Warped Space actually fire during
     the wave (the room is held in combat), and stop after it. No `blocked the
@@ -834,8 +835,8 @@ Each answer still needs to be seen working:
     with no kill count. Heroes hurt each other at about 25% (less under half
     health), not 6%. A knock-out doesn't lift it. When the wave is cleared
     the curse is lifted for everyone (`curses lifted at the end of wave N`),
-    and nobody can hurt a teammate in the break. Heroic boss waves (199,
-    224…) and solo runs never get it. Old config files are moved to `.old`
+    and nobody can hurt a teammate in the break. Heroic boss waves (200,
+    225…) and solo runs never get it. Old config files are moved to `.old`
     (schema 21, when the default chance went from 50% to 20%).
 
 63. **Starting gold:** a new run, solo and in a lobby, logs `starting gold:
@@ -847,10 +848,11 @@ Each answer still needs to be seen working:
     player(s)` at starting world 1, and 80 at starting world 3, on the host
     and a vanilla client. Old config files are moved to `.old` (schema 28).
 
-64. **Environments replace the hunter zone:** `laststand_wave 116` logs
-    `huntLevel=0` and an environment, with no artillery and no "hunted"
+64. **Environments replace the hunter zone:** a wave from 100 that rolls an
+    environment (`laststand_wave 116` until one does) logs
+    `huntLevel=0` and the environment, with no artillery and no "hunted"
     chat line, while hunters still spawn (`hunter=` in the `wave N:` line).
-    Wave 117 is a hunter zone again at hunt level 4. Late environments with
+    The next wave without one is a hunter zone again at its usual level. Late environments with
     300+ hunters (Meteoric Life corpses, Dream of Wealth stones) keep the
     host's frame rate. Old config files are moved to `.old` (schema 17).
 
@@ -898,11 +900,11 @@ Each answer still needs to be seen working:
     invulnerable for 3.5 s, and the count drops to 2. `laststand_secondwind
     3 8` makes it 8 s, `laststand_secondwind 0` removes it.
 
-69. **Heroic boss multipliers:** at wave 49 (Nightmare, world 4, solo) the
-    log line `heroic boss: wave 49 <type> maxHealth=` shows about 1.6M
-    (Belphomet) to 2.7M (Azurak), Infernus about 1.96M; with 2 players
+69. **Heroic boss multipliers:** at wave 50 (Nightmare, world 4, solo) the
+    log line `heroic boss: wave 50 <type> maxHealth=` shows about 1.66M
+    (Belphomet) to 2.75M (Azurak), Infernus about 1.99M; with 2 players
     ×1.85. The health bar starts full. The boss's `biggest hit on a hero`
-    line at death is in the tens of thousands (Skoll's AuraBlade about 132k).
+    line at death is in the tens of thousands (Skoll's AuraBlade about 134k).
     Old config files are moved to `.old` (schema 27).
     Pain minibosses and regular minibosses are unchanged.
 
@@ -932,7 +934,7 @@ Each answer still needs to be seen working:
     monsters hit back with x2 health and damage.` and the log `fast clear:
     wave 1 had 5 of 6 monster(s) die within 1 s of their first hit`. The `wave 2:` and `wave 3:` lines show `fastClear=x2`
     and both waves' monsters take about twice the hits; a second fast clear
-    makes it `x4`. A heroic boss (`laststand_wave 49`) after a fast clear
+    makes it `x4`. A heroic boss (`laststand_wave 50`) after a fast clear
     has normal health. A slow wave and `laststand_skip` never trigger it.
     A mod reload logs `... 1 fast clear(s) so far` and keeps `x2`. Old
     config files are moved to `.old` (schema 32).
@@ -953,8 +955,8 @@ Each answer still needs to be seen working:
     stays. `laststand_wave 30`, clear it fast: wave 31 shows
     `fastClear=x2`.
 76. **Fast clear on heroic bosses** (schema 40): with `Fast clear: from
-    wave` at 1, fast-clear waves 1 to 4 (x16), then `laststand_wave 49`.
-    The `wave 49:` line shows `fastClear=x16 heroicFastClear=x4`, and the
+    wave` at 1, fast-clear waves 1 to 4 (x16), then `laststand_wave 50`.
+    The `wave 50:` line shows `fastClear=x16 heroicFastClear=x4`, and the
     `heroic boss:` maxHealth line is about 4× a run without fast clears.
     With the toggle off, `heroicFastClear=x1`.
 77. **Default modifier panel:** on arrival the panel reads "Mysterious
@@ -975,7 +977,7 @@ Each answer still needs to be seen working:
     `laststand_config` in the lobby and in the run: no window opens, and
     their log shows `only the host's settings apply`. On the title screen
     and as host it opens the window as before.
-81. **Mid-join after a heroic boss:** `laststand_wave 49`, kill the boss,
+81. **Mid-join after a heroic boss:** `laststand_wave 50`, kill the boss,
     then have a friend join mid-run. The log shows `mid-join: cleared the
     game's AfterBossFight wait` (and `FightingBoss` while it lived), and
     the friend joins within a few seconds instead of waiting on "The
@@ -1008,7 +1010,7 @@ Each answer still needs to be seen working:
     minibosses (`laststand_wave 140`) the log shows `boss health: wave 140
     … (5x the toughest monster's …)` for any miniboss below 5×, within a
     second of the first monsters, and each miniboss's bar shows the new
-    maximum. At `laststand_wave 149` a heroic boss below 20× logs the
+    maximum. At `laststand_wave 150` a heroic boss below 20× logs the
     same with `20x`. Set `Monsters in wave 1` to 20:
     the merge line says wave 41. `Merged wave size` 0: nothing merges.
 85. **Alive cap 35** (schema 42): on a big wave (`laststand_wave 101`)
@@ -1016,7 +1018,7 @@ Each answer still needs to be seen working:
     N:` line), 70 on a surge wave (`laststand_wave 100`, `cap=70`), new
     ones arrive as others die, and the host's frame rate is higher than
     with the old cap of 200.
-86. **Heroic boss stardust:** kill a heroic boss (`laststand_wave 49`) on
+86. **Heroic boss stardust:** kill a heroic boss (`laststand_wave 50`) on
     Nightmare: stardust orbs pop out at the boss, the log says `heroic
     boss: died, dropped 3 Corrupted Chaos reward(s) and 23 stardust.` (16
     + 7; 18 on Normal), chat says so, and the host and a vanilla client
@@ -1063,14 +1065,14 @@ Each answer still needs to be seen working:
     defaults after many changes shows at most 6 lines plus `...and N more
     setting(s) changed.` Apply with nothing changed sends nothing. On the
     title screen, or as a client, only `settings:` log lines appear.
-92. **Heroic fast kill** (15 s by default since schema 45, see check 96):
-    `laststand_wave 49` and kill the boss fast.
-    At the wave's clear the log shows `heroic fast kill: wave 49's heroic
+92. **Heroic fast kill** (90 s by default since schema 48, see check 106):
+    `laststand_wave 50` and kill the boss fast.
+    At the wave's clear the log shows `heroic fast kill: wave 50's heroic
     bosses took D damage in their best 5 s, a kill in P s per boss at that
-    rate (target 15 s); this step xS` with S = 15 / P (at most 10), and
+    rate (target 90 s); this step xS` with S = 90 / P (at most 10), and
     chat says it in red. Hitting once, waiting, then bursting still gives
-    a short P. `laststand_wave 99`: the `wave 99:` line shows
-    `heroicKill=xS` and `heroic boss: wave 99 ... maxHealth=` is about S
+    a short P. `laststand_wave 100`: the `wave 100:` line shows
+    `heroicKill=xS` and `heroic boss: wave 100 ... maxHealth=` is about S
     times higher. A slow fight logs `no change`. A mod reload keeps the
     multiplier (`progress restored: ... heroic bosses xS health from fast
     kills`). At 0, nothing is logged and `heroicKill=x1` stays.
@@ -1096,7 +1098,7 @@ Each answer still needs to be seen working:
     shows `fast clear: wave 1 had K of 6 monster(s) die within 1 s of
     their first hit`. Old config files are moved to `.old`.
 96. **Heroic fast kill on by default** (schema 45): a new config shows
-    `Heroic fast kill: seconds per boss` at 15, and the `wave 49:` line
+    `Heroic fast kill: seconds per boss` at 15 (90 since schema 48), and the `wave 50:` line
     shows `heroicKill=x1`. After a fast kill the log has `heroic fast
     kill: ...` with no settings change. Old config files are moved to
     `.old`.
@@ -1128,22 +1130,21 @@ Each answer still needs to be seen working:
     players standing, the camp rift still travels at once with no vote, also
     with Dream Arena loaded (whose lobbies vote).
 101. **Environment chance** (schema 46): a new config shows `Environment
-    chance (%)` 10 and `First sure environment wave` 106. Over waves 1-100
-    (`laststand_wave N` a few times) about 1 wave in 10 logs `environment:
-    wave N brings RoomMod_…`, wave 1 included, and never wave 49 or 99
-    (heroic) or a Pain wave (20, 40 …). Waves 106, 116 … always get one.
-102. **Hunter zone environment cap:** a new config shows `Hunter zone
-    environment chance (%)` 50, `Hunter zone: max environments per block` 4
-    and `Hunter zone: block size` 10. Play waves 100-119
+    chance (%)` 10. Over waves 1-49 (`laststand_wave N` a few times) about
+    1 wave in 10 logs `environment: wave N brings RoomMod_…`, wave 1
+    included, and never a Pain wave (20, 40).
+102. **Hunter zone environment cap** (schema 48): a new config shows
+    `Hunter zone environment chance (%)` 50, `Hunter zone: max environments
+    per block` 2 and `Hunter zone: block size` 10. Play waves 100-119
     (`laststand_wave 100`, then `laststand_next` each wave): each block
-    100-109 and 110-119 has at most 4 `environment: wave N brings` lines,
-    the sure wave (106, 116) always among them; those waves log
+    100-109 and 110-119 has at most 2 `environment: wave N brings` lines
+    (often exactly 2), never on 100 or 120 (Pain); those waves log
     `huntLevel=0` with no artillery, the rest are hunter zones. Set the
-    chance to 0: only 106 and 116 get one.
+    chance to 0: none get one.
 103. **Every wave from 50:** a new config shows `Higher environment chance
     from wave` 50 and `Higher environment chance (%)` 100. `laststand_wave
     50`, then `laststand_next` to 99: every wave logs an environment
-    except 60 and 80 (Pain) and 99 (heroic). Waves 1-49 still get one
+    except 60 and 80 (Pain). Waves 1-49 still get one
     about 1 time in 10.
 104. **Settings pages:** the settings panel (lobby button and mod manager
     gear) lists General, Shrines, Waves, Monsters, Hunters, Fast clear,
@@ -1157,6 +1158,28 @@ Each answer still needs to be seen working:
     wave), 105 logs 2, 150 logs 11, 200 logs 21, with artillery hitting
     clearly harder at 200 than at 150. A vanilla client's HUD shows 5 stars
     from level 5 on. Set `Max hunt level` to 6: wave 200 logs 6.
+106. **Heroic fast kill at 90 s** (schema 48): a new config shows `Heroic
+    fast kill: seconds per boss` 90. Kill the wave 50 boss in well under
+    90 s of burst: the log shows `(target 90 s); this step xS` with S =
+    90 / P, at most 10, and wave 100's bosses show `heroicKill=xS`.
+107. **Environments on heroic waves from 100:** a new config shows
+    `Environments on heroic boss waves from wave` 100. `laststand_wave 50`
+    never logs an environment; `laststand_wave 125` a few times logs one
+    about half the time, with the bosses still entering, and the
+    environment ends when the wave is cleared.
+108. **Dark urge notice in red:** in co-op at wave 176+ (or `First dark
+    urge wave` 1 and chance 100), the chat line `A dark urge takes hold
+    (20% chance per wave): …` is red (`#ff4d4d`) on the host and a vanilla
+    client, with the configured chance.
+109. **Empowered waves** (schema 48): a new config shows `First empowered
+    wave` 200, `Empowered every N waves` 5 and `Empowered health and
+    damage (x)` 2. `laststand_wave 200`: the `wave 200:` line shows
+    `empowered=x2`, chat's wave line says "Empowered wave: every monster
+    has x2 health and damage", and every monster, Pain minibosses and
+    heroic bosses included, has about twice the health of the same kind at
+    wave 201 (`empowered=x1`).
+    Wave 205 is empowered again. Set the multiplier to 1: no empowered
+    text and `empowered=x1`.
 
 ## Conventions
 

@@ -8,11 +8,7 @@ internal readonly struct EnvironmentRule
 
 	public const int NoBlock = -1;
 
-	private const double Certain = 1;
-
 	private const int NextWave = 1;
-
-	public Cadence Sure { get; }
 
 	public double Chance { get; }
 
@@ -28,12 +24,13 @@ internal readonly struct EnvironmentRule
 
 	public int BlockWaves { get; }
 
+	public int HeroicFromWave { get; }
+
 	public int UntilWave { get; }
 
-	public EnvironmentRule(Cadence sure, double chance, int highFromWave, double highChance, int huntedFromWave,
-		double huntedChance, int maxPerBlock, int blockWaves, int untilWave)
+	public EnvironmentRule(double chance, int highFromWave, double highChance, int huntedFromWave,
+		double huntedChance, int maxPerBlock, int blockWaves, int heroicFromWave, int untilWave)
 	{
-		Sure = sure;
 		Chance = chance;
 		HighFromWave = highFromWave;
 		HighChance = highChance;
@@ -41,12 +38,18 @@ internal readonly struct EnvironmentRule
 		HuntedChance = huntedChance;
 		MaxPerBlock = Math.Max(0, maxPerBlock);
 		BlockWaves = Math.Max(NextWave, blockWaves);
+		HeroicFromWave = heroicFromWave;
 		UntilWave = Math.Max(NoLastWave, untilWave);
 	}
 
 	public int Block(int wave)
 	{
 		return wave < HuntedFromWave ? NoBlock : (wave - HuntedFromWave) / BlockWaves;
+	}
+
+	public bool AllowsHeroic(int wave)
+	{
+		return wave >= HeroicFromWave;
 	}
 
 	public double ChanceFor(int wave, int environmentsInBlock)
@@ -56,32 +59,11 @@ internal readonly struct EnvironmentRule
 			return 0;
 		}
 
-		if (Sure.IsOn(wave))
-		{
-			return Certain;
-		}
-
 		if (wave < HuntedFromWave)
 		{
 			return wave >= HighFromWave ? HighChance : Chance;
 		}
 
-		return environmentsInBlock + SureWavesLeftInBlock(wave) < MaxPerBlock ? HuntedChance : 0;
-	}
-
-	private int SureWavesLeftInBlock(int wave)
-	{
-		int blockEnd = HuntedFromWave + (Block(wave) + NextWave) * BlockWaves - NextWave;
-		int last = UntilWave == NoLastWave ? blockEnd : Math.Min(blockEnd, UntilWave);
-		int count = 0;
-		for (int later = wave + NextWave; later <= last; later++)
-		{
-			if (Sure.IsOn(later))
-			{
-				count++;
-			}
-		}
-
-		return count;
+		return environmentsInBlock < MaxPerBlock ? HuntedChance : 0;
 	}
 }

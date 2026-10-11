@@ -2,10 +2,14 @@
 [*]The Last Stand button in the lobby settings now only shows in a Last Stand lobby, not in every lobby you host.
 [*]Environments now come by chance: waves 1-49 have a 10% chance of one, wave 1 included, never on heroic boss or Pain waves. Set "Environment chance (%)" to 0 to turn it off.
 [*]Waves 50-99 now always get an environment, except heroic boss and Pain waves. Set "Higher environment chance (%)" to lower it.
-[*]Hunter zone waves (from 100) have a 50% chance of an environment, with at most 4 environment waves in every 10 (100-109, 110-119 …), so most waves keep their hunter zone. Set "Hunter zone environment chance (%)" to 0 to turn it off.
-[*]Sure environments now start at wave 106, every 10 waves (was every 10 waves from wave 6).
+[*]From wave 100 every wave has a 50% chance of an environment instead of its hunter zone, heroic boss waves included (not Pain waves), with at most 2 in every 10 waves (100-109, 110-119 …). Set "Hunter zone environment chance (%)" to 0 to turn it off.
+[*]No more fixed environment every 10 waves (was 6, 16, 26 …).
 [*]Hunters and hunter zones now start at wave 100 (was 101).
 [*]Hunt level now rises every 5 waves (was 10) and has no cap (was 6): level 1 at wave 100, 11 at 150, 21 at 200. Set "Max hunt level" above 0 to cap it again.
+[*]Heroic bosses now come at wave 50, 100, 125, 150, 175 … (was 49, 99, 124 …), one more boss each boss wave: 1, 2, 3, 4, 5 … (was one more every 50 waves).
+[*]Heroic fast kill target is now 90 s per boss (was 15 s).
+[*]New: empowered waves. From wave 200, every 5th wave gives every monster, bosses included, double health and damage. Set "Empowered health and damage (x)" to 1 to turn it off.
+[*]The dark urge notice is now red and shows its chance.
 [*]Hunters, fast clear and environments now have their own settings pages.
 [/list]
 

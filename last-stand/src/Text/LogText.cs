@@ -356,7 +356,7 @@ internal static class LogText
 		       $"heroicHaste={plan.HeroicBossHaste:0} " +
 		       $"ambient={plan.AmbientLevel} " +
 		       $"health=+{plan.HealthBonusPercent:0}% damage=+{plan.DamageBonusPercent:0}% " +
-		       $"fastClear=x{plan.FastClearMultiplier:0.##} heroicFastClear=x{plan.HeroicFastClearMultiplier:0.##} " +
+		       $"empowered=x{plan.EmpoweredMultiplier:0.##} fastClear=x{plan.FastClearMultiplier:0.##} heroicFastClear=x{plan.HeroicFastClearMultiplier:0.##} " +
 		       $"heroicKill=x{plan.HeroicKillMultiplier:0.##} " +
 		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +
 		       $"mirageChance={plan.MirageChance * SharedTuning.PercentScale:0}% " +

@@ -115,17 +115,18 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Spawn interval / spawns per batch | 0.5 s / 6 |
 | Scaling | Health / damage per wave | 10% / 10% |
 | | Steeper scaling from wave / late health / late damage per wave | 150 / 50% / 50% |
+| Empowered waves | First wave / every N waves / health and damage | 200 / 5 / ×2 |
 | | Fast clear: instant kills / instant within (from the first hit) / stats from next wave (stacking) / from wave | 80% / 1 s / ×2 / 30 |
 | | Fast clear: heroic bosses too / heroic boss share | on / 50% |
 | | Starting monster level / waves per level | 1 / 4 |
 | | Starting world (vanilla world scaling) | 1 |
 | Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 10 |
-| Heroic bosses | First wave / every N waves / waves per extra / max | 49 / 50 / 50 / 10 |
+| Heroic bosses | First wave / every N waves / extra per boss wave / max | 50 / 50 / 1 / 10 |
 | | More often from wave / every N waves after that | 100 / 25 |
 | | Entrance delay | 3 s |
 | | Ability haste / more per later boss wave | +200 / +50 |
 | | Health / damage multiplier | ×5 / ×8 |
-| | Fast kill: seconds per boss / burst window / largest step | 15 s / 5 s / ×10 |
+| | Fast kill: seconds per boss / burst window / largest step | 90 s / 5 s / ×10 |
 | | Types | 6 zone bosses (checkboxes; none checked means all) |
 | | Corrupted Chaos rewards / dust / gold / item multiplier | 3 / 1000 / 200 / 2 |
 | | Heroic boss stardust (vanilla boss-kill amount) | on |
@@ -138,9 +139,10 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | Mirage | First wave / waves per new skin / chance | 30 / 10 / 20% |
 | | Chance grows from wave / every monster a Mirage from wave | 130 / 149 |
 | Dark urge | First wave / chance / curse strength | 176 / 20% / Potent (25% damage between players) |
-| Environments | Chance per wave / first sure wave / every N waves / last wave (0 = never stop) | 10% / 106 / 10 / 0 |
+| Environments | Chance per wave / last wave (0 = never stop) | 10% / 0 |
 | | Higher chance from wave / higher chance | 50 / 100% |
-| | Hunter zone chance / max per block / block size (from the first hunter wave) | 50% / 4 / 10 |
+| | Hunter zone chance / max per block / block size (from the first hunter wave) | 50% / 2 / 10 |
+| | On heroic boss waves from wave | 100 |
 | | Types | 21 room modifiers (checkboxes; none checked means none) |
 | Item drops | Monster item drops | off |
 | | Monster items per player per wave | 1 |

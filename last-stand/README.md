@@ -15,7 +15,9 @@ essences and turns what you collect into upgrades.
   removed, to that room's own boss music, for every player.
 - A new wave starts **once the last one is cleared**, after a short break.
   Each wave is bigger and stronger than the last.
-- Every monster gets **more health and damage every wave**.
+- Every monster gets **more health and damage every wave**, and from wave
+  200 every 5th wave is **empowered**: double health and damage for every
+  monster, bosses included.
 - **Curse to start** (difficulty option, off by default): no wave timer.
   Each wave waits until a player takes a curse at the Hatred Remnant, which
   curses every player, each with a different curse.
@@ -24,12 +26,12 @@ essences and turns what you collect into upgrades.
   get double health and damage, stacking with each fast clear (heroic
   bosses take half the stacks).
 - **Minibosses** come every 10 waves, then several at once.
-- **Heroic bosses**, the game's real zone bosses, enter at waves 49 and 99,
-  then every 25 waves (124, 149, 174…). One more joins every 50 waves: two
-  at 99 and 124, three at 149 and 174, four at 199. Each drops 3 Corrupted
-  Chaos rewards, the kind Pain minibosses leave, and the stardust a boss
-  kill gives in a normal run. Kill them too fast (under 15 s each at your
-  best burst) and later heroic bosses come back with more health.
+- **Heroic bosses**, the game's real zone bosses, enter at waves 50 and
+  100, then every 25 waves (125, 150, 175…). Each boss wave brings one
+  more: 1 at 50, 2 at 100, 3 at 125, 4 at 150, up to 10. Each drops 3
+  Corrupted Chaos rewards, the kind Pain minibosses leave, and the stardust
+  a boss kill gives in a normal run. Kill them too fast (under 90 s each at
+  your best burst) and later heroic bosses come back with more health.
 - **Pain minibosses** change the rules while they live: every hero takes
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.
@@ -37,12 +39,12 @@ essences and turns what you collect into upgrades.
   weakest worlds first. From wave 100, a growing share of every wave's
   monsters are **hunters**, until every monster is one from wave 130 on, and
   every wave is a **hunter zone** with falling artillery that grows stronger
-  every 5 waves, with no cap, except the environment waves (106, 116 …, and any wave
-  that rolls one), where an environment takes its place.
+  every 5 waves, with no cap, except on a wave that rolls an environment,
+  which takes its place.
 - **Environments**, the game's room effects, can hit any wave: 10% chance
-  until wave 49, every wave from 50 to 99, then 50% with at most 4
-  environment waves in every 10 (106, 116 … always), so most waves keep
-  their hunter zone. Never on heroic boss or Pain waves.
+  until wave 49, every wave from 50 to 99, then 50% with at most 2
+  environment waves in every 10, so most waves keep their hunter zone.
+  Never on Pain waves, and not on heroic boss waves before wave 100.
 - **Mirage skins** appear from wave 30, weakest first, a stronger one every
   10 waves. From wave 130 their chance grows until every monster wears one
   from wave 149.

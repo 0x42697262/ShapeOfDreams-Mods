@@ -36,6 +36,8 @@ internal sealed class WavePlan
 
 	public double DamageBonusPercent { get; set; }
 
+	public double EmpoweredMultiplier { get; set; } = 1;
+
 	public double FastClearMultiplier { get; set; } = 1;
 
 	public double HeroicFastClearMultiplier { get; set; } = 1;
@@ -61,6 +63,8 @@ internal sealed class WavePlan
 	public bool IsHunted => HuntLevel > 0;
 
 	public bool HasBossHealthFloor => MiniBossHealthMultiple > 0 || HeroicBossHealthMultiple > 0;
+
+	public bool IsEmpowered => EmpoweredMultiplier != 1;
 
 	public bool IsMerged => MergeMultiplier != MergeRule.NoChange;
 
