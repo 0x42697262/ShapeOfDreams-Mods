@@ -2,7 +2,7 @@
   "id": "com.0x42697262.laststand",
   "name": "Last Stand",
   "author": "0x42697262",
-  "modVer": "0.9.0",
+  "modVer": "0.10.0",
   "supportedGameVer": [ "*" ],
   "assemblies": [ "bin/Debug/netstandard2.1/LastStand.dll" ]
 }
