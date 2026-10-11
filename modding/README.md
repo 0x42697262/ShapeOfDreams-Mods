@@ -1,7 +1,8 @@
 # Modding Shape of Dreams: a methods handbook
 
 This is a technical guide to building mods for **Shape of Dreams**, written
-while building the **Last Stand** mod. It does not walk through Last Stand's
+while building the **Last Stand** mod. Paths such as `src/...` and `docs/...`
+are Last Stand's, under [`last-stand/`](../last-stand/). It does not walk through Last Stand's
 code. It teaches the methods: how to get the game's code out of its DLLs,
 how to find the one method that matters among thousands, how to prove
 whether a value reaches a player who doesn't have your mod, how to pick a
