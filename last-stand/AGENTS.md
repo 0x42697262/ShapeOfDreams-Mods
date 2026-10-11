@@ -35,14 +35,17 @@ item is created Private.
 
 **Change notes.** The game submits every upload with no change note
 (`SteamUGC.SubmitItemUpdate(handle, null)` in `DewMod.UpdateItem`). Last
-Stand fills it in: a prefix on `DewMod.UpdateItem` reads
-`about/changenote.txt` from the uploaded folder when the item is Last
-Stand's own (same id as the loaded mod), and a prefix on
-`SteamUGC.SubmitItemUpdate` puts it in place of the `null`
-(`WorkshopUploadPatch`, `WorkshopSubmitPatch` and `WorkshopChangeNote`,
-now in the shared library, so every mod gets them). `SubmitItemUpdate`
-runs before the method's first `await`, so it happens inside the same
-call; a finalizer clears the note afterwards. These patches work outside
+Stand fills it in: a prefix on `SteamUGC.StartItemUpdate` checks the
+item id against the loaded mod's `ModItem.publishedFileId` and, when it's
+Last Stand's own, logs `workshop: uploading item N from <path>.` and reads
+`about/changenote.txt` from the mod's folder; a prefix on
+`SteamUGC.SubmitItemUpdate` then puts it in place of the `null`
+(`WorkshopStartPatch`, `WorkshopSubmitPatch` and `WorkshopChangeNote`,
+in the shared library, so every mod gets them). Both are plain Steamworks
+calls made in that order by `DewMod.UpdateItem`. It used to be a prefix on
+`DewMod.UpdateItem` itself, an async method; v0.11.0 went up with an
+empty note and no `workshop:` line at all in the log, so the hook moved to
+the Steamworks calls, and the new `uploading` line shows whether it ran. These patches work outside
 Last Stand mode, since uploads happen from the title screen. `pack.sh`
 copies the file into the pack and prints it. Write the next update's note
 in `about/changenote.txt` (Steam BBCode) before packing, and commit it. It
@@ -963,7 +966,8 @@ Each answer still needs to be seen working:
 82. **Fast clear by time to kill** (removed in schema 53, see check 117).
 83. **Workshop change note:** with `about/changenote.txt` written,
     `./pack.sh` prints it. Upload the pack: the log shows `workshop:
-    attached about/changenote.txt (N characters)`, and the item's Change
+    uploading item N from ...`, then `workshop: attached
+    about/changenote.txt (N characters)`, and the item's Change
     Notes page shows the note with its formatting. Without the file the
     log says the update goes up without a change note, and uploading
     another mod attaches nothing.

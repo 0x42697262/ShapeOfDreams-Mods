@@ -80,6 +80,11 @@ internal static class SharedLogText
 		return $"workshop: could not read about/changenote.txt ({error}); the update goes up without a change note.";
 	}
 
+	public static string ChangeNoteUploadStarted(ulong id, string path)
+	{
+		return $"workshop: uploading item {id} from {path}.";
+	}
+
 	public static string ChangeNoteAttached(int length)
 	{
 		return $"workshop: attached about/changenote.txt ({length} characters) as the update's change note.";

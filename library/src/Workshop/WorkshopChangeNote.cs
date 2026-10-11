@@ -1,20 +1,26 @@
 using System;
 using System.IO;
+using Steamworks;
 
 namespace SodLib.Workshop;
 
 internal static class WorkshopChangeNote
 {
+	private static bool _uploading;
 	private static string _pending;
 
-	public static void Begin(ModItem item)
+	public static void Begin(PublishedFileId_t id)
 	{
+		_uploading = false;
 		_pending = null;
-		if (!IsOurs(item))
+		ModItem item = OurItem(id);
+		if (item == null)
 		{
 			return;
 		}
 
+		_uploading = true;
+		Log.Info(SharedLogText.ChangeNoteUploadStarted(id.m_PublishedFileId, item.path));
 		try
 		{
 			string path = Path.Combine(item.path, SharedGameNames.ModAboutFolder, ModIdentity.ChangeNoteFile);
@@ -35,7 +41,13 @@ internal static class WorkshopChangeNote
 
 	public static void Apply(ref string changeNote)
 	{
-		if (_pending == null || !string.IsNullOrEmpty(changeNote))
+		if (!_uploading)
+		{
+			return;
+		}
+
+		_uploading = false;
+		if (_pending == null)
 		{
 			return;
 		}
@@ -45,15 +57,9 @@ internal static class WorkshopChangeNote
 		Log.Info(SharedLogText.ChangeNoteAttached(changeNote.Length));
 	}
 
-	public static void End()
+	private static ModItem OurItem(PublishedFileId_t id)
 	{
-		_pending = null;
-	}
-
-	private static bool IsOurs(ModItem item)
-	{
-		ModBehaviour mod = ModHooks.Behaviour();
-		return item != null && item.metadata != null && mod != null && mod.mod != null && mod.mod.metadata != null
-		       && item.metadata.id == mod.mod.metadata.id;
+		ModItem item = ModHooks.Behaviour()?.mod;
+		return item != null && id.m_PublishedFileId != 0 && item.publishedFileId == id.m_PublishedFileId ? item : null;
 	}
 }

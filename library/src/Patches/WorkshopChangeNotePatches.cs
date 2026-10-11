@@ -3,19 +3,13 @@ using Steamworks;
 
 namespace SodLib.Patches;
 
-[HarmonyPatch(typeof(DewMod), nameof(DewMod.UpdateItem))]
-internal static class WorkshopUploadPatch
+[HarmonyPatch(typeof(SteamUGC), nameof(SteamUGC.StartItemUpdate))]
+internal static class WorkshopStartPatch
 {
 	[HarmonyPrefix]
-	private static void Prefix(ModItem item)
+	private static void Prefix(PublishedFileId_t __1)
 	{
-		WorkshopChangeNote.Begin(item);
-	}
-
-	[HarmonyFinalizer]
-	private static void Finalizer()
-	{
-		WorkshopChangeNote.End();
+		WorkshopChangeNote.Begin(__1);
 	}
 }
 
