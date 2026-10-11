@@ -5,11 +5,11 @@ internal sealed class CampRift
 	private double _nextCheckAt;
 	private int _target = ArenaLocator.NoNode;
 
-	public void Tick(double now)
+	public bool Tick(double now)
 	{
 		if (now < _nextCheckAt)
 		{
-			return;
+			return false;
 		}
 
 		_nextCheckAt = now + SharedTuning.CampRiftCheckSeconds;
@@ -17,19 +17,20 @@ internal sealed class CampRift
 		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (rift.IsNullOrInactive() || zones == null || !ArenaLocator.TryFindArenaNode(zones, out int target))
 		{
-			return;
+			return true;
 		}
 
 		WorldMapNodes.HideAllBut(zones, target);
 
 		if (rift.nextNodeIndex == target && _target == target)
 		{
-			return;
+			return true;
 		}
 
 		rift.NetworknextNodeIndex = target;
 		_target = target;
 		Log.Info(SharedLogText.CampRiftDirected(target));
+		return true;
 	}
 
 	public void Reset()

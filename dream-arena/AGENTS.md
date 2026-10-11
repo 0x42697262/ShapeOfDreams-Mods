@@ -140,6 +140,13 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
     are moved to `.old`.
 21. **Sidebar names on one line** (library): every page name in the
     settings sidebar sits on one line, none wrapped or cut off.
+22. **Lobby settings button in multiplayer** (library): host a
+    multiplayer Dream Arena lobby, open the lobby settings popup and click
+    `Dream Arena`. The settings window opens above the popup and every
+    control responds.
+23. **Arena room kept** (library): with `Force arena room` on, the rift out
+    of camp lands in the chosen boss room; if anything removed it, the log
+    shows `arena room: an arena node had lost ...; applied it again.`
 
 ## Conventions
 

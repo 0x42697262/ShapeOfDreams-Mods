@@ -237,7 +237,11 @@ internal sealed class DreamArenaSession
 
 	private void TickCamp(double now)
 	{
-		_campRift.Tick(now);
+		if (_campRift.Tick(now) && Settings.ForceArenaRoom)
+		{
+			ArenaRooms.EnsureApplied(Settings.ArenaRoom, Settings.StripRoomModifiers);
+		}
+
 		if (Settings.CampRemnants)
 		{
 			_remnants.Tick(now);

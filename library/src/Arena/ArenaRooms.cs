@@ -12,7 +12,7 @@ internal static class ArenaRooms
 			return;
 		}
 
-		string room = string.IsNullOrWhiteSpace(arenaRoom) ? SharedGameNames.DefaultArenaRoom : arenaRoom.Trim();
+		string room = RoomOrDefault(arenaRoom);
 		try
 		{
 			int changed = 0;
@@ -42,6 +42,31 @@ internal static class ArenaRooms
 		{
 			Log.Error(SharedLogText.ArenaRoomFailed(room), e);
 		}
+	}
+
+	public static void EnsureApplied(string arenaRoom, bool stripModifiers)
+	{
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
+		if (zones == null)
+		{
+			return;
+		}
+
+		string room = RoomOrDefault(arenaRoom);
+		for (int i = 0; i < zones.nodes.Count; i++)
+		{
+			if (i != zones.currentNodeIndex && ArenaLocator.IsArenaNode(zones, i) && zones.nodes[i].roomOverride != room)
+			{
+				Log.Warn(SharedLogText.ArenaRoomRestored(room));
+				Apply(arenaRoom, stripModifiers);
+				return;
+			}
+		}
+	}
+
+	private static string RoomOrDefault(string arenaRoom)
+	{
+		return string.IsNullOrWhiteSpace(arenaRoom) ? SharedGameNames.DefaultArenaRoom : arenaRoom.Trim();
 	}
 
 	public static int Strip(ZoneManager zones, int nodeIndex)

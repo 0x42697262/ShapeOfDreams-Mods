@@ -36,6 +36,11 @@ internal static class SharedMessages
 		return Colored(AnnouncementColor, text);
 	}
 
+	public static string Version(string name, string version)
+	{
+		return Announcement($"{name} v{version}");
+	}
+
 	public static string SettingChangeLine(string name, string before, string after)
 	{
 		return $"{name}: {before} -> {after}";

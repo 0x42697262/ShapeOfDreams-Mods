@@ -18,6 +18,7 @@ internal sealed class LastStandSession
 	private readonly ArenaArrival _arrival = new ArenaArrival();
 
 	private readonly CampRift _campRift = new CampRift();
+	private readonly VersionAnnouncer _version = new VersionAnnouncer();
 
 	private readonly RunGoal _goal = new RunGoal();
 
@@ -113,7 +114,12 @@ internal sealed class LastStandSession
 
 			_phase = SessionPhase.Camp;
 			_world.Tick(now, _settings.StartingWorld);
-			_campRift.Tick(now);
+			_version.Tick();
+			if (_campRift.Tick(now))
+			{
+				ArenaRooms.EnsureApplied(_settings.ArenaRoom, _settings.StripRoomModifiers);
+			}
+
 			return;
 		}
 

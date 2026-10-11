@@ -47,6 +47,16 @@ internal static class SharedLogText
 		return $"world map: hid {count} node(s); only the camp and the arena (node {kept}) are shown.";
 	}
 
+	public static string VersionAnnounced(string version)
+	{
+		return $"version: announced v{version} in chat.";
+	}
+
+	public static string ArenaRoomRestored(string room)
+	{
+		return $"arena room: an arena node had lost '{room}' before the camp rift opened; applied it again.";
+	}
+
 	public static string CampRiftDirected(int node)
 	{
 		return $"camp rift now leads straight to node {node}.";

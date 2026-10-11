@@ -1219,6 +1219,18 @@ Each answer still needs to be seen working:
     Corrupted Chaos 2, largest step 100). Progress saved by the old
     version in the same game session loads with `0 heroic fast kill(s) on
     record`.
+120. **Lobby settings button in multiplayer** (library): host a
+    multiplayer Last Stand lobby, open the lobby settings popup and click
+    `Last Stand`. The settings window opens above the popup, and its tabs,
+    dropdowns, Apply and Cancel all respond.
+121. **Arena room kept** (library): start a run; the rift out of camp
+    lands in the `Arena room` boss room (`Room_Primus_Boss_0` by default),
+    solo and with 2+ players. If anything removed the override, the log
+    shows `arena room: an arena node had lost ...; applied it again.`
+    before travel.
+122. **Version line** (library): at the start of the camp, chat shows
+    "Last Stand v0.9.0" in light blue, once, and the log shows `version:
+    announced v0.9.0 in chat.` Continuing a saved run shows it again.
 
 ## Conventions
 

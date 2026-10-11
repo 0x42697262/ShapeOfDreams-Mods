@@ -16,6 +16,21 @@ node is any node but the camp (`ArenaLocator.IsArenaNode`). Log: `arena
 room '<room>' applied to N node(s); M room modifier(s) removed.`, or `could
 not apply arena room '<room>'.` if it throws.
 
+World generation isn't the only chance. Each time `CampRift` runs its
+once-a-second camp check, `ArenaRooms.EnsureApplied` looks at every arena
+node again and, if any has lost the boss room (seen once in a multiplayer
+run, where the party landed in the world's normal combat room), applies the
+override again. Log, as a warning: `arena room: an arena node had lost
+'<room>' before the camp rift opened; applied it again.` A run that's fine
+logs nothing.
+
+**Version line.** Once per run, when the camp is ready
+(`GameManager.IsLazyCallReady()`), the library's `VersionAnnouncer` posts
+the mod's version from `about/metadata.json` (`modVer`) in light blue to
+everyone, for example "Last Stand v0.9.0", so players can see which version
+the host runs. Log: `version: announced v0.9.0 in chat.` A mod reload
+during the camp posts it again.
+
 ## Leaving camp
 
 The camp rift goes straight to the arena: one "move to the next location"

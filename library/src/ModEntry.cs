@@ -13,6 +13,8 @@ public abstract class ModEntry : ModBehaviour
 
 	internal abstract ModConfig Config { get; }
 
+	internal string Version => mod?.metadata?.modVer;
+
 	protected abstract int ConfigSchemaVersion { get; }
 
 	protected abstract void OnLoaded();
