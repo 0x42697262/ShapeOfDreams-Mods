@@ -30,6 +30,17 @@ internal static class LobbyConfigButton
 		button.name = ModIdentity.LobbyButtonName;
 		button.SetHeight(ConfigWindowLayout.LobbyButtonHeight);
 		button.GetComponentInChildren<TMP_Text>(includeInactive: true).text = ModIdentity.DisplayName;
-		button.onClick.AddListener(ConfigWindow.Toggle);
+		GameObject popup = panel.gameObject;
+		button.onClick.AddListener(() => OpenFrom(popup));
+	}
+
+	private static void OpenFrom(GameObject popup)
+	{
+		if (popup != null)
+		{
+			popup.SetActive(false);
+		}
+
+		ConfigWindow.Open();
 	}
 }

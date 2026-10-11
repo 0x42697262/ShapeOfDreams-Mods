@@ -1222,8 +1222,9 @@ Each answer still needs to be seen working:
     record`.
 120. **Lobby settings button in multiplayer** (library): host a
     multiplayer Last Stand lobby, open the lobby settings popup and click
-    `Last Stand`. The settings window opens above the popup, and its tabs,
-    dropdowns, Apply and Cancel all respond.
+    `Last Stand`. The popup closes, the settings window opens at normal
+    brightness (only the backdrop behind it is dimmed), and its tabs,
+    dropdowns, Apply and Cancel all respond. Same in a solo lobby.
 121. **Arena room kept** (library): start a run; the rift out of camp
     lands in the `Arena room` boss room (`Room_Primus_Boss_0` by default),
     solo and with 2+ players. If anything removed the override, the log

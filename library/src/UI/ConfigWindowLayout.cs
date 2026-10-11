@@ -13,5 +13,4 @@ internal static class ConfigWindowLayout
 	public const float ButtonWidth = 200f;
 	public const float ButtonHeight = 56f;
 	public const float LobbyButtonHeight = 54f;
-	public const int SortingOrder = 1100;
 }

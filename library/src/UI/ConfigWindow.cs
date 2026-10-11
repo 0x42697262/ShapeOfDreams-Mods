@@ -45,26 +45,9 @@ internal sealed class ConfigWindow : MonoBehaviour
 		window.name = ModIdentity.ConfigWindowName;
 		window.isDraggable = true;
 		window.enableBackdrop = true;
-		DrawAboveLobby(window.gameObject);
 
 		_current = window.gameObject.AddComponent<ConfigWindow>();
 		_current.Build(window, config);
-	}
-
-	private static void DrawAboveLobby(GameObject window)
-	{
-		Canvas canvas = window.GetComponent<Canvas>();
-		if (canvas == null)
-		{
-			canvas = window.AddComponent<Canvas>();
-		}
-
-		canvas.overrideSorting = true;
-		canvas.sortingOrder = ConfigWindowLayout.SortingOrder;
-		if (window.GetComponent<GraphicRaycaster>() == null)
-		{
-			window.AddComponent<GraphicRaycaster>();
-		}
 	}
 
 	public static void Close()
