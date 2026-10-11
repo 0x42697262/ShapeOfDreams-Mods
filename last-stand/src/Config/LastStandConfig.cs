@@ -235,7 +235,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.FasterWorldRiseStepLabel)]
 	[Description(ConfigText.FasterWorldRiseStepDescription)]
-	public int fasterWorldRiseStepWaves = 2;
+	public int fasterWorldRiseStepWaves = 5;
 
 	[LabelText(ConfigText.StartingAmbientLevelLabel)]
 	[Description(ConfigText.StartingAmbientLevelDescription)]

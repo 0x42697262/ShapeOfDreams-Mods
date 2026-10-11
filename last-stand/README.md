@@ -19,7 +19,7 @@ essences and turns what you collect into upgrades.
   Each wave is bigger and stronger than the last.
 - Monsters get **stronger every wave by the game's own world scaling**:
   they fight like one world higher every 25 waves, a little more each
-  wave, and from wave 200 one world higher every 2 waves. Only their
+  wave, and from wave 200 one world higher every 5 waves. Only their
   stats climb; loot, gold and prices stay at the run's world. The wave's
   chat line shows it as "Difficulty: X.X", the world they fight at.
 - **Curse to start** (difficulty option, off by default): no wave timer.

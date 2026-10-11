@@ -117,7 +117,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Min spawn distance from heroes | 8 m |
 | | Spawn interval / spawns per batch | 0.5 s / 6 |
 | World scaling | Worlds per step / waves per step | 1 / 25 |
-| | Faster world rise from wave (0 = never) / faster: worlds per step / faster: waves per step | 200 / 1 / 2 |
+| | Faster world rise from wave (0 = never) / faster: worlds per step / faster: waves per step | 200 / 1 / 5 |
 | | Starting monster level / waves per level | 1 / 4 |
 | | Starting world (vanilla world scaling) | 1 |
 | Minibosses | First wave / every N waves / waves per extra / max | 10 / 10 / 2 / 10 |

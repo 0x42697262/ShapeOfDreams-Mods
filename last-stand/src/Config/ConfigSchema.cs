@@ -2,5 +2,5 @@ namespace LastStand.Config;
 
 internal static class ConfigSchema
 {
-	public const int Current = 55;
+	public const int Current = 56;
 }

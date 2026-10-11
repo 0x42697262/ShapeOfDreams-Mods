@@ -1185,9 +1185,9 @@ Each answer still needs to be seen working:
 114. **World scaling** (schema 53): a new config shows, on the Monsters
     page under "World scaling", `Worlds per step` 1, `Waves per step` 25,
     `Faster world rise from wave` 200, `Faster: worlds per step` 1 and
-    `Faster: waves per step` 2. At starting world 1 the `wave N:` log line
+    `Faster: waves per step` 5. At starting world 1 the `wave N:` log line
     shows `world=1` at wave 1, `world=2` at 26, `world=5` at 101,
-    `world=8.96` at 200 and `world=13.96` at 210, and no `health=`,
+    `world=8.96` at 200 and `world=10.96` at 210, and no `health=`,
     `damage=`, `empowered=` or `fastClear=`. Chat's wave line ends with
     "Difficulty: 2.0". A wave 26 regular monster has about
     1.7× the max health it would have at world 1 at the same monster level
@@ -1218,7 +1218,7 @@ Each answer still needs to be seen working:
     the same stats as without the fast clear.
 118. **Faster world rise milestone** (schema 53): `laststand_wave 200`
     sends, in light blue, "The monsters grow stronger, faster! From now
-    on, they climb 1 world(s) every 2 wave(s) instead of 1 every 25." and
+    on, they climb 1 world(s) every 5 wave(s) instead of 1 every 25." and
     no empowered text. `Faster world rise from wave` 0: no announcement
     and the rise stays at 1 world per `Waves per step` waves after 200.
 119. **Schema 53 reset:** loading a schema 52 config moves it to
@@ -1269,8 +1269,12 @@ Each answer still needs to be seen working:
 127. **Waves per step back to 25** (schema 55; it was 10 in v0.12.0,
     schema 54): loading a schema 54 config moves it to `.old`; `Waves per
     step` shows 25. At starting world 1 the log shows `world=2` at wave
-    26, `world=5` at 101, `world=8.96` at 200 and `world=13.96` at 210
+    26, `world=5` at 101, `world=8.96` at 200 and `world=10.96` at 210
     (with no fast kill, `raised=+0`).
+128. **Faster rise every 5 waves** (schema 56): `Faster: waves per step`
+    shows 5. `laststand_wave 200` logs `world=8.96`, wave 205 `world=9.96`,
+    wave 210 `world=10.96`; the wave 200 announcement says "every 5
+    wave(s)".
 
 ## Conventions
 

@@ -14,7 +14,7 @@ normal break is used, because the cleared wave's plan didn't survive. The score 
 | 5 | Surge: twice the regular monsters (hunters included) and alive cap | 5 waves |
 | 48 | Merged waves: at most 100 monsters and hunters, carrying the whole wave's strength; surges add 2 minibosses and 2 Pain minibosses | wave |
 | 1 | Monster stats follow the game's world scaling, rising 1 world every 25 waves, a little each wave | wave |
-| 200 | Faster world rise: 1 world every 2 waves | wave |
+| 200 | Faster world rise: 1 world every 5 waves | wave |
 | 10 | 3 monster types from other worlds join the pool | 5 waves |
 | 10 | Minibosses (1, 1, 2, 2… up to 10) | 10 waves |
 | 20 | Pain minibosses (1, 1, 2, 2… up to 3) | 20 waves |
@@ -52,7 +52,7 @@ works through these knobs, all using systems the game already syncs:
   (hunters, artillery, the hunt level's step) and the hunter zone
   environment chance and cap, wave 200 the faster world rise ("The
   monsters grow stronger, faster! From now on, they climb 1 world(s)
-  every 2 wave(s) instead of 1 every 25."), wave 300 the dark urge and
+  every 5 wave(s) instead of 1 every 25."), wave 300 the dark urge and
   its chance. The waves come from the settings, not fixed numbers:
   `Milestones.StartingAt` compares the wave with `First hunter wave`,
   `Faster world rise from wave` and `First dark urge wave`, and skips a
@@ -118,13 +118,13 @@ works through these knobs, all using systems the game already syncs:
 
   where F is `Faster world rise from wave` (the second part counts only
   from F on; 0 turns it off). It's smooth, not a jump every step: with the
-  defaults (1 world per 25 waves, then from wave 200 1 world per 2 waves;
+  defaults (1 world per 25 waves, then from wave 200 1 world per 5 waves (2 before schema 56);
   `Waves per step` was 10 in v0.12.0, schema 54) wave 2 is 0.04 worlds up
   and wave 26 exactly 1.
 
   | Wave | 1 | 26 | 51 | 101 | 150 | 200 | 210 | 220 | 250 | 300 |
   |---|---|---|---|---|---|---|---|---|---|---|
-  | Monsters fight like world (from world 1) | 1 | 2 | 3 | 5 | 7 | 9 | 14 | 19 | 34 | 59 |
+  | Monsters fight like world (from world 1) | 1 | 2 | 3 | 5 | 7 | 9 | 11 | 13 | 19 | 29 |
 
   What a world means, from the game's curves (Nightmare, vs world 1):
 
@@ -146,9 +146,9 @@ works through these knobs, all using systems the game already syncs:
   ×1.7 to ×2.0 early, about ×1.3 around world 10, ×1.1 around world 20 to
   25 and ×1.03 around world 50. This is why the rise speeds up at wave 200:
   at 1 world per 25 waves, late waves would barely get stronger. At 1 world
-  per 2 waves from world 9, each wave adds about +14% health and +11%
-  damage at first, about +6% and +3.5% by world 20, and about +2% and
-  +1.5% by world 40.
+  per 5 waves from world 9, each wave adds about +5% health and +4.5%
+  damage at first, and about +2% and +1.5% by world 20 (wave about 255).
+  Players who survive keep going; the climb outpaces them slowly.
 
   How it's applied (`WorldScaling`, the game adapter): the game already
   gives every monster its real world's scaling when it spawns. For each
