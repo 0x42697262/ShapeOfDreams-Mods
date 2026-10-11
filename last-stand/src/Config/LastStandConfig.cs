@@ -47,6 +47,10 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.BossMusicDescription)]
 	public bool bossMusic = true;
 
+	[LabelText(ConfigText.HeroArrivalRingLabel)]
+	[Description(ConfigText.HeroArrivalRingDescription)]
+	public float heroArrivalRingPercent;
+
 	[LabelText(ConfigText.ShowWaveInQuestTrackerLabel)]
 	[Description(ConfigText.ShowWaveInQuestTrackerDescription)]
 	public bool showWaveInQuestTracker = true;

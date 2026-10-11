@@ -11,7 +11,7 @@ internal sealed class ArenaArrival
 
 	public int StagedHeroes => _heroes.Count;
 
-	public bool TryArrive(double now, out ArenaPoints arena)
+	public bool TryArrive(double now, double ringShare, out ArenaPoints arena)
 	{
 		arena = default;
 		if (now < _nextAttemptAt)
@@ -27,7 +27,7 @@ internal sealed class ArenaArrival
 			return false;
 		}
 
-		HeroStaging.PlaceAround(arena, _heroes, Tuning.HeroRingShareOfRadius, Tuning.MinHeroRingRadius);
+		HeroStaging.PlaceAround(arena, _heroes, (float)ringShare, Tuning.MinHeroRingRadius);
 		return true;
 	}
 

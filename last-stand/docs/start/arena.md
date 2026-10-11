@@ -180,8 +180,12 @@ anchor, the entry teleporter's destination, is never used: the center, and
 the shrine ring measured from it, stays on the marker or the largest
 section. `Room_BossArena` is read with `.softInstance`, so a room without
 one costs no scene scan. On arrival, `ArenaArrival` places players with the library's
-`HeroStaging.PlaceAround` in a ring at half the radius, at least 2 m
-(`Tuning.HeroRingShareOfRadius`, `MinHeroRingRadius`), and the **Dream
+`HeroStaging.PlaceAround`. `Hero arrival spread (% of radius)` sets the ring:
+0 (the default) puts every hero together on the center, since a ring of
+separate spots was annoying to regroup from at the start and after every mod
+reload; above 0 it's a ring at that share of the radius, at least 2 m
+(`Tuning.MinHeroRingRadius`; 50 is the old ring at half the radius). The
+library treats a share of 0 as no ring at all. Then the **Dream
 Well**, **Altar of Cleansing**, **Shrine of Ascension**, **Maw of Doom**,
 **Shrine of Destiny** and **Hatred Remnant** are spaced evenly around the
 edge of the room ([Edge shrines](../shrines/edge-shrines.md)). Arrival

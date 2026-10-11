@@ -7,7 +7,7 @@ internal static class HeroStaging
 {
 	public static float PlaceAround(ArenaPoints arena, IReadOnlyList<Hero> heroes, float ringShare, float minRing)
 	{
-		float ring = Mathf.Max(minRing, arena.Radius * ringShare);
+		float ring = ringShare > 0f ? Mathf.Max(minRing, arena.Radius * ringShare) : 0f;
 		if (heroes.Count == 0)
 		{
 			return ring;

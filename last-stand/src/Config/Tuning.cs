@@ -46,7 +46,6 @@ internal static class Tuning
 
 	public const float SpawnReservationSeconds = 5f;
 
-	public const float HeroRingShareOfRadius = 0.5f;
 
 	public const float MinHeroRingRadius = 2f;
 

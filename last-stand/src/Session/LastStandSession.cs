@@ -385,7 +385,7 @@ internal sealed class LastStandSession
 	private void Arrive(double now, int node)
 	{
 		_phase = SessionPhase.Arriving;
-		if (!_arrival.TryArrive(now, out ArenaPoints arena))
+		if (!_arrival.TryArrive(now, _settings.HeroRingShare, out ArenaPoints arena))
 		{
 			return;
 		}

@@ -90,6 +90,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Random arena: worlds | all 8 (checkboxes) |
 | | Plain arena (no room modifiers) | on |
 | | Boss music (the arena room's own) | on |
+| | Hero arrival spread (% of radius) | 0 (all together at the center) |
 | | Show wave in quest tracker | on |
 | | Dream Well | on |
 | | Altar of Cleansing | on |

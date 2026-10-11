@@ -1253,6 +1253,11 @@ Each answer still needs to be seen working:
     leaves, the next wave logs a `pace:` line with a smaller raise and
     "Difficulty:" drops by the same amount; when they rejoin, the next
     wave's `pace:` line and "Difficulty:" are back up.
+126. **Heroes arrive together:** with 2+ players, take the camp rift. Every
+    hero lands on the arena's center, together, and `arena ready: N
+    hero(es) staged at ...` shows N. Reload the mod mid-run: same, all on the
+    center. Set `Hero arrival spread (% of radius)` to 50: the next arrival
+    spreads heroes on a ring halfway to the edge.
 
 ## Conventions
 

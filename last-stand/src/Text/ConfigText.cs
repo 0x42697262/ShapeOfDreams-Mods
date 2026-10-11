@@ -309,6 +309,12 @@ internal static class ConfigText
 	public const string ArenaRoomDescription =
 		"Boss room used as the arena while Random arena is off. Applies next run.";
 
+	public const string HeroArrivalRingLabel = "Hero arrival spread (% of radius)";
+
+	public const string HeroArrivalRingDescription =
+		"Where heroes are put when they arrive in the arena or the mod reloads. 0 = all together at the " +
+		"center; 50 = spread on a ring halfway to the edge.";
+
 	public const string RandomArenaRoomLabel = "Random arena";
 
 	public const string RandomArenaRoomDescription =
