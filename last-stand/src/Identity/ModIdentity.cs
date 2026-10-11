@@ -8,6 +8,10 @@ internal static class ModIdentity
 
 	public const string SaveKey = "laststand";
 
+	public const string StartingGoldSlot = Tag + ".StartingGold";
+
+	public const string ProgressSlot = Tag + ".Progress";
+
 	public const string ChangeNoteFile = "changenote.txt";
 
 	public const string LobbyModeValue = "LastStand_Mode";

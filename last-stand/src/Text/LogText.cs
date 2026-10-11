@@ -124,9 +124,9 @@ internal static class LogText
 		return $"world map: hid {count} node(s); only the camp and the arena (node {kept}) are shown.";
 	}
 
-	public static string Suppressed(int count)
+	public static string WithSuppressed(string message, int count)
 	{
-		return $"({count} more like it were not logged.)";
+		return count > 0 ? $"{message} ({count} more like it were not logged.)" : message;
 	}
 
 	public static string SpawnFailed(EnemyTier tier)

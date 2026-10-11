@@ -65,9 +65,9 @@ internal static class LogText
 		return $"workshop: attached about/changenote.txt ({length} characters) as the update's change note.";
 	}
 
-	public static string Suppressed(int count)
+	public static string WithSuppressed(string message, int count)
 	{
-		return $"({count} more like it were not logged.)";
+		return count > 0 ? $"{message} ({count} more like it were not logged.)" : message;
 	}
 
 	public static string SettingChanged(string line)

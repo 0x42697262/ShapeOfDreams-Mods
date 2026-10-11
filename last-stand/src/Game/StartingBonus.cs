@@ -1,14 +1,13 @@
 using System;
 using System.Globalization;
 using LastStand.Diagnostics;
+using LastStand.Identity;
 using LastStand.Text;
 
 namespace LastStand.Game;
 
 internal sealed class StartingBonus
 {
-	private const string Slot = "LastStand.StartingGold";
-
 	private GameManager _handled;
 
 	public void Tick(int gold, int dreamDust)
@@ -22,12 +21,12 @@ internal sealed class StartingBonus
 		_handled = game;
 		string run = game.GetInstanceID().ToString(CultureInfo.InvariantCulture);
 		if ((gold <= 0 && dreamDust <= 0) || DewNetworkManager.startSettings.continueData != null
-		    || AppDomain.CurrentDomain.GetData(Slot) as string == run)
+		    || AppDomain.CurrentDomain.GetData(ModIdentity.StartingGoldSlot) as string == run)
 		{
 			return;
 		}
 
-		AppDomain.CurrentDomain.SetData(Slot, run);
+		AppDomain.CurrentDomain.SetData(ModIdentity.StartingGoldSlot, run);
 		if (gold > 0)
 		{
 			Log.Info(LogText.StartingGoldGranted(gold, PlayerRoster.GiveGold(gold)));

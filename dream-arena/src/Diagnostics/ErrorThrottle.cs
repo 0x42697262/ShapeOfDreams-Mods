@@ -21,7 +21,7 @@ internal sealed class ErrorThrottle
 			return;
 		}
 
-		Log.Error(_suppressed > 0 ? message + " " + Text.LogText.Suppressed(_suppressed) : message, exception);
+		Log.Error(Text.LogText.WithSuppressed(message, _suppressed), exception);
 		_suppressed = 0;
 		_nextAt = now + _intervalSeconds;
 	}

@@ -1,12 +1,12 @@
 using System;
 using System.Globalization;
+using LastStand.Config;
+using LastStand.Identity;
 
 namespace LastStand.Session;
 
 internal static class ProgressStore
 {
-	private const string Slot = "LastStand.Progress";
-
 	private const char Separator = '|';
 
 	private const int FieldCount = 6;
@@ -17,10 +17,6 @@ internal static class ProgressStore
 
 	private const double NoHeroicKills = 1;
 
-	private const string InProgressFlag = "1";
-
-	private const string BetweenWavesFlag = "0";
-
 	public static string CurrentRunKey()
 	{
 		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
@@ -30,7 +26,7 @@ internal static class ProgressStore
 			return null;
 		}
 
-		return game.GetInstanceID().ToString(CultureInfo.InvariantCulture) + ":" +
+		return game.GetInstanceID().ToString(CultureInfo.InvariantCulture) + Tuning.RunKeySeparator +
 		       zones.worldSeed.ToString(CultureInfo.InvariantCulture);
 	}
 
@@ -43,10 +39,11 @@ internal static class ProgressStore
 		}
 
 		string data = string.Join(Separator.ToString(), run, node.ToString(CultureInfo.InvariantCulture),
-			wave.ToString(CultureInfo.InvariantCulture), inProgress ? InProgressFlag : BetweenWavesFlag,
+			wave.ToString(CultureInfo.InvariantCulture),
+			inProgress ? Tuning.ProgressInProgressFlag : Tuning.ProgressBetweenWavesFlag,
 			fastClears.ToString(CultureInfo.InvariantCulture),
 			heroicKillMultiplier.ToString(CultureInfo.InvariantCulture));
-		AppDomain.CurrentDomain.SetData(Slot, data);
+		AppDomain.CurrentDomain.SetData(ModIdentity.ProgressSlot, data);
 	}
 
 	public static bool TryLoad(int node, out int wave, out bool inProgress, out int fastClears,
@@ -57,7 +54,7 @@ internal static class ProgressStore
 		fastClears = 0;
 		heroicKillMultiplier = NoHeroicKills;
 		string run = CurrentRunKey();
-		if (run == null || !(AppDomain.CurrentDomain.GetData(Slot) is string data))
+		if (run == null || !(AppDomain.CurrentDomain.GetData(ModIdentity.ProgressSlot) is string data))
 		{
 			return false;
 		}
@@ -74,7 +71,7 @@ internal static class ProgressStore
 			return false;
 		}
 
-		inProgress = parts[3] == InProgressFlag;
+		inProgress = parts[3] == Tuning.ProgressInProgressFlag;
 		if (parts.Length >= FieldCountWithoutHeroicKills)
 		{
 			int.TryParse(parts[4], NumberStyles.Integer, CultureInfo.InvariantCulture, out fastClears);
@@ -91,6 +88,6 @@ internal static class ProgressStore
 
 	public static void Forget()
 	{
-		AppDomain.CurrentDomain.SetData(Slot, null);
+		AppDomain.CurrentDomain.SetData(ModIdentity.ProgressSlot, null);
 	}
 }

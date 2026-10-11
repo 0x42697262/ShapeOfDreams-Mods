@@ -4,6 +4,12 @@ namespace LastStand.Config;
 
 internal static class Tuning
 {
+	public const string RunKeySeparator = ":";
+
+	public const string ProgressInProgressFlag = "1";
+
+	public const string ProgressBetweenWavesFlag = "0";
+
 	public const float ArrivalRetrySeconds = 0.5f;
 
 	public const float CampRiftRetrySeconds = 1f;
