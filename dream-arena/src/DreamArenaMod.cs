@@ -41,4 +41,14 @@ public class DreamArenaMod : ModEntry
 	{
 		Session?.Shutdown();
 	}
+
+	protected override void OnWorldGenerated()
+	{
+		Session?.OnWorldGenerated();
+	}
+
+	protected override bool SkipCutscenes()
+	{
+		return Session?.Settings?.SkipCutscenes == true;
+	}
 }

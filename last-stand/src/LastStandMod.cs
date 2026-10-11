@@ -40,4 +40,14 @@ public class LastStandMod : ModEntry
 	{
 		Session?.Reset();
 	}
+
+	protected override void OnWorldGenerated()
+	{
+		Session?.ApplyArenaRoom();
+	}
+
+	protected override bool SkipCutscenes()
+	{
+		return ArenaLocator.IsInArenaNode();
+	}
 }

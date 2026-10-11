@@ -957,8 +957,9 @@ within 50 steps, so a bad direction degrades to "at the center", never "in a
 wall". Reuse one `NavMeshPath` instance, as the game does, and do this once
 per arrival, not per frame.
 
-**Where else this applies.** Hero staging rings (`HeroStaging` uses the same
-`LinearSweep` from the center), reward scatter, safe teleport targets.
+**Where else this applies.** Hero staging rings (`HeroStaging`, in the shared
+library at `library/src/Arena/HeroStaging.cs`, uses the same `LinearSweep`
+from the center), reward scatter, safe teleport targets.
 
 ### 4.7 Turn on a room modifier mid-room (`HuntedZone`)
 
@@ -1008,7 +1009,8 @@ zones.currentHuntLevel = _previousHuntLevel;
 
 **Where else this applies.** Any `RoomMod_*` environment for one fight, a
 custom "challenge" room state, and removing world-gen modifiers from a node
-(`ModifierGate.Strip` loops `RemoveModifier` over the node's ids).
+(`ArenaRooms.Strip`, `library/src/Arena/ArenaRooms.cs`, loops
+`RemoveModifier` over the node's ids).
 
 ### 4.8 Revive knocked-out heroes on your own schedule (`HeroSouls`)
 
@@ -1027,7 +1029,9 @@ if (base.info.target.Status.TryGetStatusEffect<Se_HeroKnockedOut>(out var effect
 `OnDestroyActor` clears `isKnockedOut`, sends the revive RPC and removes the
 hero's soul modifiers from every node.
 
-**API.**
+**API.** The loop is the shared library's `HeroRevival.ReviveAll(healthRatio)`
+(`library/src/Game/HeroRevival.cs`); Last Stand passes -1 for the game's
+default health:
 
 ```csharp
 foreach (Hero hero in actors.allHeroes.ToArray())
@@ -1036,8 +1040,10 @@ foreach (Hero hero in actors.allHeroes.ToArray())
         knockedOut.Revive(healthRatio);
 ```
 
-Only when `Dew.GetAliveHeroCount() > 0`. With everyone down, the game's own
-game over must happen.
+Only when `HeroRevival.AnyHeroStanding()`: an active hero in `allHeroes`
+that isn't knocked out, the game's own game-over test. `Dew.GetAliveHeroCount`
+counts only players' heroes and misses AI allies from other mods. With
+everyone down, the game's own game over must happen.
 
 **Catches.**
 
@@ -1154,7 +1160,7 @@ game.NetworkgoldCostMultiplier = Tuning.VanillaGoldCostMultiplier;   // on stop 
 
 - **Clear a room on demand:** `Room.ClearRoom()` (it also destroys idle creep
   monsters and may open rifts; read Section 5.3 first).
-- **Teleport heroes:** `HeroStaging` copies `BossMonster`'s
+- **Teleport heroes:** `HeroStaging` (shared library) copies `BossMonster`'s
   `Control.Teleport` after `CancelOngoingChannels` and
   `CancelOngoingDisplacement`, and moves summons with the hero.
 - **Skip the world map:** `Rift_RoomExit.nextNodeIndex` (SyncVar) makes the
@@ -1201,7 +1207,8 @@ game.NetworkgoldCostMultiplier = Tuning.VanillaGoldCostMultiplier;   // on stop 
 Set from `isRevisit` in `StartRoom`. It's a plain property with a private
 setter, not synced. True in any revisited room, so a room made to load
 "cleared" (Last Stand sets `isRevisit = true` in a `Room.OnStartServer`
-postfix to load the arena lit and empty) behaves as if combat were over.
+postfix to load the arena lit and empty; the shared library's `PlainArena`,
+`library/src/Arena/PlainArena.cs`) behaves as if combat were over.
 Readers include:
 
 - `RoomSection` (`clearRoomOnEnterFirstTime`), `RoomModifierBase.PlaceShrine`

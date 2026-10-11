@@ -1,23 +1,23 @@
-using LastStand.Text;
 using UnityEngine;
 
-namespace LastStand.Arena;
+namespace SodLib.Arena;
 
-internal sealed class PlainArena
+internal static class PlainArena
 {
-	private Room _prepared;
+	private static Room _prepared;
 
-	public void Prepare(Room room)
+	public static bool Enabled { get; set; } = true;
+
+	public static void Prepare(Room room)
 	{
 		_prepared = null;
-		if (room == null || !ArenaLocator.IsInArenaNode())
+		if (room == null || !Enabled || !ArenaLocator.IsInArenaNode())
 		{
 			return;
 		}
 
 		room.isRevisit = true;
 		_prepared = room;
-
 		int triggers = 0;
 		foreach (DewAllHeroesPresentZone zone in Object.FindObjectsByType<DewAllHeroesPresentZone>(
 			         FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -26,10 +26,10 @@ internal sealed class PlainArena
 			triggers++;
 		}
 
-		Log.Info(LogText.PlainArenaPrepared(room.name, triggers));
+		Log.Info(SharedLogText.PlainArenaPrepared(room.name, triggers));
 	}
 
-	public void AfterStart(Room room)
+	public static void AfterStart(Room room)
 	{
 		if (room != null && room == _prepared)
 		{
@@ -37,7 +37,7 @@ internal sealed class PlainArena
 		}
 	}
 
-	public void Reset()
+	public static void Reset()
 	{
 		_prepared = null;
 	}

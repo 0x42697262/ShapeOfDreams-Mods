@@ -65,27 +65,6 @@ internal sealed class Revives
 		_done.Clear();
 	}
 
-	public static int ReviveAll()
-	{
-		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
-		if (actors == null)
-		{
-			return 0;
-		}
-
-		int revived = 0;
-		foreach (Hero hero in actors.allHeroes)
-		{
-			if (hero != null && hero.isKnockedOut && hero.Status.TryGetStatusEffect(out Se_HeroKnockedOut knockedOut))
-			{
-				knockedOut.Revive(Tuning.FullHealthRatio);
-				revived++;
-			}
-		}
-
-		return revived;
-	}
-
 	public void Reset()
 	{
 		_downSince.Clear();

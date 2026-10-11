@@ -17,7 +17,7 @@ internal sealed class LastStandSession
 
 	private readonly ArenaArrival _arrival = new ArenaArrival();
 
-	private readonly CampRift _campRift = new CampRift();
+	private readonly CampRift _campRift = new CampRift(true);
 
 	private readonly RunGoal _goal = new RunGoal();
 
@@ -54,8 +54,6 @@ internal sealed class LastStandSession
 	private int _arenaNode = ArenaLocator.NoNode;
 
 	private double _now;
-
-	public PlainArena PlainArena { get; } = new PlainArena();
 
 	public ArenaShrines Shrines { get; } = new ArenaShrines();
 
@@ -183,7 +181,7 @@ internal sealed class LastStandSession
 
 	public void ReviveHeroes()
 	{
-		Log.Info(LogText.CheatRevived(HeroSouls.ReviveAll(Tuning.CheatReviveHealth)));
+		Log.Info(LogText.CheatRevived(HeroRevival.ReviveAll(Tuning.CheatReviveHealth)));
 	}
 
 	public void SetHeroLevel(int level)
@@ -288,7 +286,7 @@ internal sealed class LastStandSession
 
 	public void ApplyArenaRoom()
 	{
-		ArenaRoomOverride.Apply(_settings.ArenaRoom, _settings.StripRoomModifiers);
+		ArenaRooms.Apply(_settings.ArenaRoom, _settings.StripRoomModifiers);
 	}
 
 	public bool AllowsModifier(ZoneManager zones, int nodeIndex, string modifierType)
@@ -391,11 +389,7 @@ internal sealed class LastStandSession
 		_arenaNode = node;
 		_phase = SessionPhase.Fighting;
 
-		int hidden = WorldMapNodes.HideAllBut(NetworkedManagerBase<ZoneManager>.softInstance, node);
-		if (hidden > 0)
-		{
-			Log.Info(LogText.MapNodesHidden(hidden, node));
-		}
+		WorldMapNodes.HideAllBut(NetworkedManagerBase<ZoneManager>.softInstance, node);
 
 		Shrines.Place(arena, _settings);
 

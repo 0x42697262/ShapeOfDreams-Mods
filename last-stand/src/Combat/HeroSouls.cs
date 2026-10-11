@@ -38,50 +38,7 @@ internal static class HeroSouls
 
 	public static int ReviveAfterWave()
 	{
-		return AnyHeroStanding() ? ReviveAll(Tuning.GameDefaultReviveHealth) : 0;
-	}
-
-	public static int ReviveAll(float healthRatio)
-	{
-		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
-		if (actors == null)
-		{
-			return 0;
-		}
-
-		int revived = 0;
-		foreach (Hero hero in actors.allHeroes.ToArray())
-		{
-			if (hero == null || !hero.isActive || !hero.isKnockedOut
-			    || !hero.Status.TryGetStatusEffect(out Se_HeroKnockedOut knockedOut))
-			{
-				continue;
-			}
-
-			knockedOut.Revive(healthRatio);
-			revived++;
-		}
-
-		return revived;
-	}
-
-	private static bool AnyHeroStanding()
-	{
-		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
-		if (actors == null)
-		{
-			return false;
-		}
-
-		foreach (Hero hero in actors.allHeroes)
-		{
-			if (hero != null && hero.isActive && !hero.isKnockedOut)
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return HeroRevival.AnyHeroStanding() ? HeroRevival.ReviveAll(Tuning.GameDefaultReviveHealth) : 0;
 	}
 
 	private static bool IsSoulOf(ModifierData modifier, DewPlayer owner)

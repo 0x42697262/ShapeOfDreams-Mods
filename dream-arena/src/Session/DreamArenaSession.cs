@@ -14,7 +14,7 @@ internal sealed class DreamArenaSession
 {
 	private readonly PhaseWatch _phase = new PhaseWatch();
 	private readonly PveSweep _pve = new PveSweep();
-	private readonly CampRift _campRift = new CampRift();
+	private readonly CampRift _campRift = new CampRift(false);
 	private readonly CampRemnants _remnants = new CampRemnants();
 	private readonly TrainingDummy _dummy = new TrainingDummy();
 	private readonly HeroBoost _heroBoost = new HeroBoost();
@@ -27,7 +27,7 @@ internal sealed class DreamArenaSession
 
 	public SessionSettings Settings { get; private set; }
 
-	public Phase Phase => _phase.Current;
+	public ArenaPhase Phase => _phase.Current;
 
 	public CampRemnants Remnants => _remnants;
 
@@ -36,10 +36,11 @@ internal sealed class DreamArenaSession
 	public void UseSettings(SessionSettings settings)
 	{
 		Settings = settings;
+		PlainArena.Enabled = settings.PlainArena;
 		if (_active)
 		{
 			ApplyRules();
-			ArenaRooms.Apply(Settings);
+			ApplyArenaRoom();
 		}
 	}
 
@@ -60,7 +61,7 @@ internal sealed class DreamArenaSession
 			Start();
 		}
 
-		if (_phase.Tick(Settings) && _phase.Current == Phase.Camp)
+		if (_phase.Tick(Settings) && _phase.Current == ArenaPhase.Camp)
 		{
 			_stagedNode = ArenaLocator.NoNode;
 		}
@@ -72,11 +73,11 @@ internal sealed class DreamArenaSession
 			_goal.Tick(now);
 		}
 
-		if (_phase.Current == Phase.Arena)
+		if (_phase.Current == ArenaPhase.Arena)
 		{
 			TickArena(now);
 		}
-		else if (_phase.Current == Phase.Camp)
+		else if (_phase.Current == ArenaPhase.Camp)
 		{
 			TickCamp(now);
 		}
@@ -86,15 +87,23 @@ internal sealed class DreamArenaSession
 	{
 		if (_active)
 		{
-			ArenaRooms.Apply(Settings);
+			ApplyArenaRoom();
+		}
+	}
+
+	private void ApplyArenaRoom()
+	{
+		if (Settings.ForceArenaRoom)
+		{
+			ArenaRooms.Apply(Settings.ArenaRoom, Settings.StripRoomModifiers);
 		}
 	}
 
 	public void OnHeroesTeleported()
 	{
-		if (_active && ArenaLocator.CurrentPhase() == Phase.Arena)
+		if (_active && ArenaLocator.CurrentPhase() == ArenaPhase.Arena)
 		{
-			HeroStaging.TryPlaceInRing();
+			ArenaStaging.TryPlaceInRing();
 		}
 	}
 
@@ -131,13 +140,13 @@ internal sealed class DreamArenaSession
 
 	public bool StageNow()
 	{
-		if (!_active || _phase.Current != Phase.Arena)
+		if (!_active || _phase.Current != ArenaPhase.Arena)
 		{
 			return false;
 		}
 
 		_pve.Sweep(Settings);
-		return HeroStaging.TryPlaceInRing();
+		return ArenaStaging.TryPlaceInRing();
 	}
 
 	public int PurgeNow()
@@ -164,7 +173,7 @@ internal sealed class DreamArenaSession
 		_goal.Reset();
 		_restartVote.Clear();
 		RemnantStock.Clear();
-		PlainArena.Forget();
+		PlainArena.Reset();
 		_stagedNode = ArenaLocator.NoNode;
 		_nextStageAt = 0;
 		_active = false;
@@ -182,7 +191,7 @@ internal sealed class DreamArenaSession
 	{
 		_active = true;
 		ApplyRules();
-		ArenaRooms.Apply(Settings);
+		ApplyArenaRoom();
 		Log.Info(LogText.SessionStarted(Settings.TeamMode));
 	}
 

@@ -82,7 +82,7 @@ internal sealed class SessionSettings
 			HeroHealthMultiplier = Mathf.Max(Tuning.NormalHealthMultiplier, config.heroHealthMultiplier),
 			AutoReviveSeconds = Math.Max(0, config.autoReviveSeconds),
 			ReviveHealthRatio = Mathf.Clamp(config.reviveHealthPercent, Tuning.MinRevivePercent,
-				Tuning.MaxRevivePercent) / Tuning.PercentScale,
+				Tuning.MaxRevivePercent) / SharedTuning.PercentScale,
 			NoMonsters = config.noMonsters,
 			RemoveGameModifiers = config.removeGameModifiers,
 			RemoveLucidDreams = config.removeLucidDreams,

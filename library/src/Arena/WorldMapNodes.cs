@@ -1,11 +1,9 @@
 using UnityEngine;
 
-namespace LastStand.Arena;
+namespace SodLib.Arena;
 
 internal static class WorldMapNodes
 {
-	private const float HiddenOffset = -1f;
-
 	public static int HideAllBut(ZoneManager zones, int keep)
 	{
 		if (zones == null)
@@ -22,9 +20,14 @@ internal static class WorldMapNodes
 				continue;
 			}
 
-			node.position = new Vector2(HiddenOffset - node.position.x, node.position.y);
+			node.position = new Vector2(SharedTuning.HiddenMapNodeOffset - node.position.x, node.position.y);
 			zones.nodes[i] = node;
 			hidden++;
+		}
+
+		if (hidden > 0)
+		{
+			Log.Info(SharedLogText.MapNodesHidden(hidden, keep));
 		}
 
 		return hidden;

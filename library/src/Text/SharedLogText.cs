@@ -18,8 +18,37 @@ internal static class SharedLogText
 
 	public const string SettingChangeFailed = "settings: a change handler failed.";
 
+	public const string CutsceneCheckFailed = "cutscenes: the mod's skip check failed; the cutscene plays.";
+
+	public const string WorldGenFailed = "world gen: the mod's handler failed; the world is left as generated.";
+
 	public const string ChangeNoteMissing =
 		"workshop: no about/changenote.txt in the uploaded folder; the update goes up without a change note.";
+
+	public static string ArenaRoomApplied(string room, int nodes, int modifiers)
+	{
+		return $"arena room '{room}' applied to {nodes} node(s); {modifiers} room modifier(s) removed.";
+	}
+
+	public static string ArenaRoomFailed(string room)
+	{
+		return $"could not apply arena room '{room}'.";
+	}
+
+	public static string PlainArenaPrepared(string room, int triggers)
+	{
+		return $"plain arena: '{room}' loads cleared; {triggers} entry trigger(s) disabled.";
+	}
+
+	public static string MapNodesHidden(int count, int kept)
+	{
+		return $"world map: hid {count} node(s); only the camp and the arena (node {kept}) are shown.";
+	}
+
+	public static string CampRiftDirected(int node)
+	{
+		return $"camp rift now leads straight to node {node}.";
+	}
 
 	public static string Loaded(string name, string version)
 	{

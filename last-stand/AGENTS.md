@@ -53,9 +53,10 @@ appears on the item's Change Notes page.
 [Dream Arena](../dream-arena) is a host-only PvP mode for the same game, in
 the same repo. The plumbing both need (settings window, lobby option and
 button, mode checks, config reset, chat and log helpers, Workshop change
-notes, the mod lifecycle) is in [`library/`](../library/README.md); use it
-from there. [`library/DISCREPANCIES.md`](../library/DISCREPANCIES.md) lists
-what the two mods still carry in their own copies (the arena basics).
+notes, the mod lifecycle, the arena basics) is in
+[`library/`](../library/README.md); use it from there.
+[`library/DISCREPANCIES.md`](../library/DISCREPANCIES.md) lists how the two
+mods' copies were merged and what one mod has that the other could use.
 
 **Do not copy** Dream Arena's lucid-dream, game-modifier or PvE suppression.
 Last Stand keeps all of those vanilla. The one exception is *room* modifiers
@@ -1114,6 +1115,16 @@ Each answer still needs to be seen working:
     and the solo button all work as before. A mod reload leaves one button
     and one window; unloading logs `[LastStand] unloaded.` With Dream Arena
     loaded too, each log line carries its own mod's prefix.
+99. **Shared arena basics:** after the arena code moved to `library/`,
+    arriving in the arena still lands heroes in a ring at the same center
+    (no entry-teleporter anchor), the room loads cleared (log `plain arena:
+    '<room>' loads cleared; N entry trigger(s) disabled.`), no intro
+    cutscene plays, the world map shows only camp and arena, the camp rift
+    leads straight there (`camp rift now leads straight to node N.`), world
+    gen logs one line `arena room '<room>' applied to N node(s); M room
+    modifier(s) removed.`, and after-wave and cheat revives work (checks 27
+    and 88). With Dream Arena loaded, a Dream Arena lobby doesn't skip
+    cutscenes for Last Stand's reasons and vice versa.
 
 ## Conventions
 

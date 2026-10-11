@@ -18,10 +18,10 @@ were seen working before the refactor, and their logic was kept.
 [Last Stand](../last-stand) is a host-only wave mode for the same game, in the
 same repo, and the model for this mod's design. The plumbing both need
 (settings window, lobby option and button, mode checks, config reset, chat
-and log helpers, Workshop change notes, the mod lifecycle) is in
-[`library/`](../library/README.md); use it from there.
-[`library/DISCREPANCIES.md`](../library/DISCREPANCIES.md) lists what the two
-mods still carry in their own copies (the arena basics).
+and log helpers, Workshop change notes, the mod lifecycle, the arena basics)
+is in [`library/`](../library/README.md); use it from there.
+[`library/DISCREPANCIES.md`](../library/DISCREPANCIES.md) lists how the two
+mods' copies were merged and what one mod has that the other could use.
 
 Last Stand's `AGENTS.md` holds most confirmed game API facts. Check there
 before decompiling something again.
@@ -121,6 +121,13 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
     settings notices in chat, and the Create Lobby option (not preselected,
     lobby name `Dream Arena (PvP)`) work as before. Unloading logs
     `[DreamArena] unloaded.`
+18. **Shared arena basics:** after the arena code moved to `library/`,
+    the ring still lands inside the arena in every boss room (check 14;
+    the log names the anchor, `DewHeroesTeleporter` in rooms without a
+    `Room_BossArena`), `Plain arena` off loads the room as vanilla, `Skip
+    intro cutscenes` off plays the intro, `Force arena room` off leaves
+    world gen alone, the camp rift still leads to the arena, and
+    `arena_revive` and `-restart` revive downed heroes.
 
 ## Conventions
 

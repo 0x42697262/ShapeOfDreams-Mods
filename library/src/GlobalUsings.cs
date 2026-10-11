@@ -1,4 +1,5 @@
 global using SodLib;
+global using SodLib.Arena;
 global using SodLib.Config;
 global using SodLib.Diagnostics;
 global using SodLib.Game;

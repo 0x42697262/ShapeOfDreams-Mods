@@ -12,8 +12,6 @@ internal static class Tuning
 
 	public const float ArrivalRetrySeconds = 0.5f;
 
-	public const float CampRiftRetrySeconds = 1f;
-
 	public const float MidJoinCheckSeconds = 1f;
 
 	public const float ArenaMusicCheckSeconds = 1f;
@@ -44,17 +42,9 @@ internal static class Tuning
 
 	public const float SpawnReservationSeconds = 5f;
 
-	public const float FallbackArenaRadius = 10f;
-
-	public const float MinArenaRadius = 4f;
-
-	public const float MaxArenaRadius = 18f;
-
 	public const float HeroRingShareOfRadius = 0.5f;
 
 	public const float MinHeroRingRadius = 2f;
-
-	public const float FullCircleDegrees = 360f;
 
 	public const float RewardScatter = 2f;
 
@@ -63,8 +53,6 @@ internal static class Tuning
 	public const float MinimumPainDamage = 0.1f;
 
 	public const float PainTickSeconds = 0.1f;
-
-	public const float PercentScale = 100f;
 
 	public const float MinimumBossMultiplier = 0.1f;
 

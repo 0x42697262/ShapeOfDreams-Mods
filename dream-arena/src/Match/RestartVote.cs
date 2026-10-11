@@ -1,4 +1,3 @@
-using DreamArena.Arena;
 using DreamArena.Game;
 using DreamArena.Text;
 
@@ -10,7 +9,7 @@ internal sealed class RestartVote
 
 	public bool Pending { get; private set; }
 
-	public string TryBegin(DewPlayer player, Phase phase, System.Action restock)
+	public string TryBegin(DewPlayer player, ArenaPhase phase, System.Action restock)
 	{
 		string reason = MatchRestart.CannotRestartReason(phase);
 		if (reason != null)

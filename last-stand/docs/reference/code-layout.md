@@ -2,7 +2,7 @@
 
 | Folder | Concern |
 |---|---|
-| `src/LastStandMod.cs` | Entry point. A `ModEntry` subclass: holds the config, creates the session, and overrides `OnLoaded`, `OnTick`, `OnSettingsChanged`, `OnGameStarted` and `OnUnloading` |
+| `src/LastStandMod.cs` | Entry point. A `ModEntry` subclass: holds the config, creates the session, and overrides `OnLoaded`, `OnTick`, `OnSettingsChanged`, `OnGameStarted`, `OnUnloading`, `OnWorldGenerated` (applies the arena room) and `SkipCutscenes` (true in an arena node) |
 | `src/LastStandConsole.cs` | Console commands |
 | `src/ModHooks.cs` | The choices for each settings dropdown and checklist (`Choices`), and the lobby name (`LobbyName`) |
 | `src/Identity` | `ModIdentity`: tag, display name, save key, lobby mode value, AppDomain slot names and Last Stand's own object names |
@@ -29,6 +29,16 @@ reset on a schema change, Apply and the settings notices), the mode check
 dropdown and checklist fields, the lobby dropdown option and settings
 button, UI cleanup, chat and log helpers, run-goal removal, the Workshop
 change note, and shared text, game names and tuning.
+
+It also holds the arena basics (`library/src/Arena`, `library/src/Game`,
+`library/src/Patches`): `ArenaLocator` (arena node, camp node, standing in
+the arena), the camp rift (`CampRift`, created with `true` to hide the other
+map nodes through `WorldMapNodes`), the room override and modifier strip
+(`ArenaRooms`, run from `WorldGenPatch`), cleared loading (`PlainArena`,
+`PlainArenaPatches`), the cutscene skip (`CutscenePatch`), the arena center
+(`ArenaLayout`, `ArenaPoints`), the arrival ring (`HeroStaging`), live heroes
+(`LiveHeroes`) and revives (`HeroRevival`). See
+[Arena](../start/arena.md) for how Last Stand uses them.
 
 Last Stand plugs in through the contract files: `Identity/ModIdentity.cs`,
 `Text/ModText.cs`, `ModHooks.cs`, `LastStandMod.cs` (the `ModEntry`

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DreamArena.Arena;
 using DreamArena.Game;
 using DreamArena.Text;
 
@@ -9,7 +8,7 @@ internal static class MatchRestart
 {
 	private static readonly List<Hero> Heroes = new List<Hero>();
 
-	public static string CannotRestartReason(Phase phase)
+	public static string CannotRestartReason(ArenaPhase phase)
 	{
 		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (zones == null)
@@ -27,7 +26,7 @@ internal static class MatchRestart
 			return Messages.RestartVoteRunning;
 		}
 
-		if (phase != Phase.Arena)
+		if (phase != ArenaPhase.Arena)
 		{
 			return Messages.RestartInCamp;
 		}
@@ -55,11 +54,7 @@ internal static class MatchRestart
 
 		foreach (Hero hero in Heroes)
 		{
-			if (hero.isKnockedOut && hero.Status.TryGetStatusEffect(out Se_HeroKnockedOut knockedOut))
-			{
-				knockedOut.Revive(Config.Tuning.FullHealthRatio);
-			}
-
+			HeroRevival.Revive(hero, Config.Tuning.FullHealthRatio);
 			hero.Skill.StopHoldInHand();
 			BuildWipe.Wipe(hero);
 		}

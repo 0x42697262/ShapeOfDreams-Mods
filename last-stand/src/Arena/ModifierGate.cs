@@ -26,19 +26,4 @@ internal static class ModifierGate
 		       || modifierType == typeof(RoomMod_HeroSoul).Name;
 	}
 
-	public static int Strip(ZoneManager zones, int nodeIndex)
-	{
-		if (!ArenaLocator.IsArenaNode(zones, nodeIndex) || zones.nodes[nodeIndex].modifiers == null)
-		{
-			return 0;
-		}
-
-		int[] ids = zones.nodes[nodeIndex].modifiers.ConvertAll(modifier => modifier.id).ToArray();
-		foreach (int id in ids)
-		{
-			zones.RemoveModifier(nodeIndex, id);
-		}
-
-		return ids.Length;
-	}
 }

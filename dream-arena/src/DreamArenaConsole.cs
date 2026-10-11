@@ -1,5 +1,5 @@
 using DreamArena.Diagnostics;
-using DreamArena.Heroes;
+using DreamArena.Config;
 using DreamArena.Text;
 using Mirror;
 
@@ -58,7 +58,7 @@ public class DreamArenaConsole : ModBehaviour
 	{
 		if (Hosting())
 		{
-			Log.Info(LogText.Revived(Revives.ReviveAll()));
+			Log.Info(LogText.Revived(HeroRevival.ReviveAll(Tuning.FullHealthRatio)));
 		}
 	}
 

@@ -48,7 +48,7 @@ internal sealed class SpawnPoints
 	public Vector3 Next(float minHeroDistance)
 	{
 		_minHeroDistance = minHeroDistance;
-		PlayerRoster.FillLiveHeroes(_heroes);
+		LiveHeroes.Fill(_heroes);
 		if (_anchors.Count > 0)
 		{
 			return NextAnchor();

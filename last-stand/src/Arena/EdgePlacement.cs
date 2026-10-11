@@ -144,6 +144,6 @@ internal static class EdgePlacement
 
 	private static Vector3 DirectionAt(int index)
 	{
-		return Quaternion.Euler(0f, index * Tuning.FullCircleDegrees / Tuning.EdgeDirections, 0f) * Vector3.forward;
+		return Quaternion.Euler(0f, index * SharedTuning.FullCircleDegrees / Tuning.EdgeDirections, 0f) * Vector3.forward;
 	}
 }

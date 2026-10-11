@@ -133,21 +133,4 @@ internal static class PlayerRoster
 		}
 	}
 
-	public static void FillLiveHeroes(List<Hero> buffer)
-	{
-		buffer.Clear();
-		ActorManager actors = NetworkedManagerBase<ActorManager>.softInstance;
-		if (actors == null)
-		{
-			return;
-		}
-
-		foreach (Hero hero in actors.allHeroes)
-		{
-			if (!hero.IsNullInactiveDeadOrKnockedOut())
-			{
-				buffer.Add(hero);
-			}
-		}
-	}
 }

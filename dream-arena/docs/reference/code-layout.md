@@ -6,7 +6,7 @@ adapters, and every literal in one named place.
 
 ```
 src/
-  DreamArenaMod.cs        ModEntry subclass: the config, the session, five overrides
+  DreamArenaMod.cs        ModEntry subclass: the config, the session, seven overrides
   DreamArenaConsole.cs    console commands
   ModHooks.cs             dropdown choices and the lobby name, for the library
   Session/
@@ -23,14 +23,9 @@ src/
     Relations.cs          writes the relation SyncLists
     PhaseWatch.cs         camp vs arena, applies relations, announces
   Arena/
-    ArenaLocator.cs       phase, camp node, arena node
-    ArenaRooms.cs         room override and modifier removal
-    ArenaLayout.cs        arena center and radius
-    HeroStaging.cs        the arrival ring
-    PlainArena.cs         cleared, lit loading
+    ArenaStaging.cs       the arrival ring: live heroes, library staging, log
     PveSweep.cs           removes PvE from the arena
   Camp/
-    CampRift.cs           direct rift
     CampRemnants.cs       builds the ring, tracks taken items
     RemnantRing.cs        ring layout solver
     RemnantChoices.cs     what a remnant offers, after a pick
@@ -66,6 +61,18 @@ dropdown fields, the lobby dropdown option and settings button, UI cleanup,
 `Log`, `ErrorThrottle`, `ChatNotices`, `RunGoal`, `LocalizedNames`, the
 Workshop change note, and shared text, game names and tuning. A fix there
 reaches both mods; build both (`./check.sh`).
+
+It also holds the arena basics (`library/src/Arena`, `library/src/Game`,
+`library/src/Patches`): `ArenaLocator` and `ArenaPhase` (phase, camp node,
+arena node), the direct rift (`CampRift`, created with `false`), the room
+override and modifier removal (`ArenaRooms`, run from `WorldGenPatch`),
+cleared loading (`PlainArena`, `PlainArenaPatches`), the cutscene skip
+(`CutscenePatch`), the arena center (`ArenaLayout`, `ArenaPoints`), the
+ring placement (`HeroStaging`), live heroes (`LiveHeroes`) and revives
+(`HeroRevival`, used by `arena_revive` and the restart). Dream Arena's side
+is the `OnWorldGenerated` and `SkipCutscenes` overrides, `PlainArena.Enabled`
+set from the settings, and `ArenaStaging`. See [Arena](../arena/arena.md)
+and [Camp](../camp/camp.md).
 
 Dream Arena plugs in through the contract files: `Identity/ModIdentity.cs`,
 `Text/ModText.cs`, `ModHooks.cs`, `DreamArenaMod.cs` (the `ModEntry`

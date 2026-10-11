@@ -1267,7 +1267,8 @@ protected void UserCode_TpcInteract__NetworkConnectionToClient(NetworkConnection
     // otherwise: open the world map
 ```
 
-**Fix.** `rift.NetworknextNodeIndex = target;` on the host. Every client's
+**Fix.** `rift.NetworknextNodeIndex = target;` on the host (`CampRift`, in
+the shared library at `library/src/Arena/CampRift.cs`). Every client's
 vanilla `TpcInteract` body now takes the confirm-and-travel branch.
 
 **The vote, a function called on both sides.** `ZoneManager.ShouldVoteOnTravel()`

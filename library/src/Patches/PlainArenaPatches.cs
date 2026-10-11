@@ -1,6 +1,6 @@
 using HarmonyLib;
 
-namespace LastStand.Patches;
+namespace SodLib.Patches;
 
 [HarmonyPatch(typeof(Room), nameof(Room.OnStartServer))]
 internal static class PlainArenaStartServerPatch
@@ -10,7 +10,11 @@ internal static class PlainArenaStartServerPatch
 	{
 		if (ModMode.IsHosting())
 		{
-			LastStandMod.Current?.Session?.PlainArena.Prepare(__instance);
+			PlainArena.Prepare(__instance);
+		}
+		else
+		{
+			PlainArena.Reset();
 		}
 	}
 }
@@ -23,7 +27,7 @@ internal static class PlainArenaStartRoomPatch
 	{
 		if (ModMode.IsHosting())
 		{
-			LastStandMod.Current?.Session?.PlainArena.AfterStart(__instance);
+			PlainArena.AfterStart(__instance);
 		}
 	}
 }

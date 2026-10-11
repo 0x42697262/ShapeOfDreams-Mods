@@ -39,7 +39,7 @@ internal static class PureDreamSpots
 	private static Vector3 Pick(Func<Vector3> roll)
 	{
 		Vector3 spot = roll();
-		if (!ArenaLayout.TryFind(out ArenaPoints arena))
+		if (!ArenaLayout.TryFind(false, out ArenaPoints arena))
 		{
 			return spot;
 		}

@@ -37,7 +37,7 @@ internal static class MonsterEnhancer
 
 	private static float ExtraPercent(double multiplier)
 	{
-		return (float)((multiplier - 1) * Tuning.PercentScale);
+		return (float)((multiplier - 1) * SharedTuning.PercentScale);
 	}
 
 	public static void AddAbilityHaste(Entity entity, double haste)

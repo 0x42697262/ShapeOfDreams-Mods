@@ -89,11 +89,6 @@ internal static class LogText
 		return $"revive: {count} knocked-out hero(es) revived after wave {wave} was cleared.";
 	}
 
-	public static string MapNodesHidden(int count, int kept)
-	{
-		return $"world map: hid {count} node(s); only the camp and the arena (node {kept}) are shown.";
-	}
-
 	public static string SpawnFailed(EnemyTier tier)
 	{
 		return $"spawning a {tier} failed; that spawn was skipped and the wave carries on.";
@@ -348,16 +343,6 @@ internal static class LogText
 		return "pain zone: Aura of Pain environment added to the arena.";
 	}
 
-	public static string ArenaRoomApplied(string room, int nodes)
-	{
-		return $"arena room '{room}' applied to {nodes} node(s).";
-	}
-
-	public static string PlainArenaPrepared(string room, int triggers)
-	{
-		return $"'{room}' loads cleared; {triggers} entry trigger(s) disabled.";
-	}
-
 	public static string ArenaReady(int heroes, Vector3 center)
 	{
 		return $"arena ready: {heroes} hero(es) staged at {center}.";
@@ -374,7 +359,7 @@ internal static class LogText
 		       $"fastClear=x{plan.FastClearMultiplier:0.##} heroicFastClear=x{plan.HeroicFastClearMultiplier:0.##} " +
 		       $"heroicKill=x{plan.HeroicKillMultiplier:0.##} " +
 		       $"foreign={plan.ForeignTypesUnlocked} mirage={plan.MirageSkinsUnlocked} " +
-		       $"mirageChance={plan.MirageChance * Tuning.PercentScale:0}% " +
+		       $"mirageChance={plan.MirageChance * SharedTuning.PercentScale:0}% " +
 		       $"huntLevel={plan.HuntLevel} cap={plan.MaxAlive}.";
 	}
 
@@ -395,11 +380,6 @@ internal static class LogText
 		return $"catalog: {foreignTypes} monster type(s) from other worlds, {mirageSkins} Mirage skin(s), " +
 		       $"{heroicBosses} heroic boss type(s); hunters start at wave {hunterStartWave}, every monster is " +
 		       $"a hunter from wave {allHuntersWave}.";
-	}
-
-	public static string ModifiersStripped(int count)
-	{
-		return $"removed {count} room modifier(s) from arena nodes.";
 	}
 
 	public static string ModifierBlocked(string modifierType, int nodeIndex)
@@ -442,11 +422,6 @@ internal static class LogText
 	public static string WaveCleared(int wave)
 	{
 		return $"wave {wave} cleared.";
-	}
-
-	public static string CampRiftDirected(int node)
-	{
-		return $"camp rift now leads straight to node {node}.";
 	}
 
 	public static string SpawnSkipped(EnemyTier tier)

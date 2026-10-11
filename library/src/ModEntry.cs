@@ -25,6 +25,10 @@ public abstract class ModEntry : ModBehaviour
 
 	protected abstract void OnUnloading();
 
+	protected abstract void OnWorldGenerated();
+
+	protected abstract bool SkipCutscenes();
+
 	protected void Awake()
 	{
 		Active = this;
@@ -77,6 +81,31 @@ public abstract class ModEntry : ModBehaviour
 
 		base.LoadConfigsToDisk();
 		_settingsAnnouncer.Remember(Config);
+	}
+
+	internal bool SkipsCutscene()
+	{
+		try
+		{
+			return SkipCutscenes();
+		}
+		catch (Exception e)
+		{
+			_tickErrors.Report(Time.time, SharedLogText.CutsceneCheckFailed, e);
+			return false;
+		}
+	}
+
+	internal void WorldGenerated()
+	{
+		try
+		{
+			OnWorldGenerated();
+		}
+		catch (Exception e)
+		{
+			Log.Error(SharedLogText.WorldGenFailed, e);
+		}
 	}
 
 	internal void ApplyConfig(ModConfig edited)

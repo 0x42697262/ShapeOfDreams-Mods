@@ -1,17 +1,18 @@
 # Discrepancies between the mods
 
-What Last Stand (LS) and Dream Arena (DA) still carry in their own copies,
-how the copies differ, and how to settle each before it moves into
-`library/src`. `./check.sh` finds the copies (`tools/dupscan.py`: six or
+How Last Stand (LS) and Dream Arena (DA) code was merged into
+`library/src`, what stays per mod on purpose, and what one mod has that the
+other could use. `./check.sh` finds the copies (`tools/dupscan.py`: six or
 more identical lines in two files, after normalizing mod names) and fails
 when they grow; `tools/duplicates.txt` is the current baseline.
 
 ## Done: moved into the library
 
 Before the move the two mods shared 499 duplicated six-line windows across
-about 45 file pairs. Now there are 11, in 3 pairs (the arena basics below
-and the two entry-point subclasses). What moved, and how each difference
-was settled:
+about 45 file pairs. Now there are 5, all in the two entry-point
+subclasses (`LastStandMod`, `DreamArenaMod`), which are the same shape on
+purpose: each fills in `ModEntry`'s overrides. What moved, and how each
+difference was settled:
 
 | Area | Moved | Settled how |
 |---|---|---|
@@ -26,43 +27,24 @@ was settled:
 | Names and text | 17 game names → `SharedGameNames`; 5 constants → `SharedTuning`; shared log, config and chat text → `SharedLogText`, `SharedConfigText`, `SharedMessages` | Per-mod values (mode name, description, window note, colors, tick failure text, page titles) went to `ModText`. Some log lines now name the mod instead of "PvP Arena"/"the arena". |
 | Build | two 290-line `.csproj` files, two `pack.sh`, two `.gitignore`, local `build.sh`/`watch-log.sh` | `Directory.Build.props`, one-line projects, root `build.sh`, `pack.sh`, `watch-log.sh`, `check.sh`, one `.gitignore`. |
 | Conventions | the two *Conventions* sections | The root `AGENTS.md`, with the DRY rule. |
-
-## Arena basics (still in both mods)
-
-The next step. Each mod has its own copy of:
-
-- **`ArenaLocator`**: LS has `IsArenaNode`, `IsStandingInArena`,
-  `IsInArenaNode` and `CurrentNode`; DA has `CurrentPhase`, `CampNode`,
-  `TryFindArenaNode` and its own `Phase` enum. One locator with both sets.
-- **`ArenaLayout`**: LS waits for an active room and returns `ArenaPoints`;
-  DA also tries the entry teleporter's destination and names the anchor.
-  Make the teleporter a parameter, off for LS, so its center and edge ring
-  don't move.
-- **`HeroStaging`**: the same ring with a different share and minimum (LS
-  0.5 / 2 m, DA 0.75 / 1 m). Pass them in.
-- **`PlainArena`** and its two patches: LS's is owned by the session and
-  checks the arena node; DA's is static with a setting. One static class
-  with an `Enabled` switch.
-- **Room override**: LS `ArenaRoomOverride` with `ModifierGate.Strip`, DA
-  `ArenaRooms`, each with its own `WorldGenPatch`. One
-  `ArenaRooms.Apply(room, strip)`; the patch calls a `ModEntry` hook.
-- **`CampRift`**: LS also hides the other map nodes (`WorldMapNodes`), DA
-  doesn't. A constructor flag.
-- **Revives** (LS `HeroSouls.ReviveAll`, DA `Revives.ReviveAll`) and the
-  **cutscene skip** (LS in arena nodes, DA by setting): one helper, and one
-  patch asking a `ModEntry` hook.
+| Arena lookups | `ArenaLocator` (both), DA's `Phase`, LS's private `TryFindArenaNode` | One locator with both sets of lookups; `ArenaPhase`. An arena node is any node but the camp (same result in both). |
+| Arena layout | `ArenaLayout`, `ArenaPoints` | LS's active-room guard and `ArenaPoints` (now with `Source`), DA's `.softInstance` and anchor name. The teleporter fallback is a parameter: DA on, LS off, so LS's center and edge ring don't move. |
+| Hero ring | `HeroStaging`, LS `PlayerRoster.FillLiveHeroes` | LS's pure `PlaceAround`, with the ring share and minimum as parameters (LS 0.5 / 2 m, DA 0.75 / 1 m); `LiveHeroes.Fill`. DA keeps a thin `ArenaStaging` wrapper for its log line. |
+| Plain arena | `PlainArena`, its two patches | Static, with `Enabled` (DA's setting); both patches gated on `ModMode.IsHosting()` (DA's `StartRoom` postfix was ungated). |
+| Room override | LS `ArenaRoomOverride` + `WorldGenPatch`, DA `ArenaRooms` + `WorldGenPatch`, LS `ModifierGate.Strip` | `ArenaRooms.Apply(room, strip)` with DA's try/catch and blank-room fallback, LS's arena-node check, one log line. The patch calls `OnWorldGenerated`; DA keeps its `Force arena room` toggle there. LS's `ModifierGate` still blocks later additions. |
+| Camp rift | `CampRift` (both), LS `WorldMapNodes` | LS's version on the shared locator; map hiding is a constructor flag (LS on, DA off). |
+| Revives | LS `HeroSouls.ReviveAll`/`AnyHeroStanding`, DA `Revives.ReviveAll` | `HeroRevival`: LS's safe loop (copy, skip inactive). DA's restart and console use it at full health. |
+| Cutscene skip | `CutscenePatch` (both) | One patch asking the mod's `SkipCutscenes()` (LS: in an arena node; DA: its setting). |
 
 ## Other differences
 
-- **`Config/Tuning.cs`** still has shared values under each mod:
-  - Identical: `FallbackArenaRadius`, `FullCircleDegrees`, `PercentScale`.
-  - Same value, different name: `MinArenaRadius`/`MinSectionRadius` (4),
-    `MaxArenaRadius`/`MaxSectionRadius` (18),
-    `CampRiftRetrySeconds`/`CampRiftCheckSeconds` (1).
-  - Different values: hero ring share 0.5 vs 0.75, ring minimum 2 vs 1,
-    arrival retry 0.5 s vs staging retry 0.25 s.
-  - *Handling:* move them to `SharedTuning` with the arena code that uses
-    them, one name each. Ring and retry values become parameters.
+- **`Config/Tuning.cs`**:
+  - Moved to `SharedTuning`: `FallbackArenaRadius`, `MinArenaRadius`,
+    `MaxArenaRadius`, `FullCircleDegrees`, `PercentScale`,
+    `CampRiftCheckSeconds`.
+  - Still per mod on purpose: hero ring share (0.5 vs 0.75) and minimum
+    (2 vs 1 m), passed to `HeroStaging`; arrival retry 0.5 s vs staging
+    retry 0.25 s.
 - **Console commands** (`LastStandConsole` ↔ `DreamArenaConsole`) stay per
   mod. Shareable: the host-only check of the config command (LS calls
   `ConfigWindow.Open()`, DA `Toggle()`; pick one) and a cheat guard. DA's
@@ -70,7 +52,8 @@ The next step. Each mod has its own copy of:
 
 ## Candidates not shared yet
 
-- `Arena/WorldMapNodes.cs` (LS): would give DA a map with only camp and arena.
+- Map hiding: `WorldMapNodes` is in the library; DA could turn it on with
+  `new CampRift(true)` (a setting) to show only camp and arena.
 - `Arena/ModifierGate.cs` (LS): DA strips modifiers but doesn't block later ones.
 - Hero level: LS `PlayerRoster.SetHeroLevel` (cheat, clamped to `maxLevel`,
   through `PlayerRoster.ForEachHero`) and DA `Heroes/HeroBoost` `Player
@@ -81,10 +64,8 @@ The next step. Each mod has its own copy of:
 
 ## Suggested order
 
-1. `ArenaLocator`, DA's `Phase`, `CampRift` and `WorldMapNodes`.
-2. `ArenaLayout`, `HeroStaging` and `PlainArena`.
-3. The room override, revives and the cutscene skip.
-
-After each step `./check.sh` must pass (run `./check.sh --update-baseline`
-when duplicates drop) and the related in-game checks of both mods must
-pass.
+Everything both mods carried is in the library. What's left are
+candidates: code only one mod has that the other, or a new mod, could use
+(above). Move one at a time; after each step `./check.sh` must pass (run
+`./check.sh --update-baseline` when duplicates drop) and the related
+in-game checks of both mods must pass.

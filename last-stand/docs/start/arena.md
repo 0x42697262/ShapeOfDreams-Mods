@@ -6,14 +6,29 @@ right after `GenerateWorld_Imp` fills the node list. Taking the rift out of camp
 starts the fight. The override writes into the synced node list, so vanilla
 clients load the same room.
 
+The arena basics in this page are shared with Dream Arena and live in the
+library (`library/src/Arena`, `library/src/Patches`). The override is
+`ArenaRooms.Apply(arenaRoom, stripModifiers)`: the library's `WorldGenPatch`
+(a postfix on `GenerateWorld_Imp`) calls Last Stand's `OnWorldGenerated`
+override, which applies `Arena room` (a blank name means
+`Room_Primus_Boss_0`) to every arena node except the current one. An arena
+node is any node but the camp (`ArenaLocator.IsArenaNode`). Log: `arena
+room '<room>' applied to N node(s); M room modifier(s) removed.`, or `could
+not apply arena room '<room>'.` if it throws.
+
 ## Leaving camp
 
 The camp rift goes straight to the arena: one "move to the next location"
 prompt, no world map and no node to pick. `Rift_RoomExit` checks its
 `nextNodeIndex` before opening the map, and that field is a SyncVar, so the
-host points it at an arena node (one connected to camp, skipping side nodes)
-and vanilla clients get the same single prompt. This is retried once a second
-while in camp, until the rift exists.
+host points it at an arena node and vanilla clients get the same single
+prompt. The library's `CampRift` does this once a second while in camp
+(`SharedTuning.CampRiftCheckSeconds`). `ArenaLocator.TryFindArenaNode` picks
+the node: it skips the current node, the camp and sidetrack nodes, and
+prefers one connected to the current node, else the first. Log: `camp rift
+now leads straight to node N.` Last Stand creates it as `new
+CampRift(true)`, which also hides the other world-map nodes (below); Dream
+Arena passes false.
 
 In multiplayer, a confirmed travel normally still goes to a vote, which opens
 the world map for everyone with a 6-second countdown. The host decides that
@@ -33,6 +48,19 @@ barriers are open, and its own monsters, props, rewards and boss are skipped.
 The entry trigger (`DewAllHeroesPresentZone`) is switched off and intro
 cutscenes are skipped. The exit rift stays shut, so there is nowhere to travel.
 
+This is the library's static `PlainArena`, run by `PlainArenaPatches`
+(postfixes on `Room.OnStartServer` and `Room.StartRoom`, which opens the
+barriers with `RemoveObstacles`). Both act only while hosting the mode
+(`ModMode.IsHosting()`), and `Prepare` only in an arena node
+(`ArenaLocator.IsInArenaNode()`). `PlainArena.Enabled` stays on in Last
+Stand, whose `Plain arena (no room modifiers)` setting is about modifiers
+(below); Dream Arena sets it from its own `Plain arena` setting. Log: `plain
+arena: '<room>' loads cleared; N entry trigger(s) disabled.` The cutscene
+skip is the library's `CutscenePatch` (a prefix on
+`DewCutsceneDirector.PlayNetworked`), which asks the mod: Last Stand's
+`SkipCutscenes` override answers yes in any arena node. If that check
+throws, the error is logged (throttled) and the cutscene plays.
+
 **A plain arena.** World generation rolls room modifiers onto every node, and
 the arena node keeps them. In testing, the arena arrived with
 `RoomMod_SpawnGuidance` (an extra shrine standing in the arena),
@@ -42,7 +70,9 @@ travel (`RoomMod_SpawnMiniBoss`), and the hunters' spread. So, with
 `Plain arena` on (the default):
 
 - after `GenerateWorld_Imp`, every arena node's modifiers are removed with
-  `ZoneManager.RemoveModifier`, which writes the node back so it syncs;
+  `ZoneManager.RemoveModifier`, which writes the node back so it syncs
+  (`ArenaRooms.Strip`, in the same `ArenaRooms.Apply` call that sets the
+  room);
 - a prefix on `ZoneManager.AddModifier` refuses any later modifier on an arena
   node. Two kinds still get through. One is Last Stand's own Pain environment,
   hunter zone and wave environments, which are added through
@@ -61,7 +91,8 @@ every room load) skips the game's placement, sets the knock-out's
 `disableQuest` so no "lost soul" quest starts, and removes any soul of that
 hero left on any node. When a wave is cleared, every knocked-out hero is
 revived through the game's own `Se_HeroKnockedOut.Revive` (half health, the
-game's default), as long as at least one hero is still standing, so they
+game's default), as long as at least one hero is still standing
+(`HeroRevival.ReviveAll` and `AnyHeroStanding` in the library), so they
 have the break to get ready for the next wave. "Standing" uses the game's
 own game-over rule (`GameManager.CheckGameOver`): any `Hero` in
 `ActorManager.allHeroes` that isn't knocked out. That list includes heroes
@@ -76,10 +107,12 @@ follows as usual. Chat announces the revive.
 node except sidetrack nodes, and `WorldNodeData.IsSidetrackNode` is just
 `position.x < 0`. So once the camp rift has its arena node, and again on
 arrival, every other node's map position is mirrored to a negative x
-(`-1 - x`) and written back to the synced `ZoneManager.nodes`. Clients' maps
-then skip those nodes. Nothing else needs them: the arena never travels on,
-and the game only uses the sidetrack test for hunter progress and for picking
-quest nodes.
+(`-1 - x`, `SharedTuning.HiddenMapNodeOffset`) and written back to the
+synced `ZoneManager.nodes` (the library's `WorldMapNodes.HideAllBut`, which
+logs `world map: hid N node(s); only the camp and the arena (node K) are
+shown.` when it hides any). Clients' maps then skip those nodes. Nothing
+else needs them: the arena never travels on, and the game only uses the
+sidetrack test for hunter progress and for picking quest nodes.
 
 **Music.** The arena plays its boss room's own boss music, for the host and
 every client (`Boss music`, on). Music is local to each game: every client
@@ -106,12 +139,19 @@ heard it: an arbitrary track can't be named over the network, since a
 networked effect can only play objects that already exist in the client's
 scene. The room's own track does exist there, which is why this works.
 
-The arena's center is `Room_BossArena` when the room has one, otherwise the
-`pathablePivot` of the largest `RoomSection`. On arrival, players are placed in
-a ring around it, and the **Dream Well**, **Altar of Cleansing**, **Shrine
-of Ascension**, **Maw of Doom**, **Shrine of Destiny** and **Hatred Remnant**
-are spaced evenly
-around the edge of the room ([Edge shrines](../shrines/edge-shrines.md)). Arrival
+The arena's center comes from the library's `ArenaLayout.TryFind`, once the
+room is active: `Room_BossArena` when the room has one, otherwise the
+`pathablePivot` of the largest `RoomSection` (radius from its area, 4 to
+18 m). Last Stand passes `useEntryTeleporter` false, so Dream Arena's middle
+anchor, the entry teleporter's destination, is never used: the center, and
+the shrine ring measured from it, stays on the marker or the largest
+section. `Room_BossArena` is read with `.softInstance`, so a room without
+one costs no scene scan. On arrival, `ArenaArrival` places players with the library's
+`HeroStaging.PlaceAround` in a ring at half the radius, at least 2 m
+(`Tuning.HeroRingShareOfRadius`, `MinHeroRingRadius`), and the **Dream
+Well**, **Altar of Cleansing**, **Shrine of Ascension**, **Maw of Doom**,
+**Shrine of Destiny** and **Hatred Remnant** are spaced evenly around the
+edge of the room ([Edge shrines](../shrines/edge-shrines.md)). Arrival
 retries on a timer until the room and heroes are ready.
 
 **Enemies spawn at random spots across the whole room**, antechamber included,

@@ -56,6 +56,6 @@ internal readonly struct FastClearRule
 
 	public static double Raise(double bonusPercent, double multiplier)
 	{
-		return (Tuning.PercentScale + bonusPercent) * multiplier - Tuning.PercentScale;
+		return (SharedTuning.PercentScale + bonusPercent) * multiplier - SharedTuning.PercentScale;
 	}
 }

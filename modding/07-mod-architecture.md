@@ -119,7 +119,17 @@ protected void OnDestroy()
 }
 ```
 
-private void OnGameManagerStarted(GameManager game)
+`LastStandMod` only fills in the overrides:
+
+```csharp
+protected override void OnLoaded() { Session = new LastStandSession(SessionSettings.From(config)); }
+protected override void OnTick(double now) { Session?.Tick(now); }
+protected override void OnSettingsChanged() { Session?.UseSettings(SessionSettings.From(config)); }
+protected override void OnUnloading() { Session?.Reset(); }
+protected override void OnWorldGenerated() { Session?.ApplyArenaRoom(); }
+protected override bool SkipCutscenes() { return ArenaLocator.IsInArenaNode(); }
+
+protected override void OnGameStarted()
 {
     Session?.Reset();
     Session?.UseSettings(SessionSettings.From(config));
@@ -179,7 +189,9 @@ Last Stand's `src/` is split by concern (`docs/reference/code-layout.md`):
 
 What both mods need (`Log` and `ErrorThrottle`, the mode check and selecting
 the mode, the settings window and field builders, the lobby buttons, the
-Workshop change note) lives in the shared library, `library/src` (see
+Workshop change note, and the arena basics: `ArenaLocator`, the camp rift,
+the room override, cleared loading, the cutscene skip, the arena center,
+hero staging and revives) lives in the shared library, `library/src` (see
 `library/README.md`), and is compiled into the same DLL.
 
 The folders are by feature. The rules that matter are by **layer**. To place
@@ -631,10 +643,10 @@ internal sealed class ArenaArrival
         if (now < _nextAttemptAt) return false;
         _nextAttemptAt = now + Tuning.ArrivalRetrySeconds;
 
-        PlayerRoster.FillLiveHeroes(_heroes);
-        if (_heroes.Count == 0 || !ArenaLayout.TryFind(out arena)) return false;
+        LiveHeroes.Fill(_heroes);
+        if (_heroes.Count == 0 || !ArenaLayout.TryFind(false, out arena)) return false;
 
-        HeroStaging.PlaceAround(arena, _heroes);
+        HeroStaging.PlaceAround(arena, _heroes, Tuning.HeroRingShareOfRadius, Tuning.MinHeroRingRadius);
         return true;
     }
 
@@ -642,7 +654,8 @@ internal sealed class ArenaArrival
 }
 ```
 
-`ArenaLayout.TryFind` starts with
+`ArenaLayout.TryFind` (in the shared library, like `LiveHeroes` and
+`HeroStaging`: `library/src/Arena/ArenaLayout.cs`) starts with
 `Room room = SingletonDewNetworkBehaviour<Room>.softInstance; if (room == null || !room.isActive) return false;`.
 It is a `Try…` method that returns false while the world isn't ready, and the
 gate makes sure the expensive part runs at most twice a second.
@@ -653,7 +666,7 @@ Every timed check in Last Stand uses the same gate, each with its interval in
 | Gate | Interval | What it retries |
 |---|---|---|
 | `ArenaArrival` | `ArrivalRetrySeconds` 0.5 s | Find the arena layout, stage heroes |
-| `CampRift` | `CampRiftRetrySeconds` 1 s | Point the camp rift at the arena node |
+| `CampRift` (shared library) | `SharedTuning.CampRiftCheckSeconds` 1 s | Point the camp rift at the arena node |
 | `RunGoal` (shared library) | `SharedTuning.GoalCheckSeconds` 1 s | Remove the vanilla run goal quest |
 | `StartingWorld` | `WorldCheckSeconds` 1 s | Apply the starting world index |
 | `WaveTracker` | `TrackerRefreshSeconds` 1 s | Write the tracker's progress string |
@@ -792,7 +805,8 @@ the vanilla answer on failure.
 Every lookup that can miss returns a value meaning "not now", and the caller
 retries through a gate or skips:
 
-- `ArenaLayout.TryFind(out points)` returns false until the room is active.
+- `ArenaLayout.TryFind(useEntryTeleporter, out points)` returns false until
+  the room is active.
 - `HeroicBosses.Find(typeName)` wraps `DewResources.GetByShortTypeName<BossMonster>`
   in try/catch and returns null for an unknown name from the config.
 - `MonsterSpawner.Spawn` returns `bool`, and `false` becomes a log line, not a

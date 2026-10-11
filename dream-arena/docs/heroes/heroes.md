@@ -42,7 +42,9 @@ Knocked-out heroes never recover on their own, and the run never ends, so
 without revives a free-for-all stops after one death each. `Revives` notes
 when each hero went down and, after `Revive after (seconds)` (default 10; 0
 turns it off), calls `Se_HeroKnockedOut.Revive(ratio)` with `Revive health
-(%)` (default 100). `arena_revive` revives everyone at once.
+(%)` (default 100). `arena_revive` revives everyone at once, at full health,
+through the shared library's `HeroRevival.ReviveAll`
+(`library/src/Game/HeroRevival.cs`, which skips inactive heroes).
 
 ## Rescue quests
 

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using LastStand.Arena;
 using LastStand.Config;
 using LastStand.Game;
 
@@ -22,13 +21,13 @@ internal sealed class ArenaArrival
 
 		_nextAttemptAt = now + Tuning.ArrivalRetrySeconds;
 
-		PlayerRoster.FillLiveHeroes(_heroes);
-		if (_heroes.Count == 0 || !ArenaLayout.TryFind(out arena))
+		LiveHeroes.Fill(_heroes);
+		if (_heroes.Count == 0 || !ArenaLayout.TryFind(false, out arena))
 		{
 			return false;
 		}
 
-		HeroStaging.PlaceAround(arena, _heroes);
+		HeroStaging.PlaceAround(arena, _heroes, Tuning.HeroRingShareOfRadius, Tuning.MinHeroRingRadius);
 		return true;
 	}
 

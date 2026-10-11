@@ -1,4 +1,3 @@
-using DreamArena.Arena;
 using DreamArena.Config;
 using UnityEngine;
 
@@ -35,17 +34,7 @@ internal static class LogText
 		       $"lucid dreams cleared={lucidDreamsCleared}.";
 	}
 
-	public static string ArenaRoomApplied(string room, int nodes, int modifiers)
-	{
-		return $"arena room '{room}' applied to {nodes} node(s); {modifiers} room modifier(s) removed.";
-	}
-
-	public static string ArenaRoomFailed(string room)
-	{
-		return $"could not apply arena room '{room}'.";
-	}
-
-	public static string PhaseChanged(Phase phase, TeamMode mode)
+	public static string PhaseChanged(ArenaPhase phase, TeamMode mode)
 	{
 		return $"phase: {phase} ({mode}).";
 	}
@@ -60,19 +49,9 @@ internal static class LogText
 		return $"staging: placed {heroes} hero(es) around {source} at {center}, ring {ring:0.#} m.";
 	}
 
-	public static string PlainArenaPrepared(string room, int triggers)
-	{
-		return $"plain arena: '{room}' loads cleared; {triggers} entry trigger(s) disabled.";
-	}
-
 	public static string PveSwept(int count)
 	{
 		return $"pve: removed {count} monster(s), prop(s), shrine(s) or loose item(s) from the arena.";
-	}
-
-	public static string CampRiftPointed(int node)
-	{
-		return $"camp rift: leads straight to node {node}.";
 	}
 
 	public static string RemnantStock(string remnant, int items)
@@ -151,7 +130,7 @@ internal static class LogText
 		       $"camp node {camp}.";
 	}
 
-	public static string Status(bool selected, bool active, Phase phase, TeamMode mode, int players,
+	public static string Status(bool selected, bool active, ArenaPhase phase, TeamMode mode, int players,
 		bool gameOverEnabled, bool votePending)
 	{
 		return $"status: mode={selected} active={active} phase={phase} teams={mode} players={players} " +

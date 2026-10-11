@@ -40,7 +40,8 @@ flag:
 
 `MatchRestart.Execute`, in order:
 
-1. Revives every knocked-out hero at full health (room travel doesn't).
+1. Revives every knocked-out hero at full health (room travel doesn't),
+   through the shared library's `HeroRevival.Revive`.
 2. `BuildWipe.Wipe` destroys every equipped essence and the Q, W, E and R
    memories, plus whatever a hero holds in hand. Identity and movement can't
    be removed, so only their essences go.

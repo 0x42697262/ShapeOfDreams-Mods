@@ -17,8 +17,15 @@ if (currentNode.type != ExitBoss && !forceTravelToNextZone) { show world map; re
 
 `nextNodeIndex` is a SyncVar, so `CampRift` (once a second in camp) setting it
 on the host gives every player the boss-room feel: one prompt, then straight
-into the fight. It prefers a non-camp node connected to the current one, and
-falls back to any non-camp node.
+into the fight. The node comes from `ArenaLocator.TryFindArenaNode`: it
+skips the current node, the camp and sidetrack nodes, and prefers one
+connected to the current node, else the first. Log: `camp rift now leads
+straight to node N.`
+
+`CampRift` is shared with Last Stand (`library/src/Arena/CampRift.cs`,
+checked every `SharedTuning.CampRiftCheckSeconds`). Dream Arena creates it
+as `new CampRift(false)`, so the world map keeps every node; Last Stand
+passes true and hides all but the camp and the arena.
 
 The old build also replaced the rift's prompt text by intercepting
 `DewLocalization.GetUIValue`. That lookup runs on each client, so only the
@@ -85,7 +92,8 @@ false for them on the host, so the window doesn't open empty.
 no position syncing, so it can't be moved host-side). `RemnantRing` tries
 radii 7 to 5 m, widest first, and for each turns the whole ring by up to 45°
 to dodge a blocked slot while keeping the opening near the camp (the
-direction to the camp's largest section). It accepts a layout only when every
+direction to the camp's largest section, from the library's
+`ArenaLayout.TryFindLargestSection`). It accepts a layout only when every
 slot lands on walkable ground (within 0.65 m of the navmesh), so the camp gets
 a clean ring or none. Each remnant faces inward. `CampRemnants` retries once
 a second, up to 5 times per camp visit, and logs if it gives up.

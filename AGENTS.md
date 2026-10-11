@@ -47,7 +47,7 @@ and each mod completes (`library/README.md` lists every member):
 | `src/Identity/ModIdentity.cs` | `Tag`, `DisplayName`, `SaveKey`, `LobbyModeValue`, `PreselectInLobby` (plus its own object names) |
 | `src/Text/ModText.cs` | `ModeName`, `ModeDescription`, `WindowNote`, `NoticeColor`, `TickFailed`, `PageTitle`, `PageSubtitle` |
 | `src/ModHooks.cs` | `Choices(set)` for the settings dropdowns, `LobbyName()` |
-| `src/<Name>Mod.cs` | a `ModEntry` subclass: the config field, the session, five small overrides |
+| `src/<Name>Mod.cs` | a `ModEntry` subclass: the config field, the session, seven small overrides |
 | `src/Config/ConfigSchema.cs` | `Current`, the config schema version |
 
 A missing member is a compile error, so a new mod can't half-implement it.
@@ -58,7 +58,9 @@ cleanup, config reset on a schema change, Apply and settings notices), the
 settings window and sidebar panel with dropdown and checklist fields, the
 lobby game-mode option and settings button, mode checks (`ModMode`),
 settings change notices in chat, chat and log helpers, run-goal removal,
-Workshop change notes, and shared text, game names and tuning.
+Workshop change notes, the arena basics (node lookups, center and radius,
+hero ring, plain arena, room override, camp rift, map hiding, revives,
+cutscene skip), and shared text, game names and tuning.
 
 **Shared Harmony patches.** Library patches are compiled into each DLL and
 applied by each mod's own `harmony.PatchAll()`, so with two mods loaded the
@@ -151,8 +153,8 @@ Hard rules for all code here, the library included.
     classes, `ModEntry` overrides), never through a mod type referenced
     from the library.
   - `check.sh` fails on new duplicated code (six or more identical lines
-    in two files). `library/DISCREPANCIES.md` lists what's still duplicated
-    and how to settle it.
+    in two files). `library/DISCREPANCIES.md` lists how earlier copies were
+    settled and what one mod has that the other could use.
 - **Separation of concerns.** Each type has one job. Keep these apart:
   - **Harmony patches** are thin. They hook the game and hand off to a
     service. They hold no rules or state.

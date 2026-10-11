@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DreamArena.Arena;
 using DreamArena.Text;
 using UnityEngine;
 
@@ -19,8 +18,8 @@ internal static class ArenaScan
 			return;
 		}
 
-		Log.Info(ArenaLayout.TryFind(out Vector3 center, out float radius, out string source)
-			? LogText.ScanAnchor(source, center, radius)
+		Log.Info(ArenaLayout.TryFind(true, out ArenaPoints arena)
+			? LogText.ScanAnchor(arena.Source, arena.Center, arena.Radius)
 			: LogText.ScanNoAnchor);
 
 		int attackable = 0;

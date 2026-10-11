@@ -1,4 +1,3 @@
-using DreamArena.Arena;
 using DreamArena.Config;
 using DreamArena.Game;
 using DreamArena.Text;
@@ -10,7 +9,7 @@ internal sealed class PhaseWatch
 	private int _lastNode = int.MinValue;
 	private int _lastPlayers = -1;
 
-	public Phase Current { get; private set; } = Phase.None;
+	public ArenaPhase Current { get; private set; } = ArenaPhase.None;
 
 	public bool Tick(SessionSettings settings)
 	{
@@ -30,10 +29,10 @@ internal sealed class PhaseWatch
 		bool moved = node != _lastNode;
 		_lastNode = node;
 		_lastPlayers = players;
-		Phase previous = Current;
+		ArenaPhase previous = Current;
 		Current = ArenaLocator.CurrentPhase();
 		Apply(settings);
-		if (moved && previous != Current && previous != Phase.None)
+		if (moved && previous != Current && previous != ArenaPhase.None)
 		{
 			Announce(settings);
 		}
@@ -43,7 +42,7 @@ internal sealed class PhaseWatch
 
 	public void Apply(SessionSettings settings)
 	{
-		TeamMode mode = Current == Phase.Arena ? settings.TeamMode : TeamMode.Peaceful;
+		TeamMode mode = Current == ArenaPhase.Arena ? settings.TeamMode : TeamMode.Peaceful;
 		Relations.Apply(mode);
 		Log.Info(LogText.PhaseChanged(Current, mode));
 	}
@@ -52,7 +51,7 @@ internal sealed class PhaseWatch
 	{
 		_lastNode = int.MinValue;
 		_lastPlayers = -1;
-		Current = Phase.None;
+		Current = ArenaPhase.None;
 	}
 
 	private void Announce(SessionSettings settings)
@@ -62,7 +61,7 @@ internal sealed class PhaseWatch
 			return;
 		}
 
-		ChatNotices.Broadcast(Current == Phase.Arena
+		ChatNotices.Broadcast(Current == ArenaPhase.Arena
 			? Messages.ArenaLive(settings.TeamMode)
 			: Messages.BackInCamp);
 	}

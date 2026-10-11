@@ -30,7 +30,7 @@ internal static class RemnantRing
 	{
 		slots = new Vector3[count];
 		facings = new Vector3[count];
-		float arc = Tuning.FullCircleDegrees - Tuning.RemnantOpeningDegrees;
+		float arc = SharedTuning.FullCircleDegrees - Tuning.RemnantOpeningDegrees;
 		float start = openingAngle + Tuning.HalfCircleDegrees - arc * Tuning.Half;
 		float step = arc / (count - 1);
 		for (int i = 0; i < count; i++)

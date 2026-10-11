@@ -1252,8 +1252,10 @@ game's `RoomMod_HeroSoul`, which co-op revives depend on.
    `Se_HeroKnockedOut` adding `RoomMod_HeroSoul`, and Last Stand's own.
 
 No single method covers both, so there are two hooks:
-`WorldGenPatch` (a postfix on the private `ZoneManager.GenerateWorld_Imp`
-that strips the arena node once) and this gate for everything after.
+`WorldGenPatch` (a postfix on the private `ZoneManager.GenerateWorld_Imp`,
+now in the shared library, `library/src/Patches/WorldGenPatch.cs`; it calls
+Last Stand's `OnWorldGenerated` override, which strips the arena nodes once
+through `ArenaRooms.Apply`) and this gate for everything after.
 
 **Why this overload.** The two generic `AddModifier<T>` overloads forward to
 `AddModifier(int nodeIndex, ModifierData mod, Action<RoomModifierBase>

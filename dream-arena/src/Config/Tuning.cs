@@ -10,17 +10,9 @@ internal static class Tuning
 
 	public const float StagingRetrySeconds = 0.25f;
 
-	public const float FallbackArenaRadius = 10f;
-
 	public const float ArenaRingShare = 0.75f;
 
 	public const float MinRingRadius = 1f;
-
-	public const float MinSectionRadius = 4f;
-
-	public const float MaxSectionRadius = 18f;
-
-	public const float FullCircleDegrees = 360f;
 
 	public const float HalfCircleDegrees = 180f;
 
@@ -29,8 +21,6 @@ internal static class Tuning
 	public const int RemnantKinds = 2;
 
 	public const float PveSweepSeconds = 1f;
-
-	public const float CampRiftCheckSeconds = 1f;
 
 	public const float RemnantOpeningDegrees = 90f;
 
@@ -84,8 +74,6 @@ internal static class Tuning
 	public const int MinRevivePercent = 1;
 
 	public const int MaxRevivePercent = 100;
-
-	public const float PercentScale = 100f;
 
 	public const float FullHealthRatio = 1f;
 

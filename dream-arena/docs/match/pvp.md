@@ -55,8 +55,10 @@ entry. `Relations.ClearAll` is used when the session stops.
 
 A run opens in camp and PvP starts past the rift. World generation always
 makes one `WorldNodeType.Start` node (the camp); every other node becomes the
-arena (see [Arena](../arena/arena.md)). `ArenaLocator.CurrentPhase` reads the
-synced `ZoneManager.currentNodeIndex`:
+arena (see [Arena](../arena/arena.md)). `ArenaLocator.CurrentPhase` (in the
+shared library, `library/src/Arena/ArenaLocator.cs`) reads the synced
+`ZoneManager.currentNodeIndex` and returns an `ArenaPhase`: `Arena` for an
+arena node, `Camp` for any other, `None` with no `ZoneManager`:
 
 | Where | Relations |
 |---|---|

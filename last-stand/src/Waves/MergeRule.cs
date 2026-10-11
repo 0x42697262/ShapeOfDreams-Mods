@@ -88,7 +88,7 @@ internal readonly struct MergeRule
 			return 0;
 		}
 
-		return (target / health - 1) * Tuning.PercentScale;
+		return (target / health - 1) * SharedTuning.PercentScale;
 	}
 
 	public int ExtraMiniBosses(int wave, bool surge)

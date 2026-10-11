@@ -144,11 +144,11 @@ internal sealed class SessionSettings
 			LateScalingFromWave = Math.Max(Tuning.FirstWave, config.lateScalingFromWave),
 			LateHealthBonusPerWave = Math.Max(0f, config.lateHealthBonusPercentPerWave),
 			LateDamageBonusPerWave = Math.Max(0f, config.lateDamageBonusPercentPerWave),
-			FastClear = new FastClearRule(Math.Max(0f, config.fastClearKillPercent) / Tuning.PercentScale,
+			FastClear = new FastClearRule(Math.Max(0f, config.fastClearKillPercent) / SharedTuning.PercentScale,
 				Math.Max(0f, config.fastClearKillSeconds), Math.Max(0f, config.fastClearStatMultiplier),
 				Math.Max(Tuning.FirstWave, config.fastClearFromWave),
 				config.fastClearAffectsHeroicBosses
-					? Math.Max(0f, config.fastClearHeroicBossPercent) / Tuning.PercentScale
+					? Math.Max(0f, config.fastClearHeroicBossPercent) / SharedTuning.PercentScale
 					: 0f),
 			HeroicFastKill = new HeroicFastKillRule(Math.Max(0f, config.heroicFastKillSeconds),
 				Math.Max(0f, config.heroicFastKillBurstSeconds),
@@ -202,7 +202,7 @@ internal sealed class SessionSettings
 	private static GoldPriceRule GoldPricesFrom(LastStandConfig config)
 	{
 		return new GoldPriceRule(config.freeGoldShrines,
-			Math.Max(0f, config.goldPriceGrowthPercent) / Tuning.PercentScale,
+			Math.Max(0f, config.goldPriceGrowthPercent) / SharedTuning.PercentScale,
 			CadenceFrom(config.goldPriceGrowthEveryWaves, config.goldPriceGrowthEveryWaves),
 			Math.Max(0, config.goldPriceGrowthUntilWave));
 	}
@@ -217,7 +217,7 @@ internal sealed class SessionSettings
 	private static PainSettings PainFrom(LastStandConfig config)
 	{
 		return new PainSettings(
-			damageRatioPerSecond: Math.Max(0f, config.painDamagePercentPerSecond) / Tuning.PercentScale,
+			damageRatioPerSecond: Math.Max(0f, config.painDamagePercentPerSecond) / SharedTuning.PercentScale,
 			healthBonusPercent: config.painHealthBonusPercent,
 			damageBonusPercent: config.painDamageBonusPercent);
 	}
@@ -265,7 +265,7 @@ internal sealed class SessionSettings
 			new RarityTable(chaosRarestFirst, config.chaosTargetWave),
 			tiers,
 			mobItemsPerPlayerPerWave: Math.Max(0, config.mobItemsPerPlayerPerWave),
-			growthPerWave: Math.Max(0f, config.rewardGrowthPercentPerWave) / Tuning.PercentScale,
+			growthPerWave: Math.Max(0f, config.rewardGrowthPercentPerWave) / SharedTuning.PercentScale,
 			guaranteedDropPerWave: config.guaranteedDropPerWave,
 			heroicBossChaosRewards: Math.Max(0, config.heroicBossChaosRewards),
 			heroicBossStardust: config.heroicBossStardust,
@@ -303,6 +303,6 @@ internal sealed class SessionSettings
 
 	private static double ToChance(float percent)
 	{
-		return Math.Max(0f, Math.Min(Tuning.PercentScale, percent)) / Tuning.PercentScale;
+		return Math.Max(0f, Math.Min(SharedTuning.PercentScale, percent)) / SharedTuning.PercentScale;
 	}
 }

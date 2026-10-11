@@ -8,8 +8,8 @@ namespace DreamArena.Camp;
 internal sealed class CampRemnants
 {
 	private readonly Dictionary<string, HashSet<string>> _taken = new Dictionary<string, HashSet<string>>();
-	private int _builtNode = Arena.ArenaLocator.NoNode;
-	private int _attemptNode = Arena.ArenaLocator.NoNode;
+	private int _builtNode = ArenaLocator.NoNode;
+	private int _attemptNode = ArenaLocator.NoNode;
 	private int _attempts;
 	private double _nextAttemptAt;
 
@@ -70,8 +70,8 @@ internal sealed class CampRemnants
 	public void Restock()
 	{
 		_taken.Clear();
-		_builtNode = Arena.ArenaLocator.NoNode;
-		_attemptNode = Arena.ArenaLocator.NoNode;
+		_builtNode = ArenaLocator.NoNode;
+		_attemptNode = ArenaLocator.NoNode;
 		_attempts = 0;
 	}
 

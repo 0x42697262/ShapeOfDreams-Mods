@@ -1,12 +1,15 @@
-using DreamArena.Arena;
-using DreamArena.Config;
-using DreamArena.Text;
-
-namespace DreamArena.Camp;
+namespace SodLib.Arena;
 
 internal sealed class CampRift
 {
+	private readonly bool _hideOtherMapNodes;
 	private double _nextCheckAt;
+	private int _target = ArenaLocator.NoNode;
+
+	public CampRift(bool hideOtherMapNodes)
+	{
+		_hideOtherMapNodes = hideOtherMapNodes;
+	}
 
 	public void Tick(double now)
 	{
@@ -15,7 +18,7 @@ internal sealed class CampRift
 			return;
 		}
 
-		_nextCheckAt = now + Tuning.CampRiftCheckSeconds;
+		_nextCheckAt = now + SharedTuning.CampRiftCheckSeconds;
 		Rift_RoomExit rift = Rift_RoomExit.softInstance;
 		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (rift.IsNullOrInactive() || zones == null || !ArenaLocator.TryFindArenaNode(zones, out int target))
@@ -23,17 +26,24 @@ internal sealed class CampRift
 			return;
 		}
 
-		if (rift.nextNodeIndex == target)
+		if (_hideOtherMapNodes)
+		{
+			WorldMapNodes.HideAllBut(zones, target);
+		}
+
+		if (rift.nextNodeIndex == target && _target == target)
 		{
 			return;
 		}
 
 		rift.NetworknextNodeIndex = target;
-		Log.Info(LogText.CampRiftPointed(target));
+		_target = target;
+		Log.Info(SharedLogText.CampRiftDirected(target));
 	}
 
 	public void Reset()
 	{
 		_nextCheckAt = 0;
+		_target = ArenaLocator.NoNode;
 	}
 }
