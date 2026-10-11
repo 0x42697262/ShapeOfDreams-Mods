@@ -27,7 +27,7 @@ For working notes, hard constraints and the in-game test list, see
 
 | File | Covers |
 |---|---|
-| [Heroes](heroes/heroes.md) | Max level, the memory floor, the health multiplier, revives, rescue quests |
+| [Heroes](heroes/heroes.md) | Player level, the memory floor, the health multiplier, revives, rescue quests |
 
 ## Reference
 

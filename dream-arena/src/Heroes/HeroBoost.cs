@@ -41,10 +41,11 @@ internal sealed class HeroBoost
 				continue;
 			}
 
-			if (settings.MaxPlayerLevel && hero.maxLevel > 0 && hero.Status.level < hero.maxLevel)
+			int level = UnityEngine.Mathf.Min(settings.PlayerLevel, hero.maxLevel);
+			if (level > Tuning.PlayerLevelOff && hero.Status.level < level)
 			{
-				hero.Status.level = hero.maxLevel;
-				Log.Info(LogText.HeroLevelled(hero.name, hero.maxLevel));
+				hero.Status.level = level;
+				Log.Info(LogText.HeroLevelled(hero.name, level));
 			}
 
 			if (settings.StartingMemoryLevel > Tuning.MemoryFloorOff)

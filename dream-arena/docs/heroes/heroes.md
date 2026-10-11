@@ -3,10 +3,15 @@
 On the host, in camp and arena alike, `HeroBoost` checks every hero every
 0.5 s and `Revives` every frame (a handful of heroes, so both are cheap).
 
-## Max level
+## Player level
 
-With `Max player level` on, every hero is raised to `Hero.maxLevel`.
-`Status.level` is server state, so clients see it.
+`Player level` (default 20) raises every hero to that level, capped at the
+hero's own `Hero.maxLevel` (`ges.maxHeroLevel`, 20, or more once a Chaos
+reward's level-cap bonus sets `maxLevelOverride`). It only raises: a hero
+already above it keeps their level. 0 turns it off. `Status.level` is server
+state, so clients see it. Log: `heroes: <hero> raised to level N.` It
+replaced the on/off `Max player level` (schema 2), which could only raise
+heroes to the cap.
 
 ## Memory floor
 

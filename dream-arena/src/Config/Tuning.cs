@@ -85,6 +85,8 @@ internal static class Tuning
 
 	public const int MemoryFloorOff = 1;
 
+	public const int PlayerLevelOff = 0;
+
 	public const int MinRevivePercent = 1;
 
 	public const int MaxRevivePercent = 100;

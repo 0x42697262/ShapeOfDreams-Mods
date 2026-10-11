@@ -124,6 +124,11 @@ before decompiling something again.
     together. Host a Dream Arena lobby: the settings panel shows the
     **Dream Arena** button and no Last Stand button. Host a Last Stand or
     Shape of Dreams lobby: no Dream Arena button.
+16. **Player level** (schema 2): a new config shows `Player level` at 20.
+    Set it to 10: heroes reach level 10 in camp (log `heroes: <hero>
+    raised to level 10.`) on the host and a vanilla client; a hero already
+    above 10 keeps their level. At 0 nothing is raised. Old config files
+    are moved to `.old`.
 
 ## Conventions
 

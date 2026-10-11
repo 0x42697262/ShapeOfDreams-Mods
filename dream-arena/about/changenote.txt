@@ -6,6 +6,7 @@ Rebuilt from the ground up on the same base as Last Stand. Your saved settings a
 [*]A new settings window: five pages (Match, Arena, Camp, Heroes, Rules), with dropdowns for the arena room and dummy monster.
 [*]Chat says when the arena goes live and when everyone is back in camp, so every player knows the rules in force.
 [*]When the host changes a setting, everyone sees what changed in chat.
+[*]Player level: heroes are raised to the level you pick (20 by default, 0 = leave levels alone). It replaces the old Max player level on/off switch.
 [/list]
 
 [b]Fixed: things only the host could see[/b]

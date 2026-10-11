@@ -4,7 +4,7 @@ namespace DreamArena.Config;
 
 internal static class ConfigSchema
 {
-	public const int Current = 1;
+	public const int Current = 2;
 
 	public static bool IsCurrent(string json)
 	{

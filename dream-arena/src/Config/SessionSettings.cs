@@ -36,7 +36,7 @@ internal sealed class SessionSettings
 
 	public string DummyMonster { get; private set; }
 
-	public bool MaxPlayerLevel { get; private set; }
+	public int PlayerLevel { get; private set; }
 
 	public int StartingMemoryLevel { get; private set; }
 
@@ -77,7 +77,7 @@ internal sealed class SessionSettings
 			DummyMonster = string.IsNullOrWhiteSpace(config.dummyMonster)
 				? GameNames.DefaultDummyMonster
 				: config.dummyMonster.Trim(),
-			MaxPlayerLevel = config.maxPlayerLevel,
+			PlayerLevel = Math.Max(Tuning.PlayerLevelOff, config.playerLevel),
 			StartingMemoryLevel = Math.Max(Tuning.MemoryFloorOff, config.startingMemoryLevel),
 			HeroHealthMultiplier = Mathf.Max(Tuning.NormalHealthMultiplier, config.heroHealthMultiplier),
 			AutoReviveSeconds = Math.Max(0, config.autoReviveSeconds),

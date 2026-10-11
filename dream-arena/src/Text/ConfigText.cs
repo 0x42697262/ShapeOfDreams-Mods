@@ -108,9 +108,11 @@ internal static class ConfigText
 
 	public const string DummyMonsterDescription = "Monster used as the dummy.";
 
-	public const string MaxPlayerLevelLabel = "Max player level";
+	public const string PlayerLevelLabel = "Player level";
 
-	public const string MaxPlayerLevelDescription = "Every hero is raised to the level cap.";
+	public const string PlayerLevelDescription =
+		"Every hero is raised to this level, up to their level cap (20, more with Chaos level-cap bonuses). " +
+		"Heroes above it keep their level. 0 = leave levels alone.";
 
 	public const string StartingMemoryLevelLabel = "Starting memory level";
 

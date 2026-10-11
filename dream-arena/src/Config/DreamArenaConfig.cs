@@ -83,9 +83,9 @@ public class DreamArenaConfig : ModConfig
 
 	[Page(SettingsPage.Heroes)]
 	[Header(ConfigText.StrengthHeader)]
-	[LabelText(ConfigText.MaxPlayerLevelLabel)]
-	[Description(ConfigText.MaxPlayerLevelDescription)]
-	public bool maxPlayerLevel = true;
+	[LabelText(ConfigText.PlayerLevelLabel)]
+	[Description(ConfigText.PlayerLevelDescription)]
+	public int playerLevel = 20;
 
 	[LabelText(ConfigText.StartingMemoryLevelLabel)]
 	[Description(ConfigText.StartingMemoryLevelDescription)]

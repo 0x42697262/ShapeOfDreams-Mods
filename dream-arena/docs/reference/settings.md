@@ -47,7 +47,7 @@ changed.
 | | | Essence quality | 400 |
 | | Training dummy | Training dummy | on |
 | | | Dummy monster | Treant |
-| Heroes | Strength | Max player level | on |
+| Heroes | Strength | Player level (0 = off, capped at the hero's level cap) | 20 |
 | | | Starting memory level | 10 |
 | | | Hero health multiplier | 100 |
 | | Revive | Revive after (seconds) | 10 |
