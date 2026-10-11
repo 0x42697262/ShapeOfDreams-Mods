@@ -18,6 +18,8 @@ internal static class SharedLogText
 
 	public const string SettingChangeFailed = "settings: a change handler failed.";
 
+	public const string TravelVoteCheckFailed = "travel vote: the mod's skip check failed; the game's vote rule applies.";
+
 	public const string CutsceneCheckFailed = "cutscenes: the mod's skip check failed; the cutscene plays.";
 
 	public const string WorldGenFailed = "world gen: the mod's handler failed; the world is left as generated.";

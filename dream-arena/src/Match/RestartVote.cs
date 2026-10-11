@@ -18,12 +18,12 @@ internal sealed class RestartVote
 		}
 
 		string who = player != null ? player.guid : Messages.HostName;
-		if (StandingHeroes() <= 1)
+		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
+		if (zones == null || !zones.ShouldVoteOnTravel())
 		{
 			return MatchRestart.Execute(who, restock) ? null : Messages.RestartNotReady;
 		}
 
-		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		Pending = true;
 		_requester = who;
 		zones.StartVoteNextZone(player);
@@ -64,17 +64,4 @@ internal sealed class RestartVote
 		_requester = null;
 	}
 
-	private static int StandingHeroes()
-	{
-		int standing = 0;
-		foreach (DewPlayer player in DewPlayer.gamePlayers)
-		{
-			if (player != null && !player.hero.IsNullInactiveDeadOrKnockedOut())
-			{
-				standing++;
-			}
-		}
-
-		return standing;
-	}
 }

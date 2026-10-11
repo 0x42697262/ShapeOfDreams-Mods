@@ -19,7 +19,10 @@ through `ChatNotices.Tell`, as a raw red message.
 `RestartVote` reuses the game's own travel vote, so vanilla clients get the
 usual panel, countdown and keys. The requester counts as agreeing. Tab agrees,
 any player pressing Esc cancels, everyone agreeing passes it early, and the
-countdown running out passes it. A lone standing hero restarts at once.
+countdown running out passes it. Whether to vote follows the rift's rule,
+`ZoneManager.ShouldVoteOnTravel()` (see [Run rules](run-rules.md)): with the
+lobby's `Enable votes` off or only one hero standing, the restart happens at
+once.
 
 It's started as a next-zone vote (`StartVoteNextZone`), because the next-node
 panel draws the mini world map with every unused node; the next-zone panel

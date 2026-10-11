@@ -28,10 +28,6 @@ public class DreamArenaConfig : ModConfig
 	[Description(ConfigText.ChatRestartDescription)]
 	public bool chatRestart = true;
 
-	[LabelText(ConfigText.SkipTravelVoteLabel)]
-	[Description(ConfigText.SkipTravelVoteDescription)]
-	public bool skipTravelVote = true;
-
 	[Page(SettingsPage.Arena)]
 	[Header(ConfigText.RoomHeader)]
 	[LabelText(ConfigText.ForceArenaRoomLabel)]

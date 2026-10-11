@@ -31,13 +31,12 @@ now leads straight to node N.` It also hides the other world-map nodes
 
 In multiplayer, a confirmed travel normally still goes to a vote, which opens
 the world map for everyone with a 6-second countdown. The host decides that
-in `ZoneManager.ShouldVoteOnTravel()`, which is forced to false in Last Stand,
-so the party travels at once. The synced `GameSettingsManager.enableVotes` is
-left alone on purpose: the lobby saves it as the host's preference, so
-clearing it would carry into normal runs.
-
-Both came from Dream Arena. The camp rift is now shared code in the
-library; the vote skip (`SkipTravelVotePatch`) is still Last Stand's own.
+in `ZoneManager.ShouldVoteOnTravel()`. The library's `TravelVotePatch` asks
+the mod through its `SkipTravelVote` override; Last Stand's answers yes
+(there's only the one rift, always to the arena), so it returns false and the
+party travels at once. Dream Arena answers no and keeps the vote. The synced
+`GameSettingsManager.enableVotes` is left alone on purpose: the lobby saves
+it as the host's preference, so clearing it would carry into normal runs.
 
 ## The arena room
 

@@ -75,9 +75,10 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
 4. **Change notices:** changing `Team mode` and `Revive after` in a lobby
    with a vanilla client shows `[Dream Arena] Host changed ...` lines to
    both; nothing on the title screen.
-5. **Camp:** everyone friendly, the stock rift prompt leads straight to the
-   arena with no world map and no vote, ten remnants ring the rift, the
-   dummy stands beside them.
+5. **Camp:** everyone friendly, the stock rift prompt leads to the arena
+   with no node to pick (with two players standing it starts the travel
+   vote, check 20), ten remnants ring the rift, the dummy stands beside
+   them.
 6. **Arena live:** crossing the rift says `The arena is live. Free for all...`
    in red to everyone, nameplates turn hostile on a vanilla client, players
    land in a ring inside the arena (not the antechamber), and there are no
@@ -130,9 +131,15 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
     `arena_revive` and `-restart` revive downed heroes.
 19. **World map:** in camp, M shows only the camp and the arena node on the
     host and a vanilla client (log `world map: hid N node(s); only the camp
-    and the arena (node K) are shown.`). With `Skip travel vote` off, the
-    vote's map shows the same two. After `-restart` the rift still leads to
-    the same arena node.
+    and the arena (node K) are shown.`). The travel vote's map shows the
+    same two. After `-restart` the rift still leads to the same arena node.
+20. **Rift vote** (schema 3): with two players standing, taking the camp
+    rift starts the game's travel vote on the host and a vanilla client
+    (Tab agrees, Esc cancels, the countdown passes it); when it passes,
+    everyone lands in the arena ring. `-restart` votes the same way. Solo,
+    with one hero standing, or with the lobby's `Enable votes` off, both go
+    at once. The settings window has no `Skip travel vote`; old config files
+    are moved to `.old`.
 
 ## Conventions
 

@@ -2,7 +2,7 @@
 
 | Folder | Concern |
 |---|---|
-| `src/LastStandMod.cs` | Entry point. A `ModEntry` subclass: holds the config, creates the session, and overrides `OnLoaded`, `OnTick`, `OnSettingsChanged`, `OnGameStarted`, `OnUnloading`, `OnWorldGenerated` (applies the arena room) and `SkipCutscenes` (true in an arena node) |
+| `src/LastStandMod.cs` | Entry point. A `ModEntry` subclass: holds the config, creates the session, and overrides `OnLoaded`, `OnTick`, `OnSettingsChanged`, `OnGameStarted`, `OnUnloading`, `OnWorldGenerated` (applies the arena room), `SkipCutscenes` (true in an arena node) and `SkipTravelVote` (true) |
 | `src/LastStandConsole.cs` | Console commands |
 | `src/ModHooks.cs` | The choices for each settings dropdown and checklist (`Choices`), and the lobby name (`LobbyName`) |
 | `src/Identity` | `ModIdentity`: tag, display name, save key, lobby mode value, AppDomain slot names and Last Stand's own object names |

@@ -50,4 +50,9 @@ public class LastStandMod : ModEntry
 	{
 		return ArenaLocator.IsInArenaNode();
 	}
+
+	protected override bool SkipTravelVote()
+	{
+		return true;
+	}
 }

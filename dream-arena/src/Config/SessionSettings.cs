@@ -14,8 +14,6 @@ internal sealed class SessionSettings
 
 	public bool ChatRestart { get; private set; }
 
-	public bool SkipTravelVote { get; private set; }
-
 	public bool ForceArenaRoom { get; private set; }
 
 	public string ArenaRoom { get; private set; }
@@ -64,7 +62,6 @@ internal sealed class SessionSettings
 			AnnouncePhases = config.announcePhases,
 			NeverEndRun = config.neverEndRun,
 			ChatRestart = config.chatRestart,
-			SkipTravelVote = config.skipTravelVote,
 			ForceArenaRoom = config.forceArenaRoom,
 			ArenaRoom = string.IsNullOrWhiteSpace(config.arenaRoom) ? SharedGameNames.DefaultArenaRoom : config.arenaRoom.Trim(),
 			PlainArena = config.plainArena,

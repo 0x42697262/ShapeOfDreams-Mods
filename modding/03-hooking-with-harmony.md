@@ -215,12 +215,12 @@ statics (an old, reset session) next to the new one. See
 
 ```csharp
 [HarmonyPatch(typeof(ZoneManager), nameof(ZoneManager.ShouldVoteOnTravel))]
-internal static class SkipTravelVotePatch
+internal static class TravelVotePatch
 {
     [HarmonyPrefix]
     private static bool Prefix(ref bool __result)
     {
-        if (!ModMode.IsHosting())
+        if (!ModMode.IsHosting() || ModEntry.Active == null || !ModEntry.Active.SkipsTravelVote())
         {
             return true;
         }
@@ -269,7 +269,7 @@ to decide: `true` runs the original, `false` skips it. Postfixes still run
 after a skipped original.
 
 **Skip and supply the answer.** When you skip a method that returns a value,
-set `__result`, or the caller gets the type's default. `SkipTravelVotePatch`
+set `__result`, or the caller gets the type's default. `TravelVotePatch`
 above makes `ShouldVoteOnTravel` return `false` without running it.
 
 **Skip a void method.** `RoomClearPatch` lets the original run unless the
@@ -1339,7 +1339,7 @@ combat until the wave ends.`
 
 **Hand-off.** `Session.AllowsRoomClear` reads `RoomCombat.IsHeldOpen`.
 
-### 6.9 `SkipTravelVotePatch`: prefix on `ZoneManager.ShouldVoteOnTravel`
+### 6.9 `TravelVotePatch`: prefix on `ZoneManager.ShouldVoteOnTravel`
 
 **Problem.** In multiplayer, the camp's rift should take the party straight
 to the arena, with no world-map vote.
@@ -1390,7 +1390,9 @@ leak into the host's normal runs. Patching the predicate changes behavior
 without touching saved state.
 
 **Kind.** Prefix that skips and supplies `__result = false` (section 2).
-There is no hand-off: the rule is the mode itself.
+It lives in the shared library (`library/src/Patches/TravelVotePatch.cs`)
+and hands off to the mod's `SkipTravelVote` override: Last Stand answers
+yes, Dream Arena no (its rift is a team decision, so it keeps the vote).
 
 ### 6.10 `HeroicBossDeathPatch`: prefix on `BossMonster.OnDeath`, plus a reverse patch
 
@@ -1501,7 +1503,7 @@ thread, so a static field is enough.
 | `MiniBossSelectPatch` | `RoomMonsters.SelectMiniBoss` | prefix, skip in scope | the throwing step only |
 | `ModifierGatePatch` | `ZoneManager.AddModifier(int, ModifierData, Action)` | prefix, skip | non-generic funnel, before any side effect |
 | `RoomClearPatch` | `Room.ClearRoom` | prefix, skip | one funnel for six callers |
-| `SkipTravelVotePatch` | `ZoneManager.ShouldVoteOnTravel` | prefix, `__result` | the server's only vote decision |
+| `TravelVotePatch` (library) | `ZoneManager.ShouldVoteOnTravel` | prefix, `__result` | the server's only vote decision |
 | `HeroicBossDeathPatch` | `BossMonster.OnDeath` | prefix, skip + reverse patch | skip the boss flow, keep the base death |
 
 Seven of ten are observers or result adjusters. The three that skip do so

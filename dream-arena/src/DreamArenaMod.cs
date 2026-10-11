@@ -51,4 +51,9 @@ public class DreamArenaMod : ModEntry
 	{
 		return Session?.Settings?.SkipCutscenes == true;
 	}
+
+	protected override bool SkipTravelVote()
+	{
+		return false;
+	}
 }

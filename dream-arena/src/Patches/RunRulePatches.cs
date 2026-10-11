@@ -13,23 +13,6 @@ internal static class RunEndPatch
 	}
 }
 
-[HarmonyPatch(typeof(ZoneManager), nameof(ZoneManager.ShouldVoteOnTravel))]
-internal static class SkipTravelVotePatch
-{
-	[HarmonyPrefix]
-	private static bool Prefix(ref bool __result)
-	{
-		if (!ModMode.IsHosting() || DreamArenaMod.Current?.Session?.Settings?.SkipTravelVote != true
-		    || DreamArenaMod.Current.Session.RestartVotePending)
-		{
-			return true;
-		}
-
-		__result = false;
-		return false;
-	}
-}
-
 [HarmonyPatch(typeof(GameSettingsManager), nameof(GameSettingsManager.AddLucidDream))]
 internal static class LucidDreamAddPatch
 {

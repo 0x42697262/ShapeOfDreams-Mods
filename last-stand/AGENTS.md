@@ -1125,6 +1125,9 @@ Each answer still needs to be seen working:
     modifier(s) removed.`, and after-wave and cheat revives work (checks 27
     and 88). With Dream Arena loaded, a Dream Arena lobby doesn't skip
     cutscenes for Last Stand's reasons and vice versa.
+100. **Travel vote skip in the library:** in a Last Stand lobby with two
+    players standing, the camp rift still travels at once with no vote, also
+    with Dream Arena loaded (whose lobbies vote).
 
 ## Conventions
 

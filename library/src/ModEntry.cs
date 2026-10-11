@@ -29,6 +29,8 @@ public abstract class ModEntry : ModBehaviour
 
 	protected abstract bool SkipCutscenes();
 
+	protected abstract bool SkipTravelVote();
+
 	protected void Awake()
 	{
 		Active = this;
@@ -81,6 +83,19 @@ public abstract class ModEntry : ModBehaviour
 
 		base.LoadConfigsToDisk();
 		_settingsAnnouncer.Remember(Config);
+	}
+
+	internal bool SkipsTravelVote()
+	{
+		try
+		{
+			return SkipTravelVote();
+		}
+		catch (Exception e)
+		{
+			_tickErrors.Report(Time.time, SharedLogText.TravelVoteCheckFailed, e);
+			return false;
+		}
 	}
 
 	internal bool SkipsCutscene()

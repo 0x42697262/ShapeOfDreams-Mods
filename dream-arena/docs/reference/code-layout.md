@@ -6,7 +6,7 @@ adapters, and every literal in one named place.
 
 ```
 src/
-  DreamArenaMod.cs        ModEntry subclass: the config, the session, seven overrides
+  DreamArenaMod.cs        ModEntry subclass: the config, the session, eight overrides
   DreamArenaConsole.cs    console commands
   ModHooks.cs             dropdown choices and the lobby name, for the library
   Session/
@@ -70,7 +70,7 @@ cleared loading (`PlainArena`, `PlainArenaPatches`), the cutscene skip
 (`CutscenePatch`), the arena center (`ArenaLayout`, `ArenaPoints`), the
 ring placement (`HeroStaging`), live heroes (`LiveHeroes`) and revives
 (`HeroRevival`, used by `arena_revive` and the restart). Dream Arena's side
-is the `OnWorldGenerated` and `SkipCutscenes` overrides, `PlainArena.Enabled`
+is the `OnWorldGenerated`, `SkipCutscenes` and `SkipTravelVote` (false) overrides, `PlainArena.Enabled`
 set from the settings, and `ArenaStaging`. See [Arena](../arena/arena.md)
 and [Camp](../camp/camp.md).
 

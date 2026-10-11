@@ -44,7 +44,6 @@ being changed.
 | | | Announce in chat | on |
 | | Match flow | Never end the run | on |
 | | | Chat -restart | on |
-| | | Skip travel vote | on |
 | Arena | Room | Arena for every room | on |
 | | | Arena room | Primus (the Lone King's Zenith) |
 | | | Plain arena | on |
@@ -99,7 +98,8 @@ defaults, logging `saved config is from an older version ...`.
 
 Bump `ConfigSchema.Current` whenever a default changes or a field is renamed
 or removed. Schema 1 is the 0.2.0 refactor: files from 0.1.0 have no
-`schemaVersion` and are reset once.
+`schemaVersion` and are reset once. Schema 2 replaced `maxPlayerLevel` with
+`playerLevel`; schema 3 removed `skipTravelVote` (the rift always votes).
 
 **Renamed and removed in 0.2.0:**
 

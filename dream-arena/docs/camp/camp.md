@@ -16,8 +16,10 @@ if (currentNode.type != ExitBoss && !forceTravelToNextZone) { show world map; re
 ```
 
 `nextNodeIndex` is a SyncVar, so `CampRift` (once a second in camp) setting it
-on the host gives every player the boss-room feel: one prompt, then straight
-into the fight. The node comes from `ArenaLocator.TryFindArenaNode`: it
+on the host gives every player the boss-room feel: one prompt, no node to
+pick. With two or more heroes standing, the prompt starts the game's travel
+vote ([Run rules](../match/run-rules.md)); otherwise the party goes at
+once. The node comes from `ArenaLocator.TryFindArenaNode`: it
 skips the current node, the camp and sidetrack nodes, and prefers one
 connected to the current node, else the first. Log: `camp rift now leads
 straight to node N.`

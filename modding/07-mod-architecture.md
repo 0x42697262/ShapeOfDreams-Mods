@@ -128,6 +128,7 @@ protected override void OnSettingsChanged() { Session?.UseSettings(SessionSettin
 protected override void OnUnloading() { Session?.Reset(); }
 protected override void OnWorldGenerated() { Session?.ApplyArenaRoom(); }
 protected override bool SkipCutscenes() { return ArenaLocator.IsInArenaNode(); }
+protected override bool SkipTravelVote() { return true; }
 
 protected override void OnGameStarted()
 {

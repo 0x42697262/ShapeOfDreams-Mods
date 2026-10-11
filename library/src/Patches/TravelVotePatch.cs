@@ -1,14 +1,14 @@
 using HarmonyLib;
 
-namespace LastStand.Patches;
+namespace SodLib.Patches;
 
 [HarmonyPatch(typeof(ZoneManager), nameof(ZoneManager.ShouldVoteOnTravel))]
-internal static class SkipTravelVotePatch
+internal static class TravelVotePatch
 {
 	[HarmonyPrefix]
 	private static bool Prefix(ref bool __result)
 	{
-		if (!ModMode.IsHosting())
+		if (!ModMode.IsHosting() || ModEntry.Active == null || !ModEntry.Active.SkipsTravelVote())
 		{
 			return true;
 		}

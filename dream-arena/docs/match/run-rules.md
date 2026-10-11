@@ -67,12 +67,16 @@ which runs on each client, so only the host lost it.
 
 ## The travel vote
 
-With more than one hero standing, a confirmed travel goes to a vote:
-`CmdTravelToNode` calls `StartVoteNextNode`, which opens the world map for
-everyone with a 6 s countdown. The command runs on the host, and its only
-test is `ZoneManager.ShouldVoteOnTravel()`, so with `Skip travel vote` on,
-`SkipTravelVotePatch` makes it return false and the host travels at once;
-vanilla clients travel with it. It steps aside while a restart vote is
-pending. The synced `GameSettingsManager.enableVotes` is left alone on
-purpose: the lobby saves it as the host's preference, so clearing it would
-carry into normal runs.
+Taking the camp rift is a team decision, like `-restart`, so Dream Arena
+keeps the game's travel vote: `CmdTravelToNode` calls `StartVoteNextNode`,
+which opens the world map for everyone with a 6 s countdown (the map shows
+only the camp and the arena, see [Camp](../camp/camp.md)). The requester
+counts as agreeing, Tab agrees, Esc cancels. The command runs on the host,
+and its only test is `ZoneManager.ShouldVoteOnTravel()`: a vote when the
+lobby's `Enable votes` is on and two or more heroes stand, otherwise
+straight travel. The library's `TravelVotePatch` (a prefix on it) asks the
+mod through its `SkipTravelVote` override; Dream Arena answers no, so the
+game's rule applies, and `-restart` uses the same rule. Last Stand answers
+yes and never votes. The synced `GameSettingsManager.enableVotes` is left
+alone on purpose: the lobby saves it as the host's preference, so changing
+it would carry into normal runs.

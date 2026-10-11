@@ -45,11 +45,6 @@ internal static class ConfigText
 		"Any player can type -restart during a fight to call a vote. If it passes, everyone goes back to " +
 		"camp with builds wiped and remnants restocked.";
 
-	public const string SkipTravelVoteLabel = "Skip travel vote";
-
-	public const string SkipTravelVoteDescription =
-		"Travels as soon as someone confirms the rift, without the world map vote.";
-
 	public const string ForceArenaRoomLabel = "Arena for every room";
 
 	public const string ForceArenaRoomDescription =

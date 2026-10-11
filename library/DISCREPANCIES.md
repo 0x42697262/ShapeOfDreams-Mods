@@ -35,6 +35,7 @@ difference was settled:
 | Camp rift | `CampRift` (both), LS `WorldMapNodes` | LS's version on the shared locator. Both mods hide the other map nodes (DA used to show them all). |
 | Revives | LS `HeroSouls.ReviveAll`/`AnyHeroStanding`, DA `Revives.ReviveAll` | `HeroRevival`: LS's safe loop (copy, skip inactive). DA's restart and console use it at full health. |
 | Cutscene skip | `CutscenePatch` (both) | One patch asking the mod's `SkipCutscenes()` (LS: in an arena node; DA: its setting). |
+| Travel vote | LS `SkipTravelVotePatch`, DA's in `RunRulePatches` | `TravelVotePatch` asking the mod's `SkipTravelVote()`: LS always skips (one rift, always to the arena); DA never does, so the rift and `-restart` both follow the game's vote rule. DA's `Skip travel vote` setting is gone (schema 3). |
 
 ## Other differences
 
@@ -57,10 +58,6 @@ difference was settled:
   through `PlayerRoster.ForEachHero`) and DA `Heroes/HeroBoost` `Player
   level` (raise only, clamped to `maxLevel`). A shared hero loop and "raise
   hero level" helper could serve both.
-- Skip travel vote: LS `Patches/SkipTravelVotePatch` (always) and DA's
-  `SkipTravelVotePatch` in `RunRulePatches` (its setting, and not during a
-  restart vote) both prefix `ZoneManager.ShouldVoteOnTravel`. One library
-  patch asking a `ModEntry` hook, like `SkipCutscenes`.
 - Rescue quests: LS `HeroSoulPatch` and `HeroSouls.Suppress` (a prefix on
   `CheckAndAddHeroSoul`: sets `disableQuest` and removes the hero's souls
   from every node) and DA `Revives` (sets `disableQuest` on its next tick,

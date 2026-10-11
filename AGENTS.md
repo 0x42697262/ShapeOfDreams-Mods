@@ -47,7 +47,7 @@ and each mod completes (`library/README.md` lists every member):
 | `src/Identity/ModIdentity.cs` | `Tag`, `DisplayName`, `SaveKey`, `LobbyModeValue`, `PreselectInLobby` (plus its own object names) |
 | `src/Text/ModText.cs` | `ModeName`, `ModeDescription`, `WindowNote`, `NoticeColor`, `TickFailed`, `PageTitle`, `PageSubtitle` |
 | `src/ModHooks.cs` | `Choices(set)` for the settings dropdowns, `LobbyName()` |
-| `src/<Name>Mod.cs` | a `ModEntry` subclass: the config field, the session, seven small overrides |
+| `src/<Name>Mod.cs` | a `ModEntry` subclass: the config field, the session, eight small overrides |
 | `src/Config/ConfigSchema.cs` | `Current`, the config schema version |
 
 A missing member is a compile error, so a new mod can't half-implement it.
