@@ -93,11 +93,17 @@ worked example, is in [`modding/`](../modding/README.md) at the root of this rep
 
 ## Build
 
-Put this folder in `<Shape of Dreams>/Mods/LastStand` so the project finds the
-game's assemblies, then run `dotnet build` there (Debug, which
-`about/metadata.json` loads) or `dotnet build -c Release`.
+From the repository root, run `./build.sh last-stand` (Debug, which
+`about/metadata.json` loads) or `./build.sh last-stand Release`. The script
+runs `dotnet build` in the build container; plain `dotnet build` in this
+folder works too. The project finds the game's assemblies through `GameDir`
+in the root `Directory.Build.props` (the Steam install on Linux by default;
+override it with `-p:GameDir="<Shape of Dreams>"`). To load the build,
+this folder must be the game's `<Shape of Dreams>/Mods/LastStand` (copied
+or mounted there).
 
-For the Workshop, build Release and run `./pack.sh`. It writes
-`dist/LastStand/` with only `LastStand.dll` and `about/`, ready to upload
-from the game's mod manager. Keep `about/publishedfileid.txt` once the first
-upload creates it: it's how later uploads update the same item.
+For the Workshop, build Release and run `./pack.sh last-stand` from the
+repository root. It writes `last-stand/dist/LastStand/` with only
+`LastStand.dll` and `about/`, ready to upload from the game's mod manager.
+Keep `about/publishedfileid.txt` once the first upload creates it: it's how
+later uploads update the same item.

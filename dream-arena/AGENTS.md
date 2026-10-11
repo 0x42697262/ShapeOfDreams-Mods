@@ -56,21 +56,10 @@ before decompiling something again.
 
 ## Environment
 
-- The game and .NET SDK live in the incus container **`chen`**. Run commands
-  with `incus exec chen -- su chicken -s /bin/bash -c '...'`.
-- Game dir in `chen`: `~/.local/share/Steam/steamapps/common/Shape of Dreams`.
-- This repo is bind-mounted into `Mods/DreamArena` as incus device
-  `dreamarena`. `about/metadata.json` points at the Debug DLL.
-- `build.sh` and `watch-log.sh` are local and git-ignored. Without them, run
-  `dotnet build` in the mounted directory inside `chen`.
-- When the device points at `dist/DreamArena` (for an upload), build from a
-  copy outside `Mods/`: tar `DreamArena.csproj` and `src`, unpack under
-  `<Game>/_dabuild/DreamArena` (same depth, so `<GameDir>..\..</GameDir>`
-  resolves, and outside `Mods/`, so no `IdConflict`), build, delete it.
-- There's no C# language server. A clean build (0 warnings, 0 errors) is the
-  check.
-- Game log in `chen`: `~/.local/share/Steam/steamapps/compatdata/2444750/pfx/drive_c/users/steamuser/AppData/LocalLow/Lizard Smoothie/Shape of Dreams/Player.log`.
-- Decompiled game code: `~/sod-modding/decomp-new/` in `chen`.
+See the root [`AGENTS.md`](../AGENTS.md), *Environment*: `./build.sh
+dream-arena`, `./watch-log.sh dream-arena`, `./check.sh`. Dream Arena is
+mounted into `Mods/DreamArena` as incus device `dreamarena`;
+`about/metadata.json` points at the Debug DLL.
 
 ## Needs an in-game check
 

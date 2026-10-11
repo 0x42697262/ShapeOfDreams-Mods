@@ -54,10 +54,16 @@ table of contents.
 
 ## Build
 
-Put this folder in `<Shape of Dreams>/Mods/DreamArena` so the project finds
-the game's assemblies, then run `dotnet build` there (Debug, which
-`about/metadata.json` loads) or `dotnet build -c Release`.
+From the repository root, run `./build.sh dream-arena` (Debug, which
+`about/metadata.json` loads) or `./build.sh dream-arena Release`. The script
+runs `dotnet build` in the build container; plain `dotnet build` in this
+folder works too. The project finds the game's assemblies through `GameDir`
+in the root `Directory.Build.props` (the Steam install on Linux by default;
+override it with `-p:GameDir="<Shape of Dreams>"`). To load the build,
+this folder must be the game's `<Shape of Dreams>/Mods/DreamArena` (copied
+or mounted there).
 
-For the Workshop, build Release and run `./pack.sh`. It writes
-`dist/DreamArena/` with only `DreamArena.dll` and `about/`, ready to upload
-from the game's mod manager (see [Releasing](docs/reference/releasing.md)).
+For the Workshop, build Release and run `./pack.sh dream-arena` from the
+repository root. It writes `dream-arena/dist/DreamArena/` with only
+`DreamArena.dll` and `about/`, ready to upload from the game's mod manager
+(see [Releasing](docs/reference/releasing.md)).

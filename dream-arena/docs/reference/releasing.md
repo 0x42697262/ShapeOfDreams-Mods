@@ -14,8 +14,9 @@ Separately, `ConfigSchema.Current` versions the config file (see
 
 The game's mod manager uploads the whole mod folder
 (`SteamUGC.SetItemContent(item.path)`), so never upload from the repo: it
-would ship `.git`, `src/`, `obj/` and the docs. Build Release, then run
-`./pack.sh`. It writes `dist/DreamArena/` with only `DreamArena.dll` and
+would ship `.git`, `src/`, `obj/` and the docs. From the repository root,
+run `./build.sh dream-arena Release`, then `./pack.sh dream-arena`. It
+writes `dream-arena/dist/DreamArena/` with only `DreamArena.dll` and
 `about/`, with `metadata.json` pointed at `DreamArena.dll`.
 
 Only one folder with the mod's id may be in `Mods/` at a time

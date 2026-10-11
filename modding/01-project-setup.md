@@ -1011,12 +1011,14 @@ dotnet build -c Release      # Release → bin/Release/netstandard2.1/MyMod.dll
 
 During development, `about/metadata.json` points at the **Debug** DLL, as the
 template does. A Release build writes to a different folder and changes
-nothing the game loads, so it is safe to build while testing. For shipping,
-Last Stand's `pack.sh` copies the Release DLL into a clean folder and rewrites
-`assemblies` to `[ "LastStand.dll" ]` (`10-shipping.md`).
+nothing the game loads, so it is safe to build while testing. Last Stand
+builds from the repository root with `./build.sh last-stand [Debug|Release]`,
+which runs `dotnet build` in the container that has the game. For shipping,
+`./pack.sh last-stand` copies the Release DLL into a clean folder and
+rewrites `assemblies` to `[ "LastStand.dll" ]` (`10-shipping.md`).
 
-Last Stand's check before calling a change done is a clean build:
-`0 Warning(s)`, `0 Error(s)`.
+Last Stand's check before calling a change done is `./check.sh`: a clean
+build of every mod (`0 Warning(s)`, `0 Error(s)`) plus the code-rule checks.
 
 ### 7.2 Auto-reload
 

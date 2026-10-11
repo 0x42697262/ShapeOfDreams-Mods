@@ -228,14 +228,15 @@ The pack holds the Release DLL at its root, so its copy must say
 `"assemblies": [ "MyMod.dll" ]`. Generate that copy; don't keep two
 hand-edited files.
 
-### Last Stand's `pack.sh`, step by step
+### The repository's `pack.sh`, step by step
 
-Last Stand's `pack.sh` turns the Release build into `dist/LastStand/`. The
-same steps work for any code mod:
+`./pack.sh last-stand`, at the repository root, turns Last Stand's Release
+build into `last-stand/dist/LastStand/` (`./pack.sh dream-arena` does the
+same for Dream Arena). The same steps work for any code mod:
 
 1. **Require the Release build.** Fail with a message if
    `bin/Release/netstandard2.1/<Name>.dll` is missing
-   (`dotnet build -c Release`). Packing a stale or Debug DLL is the
+   (`./build.sh <mod> Release`). Packing a stale or Debug DLL is the
    most likely mistake.
 2. **Save the Workshop id before deleting anything.** If
    `dist/<Name>/about/publishedfileid.txt` exists and differs from the

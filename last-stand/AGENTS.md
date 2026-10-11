@@ -20,14 +20,15 @@ for pixel.
 
 **Workshop upload.** The game's mod manager uploads the whole mod folder
 (`SteamUGC.SetItemContent(item.path)`), so never upload from the repo: it
-would ship `.git`, `src/`, `obj/` and the docs. `./pack.sh` builds
-`dist/LastStand/` from the Release build: `LastStand.dll` plus `about/`,
+would ship `.git`, `src/`, `obj/` and the docs. `./pack.sh last-stand` (at
+the repo root) builds `last-stand/dist/LastStand/` from the Release build: `LastStand.dll` plus `about/`,
 with `metadata.json` pointing at `LastStand.dll`. The first upload writes
 `about/publishedfileid.txt` into the uploaded folder, and the game reads it
 to update the same item later; `pack.sh` copies it back to `about/` (commit
 it) and into every new pack. Only one folder with the mod's id may be in
 `Mods/` at a time (`IdConflict`), so the `laststand` incus device is pointed
-at `dist/LastStand` for the upload and back at the repo afterwards. A new
+at `last-stand/dist/LastStand` for the upload and back at `last-stand/`
+afterwards (root `AGENTS.md`, *Uploading a mod*). A new
 item is created Private.
 
 **Change notes.** The game submits every upload with no change note
@@ -99,25 +100,10 @@ both overloads.
 
 ## Environment
 
-- The game and .NET SDK live in the incus container **`chen`**. Run commands
-  with `incus exec chen -- su chicken -s /bin/bash -c '...'`.
-- Game dir in `chen`: `~/.local/share/Steam/steamapps/common/Shape of Dreams`.
-  Mods go in `Mods/<Name>`.
-- Dream Arena is bind-mounted into `Mods/DreamArena` as incus device
-  `dreamarena`. Last Stand is bind-mounted into `Mods/LastStand` as incus
-  device `laststand`.
-- `build.sh` and `watch-log.sh` are local to this machine and git-ignored.
-  If they're missing, run `dotnet build` in the mounted directory inside
-  `chen` directly.
-- Build with `./build.sh` (Debug) or `./build.sh Release`. It runs
-  `dotnet build` inside `chen`, in the mounted directory.
-  `about/metadata.json` points at the Debug DLL.
-- `./watch-log.sh` follows the game log filtered to this mod, Harmony and
-  errors. `./watch-log.sh all` shows everything.
-- There is no C# language server here. A clean build (0 warnings, 0 errors)
-  is the check.
-- Game log: `~/.local/share/Steam/steamapps/compatdata/2444750/pfx/drive_c/users/steamuser/AppData/LocalLow/Lizard Smoothie/Shape of Dreams/Player.log`
-  (in `chen`).
+See the root [`AGENTS.md`](../AGENTS.md), *Environment*: `./build.sh
+last-stand`, `./watch-log.sh last-stand`, `./check.sh`. Last Stand is
+mounted into `Mods/LastStand` as incus device `laststand`;
+`about/metadata.json` points at the Debug DLL.
 
 ## Reading the game's code
 
