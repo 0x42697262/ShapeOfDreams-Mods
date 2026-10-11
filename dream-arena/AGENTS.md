@@ -47,6 +47,10 @@ before decompiling something again.
   with a cap, never every frame.
 - **Never write synced state after the server stops.** Game over and restarts
   shut the transport down first; check `NetworkServer.active`.
+- **Never Harmony-patch `DewLocalization`.** 0.1.0 patched `GetUIValue`;
+  after that every call threw a `NullReferenceException`, all UI text
+  failed, and the title screen showed the prefab's raw Korean text. Change
+  what the caller shows instead.
 - **Mark it as gameplay-altering** (`instance.isAlteringGameplay = true`).
 - **Don't bypass the game's cross-play block** for modded lobbies.
 
