@@ -18,6 +18,7 @@ Rebuilt from the ground up on the same base as Last Stand. Your saved settings a
 [list]
 [*]Leaving a match or unloading the mod no longer risks errors from writing game state after the server has stopped.
 [*]The "Remove boss" setting did nothing and is gone (the boss never spawns anyway).
+[*]The Dream Arena button in the lobby settings now only shows in a Dream Arena lobby, not in every lobby you host.
 [/list]
 
 Only the host needs this update.

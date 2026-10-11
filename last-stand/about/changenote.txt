@@ -1,8 +1,5 @@
 [list]
-[*]Hatred Shard gold now scales with the wave and curse strength (50 per wave) instead of a flat 500.
-[*]Curse kill goals keep growing after wave 48 and are no longer split between players.
-[*]Fast clear's instant kill window is now 1s (was 0.5s).
-[*]New: heroic fast kill. Kill a heroic boss too fast and the next ones get more health. Set "Heroic fast kill: seconds per boss" to 0 to turn it off.
+[*]The Last Stand button in the lobby settings now only shows in a Last Stand lobby, not in every lobby you host.
 [/list]
 
-Settings are reset with this update (old file kept as .old). Only the host needs to update.
+Only the host needs to update.

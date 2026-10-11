@@ -1,6 +1,6 @@
 using LastStand.Identity;
+using LastStand.Mode;
 using LastStand.Text;
-using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,14 +16,15 @@ internal static class LobbyConfigButton
 			return;
 		}
 
+		bool show = LastStandMode.IsHosting();
 		Transform existing = panel.Find(ModIdentity.LobbyButtonName);
 		if (existing != null)
 		{
-			existing.gameObject.SetActive(NetworkServer.active);
+			existing.gameObject.SetActive(show);
 			return;
 		}
 
-		if (!NetworkServer.active)
+		if (!show)
 		{
 			return;
 		}

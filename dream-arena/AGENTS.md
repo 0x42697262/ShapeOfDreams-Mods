@@ -120,6 +120,10 @@ before decompiling something again.
     exception.
 14. **Plain arena per room:** each of the 8 arena rooms loads cleared, with
     the barriers open, and the ring lands inside the arena.
+15. **Lobby button only in its own mode:** load Dream Arena and Last Stand
+    together. Host a Dream Arena lobby: the settings panel shows the
+    **Dream Arena** button and no Last Stand button. Host a Last Stand or
+    Shape of Dreams lobby: no Dream Arena button.
 
 ## Conventions
 

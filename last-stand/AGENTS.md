@@ -1121,6 +1121,11 @@ Each answer still needs to be seen working:
     shows `heroicKill=x1`. After a fast kill the log has `heroic fast
     kill: ...` with no settings change. Old config files are moved to
     `.old`.
+97. **Lobby button only in its own mode:** load Last Stand and Dream Arena
+    together. Host a Last Stand lobby: the settings panel shows the **Last
+    Stand** button and no Dream Arena button. Host a Dream Arena lobby:
+    only the **Dream Arena** button. Host a Shape of Dreams lobby: neither.
+    Each time the panel opens it checks again.
 
 ## Conventions
 
