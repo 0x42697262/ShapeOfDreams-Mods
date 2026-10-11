@@ -43,9 +43,12 @@ Last Stand's own, logs `workshop: uploading item N from <path>.` and reads
 (`WorkshopStartPatch`, `WorkshopSubmitPatch` and `WorkshopChangeNote`,
 in the shared library, so every mod gets them). Both are plain Steamworks
 calls made in that order by `DewMod.UpdateItem`. It used to be a prefix on
-`DewMod.UpdateItem` itself, an async method; v0.11.0 went up with an
-empty note and no `workshop:` line at all in the log, so the hook moved to
-the Steamworks calls, and the new `uploading` line shows whether it ran. These patches work outside
+`DewMod.UpdateItem` itself, an async method. **Known issue:** since
+v0.9.0 the note hasn't reached Steam even when the log said `attached`
+(v0.10.0), and v0.11.0 logged no `workshop:` line at all; the notes from
+v0.9.0 to v0.11.0 were pasted in by hand on the item's Change Notes page.
+The cause isn't found yet; until it is, check the Change Notes page after
+each upload and paste the note in if it's missing. These patches work outside
 Last Stand mode, since uploads happen from the title screen. `pack.sh`
 copies the file into the pack and prints it. Write the next update's note
 in `about/changenote.txt` (Steam BBCode) before packing, and commit it. It
@@ -1215,9 +1218,9 @@ Each answer still needs to be seen working:
     the same stats as without the fast clear.
 118. **Faster world rise milestone** (schema 53): `laststand_wave 200`
     sends, in light blue, "The monsters grow stronger, faster! From now
-    on, they climb 1 world(s) every 2 wave(s) instead of 1 every 25." and
+    on, they climb 1 world(s) every 2 wave(s) instead of 1 every 10." and
     no empowered text. `Faster world rise from wave` 0: no announcement
-    and the rise stays at 1 world per 25 waves after 200.
+    and the rise stays at 1 world per `Waves per step` waves after 200.
 119. **Schema 53 reset:** loading a schema 52 config moves it to
     `LastStandMod.config.json.old` and writes fresh defaults (world
     scaling present, fast clear and empowered settings gone, heroic boss
@@ -1263,6 +1266,10 @@ Each answer still needs to be seen working:
     hero(es) staged at ...` shows N. Reload the mod mid-run: same, all on the
     center. Set `Hero arrival spread (% of radius)` to 50: the next arrival
     spreads heroes on a ring halfway to the edge.
+127. **Waves per step 10** (schema 54): loading a schema 53 config moves
+    it to `.old`; `Waves per step` shows 10. At starting world 1 the log
+    shows `world=2` at wave 11, `world=6` at 51, `world=20.9` at 200 and
+    `world=25.9` at 210 (with no fast kill, `raised=+0`).
 
 ## Conventions
 

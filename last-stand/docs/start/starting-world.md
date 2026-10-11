@@ -14,7 +14,7 @@ Turbulence). The game adds its own world bonus to every monster in
 **The run's world and the monsters' world are two numbers.** The run's
 world is this setting, and it stays put. Monster stats then climb from it
 on the game's own curves: each wave, Last Stand works out a higher world
-for the monsters (1 more every 25 waves, then 1 every 2 waves from wave
+for the monsters (1 more every 10 waves, then 1 every 2 waves from wave
 200, smooth in between) and gives each monster the difference between
 the curve there and at the run's world as one stat bonus (see
 [Waves](../waves/waves.md), *Strength, by world*). Only health and damage
@@ -39,9 +39,9 @@ this world (add `starting world − 1` for a higher start; after a heroic
 [fast kill](../waves/heroic-bosses.md) every monster sits a fixed number
 of worlds higher on top of this):
 
-| Wave | 1 | 26 | 51 | 101 | 150 | 200 | 210 | 220 | 250 | 300 |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Monster world | 1 | 2 | 3 | 5 | 7 | 9 | 14 | 19 | 34 | 59 |
+| Wave | 1 | 11 | 21 | 51 | 101 | 150 | 200 | 210 | 220 | 250 | 300 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Monster world | 1 | 2 | 3 | 6 | 11 | 15.9 | 20.9 | 25.9 | 30.9 | 45.9 | 70.9 |
 
 The chat line of every wave ends with "Difficulty: X.X" (the monster world), and the
 `wave N:` log line shows `world=X raised=+R`, where R is the fast-kill

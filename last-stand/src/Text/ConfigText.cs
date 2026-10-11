@@ -30,7 +30,7 @@ internal static class ConfigText
 
 	public const string WorldRiseStepLabel = "Waves per step";
 
-	public const string WorldRiseStepDescription = "Waves the rise above takes. 25 = +1 world by wave 26.";
+	public const string WorldRiseStepDescription = "Waves the rise above takes. 10 = +1 world by wave 11.";
 
 	public const string FasterWorldRiseFromWaveLabel = "Faster world rise from wave";
 

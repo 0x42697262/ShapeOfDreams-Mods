@@ -1,6 +1,5 @@
-[b]v0.11.0[/b]
 [list]
-[*]Fixed: the Last Stand settings window opened from the lobby settings was dimmed and ignored clicks. The lobby settings popup now closes when you open it.
+[*]Monsters now climb 1 world every 10 waves (was every 25). Change "Waves per step" to set it.
 [/list]
 
-Only the host needs to update.
+Settings are reset with this update (old file kept as .old). Only the host needs to update.

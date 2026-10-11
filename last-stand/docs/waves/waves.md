@@ -13,7 +13,7 @@ normal break is used, because the cleared wave's plan didn't survive. The score 
 | 1 | Regular monsters, 6 growing by 2 a wave | wave |
 | 5 | Surge: twice the regular monsters (hunters included) and alive cap | 5 waves |
 | 48 | Merged waves: at most 100 monsters and hunters, carrying the whole wave's strength; surges add 2 minibosses and 2 Pain minibosses | wave |
-| 1 | Monster stats follow the game's world scaling, rising 1 world every 25 waves, a little each wave | wave |
+| 1 | Monster stats follow the game's world scaling, rising 1 world every 10 waves, a little each wave | wave |
 | 200 | Faster world rise: 1 world every 2 waves | wave |
 | 10 | 3 monster types from other worlds join the pool | 5 waves |
 | 10 | Minibosses (1, 1, 2, 2… up to 10) | 10 waves |
@@ -118,12 +118,13 @@ works through these knobs, all using systems the game already syncs:
 
   where F is `Faster world rise from wave` (the second part counts only
   from F on; 0 turns it off). It's smooth, not a jump every step: with the
-  defaults (1 world per 25 waves, then from wave 200 1 world per 2 waves)
-  wave 2 is 0.04 worlds up and wave 26 exactly 1.
+  defaults (1 world per 10 waves, then from wave 200 1 world per 2 waves;
+  `Waves per step` was 25 before schema 54) wave 2 is 0.1 worlds up and
+  wave 11 exactly 1.
 
-  | Wave | 1 | 26 | 51 | 101 | 150 | 200 | 210 | 220 | 250 | 300 |
-  |---|---|---|---|---|---|---|---|---|---|---|
-  | Monsters fight like world (from world 1) | 1 | 2 | 3 | 5 | 7 | 9 | 14 | 19 | 34 | 59 |
+  | Wave | 1 | 11 | 21 | 51 | 101 | 150 | 200 | 210 | 220 | 250 | 300 |
+  |---|---|---|---|---|---|---|---|---|---|---|---|
+  | Monster world (from world 1) | 1 | 2 | 3 | 6 | 11 | 15.9 | 20.9 | 25.9 | 30.9 | 45.9 | 70.9 |
 
   What a world means, from the game's curves (Nightmare, vs world 1):
 
@@ -144,10 +145,10 @@ works through these knobs, all using systems the game already syncs:
   8, regular health past 20 and boss health past 30. So one world more is
   ×1.7 to ×2.0 early, about ×1.3 around world 10, ×1.1 around world 20 to
   25 and ×1.03 around world 50. This is why the rise speeds up at wave 200:
-  at 1 world per 25 waves, late waves would barely get stronger. At 1 world
-  per 2 waves from world 9, each wave adds about +14% health and +11%
-  damage at first, about +6% and +3.5% by world 20, and about +2% and
-  +1.5% by world 40.
+  at 1 world per 10 waves around world 21, a wave adds only about +1%
+  health. At 1 world per 2 waves from world 20.9, each wave adds about +6%
+  health and +3.5% damage at first, and about +2% and +1.5% by world 40
+  (wave about 238).
 
   How it's applied (`WorldScaling`, the game adapter): the game already
   gives every monster its real world's scaling when it spawns. For each
@@ -176,7 +177,7 @@ works through these knobs, all using systems the game already syncs:
   Chat's wave line ends with "Difficulty: X.X", the monster world, and the
   `wave N:` log line shows `world=X raised=+R`, where `world=` includes the
   raise R (`+0` before any fast kill). It counts from the run's real
-  world, so with `Starting world` 5, wave 26 is world 6.
+  world, so with `Starting world` 5, wave 11 is world 6.
 
   This replaced, in schema 53, a flat bonus of +10% health and damage per
   wave (+50% from wave 150), the empowered waves (×1.5 every 10 waves from
