@@ -57,8 +57,25 @@ difference was settled:
   through `PlayerRoster.ForEachHero`) and DA `Heroes/HeroBoost` `Player
   level` (raise only, clamped to `maxLevel`). A shared hero loop and "raise
   hero level" helper could serve both.
+- Skip travel vote: LS `Patches/SkipTravelVotePatch` (always) and DA's
+  `SkipTravelVotePatch` in `RunRulePatches` (its setting, and not during a
+  restart vote) both prefix `ZoneManager.ShouldVoteOnTravel`. One library
+  patch asking a `ModEntry` hook, like `SkipCutscenes`.
+- Rescue quests: LS `HeroSoulPatch` and `HeroSouls.Suppress` (a prefix on
+  `CheckAndAddHeroSoul`: sets `disableQuest` and removes the hero's souls
+  from every node) and DA `Revives` (sets `disableQuest` on its next tick,
+  with `No rescue quests` on). One shared suppressor, switched by DA's
+  setting.
+- Unlimited shrines for vanilla clients: both open a shrine's limits (LS
+  `StandingShrine.Configure`, DA `CampRemnants.Configure`) and clear its use
+  counts and last-use time after each use (LS `StandingShrine.OnUsed`, DA
+  `RemnantChoices.AfterChoice`), since `maxUseCountPerPlayer` and
+  `useCooldown` aren't synced. A shared helper.
 - Diagnostics: LS `BossFinder.LogAll` (in `laststand_status`) and DA
   `Diagnostics/ArenaScan.cs` (`arena_scan`) do different jobs. Keep both.
+- Ground spots around a center: LS `EdgePlacement`/`PlayableGround` (a ring
+  at the room's edge) and DA `RemnantRing`/`CampLayout` (a fixed ring with
+  an opening toward the camp) differ in shape. Keep both.
 
 ## Suggested order
 
