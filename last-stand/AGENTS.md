@@ -690,12 +690,12 @@ Each answer still needs to be seen working:
 36. **Heroic boss haste grows:** the `wave N:` log line shows `heroicHaste=200`
     at wave 49, 250 at 99, 300 at 124 and 350 at 149, and later bosses use their skills
     visibly more often.
-37. **Hunters from wave 101:** the catalog log line says `hunters start at
-    wave 101, every monster is a hunter from wave 130`. Wave 101 logs about
-    1/30 of its monsters as `hunter=` (10 of 309 solo) and a hunter zone at
-    hunt level 1; the share grows every wave, wave 115 is about half, and from
+37. **Hunters from wave 100:** the catalog log line says `hunters start at
+    wave 100, every monster is a hunter from wave 130`. Wave 101 logs about
+    2/31 of its monsters as `hunter=` and a hunter zone at hunt level 1; the
+    share grows every wave, wave 115 is about half, and from
     130 the line shows `regular=0`. Every wave from 101 except 106, 116 …
-    shows a hunt level (`huntLevel=1` for 101–110, 2 for 111–120… 6 from 151)
+    shows a hunt level (`huntLevel=1` for 100–104, 2 for 105–109…, see check 105)
     and has artillery,
     and the breaks between waves have none. Hunters arrive mixed through the wave, not
     all at the start. Check the host's frame rate with 300+ hunters.
@@ -850,7 +850,7 @@ Each answer still needs to be seen working:
 64. **Environments replace the hunter zone:** `laststand_wave 116` logs
     `huntLevel=0` and an environment, with no artillery and no "hunted"
     chat line, while hunters still spawn (`hunter=` in the `wave N:` line).
-    Wave 117 is a hunter zone again at hunt level 2. Late environments with
+    Wave 117 is a hunter zone again at hunt level 4. Late environments with
     300+ hunters (Meteoric Life corpses, Dream of Wealth stones) keep the
     host's frame rate. Old config files are moved to `.old` (schema 17).
 
@@ -1134,16 +1134,16 @@ Each answer still needs to be seen working:
     (heroic) or a Pain wave (20, 40 …). Waves 106, 116 … always get one.
 102. **Hunter zone environment cap:** a new config shows `Hunter zone
     environment chance (%)` 50, `Hunter zone: max environments per block` 4
-    and `Hunter zone: block size` 10. Play waves 101-120
-    (`laststand_wave 101`, then `laststand_next` each wave): each block
-    101-110 and 111-120 has at most 4 `environment: wave N brings` lines,
+    and `Hunter zone: block size` 10. Play waves 100-119
+    (`laststand_wave 100`, then `laststand_next` each wave): each block
+    100-109 and 110-119 has at most 4 `environment: wave N brings` lines,
     the sure wave (106, 116) always among them; those waves log
     `huntLevel=0` with no artillery, the rest are hunter zones. Set the
     chance to 0: only 106 and 116 get one.
 103. **Every wave from 50:** a new config shows `Higher environment chance
     from wave` 50 and `Higher environment chance (%)` 100. `laststand_wave
-    50`, then `laststand_next` to 100: every wave logs an environment
-    except 60, 80, 100 (Pain) and 99 (heroic). Waves 1-49 still get one
+    50`, then `laststand_next` to 99: every wave logs an environment
+    except 60 and 80 (Pain) and 99 (heroic). Waves 1-49 still get one
     about 1 time in 10.
 104. **Settings pages:** the settings panel (lobby button and mod manager
     gear) lists General, Shrines, Waves, Monsters, Hunters, Fast clear,
@@ -1151,6 +1151,12 @@ Each answer still needs to be seen working:
     without overlap. Hunters, Fast clear and Environments hold only their
     own settings; Monsters no longer shows them, and Events shows only Dark
     urge.
+105. **Hunt level every 5 waves, no cap** (schema 47): a new config shows
+    `First hunter wave` 100, `Waves per hunt level` 5 and `Max hunt level`
+    0. `laststand_wave 100` logs `huntLevel=1` (unless it's an environment
+    wave), 105 logs 2, 150 logs 11, 200 logs 21, with artillery hitting
+    clearly harder at 200 than at 150. A vanilla client's HUD shows 5 stars
+    from level 5 on. Set `Max hunt level` to 6: wave 200 logs 6.
 
 ## Conventions
 

@@ -24,7 +24,7 @@ For working notes, hard constraints and the in-game test list, see
 | [Waves](waves/waves.md) | Wave size, clearing, breaks, the alive cap, per-wave scaling, minibosses |
 | [How monsters are spawned](waves/spawning.md) | Which game spawner each monster kind goes through |
 | [Monsters from other worlds](waves/other-worlds.md) | New monster types every 5 waves |
-| [Hunters and hunter zones](waves/hunters.md) | Hunters from wave 101, hunt levels and artillery |
+| [Hunters and hunter zones](waves/hunters.md) | Hunters from wave 100, hunt levels and artillery |
 | [Mirage skins](waves/mirage-skins.md) | Skins from wave 30, every monster from 149 |
 | [Pain minibosses](waves/pain-minibosses.md) | The damage aura and Corrupted Chaos rewards |
 | [Heroic bosses](waves/heroic-bosses.md) | Zone bosses on waves 49, 99…, their scaling and rewards |

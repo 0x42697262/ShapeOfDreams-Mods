@@ -5,14 +5,14 @@ from `Environment types`. Which waves get one:
 
 - **Waves 1-49, by chance.** Every wave rolls `Environment chance (%)`
   (10% by default) when it starts, wave 1 included.
-- **Waves 50-100, every wave.** From `Higher environment chance from wave`
+- **Waves 50-99, every wave.** From `Higher environment chance from wave`
   (50) the chance is `Higher environment chance (%)` (100), so every wave
   without a heroic boss or Pain gets one.
 - **Sure waves.** Waves 106, 116, 126 … (`First sure environment wave` 106,
   every 10 waves) always get one.
 - **Hunter zone waves, a lower chance with a cap.** From the first hunter
-  wave (`First hunter wave`, 101) every other wave rolls `Hunter zone
-  environment chance (%)` (50%), but a block of 10 waves (101-110, 111-120
+  wave (`First hunter wave`, 100) every other wave rolls `Hunter zone
+  environment chance (%)` (50%), but a block of 10 waves (100-109, 110-119
   …; `Hunter zone: block size` 10) has at most 4 environment waves
   (`Hunter zone: max environments per block`), the sure wave included,
   because each one takes that wave's hunter zone. A chance wave is only
@@ -42,7 +42,7 @@ when it fades. All of these are main modifiers, like the hunter zone and the
 Aura of Pain, and the game keeps only one main modifier per room, so adding
 one would replace the other:
 
-- **From wave 101 the environment replaces the hunter zone.** Waves 106,
+- **From wave 100 the environment replaces the hunter zone.** Waves 106,
   116, 126 …, and any later wave that rolls one, get an environment and no
   hunter zone (`WaveSchedule.Plan` sets their hunt level to 0), so no artillery and no hunter stat bonus. Hunters
   still make up their usual share of the wave, and the hunt level of the next

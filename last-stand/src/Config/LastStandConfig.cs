@@ -274,7 +274,7 @@ public class LastStandConfig : ModConfig
 	[Header(ConfigText.HunterHeader)]
 	[LabelText(ConfigText.HunterFromWaveLabel)]
 	[Description(ConfigText.HunterFromWaveDescription)]
-	public int hunterFromWave = 101;
+	public int hunterFromWave = 100;
 
 	[LabelText(ConfigText.AllHuntersFromWaveLabel)]
 	[Description(ConfigText.AllHuntersFromWaveDescription)]
@@ -282,11 +282,11 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HuntLevelStepLabel)]
 	[Description(ConfigText.HuntLevelStepDescription)]
-	public int huntLevelStepWaves = 10;
+	public int huntLevelStepWaves = 5;
 
 	[LabelText(ConfigText.MaxHuntLevelLabel)]
 	[Description(ConfigText.MaxHuntLevelDescription)]
-	public int maxHuntLevel = 6;
+	public int maxHuntLevel;
 
 	[Page(SettingsPage.FastClear)]
 	[Header(ConfigText.FastClearHeader)]

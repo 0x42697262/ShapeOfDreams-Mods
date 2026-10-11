@@ -12,6 +12,8 @@ internal static class WaveSchedule
 
 	private const int NoHuntLevel = 0;
 
+	public const int NoMaxHuntLevel = 0;
+
 	private const double Everyone = 1;
 
 	public const double NoEnvironmentRoll = 1;
@@ -132,7 +134,8 @@ internal static class WaveSchedule
 	public static int HuntLevel(int wave, int hunterStart, WaveSettings settings)
 	{
 		Cadence levels = new Cadence(hunterStart, settings.HuntLevelStepWaves);
-		return Math.Max(NoHuntLevel, Math.Min(settings.MaxHuntLevel, levels.OccurrencesSoFar(wave)));
+		int level = Math.Max(NoHuntLevel, levels.OccurrencesSoFar(wave));
+		return settings.MaxHuntLevel == NoMaxHuntLevel ? level : Math.Min(settings.MaxHuntLevel, level);
 	}
 
 	public static double BreakAfter(WavePlan plan, WaveSettings settings)

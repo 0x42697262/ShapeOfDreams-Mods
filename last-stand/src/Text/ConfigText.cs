@@ -530,7 +530,7 @@ internal static class ConfigText
 	public const string MaxHuntLevelLabel = "Max hunt level";
 
 	public const string MaxHuntLevelDescription =
-		"Hunt level cap. Higher = stronger, more frequent artillery.";
+		"Hunt level cap. 0 = no cap. Higher = stronger artillery and hunters (the HUD shows at most 5).";
 
 	public const string MirageFromWaveLabel = "First Mirage wave";
 
@@ -720,7 +720,7 @@ internal static class ConfigText
 	public const string EnvironmentHuntedBlockWavesLabel = "Hunter zone: block size (waves)";
 
 	public const string EnvironmentHuntedBlockWavesDescription =
-		"Blocks start at the first hunter wave: 101-110, 111-120 … by default.";
+		"Blocks start at the first hunter wave: 100-109, 110-119 … by default.";
 
 	public const string EnvironmentUntilWaveLabel = "Last environment wave";
 

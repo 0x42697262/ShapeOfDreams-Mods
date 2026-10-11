@@ -133,8 +133,8 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Damage per second per boss | 1% |
 | | Health / damage bonus | 20% / 30% |
 | Other worlds | First wave / every N waves / types per step | 10 / 5 / 3 |
-| Hunters | First wave / every monster a hunter from wave | 101 / 130 |
-| | Waves per hunt level / max hunt level | 10 / 6 |
+| Hunters | First wave / every monster a hunter from wave | 100 / 130 |
+| | Waves per hunt level / max hunt level (0 = no cap) | 5 / 0 |
 | Mirage | First wave / waves per new skin / chance | 30 / 10 / 20% |
 | | Chance grows from wave / every monster a Mirage from wave | 130 / 149 |
 | Dark urge | First wave / chance / curse strength | 176 / 20% / Potent (25% damage between players) |

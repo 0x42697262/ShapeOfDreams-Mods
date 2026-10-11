@@ -4,9 +4,9 @@
   game's own hunter spawns get: faster, shadow-walking, no gold or exp. They
   are a share of the wave's regular monsters, not extras: the total stays the
   same and some of it spawns as hunters (`WaveSchedule.HunterShare`). The share
-  starts at wave 101 (`First hunter wave`) and grows evenly each wave until
+  starts at wave 100 (`First hunter wave`) and grows evenly each wave until
   wave 130 (`Every monster a hunter from wave`), where every regular monster is
-  a hunter, and stays there: 1/30 at 101 (10 of 309), half at 115, 29/30 at
+  a hunter, and stays there: 1/31 at 100, about half at 115, 30/31 at
   129. Surges double the wave, so they double the hunters too. Once waves merge
   (wave 48 by default) the share applies to the merged 100 (see
   [Waves](waves.md)).
@@ -22,9 +22,21 @@
   to clients. Its artillery, small and big meteors aimed at the heroes, comes
   from the modifier itself, not from any skill, memory or essence. It also
   makes hunters tougher. The hunt level (`ZoneManager.currentHuntLevel`) is 1
-  for waves 101–110 and rises by one every 10 waves (`Waves per hunt level`),
-  up to 6 from wave 151 (`Max hunt level`), which scales the artillery. The
-  game's own top is 5: its HUD shows at most 5 stars. When the wave is cleared
+  for waves 100–104 and rises by one every 5 waves (`Waves per hunt level`):
+  2 at 105, 3 at 110, 11 at 150, 21 at 200. `Max hunt level` is 0 by
+  default, which means no cap; any other value caps it. The game's own top
+  is 5: its HUD shows at most 5 stars and "Hunted V", but the level itself
+  is a synced int with no limit.
+- **What a hunt level above 5 does.** The prefab's formulas (`RoomMod_Hunted`,
+  evaluated with the hunt level as `x`) mostly cap early: artillery interval
+  at level 4, big meteor chance at about 5.3, hunter size at 5.4, artillery
+  speed at 5.6, small meteor count at 6, smart-AI share at 7. Three keep
+  growing: artillery strength (`Clamp(0.9+0.1*x, 1, 5)`, cap at 41), hunter
+  damage bonus (`Clamp(0.2+0.06*x, 0, 2.5)`, cap at 38) and hunter health
+  bonus (`Clamp(0.2+0.035*x, 0, 2)`, cap at 51). Past about level 51 nothing
+  changes. All of it runs on the host (artillery actors, hunter stats), so
+  vanilla clients feel it too. Nothing else in the game reacts to a high
+  level outside travel. When the wave is cleared
   the modifier is removed and the old hunt level is restored, so the breaks
   between waves have no artillery.
 - **The artillery needs a fix in the arena.** The modifier's artillery

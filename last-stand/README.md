@@ -34,13 +34,13 @@ essences and turns what you collect into upgrades.
   constant damage until they die. Killing them drops **Corrupted Chaos**
   rewards.
 - **Monsters from other worlds** join every 5 waves, three types at a time,
-  weakest worlds first. From wave 101, a growing share of every wave's
+  weakest worlds first. From wave 100, a growing share of every wave's
   monsters are **hunters**, until every monster is one from wave 130 on, and
   every wave is a **hunter zone** with falling artillery that grows stronger
-  every 10 waves, except the environment waves (106, 116 …, and any wave
+  every 5 waves, with no cap, except the environment waves (106, 116 …, and any wave
   that rolls one), where an environment takes its place.
 - **Environments**, the game's room effects, can hit any wave: 10% chance
-  until wave 49, every wave from 50 to 100, then 50% with at most 4
+  until wave 49, every wave from 50 to 99, then 50% with at most 4
   environment waves in every 10 (106, 116 … always), so most waves keep
   their hunter zone. Never on heroic boss or Pain waves.
 - **Mirage skins** appear from wave 30, weakest first, a stronger one every

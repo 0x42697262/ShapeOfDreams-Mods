@@ -1,9 +1,11 @@
 [list]
 [*]The Last Stand button in the lobby settings now only shows in a Last Stand lobby, not in every lobby you host.
 [*]Environments now come by chance: waves 1-49 have a 10% chance of one, wave 1 included, never on heroic boss or Pain waves. Set "Environment chance (%)" to 0 to turn it off.
-[*]Waves 50-100 now always get an environment, except heroic boss and Pain waves. Set "Higher environment chance (%)" to lower it.
-[*]Hunter zone waves (from 101) have a 50% chance of an environment, with at most 4 environment waves in every 10 (101-110, 111-120 …), so most waves keep their hunter zone. Set "Hunter zone environment chance (%)" to 0 to turn it off.
+[*]Waves 50-99 now always get an environment, except heroic boss and Pain waves. Set "Higher environment chance (%)" to lower it.
+[*]Hunter zone waves (from 100) have a 50% chance of an environment, with at most 4 environment waves in every 10 (100-109, 110-119 …), so most waves keep their hunter zone. Set "Hunter zone environment chance (%)" to 0 to turn it off.
 [*]Sure environments now start at wave 106, every 10 waves (was every 10 waves from wave 6).
+[*]Hunters and hunter zones now start at wave 100 (was 101).
+[*]Hunt level now rises every 5 waves (was 10) and has no cap (was 6): level 1 at wave 100, 11 at 150, 21 at 200. Set "Max hunt level" above 0 to cap it again.
 [*]Hunters, fast clear and environments now have their own settings pages.
 [/list]
 

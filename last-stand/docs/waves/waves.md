@@ -21,8 +21,8 @@ normal break is used, because the cleared wave's plan didn't survive. The score 
 | 30 | The next stronger Mirage skin is unlocked | 10 waves |
 | 130 | Mirage chance grows from 20% to 100% at wave 149 | wave |
 | 49 | Heroic boss, last in the wave (1 at 49, 2 at 99 and 124, 3 at 149 and 174, 4 at 199…, up to 10 from 499) | 50 waves, 25 from wave 100 |
-| 101 | Hunters: 1/30 of the regular monsters, 2/30 at 102… all of them from 130 on | wave |
-| 101 | Hunter zone on every wave: falling artillery, hunt level 1 for 101–110, 2 for 111–120… up to 6 from 151 | wave |
+| 100 | Hunters: 1/31 of the regular monsters, 2/31 at 101… all of them from 130 on | wave |
+| 100 | Hunter zone on every wave: falling artillery, hunt level 1 for 100–104, 2 for 105–109… no cap | wave |
 
 How many monster types the other worlds add is only known at runtime. The log
 reports it when the arena is ready: `catalog: N monster type(s) from other
