@@ -1218,7 +1218,7 @@ Each answer still needs to be seen working:
     the same stats as without the fast clear.
 118. **Faster world rise milestone** (schema 53): `laststand_wave 200`
     sends, in light blue, "The monsters grow stronger, faster! From now
-    on, they climb 1 world(s) every 2 wave(s) instead of 1 every 10." and
+    on, they climb 1 world(s) every 2 wave(s) instead of 1 every 25." and
     no empowered text. `Faster world rise from wave` 0: no announcement
     and the rise stays at 1 world per `Waves per step` waves after 200.
 119. **Schema 53 reset:** loading a schema 52 config moves it to
@@ -1266,10 +1266,11 @@ Each answer still needs to be seen working:
     hero(es) staged at ...` shows N. Reload the mod mid-run: same, all on the
     center. Set `Hero arrival spread (% of radius)` to 50: the next arrival
     spreads heroes on a ring halfway to the edge.
-127. **Waves per step 10** (schema 54): loading a schema 53 config moves
-    it to `.old`; `Waves per step` shows 10. At starting world 1 the log
-    shows `world=2` at wave 11, `world=6` at 51, `world=20.9` at 200 and
-    `world=25.9` at 210 (with no fast kill, `raised=+0`).
+127. **Waves per step back to 25** (schema 55; it was 10 in v0.12.0,
+    schema 54): loading a schema 54 config moves it to `.old`; `Waves per
+    step` shows 25. At starting world 1 the log shows `world=2` at wave
+    26, `world=5` at 101, `world=8.96` at 200 and `world=13.96` at 210
+    (with no fast kill, `raised=+0`).
 
 ## Conventions
 
