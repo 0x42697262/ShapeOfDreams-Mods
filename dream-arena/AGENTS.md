@@ -138,6 +138,8 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
     with one hero standing, or with the lobby's `Enable votes` off, both go
     at once. The settings window has no `Skip travel vote`; old config files
     are moved to `.old`.
+21. **Sidebar names on one line** (library): every page name in the
+    settings sidebar sits on one line, none wrapped or cut off.
 
 ## Conventions
 

@@ -4,7 +4,9 @@ namespace SodLib.UI;
 
 internal static class SettingsLayout
 {
-	public const float SidebarWidth = 260f;
+	public const float SidebarWidth = 280f;
+
+	public const float SidebarMinTextScale = 0.75f;
 	public const float SidebarGap = 28f;
 	public const int SidebarPadding = 12;
 	public const float SidebarItemSpacing = 4f;

@@ -189,6 +189,10 @@ internal sealed class SettingsPanel
 		label.SetText(ModText.PageTitle(page));
 		label.raycastTarget = false;
 		label.SetExpandWidth(expand: true);
+		label.textWrappingMode = TextWrappingModes.NoWrap;
+		label.fontSizeMax = label.fontSize;
+		label.fontSizeMin = label.fontSize * SettingsLayout.SidebarMinTextScale;
+		label.enableAutoSizing = true;
 
 		Button button = item.GetComponent<Button>();
 		button.targetGraphic = background;

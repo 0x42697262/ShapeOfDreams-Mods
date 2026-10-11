@@ -1188,6 +1188,9 @@ Each answer still needs to be seen working:
     come after the last monster. Pain minibosses still spawn, the wave only
     clears when every boss is dead, and the heroic fast kill still
     measures. Chance 100: every boss is early; 0: none.
+111. **Sidebar names on one line** (library): in the settings panel
+    "Environments" sits on one line at the same size as "Fast clear", and
+    no page name wraps or is cut off.
 
 ## Conventions
 

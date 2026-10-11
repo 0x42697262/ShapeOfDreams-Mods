@@ -40,7 +40,7 @@ mode, or the last one to patch wins.
 | `WindowNote` | The line under the settings window's title |
 | `NoticeColor` | The mod's chat color for `SharedMessages.Notice` |
 | `TickFailed` | Logged (throttled) when the session's per-frame tick throws |
-| `PageTitle(Enum)`, `PageSubtitle(Enum)` | Sidebar name and subtitle of a settings page; cast to the mod's page enum |
+| `PageTitle(Enum)`, `PageSubtitle(Enum)` | Sidebar name and subtitle of a settings page; cast to the mod's page enum. A sidebar name never wraps: one that doesn't fit the 280-unit sidebar shrinks to fit, down to 75% of the normal size |
 
 ### `src/ModHooks.cs` (`partial class SodLib.ModHooks`)
 
