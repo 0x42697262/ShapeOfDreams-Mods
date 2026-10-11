@@ -23,9 +23,17 @@ connected to the current node, else the first. Log: `camp rift now leads
 straight to node N.`
 
 `CampRift` is shared with Last Stand (`library/src/Arena/CampRift.cs`,
-checked every `SharedTuning.CampRiftCheckSeconds`). Dream Arena creates it
-as `new CampRift(false)`, so the world map keeps every node; Last Stand
-passes true and hides all but the camp and the arena.
+checked every `SharedTuning.CampRiftCheckSeconds`).
+
+**The world map shows only the camp and the arena**, as in Last Stand. Once
+the rift has its node, `CampRift` calls the library's
+`WorldMapNodes.HideAllBut`: every other node's map position is mirrored to
+a negative x (`-1 - x`), which makes it a sidetrack node, and written back to
+the synced `ZoneManager.nodes`. The map (M) and the travel vote's map skip
+sidetrack nodes, on vanilla clients too. Hidden nodes are also skipped by
+`TryFindArenaNode`, so the rift keeps the same arena node all run, and a
+restart (which travels to the camp) changes nothing. Log: `world map: hid N
+node(s); only the camp and the arena (node K) are shown.`
 
 The old build also replaced the rift's prompt text by intercepting
 `DewLocalization.GetUIValue`. That lookup runs on each client, so only the

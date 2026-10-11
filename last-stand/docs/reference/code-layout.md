@@ -32,8 +32,8 @@ change note, and shared text, game names and tuning.
 
 It also holds the arena basics (`library/src/Arena`, `library/src/Game`,
 `library/src/Patches`): `ArenaLocator` (arena node, camp node, standing in
-the arena), the camp rift (`CampRift`, created with `true` to hide the other
-map nodes through `WorldMapNodes`), the room override and modifier strip
+the arena), the camp rift (`CampRift`, which also hides the other map nodes
+through `WorldMapNodes`), the room override and modifier strip
 (`ArenaRooms`, run from `WorldGenPatch`), cleared loading (`PlainArena`,
 `PlainArenaPatches`), the cutscene skip (`CutscenePatch`), the arena center
 (`ArenaLayout`, `ArenaPoints`), the arrival ring (`HeroStaging`), live heroes

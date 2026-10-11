@@ -32,7 +32,7 @@ difference was settled:
 | Hero ring | `HeroStaging`, LS `PlayerRoster.FillLiveHeroes` | LS's pure `PlaceAround`, with the ring share and minimum as parameters (LS 0.5 / 2 m, DA 0.75 / 1 m); `LiveHeroes.Fill`. DA keeps a thin `ArenaStaging` wrapper for its log line. |
 | Plain arena | `PlainArena`, its two patches | Static, with `Enabled` (DA's setting); both patches gated on `ModMode.IsHosting()` (DA's `StartRoom` postfix was ungated). |
 | Room override | LS `ArenaRoomOverride` + `WorldGenPatch`, DA `ArenaRooms` + `WorldGenPatch`, LS `ModifierGate.Strip` | `ArenaRooms.Apply(room, strip)` with DA's try/catch and blank-room fallback, LS's arena-node check, one log line. The patch calls `OnWorldGenerated`; DA keeps its `Force arena room` toggle there. LS's `ModifierGate` still blocks later additions. |
-| Camp rift | `CampRift` (both), LS `WorldMapNodes` | LS's version on the shared locator; map hiding is a constructor flag (LS on, DA off). |
+| Camp rift | `CampRift` (both), LS `WorldMapNodes` | LS's version on the shared locator. Both mods hide the other map nodes (DA used to show them all). |
 | Revives | LS `HeroSouls.ReviveAll`/`AnyHeroStanding`, DA `Revives.ReviveAll` | `HeroRevival`: LS's safe loop (copy, skip inactive). DA's restart and console use it at full health. |
 | Cutscene skip | `CutscenePatch` (both) | One patch asking the mod's `SkipCutscenes()` (LS: in an arena node; DA: its setting). |
 
@@ -52,8 +52,6 @@ difference was settled:
 
 ## Candidates not shared yet
 
-- Map hiding: `WorldMapNodes` is in the library; DA could turn it on with
-  `new CampRift(true)` (a setting) to show only camp and arena.
 - `Arena/ModifierGate.cs` (LS): DA strips modifiers but doesn't block later ones.
 - Hero level: LS `PlayerRoster.SetHeroLevel` (cheat, clamped to `maxLevel`,
   through `PlayerRoster.ForEachHero`) and DA `Heroes/HeroBoost` `Player

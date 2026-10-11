@@ -26,9 +26,8 @@ prompt. The library's `CampRift` does this once a second while in camp
 (`SharedTuning.CampRiftCheckSeconds`). `ArenaLocator.TryFindArenaNode` picks
 the node: it skips the current node, the camp and sidetrack nodes, and
 prefers one connected to the current node, else the first. Log: `camp rift
-now leads straight to node N.` Last Stand creates it as `new
-CampRift(true)`, which also hides the other world-map nodes (below); Dream
-Arena passes false.
+now leads straight to node N.` It also hides the other world-map nodes
+(below), in both mods.
 
 In multiplayer, a confirmed travel normally still goes to a vote, which opens
 the world map for everyone with a 6-second countdown. The host decides that

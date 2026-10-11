@@ -13,8 +13,9 @@ camp, test it on a dummy, then take the rift and fight.
 - **PvP with vanilla friends.** Only the host needs the mod. Friends join on
   an unmodded game and see hostile nameplates, damage and everything else.
 - **Free For All, Two Teams or Peaceful.** Teams split by join order.
-- **Camp and arena.** Camp is safe; the arena past the rift is live. Chat
-  tells everyone when the arena goes live and when they're back in camp.
+- **Camp and arena.** Camp is safe; the arena past the rift is live, and the
+  world map shows only those two. Chat tells everyone when the arena goes
+  live and when they're back in camp.
 - **A real arena.** Every room past camp is one boss room (the Lone King's
   Zenith by default, any of 8), loaded cleared and lit, with no boss,
   monsters, props or room modifiers. Players arrive in a ring inside it.

@@ -17,7 +17,7 @@ internal sealed class LastStandSession
 
 	private readonly ArenaArrival _arrival = new ArenaArrival();
 
-	private readonly CampRift _campRift = new CampRift(true);
+	private readonly CampRift _campRift = new CampRift();
 
 	private readonly RunGoal _goal = new RunGoal();
 

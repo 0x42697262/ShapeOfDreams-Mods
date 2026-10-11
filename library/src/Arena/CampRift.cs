@@ -2,14 +2,8 @@ namespace SodLib.Arena;
 
 internal sealed class CampRift
 {
-	private readonly bool _hideOtherMapNodes;
 	private double _nextCheckAt;
 	private int _target = ArenaLocator.NoNode;
-
-	public CampRift(bool hideOtherMapNodes)
-	{
-		_hideOtherMapNodes = hideOtherMapNodes;
-	}
 
 	public void Tick(double now)
 	{
@@ -26,10 +20,7 @@ internal sealed class CampRift
 			return;
 		}
 
-		if (_hideOtherMapNodes)
-		{
-			WorldMapNodes.HideAllBut(zones, target);
-		}
+		WorldMapNodes.HideAllBut(zones, target);
 
 		if (rift.nextNodeIndex == target && _target == target)
 		{

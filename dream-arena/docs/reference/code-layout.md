@@ -64,7 +64,7 @@ reaches both mods; build both (`./check.sh`).
 
 It also holds the arena basics (`library/src/Arena`, `library/src/Game`,
 `library/src/Patches`): `ArenaLocator` and `ArenaPhase` (phase, camp node,
-arena node), the direct rift (`CampRift`, created with `false`), the room
+arena node), the direct rift and map hiding (`CampRift`, `WorldMapNodes`), the room
 override and modifier removal (`ArenaRooms`, run from `WorldGenPatch`),
 cleared loading (`PlainArena`, `PlainArenaPatches`), the cutscene skip
 (`CutscenePatch`), the arena center (`ArenaLayout`, `ArenaPoints`), the

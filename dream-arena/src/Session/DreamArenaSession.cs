@@ -14,7 +14,7 @@ internal sealed class DreamArenaSession
 {
 	private readonly PhaseWatch _phase = new PhaseWatch();
 	private readonly PveSweep _pve = new PveSweep();
-	private readonly CampRift _campRift = new CampRift(false);
+	private readonly CampRift _campRift = new CampRift();
 	private readonly CampRemnants _remnants = new CampRemnants();
 	private readonly TrainingDummy _dummy = new TrainingDummy();
 	private readonly HeroBoost _heroBoost = new HeroBoost();

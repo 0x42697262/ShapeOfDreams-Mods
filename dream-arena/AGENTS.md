@@ -128,6 +128,11 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
     intro cutscenes` off plays the intro, `Force arena room` off leaves
     world gen alone, the camp rift still leads to the arena, and
     `arena_revive` and `-restart` revive downed heroes.
+19. **World map:** in camp, M shows only the camp and the arena node on the
+    host and a vanilla client (log `world map: hid N node(s); only the camp
+    and the arena (node K) are shown.`). With `Skip travel vote` off, the
+    vote's map shows the same two. After `-restart` the rift still leads to
+    the same arena node.
 
 ## Conventions
 
