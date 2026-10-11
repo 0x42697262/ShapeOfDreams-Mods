@@ -139,7 +139,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Waves per hunt level / max hunt level (0 = no cap) | 5 / 0 |
 | Mirage | First wave / waves per new skin / chance | 30 / 10 / 20% |
 | | Chance grows from wave / every monster a Mirage from wave | 130 / 149 |
-| Dark urge | First wave / chance / curse strength | 176 / 20% / Potent (25% damage between players) |
+| Dark urge | First wave / chance / curse strength | 300 / 20% / Potent (25% damage between players) |
 | Environments | Chance per wave / last wave (0 = never stop) | 10% / 0 |
 | | Higher chance from wave / higher chance | 50 / 100% |
 | | Hunter zone chance / max per block / block size (from the first hunter wave) | 50% / 2 / 10 |

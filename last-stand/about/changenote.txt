@@ -10,7 +10,7 @@
 [*]Heroic fast kill target is now 90 s per boss (was 15 s), and one fast kill can raise boss health up to x50 (was x10).
 [*]New: empowered waves. From wave 200, every 10th wave gives every monster, bosses included, x1.5 health and damage. Set "Empowered health and damage (x)" to 1 to turn it off.
 [*]New: from wave 125, each heroic boss enters at a random moment up to 60 s after the wave's first spawn instead of last (or after the last monster if spawning ends first). Set "Heroic boss entrance window (s)" to 0 to turn it off.
-[*]The dark urge notice is now red and shows its chance.
+[*]Dark urge now starts at wave 300 (was 176), and its notice is now red and shows its chance.
 [*]Hunters, fast clear and environments now have their own settings pages.
 [/list]
 

@@ -507,7 +507,7 @@ public class LastStandConfig : ModConfig
 	[Header(ConfigText.FriendlyFireHeader)]
 	[LabelText(ConfigText.FriendlyFireFromWaveLabel)]
 	[Description(ConfigText.FriendlyFireFromWaveDescription)]
-	public int friendlyFireFromWave = 176;
+	public int friendlyFireFromWave = 300;
 
 	[LabelText(ConfigText.FriendlyFireChanceLabel)]
 	[Description(ConfigText.FriendlyFireChanceDescription)]

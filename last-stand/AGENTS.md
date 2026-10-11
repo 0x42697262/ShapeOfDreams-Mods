@@ -828,15 +828,15 @@ Each answer still needs to be seen working:
     included) at wave 109, 224 at 111 and 264 at 130 (a surge: 528), and
     wave 110 totals 454 with its 6 minibosses.
 
-62. **Dark urge:** in co-op from wave 176, about 1 in 5 waves without a
+62. **Dark urge:** in co-op from wave 300 (schema 52; was 176), about 1 in 5 waves without a
     heroic boss log `dark urge: wave N curses every player with Potent Dark
     Urge`. Every player, on the host and on a vanilla client, gets the
     "cursed" message and a Dark Urge entry in the quest tracker on the right
     with no kill count. Heroes hurt each other at about 25% (less under half
     health), not 6%. A knock-out doesn't lift it. When the wave is cleared
     the curse is lifted for everyone (`curses lifted at the end of wave N`),
-    and nobody can hurt a teammate in the break. Heroic boss waves (200,
-    225…) and solo runs never get it. Old config files are moved to `.old`
+    and nobody can hurt a teammate in the break. Heroic boss waves (300,
+    325…) and solo runs never get it. Old config files are moved to `.old`
     (schema 21, when the default chance went from 50% to 20%).
 
 63. **Starting gold:** a new run, solo and in a lobby, logs `starting gold:
@@ -1168,7 +1168,7 @@ Each answer still needs to be seen working:
     never logs an environment; `laststand_wave 125` a few times logs one
     about half the time, with the bosses still entering, and the
     environment ends when the wave is cleared.
-108. **Dark urge notice in red:** in co-op at wave 176+ (or `First dark
+108. **Dark urge notice in red:** in co-op at wave 300+ (or `First dark
     urge wave` 1 and chance 100), the chat line `A dark urge takes hold
     (20% chance per wave): …` is red (`#ff4d4d`) on the host and a vanilla
     client, with the configured chance.
