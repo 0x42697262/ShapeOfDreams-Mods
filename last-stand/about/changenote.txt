@@ -7,7 +7,7 @@
 [*]Hunters and hunter zones now start at wave 100 (was 101).
 [*]Hunt level now rises every 5 waves (was 10) and has no cap (was 6): level 1 at wave 100, 11 at 150, 21 at 200. Set "Max hunt level" above 0 to cap it again.
 [*]Heroic bosses now come at wave 50, 100, 125, 150, 175 … (was 49, 99, 124 …), one more boss each boss wave: 1, 2, 3, 4, 5 … (was one more every 50 waves).
-[*]Heroic fast kill target is now 90 s per boss (was 15 s).
+[*]Heroic fast kill target is now 90 s per boss (was 15 s), and one fast kill can raise boss health up to x50 (was x10).
 [*]New: empowered waves. From wave 200, every 10th wave gives every monster, bosses included, x1.5 health and damage. Set "Empowered health and damage (x)" to 1 to turn it off.
 [*]New: from wave 125, each heroic boss enters at a random moment up to 60 s after the wave's first spawn instead of last (or after the last monster if spawning ends first). Set "Heroic boss entrance window (s)" to 0 to turn it off.
 [*]The dark urge notice is now red and shows its chance.

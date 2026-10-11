@@ -437,7 +437,7 @@ public class LastStandConfig : ModConfig
 
 	[LabelText(ConfigText.HeroicFastKillMaxStepLabel)]
 	[Description(ConfigText.HeroicFastKillMaxStepDescription)]
-	public float heroicFastKillMaxStep = 10f;
+	public float heroicFastKillMaxStep = 50f;
 
 	[PickMany(ChoiceSet.HeroicBosses)]
 	[LabelText(ConfigText.HeroicBossTypesLabel)]

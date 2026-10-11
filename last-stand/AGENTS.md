@@ -1069,7 +1069,7 @@ Each answer still needs to be seen working:
     `laststand_wave 50` and kill the boss fast.
     At the wave's clear the log shows `heroic fast kill: wave 50's heroic
     bosses took D damage in their best 5 s, a kill in P s per boss at that
-    rate (target 90 s); this step xS` with S = 90 / P (at most 10), and
+    rate (target 90 s); this step xS` with S = 90 / P (at most 50), and
     chat says it in red. Hitting once, waiting, then bursting still gives
     a short P. `laststand_wave 100`: the `wave 100:` line shows
     `heroicKill=xS` and `heroic boss: wave 100 ... maxHealth=` is about S
@@ -1161,7 +1161,8 @@ Each answer still needs to be seen working:
 106. **Heroic fast kill at 90 s** (schema 48): a new config shows `Heroic
     fast kill: seconds per boss` 90. Kill the wave 50 boss in well under
     90 s of burst: the log shows `(target 90 s); this step xS` with S =
-    90 / P, at most 10, and wave 100's bosses show `heroicKill=xS`.
+    90 / P, at most 50, and wave 100's bosses show `heroicKill=xS`.
+    A new config (schema 51) shows `Heroic fast kill: largest step` 50.
 107. **Environments on heroic waves from 100:** a new config shows
     `Environments on heroic boss waves from wave` 100. `laststand_wave 50`
     never logs an environment; `laststand_wave 125` a few times logs one
