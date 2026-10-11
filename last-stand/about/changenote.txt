@@ -1,4 +1,5 @@
 [b]v0.12.0[/b]
+Monsters climb the worlds faster.
 
 [b]Updated[/b]
 [list]

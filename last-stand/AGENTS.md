@@ -43,12 +43,12 @@ Last Stand's own, logs `workshop: uploading item N from <path>.` and reads
 (`WorkshopStartPatch`, `WorkshopSubmitPatch` and `WorkshopChangeNote`,
 in the shared library, so every mod gets them). Both are plain Steamworks
 calls made in that order by `DewMod.UpdateItem`. It used to be a prefix on
-`DewMod.UpdateItem` itself, an async method. **Known issue:** since
-v0.9.0 the note hasn't reached Steam even when the log said `attached`
-(v0.10.0), and v0.11.0 logged no `workshop:` line at all; the notes from
-v0.9.0 to v0.11.0 were pasted in by hand on the item's Change Notes page.
-The cause isn't found yet; until it is, check the Change Notes page after
-each upload and paste the note in if it's missing. These patches work outside
+`DewMod.UpdateItem` itself, an async method. From v0.9.0 to
+v0.11.0 the note didn't reach Steam (v0.10.0 even logged `attached`;
+v0.11.0 logged no `workshop:` line at all) and was pasted in by hand.
+v0.12.0, the first upload with the Steamworks hooks, went up with its
+note (`workshop: uploading item ...` then `attached ... (255
+characters)`). Still check the Change Notes page after each upload. These patches work outside
 Last Stand mode, since uploads happen from the title screen. `pack.sh`
 copies the file into the pack and prints it. Write the next update's note
 in `about/changenote.txt` (Steam BBCode) before packing, and commit it. It

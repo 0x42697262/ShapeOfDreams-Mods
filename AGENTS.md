@@ -210,7 +210,9 @@ Hard rules for all code here, the library included.
   upload, and paste it in by hand if it's missing). It covers only what
   changed since the last upload, written like a dev's patch notes, not a
   press release. The first line is the version in bold, `[b]vX.Y.Z[/b]`,
-  matching `modVer`. Then up to three sections, in this order and only the
+  matching `modVer`. The next line is a one-sentence summary of the
+  release in plain text, so two bold lines never sit right on top of each
+  other. Then up to three sections, in this order and only the
   ones with entries, each a bold heading on its own line followed by a
   Steam BBCode `[list]` of one-line bullets:
   - `[b]New[/b]`: new features. If one is on by default, say how to turn
@@ -225,6 +227,7 @@ Hard rules for all code here, the library included.
   host needs to update.` Example:
   ```
   [b]v0.12.0[/b]
+  A random arena option, faster monster climb and a lobby fix.
 
   [b]New[/b]
   [list]
