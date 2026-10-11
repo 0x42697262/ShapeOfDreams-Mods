@@ -194,6 +194,7 @@ internal sealed class SessionSettings
 			DarkUrgeStrength = StrengthFrom(config.darkUrgeStrength),
 
 			Environments = CadenceFrom(config.environmentFromWave, config.environmentIntervalWaves),
+			EnvironmentChance = ToChance(config.environmentChancePercent),
 			EnvironmentUntilWave = config.environmentUntilWave,
 			EnvironmentTypes = KnownChoices(config.environmentTypes, ChoiceSet.Environments),
 		};

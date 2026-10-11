@@ -329,7 +329,8 @@ internal sealed class WaveDirector
 
 		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
 			_catalog.HeroicBossCount);
-		return WaveSchedule.Plan(_cycle.CurrentWave + 1, PlayerRoster.PlayerCount(), settings, content)
+		return WaveSchedule.Plan(_cycle.CurrentWave + 1, PlayerRoster.PlayerCount(), settings, content,
+				WaveSchedule.NoEnvironmentRoll)
 			.FullStrengthMonsters;
 	}
 
@@ -337,7 +338,8 @@ internal sealed class WaveDirector
 	{
 		WaveContent content = new WaveContent(_catalog.ForeignTypeCount, _catalog.MirageSkinCount,
 			_catalog.HeroicBossCount);
-		_plan = WaveSchedule.Plan(_cycle.CurrentWave, PlayerRoster.PlayerCount(), settings, content);
+		_plan = WaveSchedule.Plan(_cycle.CurrentWave, PlayerRoster.PlayerCount(), settings, content,
+			UnityEngine.Random.value);
 		_plan.FastClearMultiplier = settings.FastClear.MultiplierFor(_fastClear.Stacks);
 		_plan.HeroicFastClearMultiplier = settings.FastClear.HeroicBossMultiplierFor(_fastClear.Stacks);
 		_plan.HeroicKillMultiplier = settings.HeroicFastKill.MultiplierFor(_heroicFastKill.Multiplier);

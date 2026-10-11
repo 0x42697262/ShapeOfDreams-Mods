@@ -1,5 +1,7 @@
 [list]
 [*]The Last Stand button in the lobby settings now only shows in a Last Stand lobby, not in every lobby you host.
+[*]Environments now come by chance: every wave has a 10% chance of one, wave 1 included, never on heroic boss or Pain waves. Set "Environment chance (%)" to 0 to turn it off.
+[*]Sure environments now start at wave 106, every 10 waves (was every 10 waves from wave 6).
 [/list]
 
-Only the host needs to update.
+Settings are reset with this update (old file kept as .old). Only the host needs to update.

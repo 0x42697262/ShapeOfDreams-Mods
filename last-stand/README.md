@@ -37,8 +37,10 @@ essences and turns what you collect into upgrades.
   weakest worlds first. From wave 101, a growing share of every wave's
   monsters are **hunters**, until every monster is one from wave 130 on, and
   every wave is a **hunter zone** with falling artillery that grows stronger
-  every 10 waves, except the environment waves (106, 116 …), where an
-  environment takes its place.
+  every 10 waves, except the environment waves (106, 116 …, and any wave
+  that rolls one), where an environment takes its place.
+- **Environments**, the game's room effects, can hit any wave (10% chance,
+  never on heroic boss or Pain waves) and always come on waves 106, 116 …
 - **Mirage skins** appear from wave 30, weakest first, a stronger one every
   10 waves. From wave 130 their chance grows until every monster wears one
   from wave 149.

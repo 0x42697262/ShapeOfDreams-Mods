@@ -682,20 +682,25 @@ internal static class ConfigText
 
 	public const string PowerfulDarkUrge = "Powerful: 40% damage between players";
 
-	public const string EnvironmentFromWaveLabel = "First environment wave";
+	public const string EnvironmentChanceLabel = "Environment chance (%)";
 
-	public const string EnvironmentFromWaveDescription =
-		"First environment: a random room effect that lasts until the wave is cleared.";
+	public const string EnvironmentChanceDescription =
+		"Chance per wave of an environment: a random room effect that lasts until the wave is cleared. " +
+		"Never on heroic boss or Pain waves.";
 
-	public const string EnvironmentIntervalLabel = "Waves between environments";
+	public const string EnvironmentFromWaveLabel = "First sure environment wave";
 
-	public const string EnvironmentIntervalDescription = "Environment every N waves.";
+	public const string EnvironmentFromWaveDescription = "First wave that always gets an environment.";
+
+	public const string EnvironmentIntervalLabel = "Waves between sure environments";
+
+	public const string EnvironmentIntervalDescription = "Sure environment every N waves.";
 
 	public const string EnvironmentUntilWaveLabel = "Last environment wave";
 
 	public const string EnvironmentUntilWaveDescription =
 		"Last environment wave. 0 = never stop. Replaces the hunter zone on its wave (hunters still " +
-		"spawn). Never on Pain waves.";
+		"spawn).";
 
 	public const string EnvironmentTypesLabel = "Environment types";
 

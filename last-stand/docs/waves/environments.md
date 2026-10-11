@@ -1,8 +1,21 @@
 # Environments
 
-Waves 6, 16, 26 … (`First environment wave` 6, every 10 waves, with no
-`Last environment wave` by default) each bring an **environment**: one of the
-game's own room modifiers, picked at random from `Environment types`. It goes
+An **environment** is one of the game's own room modifiers, picked at random
+from `Environment types`. Which waves get one:
+
+- **Any wave, by chance.** Every wave rolls `Environment chance (%)` (10% by
+  default) when it starts, wave 1 included.
+- **Sure waves.** Waves 106, 116, 126 … (`First sure environment wave` 106,
+  every 10 waves) always get one.
+- **Never** on a heroic boss wave (49, 99, 124 …) or a Pain wave, and never
+  after `Last environment wave` (0 by default, never stop).
+
+`WaveSchedule.EnvironmentChance` gives the wave's chance (0, the setting, or
+1 on a sure wave) and `WaveSchedule.Plan` compares it with a roll the
+director passes in (`UnityEngine.Random.value`), so the schedule stays plain
+logic. A wave resumed after a mod reload rolls again.
+
+The environment goes
 live when the wave starts and is removed when the wave is cleared, so the break
 after it is plain. Chat says which one came ("The arena changes: …") and
 when it fades. All of these are main modifiers, like the hunter zone and the
@@ -10,12 +23,12 @@ Aura of Pain, and the game keeps only one main modifier per room, so adding
 one would replace the other:
 
 - **From wave 101 the environment replaces the hunter zone.** Waves 106,
-  116, 126 … get an environment and no hunter zone (`WaveSchedule.Plan` sets
-  their hunt level to 0), so no artillery and no hunter stat bonus. Hunters
+  116, 126 …, and any later wave that rolls one, get an environment and no
+  hunter zone (`WaveSchedule.Plan` sets their hunt level to 0), so no artillery and no hunter stat bonus. Hunters
   still make up their usual share of the wave, and the hunt level of the next
   hunter zone wave is the same as without the environment.
-- **A wave with Pain minibosses never gets one.** With the defaults they
-  never meet (Pain every 20 waves from 20).
+- **A wave with Pain minibosses never gets one,** since the Aura of Pain
+  is a main modifier too. Heroic boss waves never get one either.
 
 It's added the same way as the hunter zone: `ZoneManager.AddModifier` on the
 arena node, through `ModifierGate.AddOwn` so the plain-arena gate lets it

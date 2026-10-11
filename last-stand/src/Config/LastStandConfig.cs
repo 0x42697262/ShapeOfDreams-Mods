@@ -442,9 +442,13 @@ public class LastStandConfig : ModConfig
 
 	[Page(SettingsPage.Events)]
 	[Header(ConfigText.EnvironmentHeader)]
+	[LabelText(ConfigText.EnvironmentChanceLabel)]
+	[Description(ConfigText.EnvironmentChanceDescription)]
+	public float environmentChancePercent = 10f;
+
 	[LabelText(ConfigText.EnvironmentFromWaveLabel)]
 	[Description(ConfigText.EnvironmentFromWaveDescription)]
-	public int environmentFromWave = 6;
+	public int environmentFromWave = 106;
 
 	[LabelText(ConfigText.EnvironmentIntervalLabel)]
 	[Description(ConfigText.EnvironmentIntervalDescription)]

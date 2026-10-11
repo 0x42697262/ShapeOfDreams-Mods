@@ -17,7 +17,7 @@ Hold one boss arena against waves that never stop. Every wave is bigger and stro
 [*][b]Minibosses[/b] every 10 waves, and [b]Pain minibosses[/b] every 20 that hurt the whole party until they fall.
 [*][b]Heroic bosses[/b], the game's real zone bosses, join at wave 49, 99, 124, 149… and drop Corrupted Chaos rewards.
 [*][b]Monsters from other worlds[/b] join the pool as you go. Mirage skins, hunters and hunter zones with falling artillery arrive in the late waves.
-[*][b]Environments[/b] change the rules for a wave every 10 waves.
+[*][b]Environments[/b] can change the rules of any wave (10% chance), and every 10 waves from wave 106.
 [*][b]Shrines on the arena's edge:[/b] Dream Well, Altar of Cleansing, Shrine of Ascension, Maw of Doom, Shrine of Destiny, Hatred Remnant and Reminiscence of Luck.
 [*][b]Gold prices rise every wave[/b] (5% compounding, until wave 100), so spend it while it's cheap.
 [*][b]Optional difficulty:[/b] Curse to start. Each wave waits until a player takes a curse at the Hatred Remnant, and that curse falls on everyone.

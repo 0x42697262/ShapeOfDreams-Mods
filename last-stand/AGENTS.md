@@ -802,12 +802,13 @@ Each answer still needs to be seen working:
     not split by players (×1, ×1.25, ×1.75 by strength; see check 94). The curse quest on the host and on a vanilla
     client shows a kill count (never rooms) from the start, counts down with
     kills, and the curse ends at 0.
-57. **Environments:** waves 6, 16 … 96, 106, 116 … each log `environment:
-    wave N brings RoomMod_…` and chat names it; wave 104 has none. The effect shows for the
+57. **Environments:** waves 106, 116 … each log `environment:
+    wave N brings RoomMod_…` and chat names it; other waves get one only by
+    chance (check 101). The effect shows for the
     host and a vanilla client, and stops when the wave is cleared (log
     `environment: … removed`, chat "… fades"). The next wave has no leftover
     status effects, hazards or slowed music (Gravity Training). Try
-    `laststand_wave 4` several times to see different ones.
+    `laststand_wave 106` several times to see different ones.
 58. **Hazards in a cleared arena:** Crimson Flame Demon, Gaze of the Abyss,
     Hazardous Weather, Giant Ink Drop and Warped Space actually fire during
     the wave (the room is held in combat), and stop after it. No `blocked the
@@ -1126,6 +1127,13 @@ Each answer still needs to be seen working:
 100. **Travel vote skip in the library:** in a Last Stand lobby with two
     players standing, the camp rift still travels at once with no vote, also
     with Dream Arena loaded (whose lobbies vote).
+101. **Environment chance** (schema 46): a new config shows `Environment
+    chance (%)` 10 and `First sure environment wave` 106. Over waves 1-100
+    (`laststand_wave N` a few times) about 1 wave in 10 logs `environment:
+    wave N brings RoomMod_…`, wave 1 included, and never wave 49 or 99
+    (heroic) or a Pain wave (20, 40 …). Waves 106, 116 … always get one.
+    About 1 in 10 of the other waves from 101 get one too, with `huntLevel=0`
+    and no artillery. Set the chance to 0: only 106, 116 … get one.
 
 ## Conventions
 

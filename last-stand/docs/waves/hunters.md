@@ -15,7 +15,8 @@
   heroic bosses, and heroes stop gaining exp from kills. Items still drop
   (hunters use the regular monsters' loot).
 - **Hunter zones** run on every wave from the first hunter wave on, except
-  [environment](environments.md) waves (106, 116 …), where the environment takes
+  [environment](environments.md) waves (106, 116 …, and any wave that rolls
+  one), where the environment takes
   their place. For each wave, the arena gets the game's `RoomMod_Hunted` modifier
   through `ZoneManager.AddModifier`, which adds it to the live room and syncs it
   to clients. Its artillery, small and big meteors aimed at the heroes, comes

@@ -113,6 +113,8 @@ internal sealed class WaveSettings
 
 	public Cadence Environments { get; set; }
 
+	public double EnvironmentChance { get; set; }
+
 	public int EnvironmentUntilWave { get; set; }
 
 	public IReadOnlyList<string> EnvironmentTypes { get; set; }
