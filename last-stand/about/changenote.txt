@@ -1,3 +1,4 @@
+[b]v0.9.0[/b]
 [list]
 [*]The Last Stand button in the lobby settings now only shows in a Last Stand lobby, not in every lobby you host.
 [*]Environments now come by chance: waves 1-49 have a 10% chance of one, wave 1 included, never on heroic boss or Pain waves. Set "Environment chance (%)" to 0 to turn it off.
