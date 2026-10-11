@@ -30,7 +30,7 @@ essences and turns what you collect into upgrades.
   (25, 50, 75…). Each boss wave brings one more: 1 at 25, 2 at 50, 3 at
   75, 4 at 100, up to 10. Each drops 2 Corrupted Chaos rewards, the kind
   Pain minibosses leave, and the stardust a boss kill gives in a normal
-  run. Kill them too fast (all of a wave's bosses in under 90 s at your
+  run. Kill them too fast (all of a wave's bosses in under 60 s at your
   best burst) and the difficulty of every monster rises from the next
   wave on, bosses and mobs alike (stats only; loot and gold stay the
   same). If the player who earned that leaves, it goes back down, and

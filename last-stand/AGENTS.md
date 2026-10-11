@@ -1041,12 +1041,12 @@ Each answer still needs to be seen working:
     defaults after many changes shows at most 6 lines plus `...and N more
     setting(s) changed.` Apply with nothing changed sends nothing. On the
     title screen, or as a client, only `settings:` log lines appear.
-92. **Heroic fast kill** (90 s for all bosses since schema 53, see checks
+92. **Heroic fast kill** (60 s for all bosses since schema 57, 90 in 53 to 56, see checks
     106 and 116): `laststand_wave 50` and kill both bosses fast.
     At the wave's clear the log shows `heroic fast kill: wave 50's heroic
     bosses took D damage in their best 5 s, all of them dead in P s at that
-    rate (target 90 s); this step xS` with P the time for both bosses
-    together and S = 90 / P (at most 100), and chat says it in red.
+    rate (target 60 s); this step xS` with P the time for both bosses
+    together and S = 60 / P (at most 100), and chat says it in red.
     Hitting once, waiting, then bursting still gives a short P.
     The line ends `boss health (largest x100) = +W world(s); every
     monster is now +R world(s) up.` `laststand_wave 75`: the `wave 75:`
@@ -1135,9 +1135,9 @@ Each answer still needs to be seen working:
     from level 5 on. Set `Max hunt level` to 6: wave 200 logs 6.
 106. **Heroic fast kill at 90 s** (schema 48; for all bosses together and
     a largest step of 100 since schema 53): a new config shows `Heroic
-    fast kill: seconds for all bosses` 90 and `Heroic fast kill: largest
-    step` 100. Kill the wave 50 bosses in well under 90 s of burst: the log
-    shows `(target 90 s); this step xS` with S = 90 / P, at most 100, and
+    fast kill: seconds for all bosses` 60 and `Heroic fast kill: largest
+    step` 100. Kill the wave 50 bosses in well under 60 s of burst: the log
+    shows `(target 60 s); this step xS` with S = 60 / P, at most 100, and
     wave 75 shows `raised=+R` above 0.
 107. **Environments on heroic waves from 100:** a new config shows
     `Environments on heroic boss waves from wave` 100. `laststand_wave 50`
@@ -1204,8 +1204,8 @@ Each answer still needs to be seen working:
     the line shows `raised=+0`, and a wave 100 boss's `maxHealth=` is
     about 9× a world 1 boss of the same type (world 4.96, Nightmare, solo).
 116. **Heroic fast kill as a world raise for every monster** (schema 53):
-    kill the wave 25 boss well under 90 s of burst. The log's
-    step is 90 / P (at most 100) and `= +W world(s)`. From wave 26 every
+    kill the wave 25 boss well under 60 s of burst. The log's
+    step is 60 / P (at most 100) and `= +W world(s)`. From wave 26 every
     wave logs `raised=+W` and a `world=` W higher than the schedule, and
     a regular monster and a miniboss have clearly more `maxHealth` than in
     a run without the fast kill. Gold per kill, loot levels and shop
@@ -1275,6 +1275,10 @@ Each answer still needs to be seen working:
     shows 5. `laststand_wave 200` logs `world=8.96`, wave 205 `world=9.96`,
     wave 210 `world=10.96`; the wave 200 announcement says "every 5
     wave(s)".
+129. **Fast kill target 60 s** (schema 57): `Heroic fast kill: seconds
+    for all bosses` shows 60. Kill the wave 25 boss: the log says `(target
+    60 s)` and the step is 60 / P; a projection between 60 and 90 s now
+    logs `no change.`
 
 ## Conventions
 

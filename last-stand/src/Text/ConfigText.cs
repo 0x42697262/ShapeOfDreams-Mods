@@ -145,7 +145,7 @@ internal static class ConfigText
 	public const string HeroicFastKillSecondsDescription =
 		"After a boss wave, the party's best burst is turned into the time to kill all of that wave's heroic " +
 		"bosses. Under this, the difficulty (world) of every monster rises until that kill would take this " +
-		"long: a 30 s kill at 90 needs x3 boss health. Only drops when a player who earned it leaves. 0 = off.";
+		"long: a 20 s kill at 60 needs x3 boss health. Only drops when a player who earned it leaves. 0 = off.";
 
 	public const string HeroicFastKillBurstLabel = "Heroic fast kill: burst window (s)";
 

@@ -99,9 +99,9 @@ ability that allows cooldown reduction. Haste is a normal synced stat. It's
 applied one frame after the spawn, once the game's difficulty bonus is in.
 
 **Fast kills raise every monster.** Heroic bosses have a check of their
-own, `Heroic fast kill: seconds for all bosses`, 90 by default: killing
-all of a wave's heroic bosses together shouldn't take less than 90
-seconds of the party's best damage. When it does, the difficulty (world)
+own, `Heroic fast kill: seconds for all bosses`, 60 by default (90 before
+schema 57): killing all of a wave's heroic bosses together shouldn't take
+less than 60 seconds of the party's best damage. When it does, the difficulty (world)
 of every monster rises from the next wave on: mobs, minibosses, Pain
 minibosses, hunters and heroic bosses. Only heroic bosses are measured;
 mobs aren't watched any more (fast clear was removed in schema 53). A
@@ -129,8 +129,8 @@ with very different health count by their real health, with no average.
 A fight shorter than the window uses its own length (first heroic hit to
 last), so a 2 s kill reads as 2 s, not 5. If the projection is under the
 target, the step is `target ÷ projection`, at most `Heroic fast kill:
-largest step` (×100; ×50 until schema 53, ×10 before schema 51): at 90, a
-30 s projection gives ×3. A projection at or over the target changes
+largest step` (×100; ×50 until schema 53, ×10 before schema 51): at 60, a
+20 s projection gives ×3. A projection at or over the target changes
 nothing, so it settles at the target, and the raise goes back down only
 when a player who earned it leaves ([Fast kill follows the
 players](pace-by-player.md)) or the setting goes to 0. Holding back
@@ -169,12 +169,12 @@ keeps them. With the setting at 0 the raise stops applying; set back
 above 0, it returns.
 
 Logs: `heroic fast kill: wave 50's heroic bosses took 41,203,118 damage in
-their best 5 s, all of them dead in 2.1 s at that rate (target 90 s); this
+their best 5 s, all of them dead in 2.1 s at that rate (target 60 s); this
 step x42.86 boss health (largest x100) = +W world(s); every monster is now
 +R world(s) up.`, or the same up to the target with `no change.`. Every
 `wave N:` line shows `world=X raised=+R`, where `world=` already includes
 R. Chat says the fast kill in red: "Your best burst would kill all of this
-wave's heroic bosses in Xs, faster than 90s. Difficulty rises from A to B
+wave's heroic bosses in Xs, faster than 60s. Difficulty rises from A to B
 for every monster." A is this wave's difficulty and B the same wave with
 the new raise; the next wave's "Difficulty: X.X" is B plus the schedule's
 rise for that wave.

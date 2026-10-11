@@ -126,7 +126,7 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Entrance delay | 3 s |
 | | Enter mid-wave from wave / entrance window | 125 / 60 s |
 | | Ability haste / more per later boss wave | +200 / +50 |
-| | Fast kill: seconds for all bosses / burst window / largest step | 90 s / 5 s / ×100 |
+| | Fast kill: seconds for all bosses / burst window / largest step | 60 s / 5 s / ×100 |
 | | Types | 6 zone bosses (checkboxes; none checked means all) |
 | | Corrupted Chaos rewards / dust / gold / item multiplier | 2 / 1000 / 200 / 2 |
 | | Heroic boss stardust (vanilla boss-kill amount) | on |
