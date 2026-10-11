@@ -36,6 +36,8 @@ internal static class ConfigText
 
 	public const string EnvironmentHeader = "Environments";
 
+	public const string FastClearHeader = "Fast clear";
+
 	public const string FriendlyFireHeader = "Dark urge";
 
 	public const string ItemDropsHeader = "Item drops";
@@ -685,7 +687,7 @@ internal static class ConfigText
 	public const string EnvironmentChanceLabel = "Environment chance (%)";
 
 	public const string EnvironmentChanceDescription =
-		"Chance per wave of an environment before the late chance starts: a random room effect that lasts " +
+		"Chance per wave of an environment before the higher chance starts: a random room effect that lasts " +
 		"until the wave is cleared. Never on heroic boss or Pain waves.";
 
 	public const string EnvironmentFromWaveLabel = "First sure environment wave";
@@ -696,24 +698,29 @@ internal static class ConfigText
 
 	public const string EnvironmentIntervalDescription = "Sure environment every N waves.";
 
-	public const string EnvironmentLateFromWaveLabel = "Late environment chance from wave";
+	public const string EnvironmentHighFromWaveLabel = "Higher environment chance from wave";
 
-	public const string EnvironmentLateFromWaveDescription =
-		"From this wave the late chance and the cap below replace the first chance.";
+	public const string EnvironmentHighFromWaveDescription =
+		"From this wave until the first hunter wave, the higher chance replaces the first one.";
 
-	public const string EnvironmentLateChanceLabel = "Late environment chance (%)";
+	public const string EnvironmentHighChanceLabel = "Higher environment chance (%)";
 
-	public const string EnvironmentLateChanceDescription = "Chance per wave from the late wave on.";
+	public const string EnvironmentHighChanceDescription = "Chance per wave from the wave above. 100 = every wave.";
 
-	public const string EnvironmentLateMaxPerBlockLabel = "Late max environments per block";
+	public const string EnvironmentHuntedChanceLabel = "Hunter zone environment chance (%)";
 
-	public const string EnvironmentLateMaxPerBlockDescription =
+	public const string EnvironmentHuntedChanceDescription =
+		"Chance per wave from the first hunter wave on. The environment replaces that wave's hunter zone.";
+
+	public const string EnvironmentHuntedMaxPerBlockLabel = "Hunter zone: max environments per block";
+
+	public const string EnvironmentHuntedMaxPerBlockDescription =
 		"Most environment waves per block, sure ones included, so the rest keep their hunter zone.";
 
-	public const string EnvironmentLateBlockWavesLabel = "Late block size (waves)";
+	public const string EnvironmentHuntedBlockWavesLabel = "Hunter zone: block size (waves)";
 
-	public const string EnvironmentLateBlockWavesDescription =
-		"Blocks start at the late wave: 101-110, 111-120 … by default.";
+	public const string EnvironmentHuntedBlockWavesDescription =
+		"Blocks start at the first hunter wave: 101-110, 111-120 … by default.";
 
 	public const string EnvironmentUntilWaveLabel = "Last environment wave";
 

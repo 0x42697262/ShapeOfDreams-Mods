@@ -3,18 +3,24 @@
 An **environment** is one of the game's own room modifiers, picked at random
 from `Environment types`. Which waves get one:
 
-- **Waves 1-100, by chance.** Every wave rolls `Environment chance (%)`
+- **Waves 1-49, by chance.** Every wave rolls `Environment chance (%)`
   (10% by default) when it starts, wave 1 included.
+- **Waves 50-100, every wave.** From `Higher environment chance from wave`
+  (50) the chance is `Higher environment chance (%)` (100), so every wave
+  without a heroic boss or Pain gets one.
 - **Sure waves.** Waves 106, 116, 126 … (`First sure environment wave` 106,
   every 10 waves) always get one.
-- **From wave 101, a higher chance with a cap.** Every other wave rolls
-  `Late environment chance (%)` (50%), but a block of 10 waves (101-110,
-  111-120 …; `Late environment chance from wave` 101, `Late block size`
-  10) has at most 4 environment waves (`Late max environments per block`),
-  the sure wave included. A chance wave is only rolled while the block's
-  environments so far plus its sure waves still to come are under the cap,
-  so the sure wave always fits and at least 6 waves of every 10 keep their
-  hunter zone. Set the late chance to 0 to get only the sure waves.
+- **Hunter zone waves, a lower chance with a cap.** From the first hunter
+  wave (`First hunter wave`, 101) every other wave rolls `Hunter zone
+  environment chance (%)` (50%), but a block of 10 waves (101-110, 111-120
+  …; `Hunter zone: block size` 10) has at most 4 environment waves
+  (`Hunter zone: max environments per block`), the sure wave included,
+  because each one takes that wave's hunter zone. A chance wave is only
+  rolled while the block's environments so far plus its sure waves still
+  to come are under the cap, so the sure wave always fits and at least 6
+  waves of every 10 keep their hunter zone. Set the chance to 0 to get only
+  the sure waves. This stage starts with the hunter zones, so moving
+  `First hunter wave` moves it too.
 - **Never** on a heroic boss wave (49, 99, 124 …) or a Pain wave, and never
   after `Last environment wave` (0 by default, never stop).
 

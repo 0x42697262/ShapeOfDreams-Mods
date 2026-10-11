@@ -26,8 +26,14 @@ internal static partial class ModText
 				return "Waves";
 			case SettingsPage.Monsters:
 				return "Monsters";
+			case SettingsPage.Hunters:
+				return "Hunters";
+			case SettingsPage.FastClear:
+				return "Fast clear";
 			case SettingsPage.Bosses:
 				return "Bosses";
+			case SettingsPage.Environments:
+				return "Environments";
 			case SettingsPage.Events:
 				return "Events";
 			case SettingsPage.Rewards:
@@ -46,11 +52,17 @@ internal static partial class ModText
 			case SettingsPage.Waves:
 				return "Pace, size and spawning.";
 			case SettingsPage.Monsters:
-				return "Scaling, other worlds, hunters and Mirage skins.";
+				return "Scaling, other worlds and Mirage skins.";
+			case SettingsPage.Hunters:
+				return "Hunters and hunter zones.";
+			case SettingsPage.FastClear:
+				return "What clearing a wave too fast costs.";
 			case SettingsPage.Bosses:
 				return "Minibosses, Pain minibosses and heroic bosses.";
+			case SettingsPage.Environments:
+				return "Room effects that last one wave.";
 			case SettingsPage.Events:
-				return "Environments and dark urge.";
+				return "Dark urge.";
 			case SettingsPage.Rewards:
 				return "Item drops, gold, dream dust and chaos rarity.";
 			default:

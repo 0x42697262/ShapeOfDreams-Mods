@@ -39,9 +39,10 @@ essences and turns what you collect into upgrades.
   every wave is a **hunter zone** with falling artillery that grows stronger
   every 10 waves, except the environment waves (106, 116 …, and any wave
   that rolls one), where an environment takes its place.
-- **Environments**, the game's room effects, can hit any wave (10% chance,
-  never on heroic boss or Pain waves) and always come on waves 106, 116 …
-  From wave 101 the chance is 50%, at most 4 environment waves in every 10.
+- **Environments**, the game's room effects, can hit any wave: 10% chance
+  until wave 49, every wave from 50 to 100, then 50% with at most 4
+  environment waves in every 10 (106, 116 … always), so most waves keep
+  their hunter zone. Never on heroic boss or Pain waves.
 - **Mirage skins** appear from wave 30, weakest first, a stronger one every
   10 waves. From wave 130 their chance grows until every monster wears one
   from wave 149.

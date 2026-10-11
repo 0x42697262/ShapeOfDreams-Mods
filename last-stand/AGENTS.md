@@ -1132,13 +1132,25 @@ Each answer still needs to be seen working:
     (`laststand_wave N` a few times) about 1 wave in 10 logs `environment:
     wave N brings RoomMod_…`, wave 1 included, and never wave 49 or 99
     (heroic) or a Pain wave (20, 40 …). Waves 106, 116 … always get one.
-102. **Late environment cap:** a new config shows `Late environment chance
-    (%)` 50, `Late max environments per block` 4 and `Late block size` 10.
-    Play waves 101-120 (`laststand_wave 101`, then `laststand_next` each wave): each block 101-110
-    and 111-120 has at most 4 `environment: wave N brings` lines, the sure
-    wave (106, 116) always among them; those waves log `huntLevel=0` with no
-    artillery, the rest are hunter zones. Set the late chance to 0: only
-    106 and 116 get one.
+102. **Hunter zone environment cap:** a new config shows `Hunter zone
+    environment chance (%)` 50, `Hunter zone: max environments per block` 4
+    and `Hunter zone: block size` 10. Play waves 101-120
+    (`laststand_wave 101`, then `laststand_next` each wave): each block
+    101-110 and 111-120 has at most 4 `environment: wave N brings` lines,
+    the sure wave (106, 116) always among them; those waves log
+    `huntLevel=0` with no artillery, the rest are hunter zones. Set the
+    chance to 0: only 106 and 116 get one.
+103. **Every wave from 50:** a new config shows `Higher environment chance
+    from wave` 50 and `Higher environment chance (%)` 100. `laststand_wave
+    50`, then `laststand_next` to 100: every wave logs an environment
+    except 60, 80, 100 (Pain) and 99 (heroic). Waves 1-49 still get one
+    about 1 time in 10.
+104. **Settings pages:** the settings panel (lobby button and mod manager
+    gear) lists General, Shrines, Waves, Monsters, Hunters, Fast clear,
+    Bosses, Environments, Events, Rewards, all visible in the sidebar
+    without overlap. Hunters, Fast clear and Environments hold only their
+    own settings; Monsters no longer shows them, and Events shows only Dark
+    urge.
 
 ## Conventions
 

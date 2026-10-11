@@ -16,9 +16,13 @@ internal readonly struct EnvironmentRule
 
 	public double Chance { get; }
 
-	public int LateFromWave { get; }
+	public int HighFromWave { get; }
 
-	public double LateChance { get; }
+	public double HighChance { get; }
+
+	public int HuntedFromWave { get; }
+
+	public double HuntedChance { get; }
 
 	public int MaxPerBlock { get; }
 
@@ -26,13 +30,15 @@ internal readonly struct EnvironmentRule
 
 	public int UntilWave { get; }
 
-	public EnvironmentRule(Cadence sure, double chance, int lateFromWave, double lateChance, int maxPerBlock,
-		int blockWaves, int untilWave)
+	public EnvironmentRule(Cadence sure, double chance, int highFromWave, double highChance, int huntedFromWave,
+		double huntedChance, int maxPerBlock, int blockWaves, int untilWave)
 	{
 		Sure = sure;
 		Chance = chance;
-		LateFromWave = lateFromWave;
-		LateChance = lateChance;
+		HighFromWave = highFromWave;
+		HighChance = highChance;
+		HuntedFromWave = huntedFromWave;
+		HuntedChance = huntedChance;
 		MaxPerBlock = Math.Max(0, maxPerBlock);
 		BlockWaves = Math.Max(NextWave, blockWaves);
 		UntilWave = Math.Max(NoLastWave, untilWave);
@@ -40,7 +46,7 @@ internal readonly struct EnvironmentRule
 
 	public int Block(int wave)
 	{
-		return wave < LateFromWave ? NoBlock : (wave - LateFromWave) / BlockWaves;
+		return wave < HuntedFromWave ? NoBlock : (wave - HuntedFromWave) / BlockWaves;
 	}
 
 	public double ChanceFor(int wave, int environmentsInBlock)
@@ -55,17 +61,17 @@ internal readonly struct EnvironmentRule
 			return Certain;
 		}
 
-		if (wave < LateFromWave)
+		if (wave < HuntedFromWave)
 		{
-			return Chance;
+			return wave >= HighFromWave ? HighChance : Chance;
 		}
 
-		return environmentsInBlock + SureWavesLeftInBlock(wave) < MaxPerBlock ? LateChance : 0;
+		return environmentsInBlock + SureWavesLeftInBlock(wave) < MaxPerBlock ? HuntedChance : 0;
 	}
 
 	private int SureWavesLeftInBlock(int wave)
 	{
-		int blockEnd = LateFromWave + (Block(wave) + NextWave) * BlockWaves - NextWave;
+		int blockEnd = HuntedFromWave + (Block(wave) + NextWave) * BlockWaves - NextWave;
 		int last = UntilWave == NoLastWave ? blockEnd : Math.Min(blockEnd, UntilWave);
 		int count = 0;
 		for (int later = wave + NextWave; later <= last; later++)

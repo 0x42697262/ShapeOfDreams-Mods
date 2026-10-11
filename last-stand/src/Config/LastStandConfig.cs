@@ -228,6 +228,68 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.LateDamagePerWaveDescription)]
 	public float lateDamageBonusPercentPerWave = 50f;
 
+	[LabelText(ConfigText.StartingAmbientLevelLabel)]
+	[Description(ConfigText.StartingAmbientLevelDescription)]
+	public int startingAmbientLevel = 1;
+
+	[LabelText(ConfigText.WavesPerAmbientLevelLabel)]
+	[Description(ConfigText.WavesPerAmbientLevelDescription)]
+	public int wavesPerAmbientLevel = 4;
+
+	[Header(ConfigText.ForeignHeader)]
+	[LabelText(ConfigText.ForeignFromWaveLabel)]
+	[Description(ConfigText.ForeignFromWaveDescription)]
+	public int foreignTypesFromWave = 10;
+
+	[LabelText(ConfigText.ForeignIntervalLabel)]
+	[Description(ConfigText.ForeignIntervalDescription)]
+	public int foreignTypesIntervalWaves = 5;
+
+	[LabelText(ConfigText.ForeignPerUnlockLabel)]
+	[Description(ConfigText.ForeignPerUnlockDescription)]
+	public int foreignTypesPerUnlock = 3;
+
+	[Header(ConfigText.MirageHeader)]
+	[LabelText(ConfigText.MirageFromWaveLabel)]
+	[Description(ConfigText.MirageFromWaveDescription)]
+	public int mirageFromWave = 30;
+
+	[LabelText(ConfigText.MirageIntervalLabel)]
+	[Description(ConfigText.MirageIntervalDescription)]
+	public int mirageIntervalWaves = 10;
+
+	[LabelText(ConfigText.MirageChanceLabel)]
+	[Description(ConfigText.MirageChanceDescription)]
+	public float mirageChancePercent = 20f;
+
+	[LabelText(ConfigText.MirageRampFromWaveLabel)]
+	[Description(ConfigText.MirageRampFromWaveDescription)]
+	public int mirageRampFromWave = 130;
+
+	[LabelText(ConfigText.AllMirageFromWaveLabel)]
+	[Description(ConfigText.AllMirageFromWaveDescription)]
+	public int allMirageFromWave = 149;
+
+	[Page(SettingsPage.Hunters)]
+	[Header(ConfigText.HunterHeader)]
+	[LabelText(ConfigText.HunterFromWaveLabel)]
+	[Description(ConfigText.HunterFromWaveDescription)]
+	public int hunterFromWave = 101;
+
+	[LabelText(ConfigText.AllHuntersFromWaveLabel)]
+	[Description(ConfigText.AllHuntersFromWaveDescription)]
+	public int allHuntersFromWave = 130;
+
+	[LabelText(ConfigText.HuntLevelStepLabel)]
+	[Description(ConfigText.HuntLevelStepDescription)]
+	public int huntLevelStepWaves = 10;
+
+	[LabelText(ConfigText.MaxHuntLevelLabel)]
+	[Description(ConfigText.MaxHuntLevelDescription)]
+	public int maxHuntLevel = 6;
+
+	[Page(SettingsPage.FastClear)]
+	[Header(ConfigText.FastClearHeader)]
 	[LabelText(ConfigText.FastClearKillPercentLabel)]
 	[Description(ConfigText.FastClearKillPercentDescription)]
 	public float fastClearKillPercent = 80f;
@@ -251,65 +313,6 @@ public class LastStandConfig : ModConfig
 	[LabelText(ConfigText.FastClearHeroicBossPercentLabel)]
 	[Description(ConfigText.FastClearHeroicBossPercentDescription)]
 	public float fastClearHeroicBossPercent = 50f;
-
-	[LabelText(ConfigText.StartingAmbientLevelLabel)]
-	[Description(ConfigText.StartingAmbientLevelDescription)]
-	public int startingAmbientLevel = 1;
-
-	[LabelText(ConfigText.WavesPerAmbientLevelLabel)]
-	[Description(ConfigText.WavesPerAmbientLevelDescription)]
-	public int wavesPerAmbientLevel = 4;
-
-	[Header(ConfigText.ForeignHeader)]
-	[LabelText(ConfigText.ForeignFromWaveLabel)]
-	[Description(ConfigText.ForeignFromWaveDescription)]
-	public int foreignTypesFromWave = 10;
-
-	[LabelText(ConfigText.ForeignIntervalLabel)]
-	[Description(ConfigText.ForeignIntervalDescription)]
-	public int foreignTypesIntervalWaves = 5;
-
-	[LabelText(ConfigText.ForeignPerUnlockLabel)]
-	[Description(ConfigText.ForeignPerUnlockDescription)]
-	public int foreignTypesPerUnlock = 3;
-
-	[Header(ConfigText.HunterHeader)]
-	[LabelText(ConfigText.HunterFromWaveLabel)]
-	[Description(ConfigText.HunterFromWaveDescription)]
-	public int hunterFromWave = 101;
-
-	[LabelText(ConfigText.AllHuntersFromWaveLabel)]
-	[Description(ConfigText.AllHuntersFromWaveDescription)]
-	public int allHuntersFromWave = 130;
-
-	[LabelText(ConfigText.HuntLevelStepLabel)]
-	[Description(ConfigText.HuntLevelStepDescription)]
-	public int huntLevelStepWaves = 10;
-
-	[LabelText(ConfigText.MaxHuntLevelLabel)]
-	[Description(ConfigText.MaxHuntLevelDescription)]
-	public int maxHuntLevel = 6;
-
-	[Header(ConfigText.MirageHeader)]
-	[LabelText(ConfigText.MirageFromWaveLabel)]
-	[Description(ConfigText.MirageFromWaveDescription)]
-	public int mirageFromWave = 30;
-
-	[LabelText(ConfigText.MirageIntervalLabel)]
-	[Description(ConfigText.MirageIntervalDescription)]
-	public int mirageIntervalWaves = 10;
-
-	[LabelText(ConfigText.MirageChanceLabel)]
-	[Description(ConfigText.MirageChanceDescription)]
-	public float mirageChancePercent = 20f;
-
-	[LabelText(ConfigText.MirageRampFromWaveLabel)]
-	[Description(ConfigText.MirageRampFromWaveDescription)]
-	public int mirageRampFromWave = 130;
-
-	[LabelText(ConfigText.AllMirageFromWaveLabel)]
-	[Description(ConfigText.AllMirageFromWaveDescription)]
-	public int allMirageFromWave = 149;
 
 	[Page(SettingsPage.Bosses)]
 	[Header(ConfigText.MiniBossHeader)]
@@ -440,11 +443,19 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.GoldDescription)]
 	public int heroicBossGold = 200;
 
-	[Page(SettingsPage.Events)]
+	[Page(SettingsPage.Environments)]
 	[Header(ConfigText.EnvironmentHeader)]
 	[LabelText(ConfigText.EnvironmentChanceLabel)]
 	[Description(ConfigText.EnvironmentChanceDescription)]
 	public float environmentChancePercent = 10f;
+
+	[LabelText(ConfigText.EnvironmentHighFromWaveLabel)]
+	[Description(ConfigText.EnvironmentHighFromWaveDescription)]
+	public int environmentHighFromWave = 50;
+
+	[LabelText(ConfigText.EnvironmentHighChanceLabel)]
+	[Description(ConfigText.EnvironmentHighChanceDescription)]
+	public float environmentHighChancePercent = 100f;
 
 	[LabelText(ConfigText.EnvironmentFromWaveLabel)]
 	[Description(ConfigText.EnvironmentFromWaveDescription)]
@@ -454,21 +465,17 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.EnvironmentIntervalDescription)]
 	public int environmentIntervalWaves = 10;
 
-	[LabelText(ConfigText.EnvironmentLateFromWaveLabel)]
-	[Description(ConfigText.EnvironmentLateFromWaveDescription)]
-	public int environmentLateFromWave = 101;
+	[LabelText(ConfigText.EnvironmentHuntedChanceLabel)]
+	[Description(ConfigText.EnvironmentHuntedChanceDescription)]
+	public float environmentHuntedChancePercent = 50f;
 
-	[LabelText(ConfigText.EnvironmentLateChanceLabel)]
-	[Description(ConfigText.EnvironmentLateChanceDescription)]
-	public float environmentLateChancePercent = 50f;
+	[LabelText(ConfigText.EnvironmentHuntedMaxPerBlockLabel)]
+	[Description(ConfigText.EnvironmentHuntedMaxPerBlockDescription)]
+	public int environmentHuntedMaxPerBlock = 4;
 
-	[LabelText(ConfigText.EnvironmentLateMaxPerBlockLabel)]
-	[Description(ConfigText.EnvironmentLateMaxPerBlockDescription)]
-	public int environmentLateMaxPerBlock = 4;
-
-	[LabelText(ConfigText.EnvironmentLateBlockWavesLabel)]
-	[Description(ConfigText.EnvironmentLateBlockWavesDescription)]
-	public int environmentLateBlockWaves = 10;
+	[LabelText(ConfigText.EnvironmentHuntedBlockWavesLabel)]
+	[Description(ConfigText.EnvironmentHuntedBlockWavesDescription)]
+	public int environmentHuntedBlockWaves = 10;
 
 	[LabelText(ConfigText.EnvironmentUntilWaveLabel)]
 	[Description(ConfigText.EnvironmentUntilWaveDescription)]
@@ -479,6 +486,7 @@ public class LastStandConfig : ModConfig
 	[Description(ConfigText.EnvironmentTypesDescription)]
 	public string environmentTypes = GameNames.DefaultEnvironments;
 
+	[Page(SettingsPage.Events)]
 	[Header(ConfigText.FriendlyFireHeader)]
 	[LabelText(ConfigText.FriendlyFireFromWaveLabel)]
 	[Description(ConfigText.FriendlyFireFromWaveDescription)]

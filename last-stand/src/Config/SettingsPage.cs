@@ -6,7 +6,10 @@ internal enum SettingsPage
 	Shrines,
 	Waves,
 	Monsters,
+	Hunters,
+	FastClear,
 	Bosses,
+	Environments,
 	Events,
 	Rewards,
 }

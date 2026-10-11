@@ -44,7 +44,7 @@ of this is the shared library's (`library/src`), used by both mods:
 
 **Layout.** Both places show the same panel, laid out like a system settings
 app: a sidebar of pages on the left (General, Shrines, Waves, Monsters,
-Bosses, Events, Rewards) and the selected page on the right. A page has a
+Hunters, Fast clear, Bosses, Environments, Events, Rewards) and the selected page on the right. A page has a
 title and a one-line summary, then its settings in grouped cards (for
 example Timing, Wave size and Spawning on Waves). Each row has the label
 and a short gray description on the left and the control on the right;
@@ -139,7 +139,8 @@ you changed yourself. Copy them back from the `.old` file if you want them.
 | | Chance grows from wave / every monster a Mirage from wave | 130 / 149 |
 | Dark urge | First wave / chance / curse strength | 176 / 20% / Potent (25% damage between players) |
 | Environments | Chance per wave / first sure wave / every N waves / last wave (0 = never stop) | 10% / 106 / 10 / 0 |
-| | Late chance from wave / late chance / late max per block / late block size | 101 / 50% / 4 / 10 |
+| | Higher chance from wave / higher chance | 50 / 100% |
+| | Hunter zone chance / max per block / block size (from the first hunter wave) | 50% / 4 / 10 |
 | | Types | 21 room modifiers (checkboxes; none checked means none) |
 | Item drops | Monster item drops | off |
 | | Monster items per player per wave | 1 |
