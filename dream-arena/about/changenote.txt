@@ -1,0 +1,23 @@
+[b]Dream Arena 0.2.0: rebuilt[/b]
+Rebuilt from the ground up on the same base as Last Stand. Your saved settings are reset to the new defaults once.
+
+[b]New[/b]
+[list]
+[*]A new settings window: five pages (Match, Arena, Camp, Heroes, Rules), with dropdowns for the arena room and dummy monster.
+[*]Chat says when the arena goes live and when everyone is back in camp, so every player knows the rules in force.
+[*]When the host changes a setting, everyone sees what changed in chat.
+[/list]
+
+[b]Fixed: things only the host could see[/b]
+[list]
+[*]The run goal is now removed for every player, not just hidden for the host.
+[*]The "PVP" label and rift prompt only ever showed for the host. They're replaced by the chat announcements.
+[/list]
+
+[b]Fixed[/b]
+[list]
+[*]Leaving a match or unloading the mod no longer risks errors from writing game state after the server has stopped.
+[*]The "Remove boss" setting did nothing and is gone (the boss never spawns anyway).
+[/list]
+
+Only the host needs this update.

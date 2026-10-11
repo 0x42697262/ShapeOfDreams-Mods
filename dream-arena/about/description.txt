@@ -1,0 +1,5 @@
+Host-only PvP arena for friendly matches.
+
+Play with your friends and test out builds against each other! Supports FFA and Team Fights. Just select "PvP Arena" as the game mode when creating your lobby.
+
+Note: Only the host needs this mod. Your friends can join on a fully vanilla client.

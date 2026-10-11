@@ -1,0 +1,8 @@
+{
+  "id": "com.0x42697262.dreamarena",
+  "name": "Dream Arena",
+  "author": "0x42697262",
+  "modVer": "0.2.0",
+  "supportedGameVer": [ "*" ],
+  "assemblies": [ "bin/Debug/netstandard2.1/DreamArena.dll" ]
+}
