@@ -3,6 +3,7 @@
 [list]
 [*]Monsters climb 1 world every 25 waves again (was every 10 in v0.12.0). Change "Waves per step" on the Monsters page to set it.
 [*]From wave 200, monsters climb 1 world every 5 waves (was every 2). Change "Faster: waves per step" to set it.
+[*]Heroic fast kill now triggers when all of a wave's heroic bosses would die in under 60 seconds (was 90).
 [/list]
 
 Settings are reset with this update (old file kept as .old). Only the host needs to update.
