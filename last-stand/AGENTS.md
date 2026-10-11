@@ -1244,6 +1244,12 @@ Each answer still needs to be seen working:
     run.` once at world gen, and no `had lost` warning follows in camp.
     Untick all worlds: runs use `Arena room` again. Continue a saved run:
     same room as before, no new pick.
+125. **Heroic difficulty after a fast kill:** fast-kill the wave 25 or 50
+    heroic bosses. The red chat line ends with "heroic difficulty H now,
+    while other monsters stay at D. It shows on the next heroic wave." with
+    H well above D. Waves in between show only "Difficulty: D"; the next
+    heroic wave shows "heroic bosses H'" near H plus the waves' rise, and
+    its `wave N:` log line has `heroicWorld=` above `world=`.
 
 ## Conventions
 

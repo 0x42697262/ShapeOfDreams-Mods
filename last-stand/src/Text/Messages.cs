@@ -122,9 +122,10 @@ internal static class Messages
 		return SharedMessages.Notice($"{count} unclaimed memory or essence drop(s) on the ground are now free for anyone.");
 	}
 
-	public static string HeroicFastKill(double projectedSeconds, double targetSeconds, double multiplier)
+	public static string HeroicFastKill(double projectedSeconds, double targetSeconds, double multiplier,
+		double heroicWorld, double monsterWorld)
 	{
-		return SharedMessages.Warning($"Your best burst would kill all of this wave's heroic bosses in {projectedSeconds:0.#}s, faster than {targetSeconds:0}s. Heroic bosses now return from a stronger world, with x{multiplier:0.##} health.");
+		return SharedMessages.Warning($"Your best burst would kill all of this wave's heroic bosses in {projectedSeconds:0.#}s, faster than {targetSeconds:0}s. Heroic bosses now return with x{multiplier:0.##} health: heroic difficulty {heroicWorld:0.0} now, while other monsters stay at {monsterWorld:0.0}. It shows on the next heroic wave.");
 	}
 
 	public static string ArenaReadyAwaitingCurse()

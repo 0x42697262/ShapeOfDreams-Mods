@@ -157,10 +157,17 @@ keeps it. With the setting back at 0 the earned multiplier stops applying.
 Logs: `heroic fast kill: wave 50's heroic bosses took 41,203,118 damage in
 their best 5 s, all of them dead in 2.1 s at that rate (target 90 s); this
 step x42.86 (largest x100), heroic bosses now have x42.86 health.`, or the
-same with `no change.`; every `wave N:` line shows `heroicKill=xM`
-and `heroicWorld=`, above `world=` once M is over 1. Chat says it in red:
-"Your best burst would kill all of this wave's heroic bosses in Xs, faster
-than 90s. Heroic bosses now return from a stronger world, with xM health."
+same with `no change.`; every `wave N:` line shows `heroicKill=xM`.
+`heroicWorld=` is above `world=` only on heroic waves: the raise is worked
+out per wave from M and only for waves that have heroic bosses, so between
+heroic waves `heroicWorld=` equals `world=` and the chat line shows just
+"Difficulty: X.X". Chat says the fast kill in red, with the heroic
+difficulty the raise gives at that wave's world: "Your best burst would kill
+all of this wave's heroic bosses in Xs, faster than 90s. Heroic bosses now
+return with xM health: heroic difficulty H now, while other monsters stay at
+D. It shows on the next heroic wave." By the next heroic wave both numbers
+have risen with the waves, and H − D shrinks a little, since the boss
+health curve flattens.
 
 **Full kit.** It's the real `BossMonster` with its own AI: the boss AI always
 targets the nearest hero, picks its ability pool (the hard pool where the zone

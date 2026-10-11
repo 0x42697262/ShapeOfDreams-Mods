@@ -369,7 +369,7 @@ internal sealed class WaveDirector
 		double heroicKill = HeroicKillMultiplierHere(settings.HeroicFastKill);
 		_plan.HeroicKillMultiplier = settings.HeroicFastKill.MultiplierFor(heroicKill);
 		_plan.HeroicBossWorldRaise = _plan.HeroicBossCount > 0
-			? WorldScaling.ExtraWorldsForBossHealth(_plan.ExtraWorlds, _plan.HeroicKillMultiplier) - _plan.ExtraWorlds
+			? HeroicBossWorldRaise(_plan.ExtraWorlds, _plan.HeroicKillMultiplier)
 			: 0;
 		LogPaceForRoster(settings, heroicKill);
 
@@ -421,7 +421,14 @@ internal sealed class WaveDirector
 		double multiplier = HeroicKillMultiplierHere(rule);
 		Log.Info(LogText.HeroicFastKill(wave, _heroicFastKill.BestBurstDamage, _heroicFastKill.BurstSeconds, projected,
 			rule.TargetSeconds, step, rule.MaxStep, multiplier));
-		ChatNotices.Broadcast(Messages.HeroicFastKill(projected, rule.TargetSeconds, multiplier));
+		double heroicWorld = _plan.MonsterWorld + HeroicBossWorldRaise(_plan.ExtraWorlds, rule.MultiplierFor(multiplier));
+		ChatNotices.Broadcast(Messages.HeroicFastKill(projected, rule.TargetSeconds, multiplier, heroicWorld,
+			_plan.MonsterWorld));
+	}
+
+	private static double HeroicBossWorldRaise(double extraWorlds, double healthMultiplier)
+	{
+		return WorldScaling.ExtraWorldsForBossHealth(extraWorlds, healthMultiplier) - extraWorlds;
 	}
 
 	private void FinishWave(double breakSeconds, bool curseToStart)
