@@ -429,9 +429,9 @@ internal static class LogText
 		return $"wave vote: open for wave {wave}, {seconds} s left; it starts once every live player votes.";
 	}
 
-	public static string WaveVoteCanceled(int wave)
+	public static string WaveVoteCanceled(int wave, int seconds)
 	{
-		return $"wave vote: canceled by a player; wave {wave} starts on its timer.";
+		return $"wave vote: canceled by a player; wave {wave} starts on its timer in {seconds} s.";
 	}
 
 	public static string WaveVotePassed(int wave)

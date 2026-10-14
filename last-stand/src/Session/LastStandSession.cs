@@ -380,15 +380,20 @@ internal sealed class LastStandSession
 		}
 
 		int wave = _waves.CurrentWave + 1;
-		if (!_vote.Tick(wave, (int)Math.Ceiling(_waves.SecondsUntilNextWave(now))))
+		int secondsLeft = (int)Math.Ceiling(_waves.SecondsUntilNextWave(now));
+		switch (_vote.Tick(wave, secondsLeft))
 		{
-			return;
+			case WaveVoteResult.Passed:
+				_vote.Close();
+				_waves.StartNextWaveNow(now);
+				Log.Info(LogText.WaveVotePassed(wave));
+				ChatNotices.Broadcast(Messages.WaveVotePassed(wave));
+				break;
+			case WaveVoteResult.Canceled:
+				Log.Info(LogText.WaveVoteCanceled(wave, secondsLeft));
+				ChatNotices.Broadcast(Messages.WaveVoteCanceled(wave, secondsLeft));
+				break;
 		}
-
-		_vote.Close();
-		_waves.StartNextWaveNow(now);
-		Log.Info(LogText.WaveVotePassed(wave));
-		ChatNotices.Broadcast(Messages.WaveVotePassed(wave));
 	}
 
 	public string Describe()

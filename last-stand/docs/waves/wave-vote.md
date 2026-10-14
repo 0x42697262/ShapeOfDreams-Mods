@@ -16,10 +16,13 @@ break ends, as before. It's always on; there's no setting.
   the last seconds or the 3 s after a curse. Not before wave 1 (the first
   wave's 10 s arrival delay has no vote), and not while
   [Curse to start](curse-to-start.md) holds the wave.
-- **One vote per break.** If a player cancels it (the cancel key, `Escape`
-  by default), the game's cancel runs: chat says the player canceled the
-  travel vote and the window closes. The wave then starts on its timer, and
-  the vote comes back after the next wave.
+- **One vote per break.** Any player with a live hero can cancel it for
+  everyone (the cancel key, `Escape` by default). The game's cancel runs:
+  chat says the player canceled the travel vote and the window closes on
+  every screen. Last Stand then posts `Vote canceled. Wave N arrives in S
+  s.` The wave starts on its timer, and the vote comes back after the next
+  wave. If several players press it, the first cancel wins: the cancel key
+  only works while a vote is open, so the others do nothing.
 - **It closes** when the wave starts, by vote or by timer, and when the
   fight stops (camp, game over, mod unload).
 
@@ -27,7 +30,7 @@ Chat: the cleared-wave line is unchanged (`Wave N cleared. The next wave
 arrives in S s.`), and a passed vote says `Everyone is ready. Wave N starts now.` Log:
 `wave vote: open for wave N, S s left; …`, `wave vote: every live player
 voted; wave N starts now.`, or `wave vote: canceled by a player; wave N starts
-on its timer.`
+on its timer in S s.`
 
 ## How it works
 

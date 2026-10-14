@@ -1307,8 +1307,10 @@ Each answer still needs to be seen working:
     Tab: wave 2 starts at once, chat says `Everyone is ready. Wave 2 starts
     now.` and the window closes. Next break, don't vote: the window closes
     when the wave starts on its timer. Next break, press Escape: chat says
-    you canceled, the log shows `canceled by a player`, no new window that
-    break. With a shrine conversation open or a memory on the ground, a
+    you canceled, then `Vote canceled. Wave N arrives in S s.` with the
+    seconds left, the log shows `canceled by a player; … in S s`, no new
+    window that break. Co-op: one player's Escape closes the window for
+    everyone. With a shrine conversation open or a memory on the ground, a
     full vote still starts the wave with no "can't travel" message. Co-op
     with a vanilla client: the client sees the window and its vote counts;
     the wave waits until both have voted, and a knocked-out player doesn't

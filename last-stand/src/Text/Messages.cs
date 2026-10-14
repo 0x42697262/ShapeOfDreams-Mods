@@ -146,6 +146,11 @@ internal static class Messages
 		return SharedMessages.Success($"Wave {wave} cleared. The next wave arrives in {secondsUntilNextWave} s.");
 	}
 
+	public static string WaveVoteCanceled(int wave, int seconds)
+	{
+		return SharedMessages.Notice($"Vote canceled. Wave {wave} arrives in {seconds} s.");
+	}
+
 	public static string WaveVotePassed(int wave)
 	{
 		return SharedMessages.Notice($"Everyone is ready. Wave {wave} starts now.");

@@ -34,7 +34,7 @@ internal sealed class WaveVote
 
 	public bool IsOpen => _open != null;
 
-	public bool Tick(int wave, int secondsLeft)
+	public WaveVoteResult Tick(int wave, int secondsLeft)
 	{
 		try
 		{
@@ -44,7 +44,7 @@ internal sealed class WaveVote
 		{
 			_spent = true;
 			_errors.Report(Time.time, LogText.WaveVoteFailed, e);
-			return false;
+			return WaveVoteResult.Pending;
 		}
 	}
 
@@ -70,12 +70,12 @@ internal sealed class WaveVote
 		}
 	}
 
-	private bool TickOpen(int wave, int secondsLeft)
+	private WaveVoteResult TickOpen(int wave, int secondsLeft)
 	{
 		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		if (zones == null)
 		{
-			return false;
+			return WaveVoteResult.Pending;
 		}
 
 		if (_open == null)
@@ -85,18 +85,17 @@ internal sealed class WaveVote
 				Open(zones, wave, secondsLeft);
 			}
 
-			return false;
+			return WaveVoteResult.Pending;
 		}
 
 		if (_open != zones || !zones.isVoting)
 		{
 			_open = null;
-			Log.Info(LogText.WaveVoteCanceled(wave));
-			return false;
+			return WaveVoteResult.Canceled;
 		}
 
 		ShowSeconds(secondsLeft);
-		return EveryoneReady();
+		return EveryoneReady() ? WaveVoteResult.Passed : WaveVoteResult.Pending;
 	}
 
 	private void Open(ZoneManager zones, int wave, int secondsLeft)
