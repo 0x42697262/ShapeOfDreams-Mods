@@ -25,3 +25,13 @@ internal static class ContinueSaveReadPatch
 		ContinueSave.Read(data);
 	}
 }
+
+[HarmonyPatch(typeof(GameManager), nameof(GameManager.SaveContinueDataMidRun))]
+internal static class ContinueSaveGatePatch
+{
+	[HarmonyPrefix]
+	private static bool Prefix()
+	{
+		return !ModMode.IsHosting() || LastStandMod.Current?.Session?.AllowsContinueSave() != false;
+	}
+}

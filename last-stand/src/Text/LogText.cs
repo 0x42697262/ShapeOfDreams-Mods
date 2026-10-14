@@ -56,6 +56,8 @@ internal static class LogText
 
 	public const string ContinueSaveFailed = "continue save: failed; the run resumes without Last Stand's progress.";
 
+	public const string CheckpointFailed = "continue save: the end-of-wave checkpoint failed; retrying.";
+
 	public const string ContinueSaveMissing = "continue save: no Last Stand progress in this save.";
 
 	public const string WaveVoteFailed = "wave vote: failed; the next wave starts on its timer.";
@@ -426,6 +428,21 @@ internal static class LogText
 	public static string WaveCleared(int wave)
 	{
 		return $"wave {wave} cleared.";
+	}
+
+	public static string CheckpointSaved(int wave)
+	{
+		return $"continue save: checkpoint after wave {wave} saved.";
+	}
+
+	public static string CheckpointMissed(int wave)
+	{
+		return $"continue save: no checkpoint after wave {wave} (the game wouldn't save before the next wave); the last one stays.";
+	}
+
+	public static string ContinueSaveBlocked(int wave)
+	{
+		return $"continue save: the game's save during wave {wave} was skipped; the last checkpoint stays.";
 	}
 
 	public static string ContinueSaveWritten(string progress)

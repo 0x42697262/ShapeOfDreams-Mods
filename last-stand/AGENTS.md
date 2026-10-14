@@ -590,7 +590,10 @@ These were checked in the decompiled code.
   managers it finds, so extra keys are ignored. On continue,
   `PlayGameManager.OnLateStartServer` calls `ApplyGameData` with a new
   `GameManager`; it destroys every actor and recreates only
-  `[SaveActor]` ones (no monsters).
+  `[SaveActor]` ones (no monsters). `GameManager.runId` is a GUID set once
+  per new run, a `[SaveVar]` restored on continue. `BossMonster` calls
+  `SaveContinueDataMidRun` when the last boss dies. Game over and "no live
+  heroes" clear `continueData`.
 - **Zones.** `ZoneManager.LoadNextZoneByContentSettings` lists zones with
   `DewResources.FindAllByNameSubstring<Zone>("Zone_")` and
   `DewBuildProfile.current.content.FilterZones`. `Zone.zoneTier` orders them.
@@ -1340,16 +1343,18 @@ Each answer still needs to be seen working:
 132. **Tracker shows the next wave between waves**: on arrival the quest
     tracker reads `Wave 1`, after clearing wave 5 `Wave 6` (never `Wave N
     in Ns`), and `Wave N: M monsters left` during a wave.
-133. **Wave and difficulty survive quitting** (`ContinueSave`): clear wave
-    5, note the "Difficulty" of wave 5's chat line, then leave to the main
-    menu (log: `continue save: progress '…|5|0|…' saved with the run.`).
-    Continue the run: the log shows `continue save: resuming after wave
-    5.` and `progress restored`, the tracker reads `Wave 6`, and wave 6's
-    difficulty follows on from wave 5's (with any fast-kill raise kept).
-    Quit during wave 7 and continue: `…was in progress, so it replays;
-    resuming after wave 6.` and wave 7 starts again in full. Same through
-    the lobby, and after restarting the game. In co-op, clients rejoin and
-    see the same wave.
+133. **Wave and difficulty survive quitting** (`ContinueSave`,
+    `ContinueCheckpoint`): clear wave 5 and note its "Difficulty"; the log
+    shows `continue save: checkpoint after wave 5 saved.` Leave to the main
+    menu during the break and continue: `continue save: resuming after
+    wave 5.`, the tracker reads `Wave 6`, and wave 6's difficulty follows
+    on from wave 5's (any fast-kill raise kept). Then, mid-wave 6, pick up
+    gold and dust and quit: the log shows `the game's save during wave 6
+    was skipped`. Continue: gold, dust, items and levels are back to the
+    end of wave 5 (or the break), and wave 6 replays in full. At wave 25,
+    quit with the heroic boss out and continue: only wave 25's own boss
+    appears. Same through the lobby and after restarting the game. Game
+    over still clears the save.
 
 ## Conventions
 

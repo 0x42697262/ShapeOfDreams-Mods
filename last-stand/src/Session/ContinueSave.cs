@@ -38,6 +38,7 @@ internal static class ContinueSave
 			    || fields == null
 			    || !fields.TryGetValue(ModIdentity.ContinueProgressField, out string progress))
 			{
+				ProgressStore.Forget();
 				Log.Info(LogText.ContinueSaveMissing);
 				return;
 			}

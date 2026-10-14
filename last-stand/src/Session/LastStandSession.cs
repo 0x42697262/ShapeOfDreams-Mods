@@ -30,6 +30,8 @@ internal sealed class LastStandSession
 
 	private readonly WaveVote _vote = new WaveVote();
 
+	private readonly ContinueCheckpoint _checkpoint = new ContinueCheckpoint();
+
 	private readonly StartingWorld _world = new StartingWorld();
 
 	private readonly GoldPrices _goldPrices = new GoldPrices();
@@ -140,6 +142,18 @@ internal sealed class LastStandSession
 		_panel.Tick(_waves.HasArenaModifier || _pain.ZoneActive);
 		Shrines.Tick(now, _waves.ClearedWaves, _settings.AscensionResetWaves, _settings.Waves.CurseToStart);
 		TickWaveVote(now);
+		_checkpoint.Tick(now);
+	}
+
+	public bool AllowsContinueSave()
+	{
+		if (_phase != SessionPhase.Fighting || !_waves.WaveInProgress)
+		{
+			return true;
+		}
+
+		Log.Info(LogText.ContinueSaveBlocked(_waves.CurrentWave));
+		return false;
 	}
 
 	public bool OwnsVote()
@@ -491,6 +505,7 @@ internal sealed class LastStandSession
 		_curseStart.Reset();
 		_music.Reset();
 		_vote.Close();
+		_checkpoint.Reset();
 		_arenaNode = ArenaLocator.NoNode;
 	}
 
@@ -505,6 +520,7 @@ internal sealed class LastStandSession
 
 	private void OnWaveStarted(WavePlan plan)
 	{
+		_checkpoint.Reset();
 		ProgressStore.Save(_arenaNode, plan.Number, true, _waves.Pace);
 		_loot.OnWaveStarted();
 		Shrines.OnWaveStarted();
@@ -596,6 +612,8 @@ internal sealed class LastStandSession
 			Log.Info(LogText.HeroesRevived(wave, revived));
 			ChatNotices.Broadcast(Messages.HeroesRevived(revived));
 		}
+
+		_checkpoint.Request(wave);
 	}
 
 	private void OnEnemyDied(EnemyDeath death)

@@ -27,8 +27,8 @@ internal static class ProgressStore
 
 	public static string CurrentRunKey()
 	{
-		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
-		return zones != null ? RunKey(zones.worldSeed.ToString(CultureInfo.InvariantCulture)) : null;
+		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
+		return game != null && !string.IsNullOrEmpty(game.runId) ? game.runId : null;
 	}
 
 	public static void Save(int node, int wave, bool inProgress, PaceLedger pace)
@@ -70,32 +70,24 @@ internal static class ProgressStore
 		if (!TryParse(saved, out string savedRun, out int node, out int savedWave, out wasInProgress,
 			    out PaceLedger pace))
 		{
+			Forget();
 			return false;
 		}
 
-		int separator = savedRun.IndexOf(Tuning.RunKeySeparator, StringComparison.Ordinal);
-		string run = separator >= 0 ? RunKey(savedRun.Substring(separator + Tuning.RunKeySeparator.Length)) : null;
 		wave = wasInProgress ? savedWave - 1 : savedWave;
-		if (run == null || wave < Tuning.FirstWave)
+		if (wave < Tuning.FirstWave)
 		{
+			Forget();
 			return false;
 		}
 
-		Store(run, node, wave, false, pace);
+		Store(savedRun, node, wave, false, pace);
 		return true;
 	}
 
 	public static void Forget()
 	{
 		AppDomain.CurrentDomain.SetData(ModIdentity.ProgressSlot, null);
-	}
-
-	private static string RunKey(string worldSeed)
-	{
-		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
-		return game != null
-			? game.GetInstanceID().ToString(CultureInfo.InvariantCulture) + Tuning.RunKeySeparator + worldSeed
-			: null;
 	}
 
 	private static string Stored()

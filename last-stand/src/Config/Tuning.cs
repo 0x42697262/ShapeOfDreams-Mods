@@ -4,8 +4,6 @@ namespace LastStand.Config;
 
 internal static class Tuning
 {
-	public const string RunKeySeparator = ":";
-
 	public const string RoundTripNumberFormat = "R";
 
 	public const int WorldOfZoneIndexZero = 1;
@@ -29,6 +27,8 @@ internal static class Tuning
 	public const float TrackerRefreshSeconds = 1f;
 
 	public const int WaveVoteMinSeconds = 5;
+
+	public const float CheckpointRetrySeconds = 1f;
 
 	public const int MinStartingWorld = 1;
 

@@ -71,35 +71,60 @@ Three things used to send a run back to wave 1, and all are fixed:
 
 - **Quitting and continuing.** Leaving a run for the lobby or the main
   menu and continuing it later ("resume the dream") used to restart at
-  wave 1, with the fast-kill raise gone. The progress above lived only in
-  memory, keyed by the `GameManager`'s instance ID, and a continued run
-  gets a new `GameManager`. Now it's also written into the game's own
-  continue save. When the host quits, the game calls
-  `GameManager.SaveContinueDataMidRun` (also after a boss kill and on some
-  locks), which builds a `DewPersistence.GameData` with
+  wave 1, with the fast-kill raise gone: the progress lived only in memory,
+  keyed by the `GameManager`'s instance ID, and a continued run gets a new
+  `GameManager`. The key is now `GameManager.runId`, a GUID the game makes
+  once per run and keeps in its save (`[SaveVar]`), and the progress is
+  also written into the game's continue save.
+
+  **The continue save is an end-of-wave checkpoint.** A first version let
+  the game save whenever it wanted, which made quitting an exploit: quit
+  during a heroic boss wave and continue, and the boss came back next to
+  the replayed wave's new one; gold and dream dust picked up during the
+  wave were kept and earned again. Now:
+
+  - When a wave is cleared (after its rewards drop and souls revive), the
+    session asks the game for a save: `GameManager.SaveContinueDataMidRun`,
+    the same call the game makes when the host quits.
+    `ContinueCheckpoint` retries once a second through the break until the
+    game allows it (`IsEligibleForMidRunSave`: the room's `didClearRoom`,
+    which an environment holds open until it ends). Log: `continue save:
+    checkpoint after wave N saved.`
+  - While a wave is being fought, a prefix on `SaveContinueDataMidRun`
+    (`ContinueSaveGatePatch`) skips every save the game tries: on quitting,
+    on a boss kill (`BossMonster` saves when the last boss dies), on
+    `LockMidRunSave`. Log: `continue save: the game's save during wave N
+    was skipped; the last checkpoint stays.` So quitting mid-wave leaves the
+    checkpoint from the end of the last wave in place, with everyone's
+    items, levels, gold and dream dust as they were then. Monsters aren't
+    in the save, so the wave replays in full.
+  - Quitting during a break saves as the game normally does, so what was
+    bought or upgraded in the break is kept.
+
+  The only thing left to repeat is a wave itself, which the game allows
+  too.
+
+  **How the progress rides along.** Every continue save goes through
   `DewPersistence.SerializeGameData`. A postfix there (`ContinueSaveWritePatch`,
   host in the mode only) adds one entry to its `managerPersistentData`:
-  key `LastStand`, field `progress`, the same string as in memory (arena
-  node, wave, in progress or not, fast-kill raise). The game only reads
-  entries named after its own managers, so it ignores ours, and the save
-  stays loadable without the mod. On continue, `PlayGameManager` passes the
-  save to `DewPersistence.ApplyGameData`; a prefix there
-  (`ContinueSaveReadPatch`) reads the entry back into memory under the new
-  `GameManager`'s instance ID and the saved world seed (the game restores
-  `ZoneManager._worldSeed`, a `[SaveVar]`), so the arrival in the arena
-  resumes it like a mod reload. The read doesn't check the game mode,
+  key `LastStand`, field `progress`, the same string as in memory (run ID,
+  arena node, wave, in progress or not, fast-kill raise). The game only
+  reads entries named after its own managers, so it ignores ours, and the
+  save stays loadable without the mod. On continue, `PlayGameManager`
+  passes the save to `DewPersistence.ApplyGameData`; a prefix there
+  (`ContinueSaveReadPatch`) puts the entry back in memory, and the game
+  restores `runId`, so the arrival in the arena resumes it like a mod
+  reload. A save without the entry clears what's in memory, so a stale
+  mid-wave state can't be resumed. The read doesn't check the game mode,
   since the lobby settings may not be restored yet, but it only reads Last
-  Stand's own entry. The difficulty comes back with it: the monster world
-  is the run's world (saved by the game), plus the wave's scheduled rise,
-  plus the saved fast-kill raise.
+  Stand's own entry. A wave saved as in progress (it shouldn't happen any
+  more) is restored as the wave before it, cleared.
 
-  Monsters aren't in the continue save, so a wave that was being fought
-  when the host quit replays from its start: the progress is restored as
-  the wave before it, cleared, and the next wave follows the usual break.
-  Log: `continue save: progress '…' saved with the run.` on quitting, and
-  `continue save: resuming after wave N.` (or `…was in progress, so it
-  replays; resuming after wave N.`) on continuing. A save from before this
-  fix logs `no Last Stand progress in this save.` and starts at wave 1.
+  The difficulty comes back with it: the monster world is the run's world
+  (saved by the game), plus the wave's scheduled rise, plus the saved
+  fast-kill raise. Log on continuing: `continue save: resuming after wave
+  N.` A save from before this fix logs `no Last Stand progress in this
+  save.` and starts at wave 1.
 
 The crash behind the reset at wave 10 came from the game's
 `RoomMonsters.SpawnMiniBoss`, which always calls `SelectMiniBoss` first. That
