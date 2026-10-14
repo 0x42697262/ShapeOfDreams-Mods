@@ -1,18 +1,4 @@
-[h2]v0.14.0[/h2]
-[b]New[/b]
-[list]
-[*]Wave vote: after a wave is cleared, and before wave 1, press Tab to vote. Once every live player has voted, the next wave starts right away. If someone cancels it, type !vote in chat to bring it back.
-[/list]
-
-[b]Updated[/b]
-[list]
-[*]The quest tracker shows the next wave (for example "Wave 6") between waves instead of a countdown.
-[/list]
-
-[b]Fixed[/b]
-[list]
-[*]Leaving a run and resuming it later started over at wave 1 with the difficulty reset. It now continues from the end of the last cleared wave, with items, gold and dream dust as they were then; a wave you quit during starts again.
-[*]The Primus boss preview cutscene could still play in the arena with cutscene skipping on.
-[/list]
+[h2]v0.14.1[/h2]
+No gameplay changes.
 
 Only the host needs to update.
