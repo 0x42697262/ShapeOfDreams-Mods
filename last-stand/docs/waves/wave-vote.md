@@ -23,8 +23,8 @@ break ends, as before. It's always on; there's no setting.
 - **It closes** when the wave starts, by vote or by timer, and when the
   fight stops (camp, game over, mod unload).
 
-Chat: the cleared-wave line ends with "or as soon as everyone votes (Tab)."
-and a passed vote says `Everyone is ready. Wave N starts now.` Log:
+Chat: the cleared-wave line is unchanged (`Wave N cleared. The next wave
+arrives in S s.`), and a passed vote says `Everyone is ready. Wave N starts now.` Log:
 `wave vote: open for wave N, S s left; …`, `wave vote: every live player
 voted; wave N starts now.`, or `wave vote: canceled by a player; wave N starts
 on its timer.`
@@ -54,7 +54,9 @@ reasons:
 So `WaveVote` (a game adapter) sets the SyncVars itself: every player's
 `isReady` to false, `voteType` to `None`, `voteData` to -1,
 `voteRemainingSeconds` to the seconds left in the break, `isVoting` to true,
-and sends `RpcInvokeVoteStarted` with the host as the starter (the private
+and sends `RpcInvokeVoteStarted` with the host's player as the starter
+(`DewPlayer.local`, whatever the player count; the window's first line names
+them, but they aren't marked ready) (the private
 setters and RPCs are reached with `AccessTools`). Each tick it updates
 `voteRemainingSeconds`, so the window's "traveling in N seconds" counts down
 with the break, and checks whether every live player is ready. A prefix on
