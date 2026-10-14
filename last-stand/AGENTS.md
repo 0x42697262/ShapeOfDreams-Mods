@@ -1330,8 +1330,9 @@ Each answer still needs to be seen working:
     seconds left and `Type !vote to vote again.`, the log shows `canceled by
     a player; … in S s`, no new window that break until someone types
     `!vote`: then the window comes back for everyone with no votes, and
-    Tab starts the wave. `!vote` during a wave, with an open vote or with
-    5 s or less left logs `ignored.` A vanilla client's `!vote` works the
+    Tab starts the wave. Every `!vote` logs `chat command: '!vote'
+    from connection N.`; during a wave, with an open vote or with 5 s or
+    less left it then logs why it was ignored. A vanilla client's `!vote` works the
     same. Co-op: one player's Escape closes the window for
     everyone. With a shrine conversation open or a memory on the ground, a
     full vote still starts the wave with no "can't travel" message. Co-op

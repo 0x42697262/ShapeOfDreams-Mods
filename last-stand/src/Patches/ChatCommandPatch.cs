@@ -12,7 +12,7 @@ internal static class ChatCommandPatch
 	{
 		if (NetworkServer.active && ModMode.IsHosting() && sender != null)
 		{
-			LastStandMod.Current?.Session?.OnChat(sender.GetPlayer(), content);
+			LastStandMod.Current?.Session?.OnChat(sender.connectionId, content);
 		}
 	}
 }

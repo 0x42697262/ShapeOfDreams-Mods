@@ -27,9 +27,13 @@ break ends, as before. It's always on; there's no setting.
   reopens the window for everyone, with every vote reset, as long as the
   next wave waits on a timer with more than 5 s left and no vote is open.
   It doesn't count as the typer's vote; they press Tab like everyone else.
-  The `!vote` message itself still shows in chat. Typed at any other time,
-  it's ignored (log: `… typed !vote, but a vote is open or none can open
-  now; ignored.`).
+  The `!vote` message itself still shows in chat. Every chat message
+  starting with `!` that reaches the host is logged (`chat command: '!vote'
+  from connection N.`), followed by `!vote reopened the vote for wave N.`
+  or why it was ignored: no timed break (with the phase, wave and curse
+  state), 5 s or less left, or a vote already open. Invisible characters
+  (control and format characters, such as a zero-width space) are dropped
+  and case is ignored before matching.
 - **It closes** when the wave starts, by vote or by timer, and when the
   fight stops (camp, game over, mod unload).
 
@@ -86,8 +90,7 @@ sidetrack panels show.
 through the server: a client's `ChatManager.CmdSendChatMessage` runs
 `UserCode_CmdSendChatMessage__String__NetworkConnectionToClient` on the
 host, which broadcasts it. `ChatCommandPatch`, a postfix there, hands the
-text and the sender's player (`NetworkConnectionToClient.GetPlayer()`) to
-the session, which reopens the vote through `WaveVote.Reopen`. The host's
+text and the sender's connection ID to the session, which reopens the vote through `WaveVote.Reopen`. The host's
 own messages take the same path.
 
 If any step throws, the error is logged (at most once every 5 s), the vote

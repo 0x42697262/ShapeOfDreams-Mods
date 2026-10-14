@@ -472,14 +472,24 @@ internal static class LogText
 		return $"wave vote: canceled by a player; wave {wave} starts on its timer in {seconds} s.";
 	}
 
-	public static string VoteChatReopened(uint player, int wave)
+	public static string ChatCommandReceived(int connection, string command)
 	{
-		return $"wave vote: player {player} typed {CommandText.VoteChat}; vote for wave {wave} reopened.";
+		return $"chat command: '{command}' from connection {connection}.";
 	}
 
-	public static string VoteChatIgnored(uint player)
+	public static string VoteChatReopened(int wave)
 	{
-		return $"wave vote: player {player} typed {CommandText.VoteChat}, but a vote is open or none can open now; ignored.";
+		return $"wave vote: {CommandText.VoteChat} reopened the vote for wave {wave}.";
+	}
+
+	public static string VoteChatNoBreak(string phase, bool waveInProgress, bool waitingForCurse)
+	{
+		return $"wave vote: {CommandText.VoteChat} ignored, no timed break (phase={phase} waveInProgress={waveInProgress} waitingForCurse={waitingForCurse}).";
+	}
+
+	public static string VoteChatNotReopened(int wave, int secondsLeft, bool voteOpen)
+	{
+		return $"wave vote: {CommandText.VoteChat} ignored for wave {wave}: {secondsLeft} s left (needs more than {Tuning.WaveVoteMinSeconds}), vote already open={voteOpen}, or the game has another vote open.";
 	}
 
 	public static string WaveVotePassed(int wave)

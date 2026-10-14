@@ -161,22 +161,31 @@ internal sealed class LastStandSession
 		return _vote.IsOpen;
 	}
 
-	public void OnChat(DewPlayer player, string content)
+	public void OnChat(int connection, string content)
 	{
-		if (player == null || content == null
-		    || !string.Equals(content.Trim(), CommandText.VoteChat, StringComparison.OrdinalIgnoreCase))
+		string command = ChatCommand.Parse(content);
+		if (command == null)
+		{
+			return;
+		}
+
+		Log.Info(LogText.ChatCommandReceived(connection, command));
+		if (command != CommandText.VoteChat)
 		{
 			return;
 		}
 
 		int wave = _waves.CurrentWave + 1;
-		if (!InTimedBreak() || !_vote.Reopen(wave, SecondsUntilNextWave()))
+		if (!InTimedBreak())
 		{
-			Log.Info(LogText.VoteChatIgnored(player.netId));
+			Log.Info(LogText.VoteChatNoBreak(_phase.ToString(), _waves.WaveInProgress, _waves.WaitingForCurse));
 			return;
 		}
 
-		Log.Info(LogText.VoteChatReopened(player.netId, wave));
+		int secondsLeft = SecondsUntilNextWave();
+		Log.Info(_vote.Reopen(wave, secondsLeft)
+			? LogText.VoteChatReopened(wave)
+			: LogText.VoteChatNotReopened(wave, secondsLeft, _vote.IsOpen));
 	}
 
 	public void SpawnTestBoss(string typeName)
