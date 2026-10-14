@@ -1,12 +1,12 @@
 [h2]v0.14.0[/h2]
 [b]New[/b]
 [list]
-[*]Wave vote: after a wave is cleared, press Tab to vote. Once every live player has voted, the next wave starts right away.
+[*]Wave vote: after a wave is cleared, and before wave 1, press Tab to vote. Once every live player has voted, the next wave starts right away.
 [/list]
 
 [b]Updated[/b]
 [list]
-[*]The quest tracker shows the run's world (for example "World 6") between waves instead of a countdown.
+[*]The quest tracker shows the next wave (for example "Wave 6") between waves instead of a countdown.
 [/list]
 
 [b]Fixed[/b]
