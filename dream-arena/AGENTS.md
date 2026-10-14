@@ -156,6 +156,11 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
     'Room_Primus_Boss_0'.` and no boss preview plays, with `Plain arena` on
     and again with it off. With `Skip intro cutscenes` off, there's no
     `cutscenes:` line and the preview plays.
+26. **Upload log** (library, `WorkshopChangeNote`): upload Dream Arena from
+    the mod manager with Last Stand also loaded. The log shows two
+    `workshop: an upload of item N started; this mod's item is M.` lines
+    (one per mod, each with its own M), then `uploading item N` and
+    `attached about/changenote.txt` from Dream Arena only.
 
 ## Conventions
 

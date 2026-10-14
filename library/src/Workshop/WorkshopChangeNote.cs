@@ -13,6 +13,8 @@ internal static class WorkshopChangeNote
 	{
 		_uploading = false;
 		_pending = null;
+		ModItem ours = ModHooks.Behaviour()?.mod;
+		Log.Info(SharedLogText.ChangeNoteUploadSeen(id.m_PublishedFileId, ours?.publishedFileId ?? 0));
 		ModItem item = OurItem(id);
 		if (item == null)
 		{

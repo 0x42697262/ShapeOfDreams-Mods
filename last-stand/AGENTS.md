@@ -48,7 +48,13 @@ v0.11.0 the note didn't reach Steam (v0.10.0 even logged `attached`;
 v0.11.0 logged no `workshop:` line at all) and was pasted in by hand.
 v0.12.0, the first upload with the Steamworks hooks, went up with its
 note (`workshop: uploading item ...` then `attached ... (255
-characters)`). Still check the Change Notes page after each upload. These patches work outside
+characters)`). v0.14.0 again logged no `workshop:` line and went up
+without a note; it was uploaded from the in-game mod manager right after
+the mod reloaded mid-run from the pack. That line only appeared for our
+own item, so the log couldn't tell a hook that never ran from an id that
+didn't match. Now every `StartItemUpdate` that reaches the hook logs
+`workshop: an upload of item N started; this mod's item is M.` first.
+Still check the Change Notes page after each upload. These patches work outside
 Last Stand mode, since uploads happen from the title screen. `pack.sh`
 copies the file into the pack and prints it. Write the next update's note
 in `about/changenote.txt` (Steam BBCode) before packing, and commit it. It
@@ -1002,8 +1008,9 @@ Each answer still needs to be seen working:
     friend who joins while the boss is alive gets in too.
 82. **Fast clear by time to kill** (removed in schema 53, see check 117).
 83. **Workshop change note:** with `about/changenote.txt` written,
-    `./pack.sh` prints it. Upload the pack: the log shows `workshop:
-    uploading item N from ...`, then `workshop: attached
+    `./pack.sh` prints it. Upload the pack: the log shows `workshop: an
+    upload of item N started; this mod's item is N.` (once per loaded mod,
+    with its own item), then `workshop: uploading item N from ...`, then `workshop: attached
     about/changenote.txt (N characters)`, and the item's Change
     Notes page shows the note with its formatting. Without the file the
     log says the update goes up without a change note, and uploading
