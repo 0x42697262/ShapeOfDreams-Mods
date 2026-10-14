@@ -1,4 +1,14 @@
 [h2]v0.14.0[/h2]
+[b]New[/b]
+[list]
+[*]Wave vote: after a wave is cleared, press Tab to vote. Once every live player has voted, the next wave starts right away.
+[/list]
+
+[b]Updated[/b]
+[list]
+[*]The quest tracker shows the run's world (for example "World 6") between waves instead of a countdown.
+[/list]
+
 [b]Fixed[/b]
 [list]
 [*]The Primus boss preview cutscene could still play in the arena with cutscene skipping on.
