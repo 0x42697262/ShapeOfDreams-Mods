@@ -9,7 +9,8 @@ break ends, as before. It's always on; there's no setting.
 - **Who counts.** Every human player with a live hero
   (`PlayerRoster.FillPlayersWithLiveHeroes`). Knocked-out and dead heroes
   don't block it, and AI allies aren't asked. Solo, one press starts the
-  wave.
+  wave. A player who joins during a break doesn't see the window (RPCs
+  aren't replayed) but counts, and can still vote with the key.
 - **When it opens.** In a break on a timer after a cleared wave, with more
   than 5 s left (`Tuning.WaveVoteMinSeconds`), so it doesn't flash up for
   the last seconds or the 3 s after a curse. Not before wave 1 (the first
