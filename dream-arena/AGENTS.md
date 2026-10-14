@@ -150,6 +150,12 @@ mounted into `Mods/DreamArena` as incus device `dreamarena`;
 24. **Rift vote still on** (library, `TravelVotes`): with two players
     standing and `Enable votes` on, the camp rift still starts a vote; no
     `travel votes: off` line in the log.
+25. **Primus cutscene off** (library, `SectionCutscenes`): with `Arena
+    room` on Primus and `Skip intro cutscenes` on, the log shows
+    `cutscenes: 1 room-section cutscene call(s) switched off in
+    'Room_Primus_Boss_0'.` and no boss preview plays, with `Plain arena` on
+    and again with it off. With `Skip intro cutscenes` off, there's no
+    `cutscenes:` line and the preview plays.
 
 ## Conventions
 

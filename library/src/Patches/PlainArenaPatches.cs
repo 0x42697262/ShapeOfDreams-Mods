@@ -11,6 +11,7 @@ internal static class PlainArenaStartServerPatch
 		if (ModMode.IsHosting())
 		{
 			PlainArena.Prepare(__instance);
+			SectionCutscenes.SwitchOff(__instance);
 		}
 		else
 		{

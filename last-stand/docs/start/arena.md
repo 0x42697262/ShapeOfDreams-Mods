@@ -88,11 +88,32 @@ barriers with `RemoveObstacles`). Both act only while hosting the mode
 (`ArenaLocator.IsInArenaNode()`). `PlainArena.Enabled` stays on in Last
 Stand, whose `Plain arena (no room modifiers)` setting is about modifiers
 (below); Dream Arena sets it from its own `Plain arena` setting. Log: `plain
-arena: '<room>' loads cleared; N entry trigger(s) disabled.` The cutscene
-skip is the library's `CutscenePatch` (a prefix on
-`DewCutsceneDirector.PlayNetworked`), which asks the mod: Last Stand's
-`SkipCutscenes` override answers yes in any arena node. If that check
-throws, the error is logged (throttled) and the cutscene plays.
+arena: '<room>' loads cleared; N entry trigger(s) disabled.` The cutscene skip is the library's
+`CutscenePatch` (a prefix on `DewCutsceneDirector.PlayNetworked`), which
+asks the mod: Last Stand's `SkipCutscenes` override answers yes in any
+arena node. If that check throws, the error is logged (throttled) and the
+cutscene plays.
+
+**Room-section cutscenes.** Not every boss room starts its cutscene from the
+entry trigger. `Room_Primus_Boss_0` has no `DewAllHeroesPresentZone`: its
+room section `0` has a persistent `UnityEvent` call (set in the scene) to
+`DewCutsceneDirector.PlayNetworked` on `TEMP CUTSCENE` (the boss preview),
+next to one to `FxNetworkedEffect.PlayNetworked` on `BossMusicStart`.
+`RoomSection` fires it on the server when the first hero walks in. In
+testing, `CutscenePatch` stopped it on a fresh game start, but after a mod
+reload the cutscene played every time (`Playing cutscene 'TEMP CUTSCENE'
+networked` in the log). So the library's `SectionCutscenes`, called from the
+same `Room.OnStartServer` postfix as `PlainArena.Prepare` but independent of
+`PlainArena.Enabled`, switches off every persistent call on a `RoomSection`
+event (`onEnterFirstTime`, `onEveryonePresent`, `onEntityEnter`,
+`onEntityExit`, `onEntitiesChanged`) whose target is a `DewCutsceneDirector`,
+with `UnityEventBase.SetPersistentListenerState(i, Off)`. It acts only in an
+arena node while the mod's `SkipCutscenes` says yes. This runs before any hero
+can enter the section and doesn't need the `PlayNetworked` patch. The boss
+music call stays on. The scene is loaded again on every visit, so nothing
+needs undoing. Log: `cutscenes: N room-section cutscene call(s) switched off
+in '<room>'.` If the switch-off throws, the error is logged (throttled), room
+start goes on, and `CutscenePatch` is the only guard left.
 
 **A plain arena.** World generation rolls room modifiers onto every node, and
 the arena node keeps them. In testing, the arena arrived with

@@ -25,6 +25,9 @@ internal static class SharedLogText
 
 	public const string CutsceneCheckFailed = "cutscenes: the mod's skip check failed; the cutscene plays.";
 
+	public const string SectionCutscenesFailed =
+		"cutscenes: could not switch off room-section cutscenes; the cutscene patch still applies.";
+
 	public const string WorldGenFailed = "world gen: the mod's handler failed; the world is left as generated.";
 
 	public const string ChangeNoteMissing =
@@ -43,6 +46,11 @@ internal static class SharedLogText
 	public static string PlainArenaPrepared(string room, int triggers)
 	{
 		return $"plain arena: '{room}' loads cleared; {triggers} entry trigger(s) disabled.";
+	}
+
+	public static string SectionCutscenesOff(string room, int cutscenes)
+	{
+		return $"cutscenes: {cutscenes} room-section cutscene call(s) switched off in '{room}'.";
 	}
 
 	public static string MapNodesHidden(int count, int kept)

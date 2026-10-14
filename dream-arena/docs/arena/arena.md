@@ -51,7 +51,12 @@ sunlight in. Barriers open, and props, monsters and rewards are skipped.
 `NetworkServer.SpawnObjects` runs `Room.OnStartServer`. With `Plain arena` on,
 `PlainArenaStartServerPatch` (a postfix there) forces it before any client
 receives the room, and `PlainArena.Prepare` switches off the server-only
-entry trigger (`DewAllHeroesPresentZone`). A postfix on `Room.StartRoom` opens
+entry trigger (`DewAllHeroesPresentZone`). With `Skip intro cutscenes` on,
+whether `Plain arena` is on or off, the same postfix also switches off
+room-section cutscene calls (`SectionCutscenes`; `Room_Primus_Boss_0` starts
+its cutscene from a `RoomSection` event, not the entry trigger; see Last
+Stand's `docs/start/arena.md`, *Room-section cutscenes*). A postfix on
+`Room.StartRoom` opens
 any barriers (`RemoveObstacles`). A cleared room never opens its own exit
 rift, which is left alone: there's nothing to leave the arena to.
 

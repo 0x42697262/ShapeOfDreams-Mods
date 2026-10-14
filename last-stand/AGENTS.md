@@ -1279,6 +1279,13 @@ Each answer still needs to be seen working:
     for all bosses` shows 60. Kill the wave 25 boss: the log says `(target
     60 s)` and the step is 60 / P; a projection between 60 and 90 s now
     logs `no change.`
+130. **No Primus boss preview after a reload** (library, `SectionCutscenes`):
+    in the default Primus arena, the log shows `plain arena:
+    'Room_Primus_Boss_0' loads cleared; 0 entry trigger(s) disabled.`, then
+    `cutscenes: 1 room-section cutscene call(s) switched off in
+    'Room_Primus_Boss_0'.` and no `Playing cutscene 'TEMP CUTSCENE'` line; the boss
+    preview doesn't play and the boss music still starts. Reload the mod,
+    start a new run: same. Same with Dream Arena loaded.
 
 ## Conventions
 
