@@ -1,7 +1,7 @@
 [h2]v0.14.0[/h2]
 [b]New[/b]
 [list]
-[*]Wave vote: after a wave is cleared, and before wave 1, press Tab to vote. Once every live player has voted, the next wave starts right away.
+[*]Wave vote: after a wave is cleared, and before wave 1, press Tab to vote. Once every live player has voted, the next wave starts right away. If someone cancels it, type !vote in chat to bring it back.
 [/list]
 
 [b]Updated[/b]
