@@ -54,6 +54,10 @@ internal static class LogText
 
 	public const string TrackerFailed = "wave tracker: update failed.";
 
+	public const string ContinueSaveFailed = "continue save: failed; the run resumes without Last Stand's progress.";
+
+	public const string ContinueSaveMissing = "continue save: no Last Stand progress in this save.";
+
 	public const string WaveVoteFailed = "wave vote: failed; the next wave starts on its timer.";
 
 	public const string CheatNoHostHero = "cheat: the host has no living hero to drop it near.";
@@ -422,6 +426,23 @@ internal static class LogText
 	public static string WaveCleared(int wave)
 	{
 		return $"wave {wave} cleared.";
+	}
+
+	public static string ContinueSaveWritten(string progress)
+	{
+		return $"continue save: progress '{progress}' saved with the run.";
+	}
+
+	public static string ContinueSaveRestored(int wave, bool wasInProgress)
+	{
+		return wasInProgress
+			? $"continue save: the saved wave was in progress, so it replays; resuming after wave {wave}."
+			: $"continue save: resuming after wave {wave}.";
+	}
+
+	public static string ContinueSaveUnusable(string progress)
+	{
+		return $"continue save: progress '{progress}' has no wave to resume; starting at wave 1.";
 	}
 
 	public static string WaveVoteOpened(int wave, int seconds)

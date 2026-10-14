@@ -13,31 +13,98 @@ internal static class ProgressStore
 
 	private const int OldestFieldCount = 4;
 
+	private const int RunField = 0;
+
+	private const int NodeField = 1;
+
+	private const int WaveField = 2;
+
+	private const int FlagField = 3;
+
 	private const int FormatField = 4;
 
 	private const int PaceField = 5;
 
 	public static string CurrentRunKey()
 	{
-		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
 		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
-		if (game == null || zones == null)
-		{
-			return null;
-		}
-
-		return game.GetInstanceID().ToString(CultureInfo.InvariantCulture) + Tuning.RunKeySeparator +
-		       zones.worldSeed.ToString(CultureInfo.InvariantCulture);
+		return zones != null ? RunKey(zones.worldSeed.ToString(CultureInfo.InvariantCulture)) : null;
 	}
 
 	public static void Save(int node, int wave, bool inProgress, PaceLedger pace)
 	{
 		string run = CurrentRunKey();
-		if (run == null)
+		if (run != null)
 		{
-			return;
+			Store(run, node, wave, inProgress, pace);
+		}
+	}
+
+	public static bool TryLoad(int node, out int wave, out bool inProgress, out PaceLedger pace)
+	{
+		string run = CurrentRunKey();
+		if (run == null || !TryParse(Stored(), out string savedRun, out int savedNode, out wave, out inProgress, out pace)
+		    || savedRun != run || savedNode != node)
+		{
+			wave = 0;
+			inProgress = false;
+			pace = new PaceLedger();
+			return false;
 		}
 
+		return true;
+	}
+
+	public static string Snapshot()
+	{
+		string run = CurrentRunKey();
+		return run != null && TryParse(Stored(), out string savedRun, out _, out _, out _, out _) && savedRun == run
+			? Stored()
+			: null;
+	}
+
+	public static bool TryRestore(string saved, out int wave, out bool wasInProgress)
+	{
+		wave = 0;
+		wasInProgress = false;
+		if (!TryParse(saved, out string savedRun, out int node, out int savedWave, out wasInProgress,
+			    out PaceLedger pace))
+		{
+			return false;
+		}
+
+		int separator = savedRun.IndexOf(Tuning.RunKeySeparator, StringComparison.Ordinal);
+		string run = separator >= 0 ? RunKey(savedRun.Substring(separator + Tuning.RunKeySeparator.Length)) : null;
+		wave = wasInProgress ? savedWave - 1 : savedWave;
+		if (run == null || wave < Tuning.FirstWave)
+		{
+			return false;
+		}
+
+		Store(run, node, wave, false, pace);
+		return true;
+	}
+
+	public static void Forget()
+	{
+		AppDomain.CurrentDomain.SetData(ModIdentity.ProgressSlot, null);
+	}
+
+	private static string RunKey(string worldSeed)
+	{
+		GameManager game = NetworkedManagerBase<GameManager>.softInstance;
+		return game != null
+			? game.GetInstanceID().ToString(CultureInfo.InvariantCulture) + Tuning.RunKeySeparator + worldSeed
+			: null;
+	}
+
+	private static string Stored()
+	{
+		return AppDomain.CurrentDomain.GetData(ModIdentity.ProgressSlot) as string;
+	}
+
+	private static void Store(string run, int node, int wave, bool inProgress, PaceLedger pace)
+	{
 		string data = string.Join(Separator.ToString(), run, node.ToString(CultureInfo.InvariantCulture),
 			wave.ToString(CultureInfo.InvariantCulture),
 			inProgress ? Tuning.ProgressInProgressFlag : Tuning.ProgressBetweenWavesFlag,
@@ -45,39 +112,35 @@ internal static class ProgressStore
 		AppDomain.CurrentDomain.SetData(ModIdentity.ProgressSlot, data);
 	}
 
-	public static bool TryLoad(int node, out int wave, out bool inProgress, out PaceLedger pace)
+	private static bool TryParse(string data, out string run, out int node, out int wave, out bool inProgress,
+		out PaceLedger pace)
 	{
+		run = null;
+		node = 0;
 		wave = 0;
 		inProgress = false;
 		pace = new PaceLedger();
-		string run = CurrentRunKey();
-		if (run == null || !(AppDomain.CurrentDomain.GetData(ModIdentity.ProgressSlot) is string data))
+		if (data == null)
 		{
 			return false;
 		}
 
 		string[] parts = data.Split(Separator);
-		if (parts.Length < OldestFieldCount || parts.Length > FieldCount || parts[0] != run
-		    || !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int savedNode)
-		    || savedNode != node
-		    || !int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out wave)
+		if (parts.Length < OldestFieldCount || parts.Length > FieldCount
+		    || !int.TryParse(parts[NodeField], NumberStyles.Integer, CultureInfo.InvariantCulture, out node)
+		    || !int.TryParse(parts[WaveField], NumberStyles.Integer, CultureInfo.InvariantCulture, out wave)
 		    || wave <= 0)
 		{
-			wave = 0;
 			return false;
 		}
 
-		inProgress = parts[3] == Tuning.ProgressInProgressFlag;
+		run = parts[RunField];
+		inProgress = parts[FlagField] == Tuning.ProgressInProgressFlag;
 		if (parts.Length == FieldCount && parts[FormatField] == ModIdentity.ProgressPaceFormat)
 		{
 			pace = PaceLedger.Parse(parts[PaceField]);
 		}
 
 		return true;
-	}
-
-	public static void Forget()
-	{
-		AppDomain.CurrentDomain.SetData(ModIdentity.ProgressSlot, null);
 	}
 }

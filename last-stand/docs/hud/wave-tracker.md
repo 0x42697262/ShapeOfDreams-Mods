@@ -47,7 +47,7 @@ quest tracker`.
 
 ## The wave count never resets
 
-Two things used to send a run back to wave 1, and both are fixed:
+Three things used to send a run back to wave 1, and all are fixed:
 
 - **Errors.** Any exception in the session tick used to stop the whole
   session, and the next tick started over at wave 1. Now a failed tick is
@@ -68,6 +68,38 @@ Two things used to send a run back to wave 1, and both are fixed:
   of Cleansing, the Shrine of Ascension, the Maw of Doom, the Shrine of
   Destiny and the Hatred Remnant already standing are reused rather than
   doubled.
+
+- **Quitting and continuing.** Leaving a run for the lobby or the main
+  menu and continuing it later ("resume the dream") used to restart at
+  wave 1, with the fast-kill raise gone. The progress above lived only in
+  memory, keyed by the `GameManager`'s instance ID, and a continued run
+  gets a new `GameManager`. Now it's also written into the game's own
+  continue save. When the host quits, the game calls
+  `GameManager.SaveContinueDataMidRun` (also after a boss kill and on some
+  locks), which builds a `DewPersistence.GameData` with
+  `DewPersistence.SerializeGameData`. A postfix there (`ContinueSaveWritePatch`,
+  host in the mode only) adds one entry to its `managerPersistentData`:
+  key `LastStand`, field `progress`, the same string as in memory (arena
+  node, wave, in progress or not, fast-kill raise). The game only reads
+  entries named after its own managers, so it ignores ours, and the save
+  stays loadable without the mod. On continue, `PlayGameManager` passes the
+  save to `DewPersistence.ApplyGameData`; a prefix there
+  (`ContinueSaveReadPatch`) reads the entry back into memory under the new
+  `GameManager`'s instance ID and the saved world seed (the game restores
+  `ZoneManager._worldSeed`, a `[SaveVar]`), so the arrival in the arena
+  resumes it like a mod reload. The read doesn't check the game mode,
+  since the lobby settings may not be restored yet, but it only reads Last
+  Stand's own entry. The difficulty comes back with it: the monster world
+  is the run's world (saved by the game), plus the wave's scheduled rise,
+  plus the saved fast-kill raise.
+
+  Monsters aren't in the continue save, so a wave that was being fought
+  when the host quit replays from its start: the progress is restored as
+  the wave before it, cleared, and the next wave follows the usual break.
+  Log: `continue save: progress '…' saved with the run.` on quitting, and
+  `continue save: resuming after wave N.` (or `…was in progress, so it
+  replays; resuming after wave N.`) on continuing. A save from before this
+  fix logs `no Last Stand progress in this save.` and starts at wave 1.
 
 The crash behind the reset at wave 10 came from the game's
 `RoomMonsters.SpawnMiniBoss`, which always calls `SelectMiniBoss` first. That

@@ -18,6 +18,10 @@ internal static partial class ModIdentity
 
 	public const string ProgressPaceFormat = "pace3";
 
+	public const string ContinueSaveKey = Tag;
+
+	public const string ContinueProgressField = "progress";
+
 	public const string NoPlayerKey = "x";
 
 	public const string SteamPlayerKeyPrefix = "s";
