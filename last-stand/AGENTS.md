@@ -575,6 +575,11 @@ These were checked in the decompiled code.
   `RpcInvokeVoteStarted(player)`, shows the player's name and
   `voteRemainingSeconds`, and closes on `RpcInvokeVoteCompleted` or
   `RpcInvokeVoteCanceled`. See `docs/waves/wave-vote.md`.
+- **Chat.** `ChatManager.CmdSendChatMessage(content)` runs
+  `UserCode_CmdSendChatMessage__String__NetworkConnectionToClient(content,
+  sender)` on the server, for the host's messages too: it trims, rate-limits,
+  sanitizes and broadcasts. `sender.GetPlayer()` (server only) finds the
+  sender's `DewPlayer`.
 - **Zones.** `ZoneManager.LoadNextZoneByContentSettings` lists zones with
   `DewResources.FindAllByNameSubstring<Zone>("Zone_")` and
   `DewBuildProfile.current.content.FilterZones`. `Zone.zoneTier` orders them.
@@ -1308,8 +1313,12 @@ Each answer still needs to be seen working:
     now.` and the window closes. Next break, don't vote: the window closes
     when the wave starts on its timer. Next break, press Escape: chat says
     you canceled, then `Vote canceled. Wave N arrives in S s.` with the
-    seconds left, the log shows `canceled by a player; … in S s`, no new
-    window that break. Co-op: one player's Escape closes the window for
+    seconds left and `Type !vote to vote again.`, the log shows `canceled by
+    a player; … in S s`, no new window that break until someone types
+    `!vote`: then the window comes back for everyone with no votes, and
+    Tab starts the wave. `!vote` during a wave, with an open vote or with
+    5 s or less left logs `ignored.` A vanilla client's `!vote` works the
+    same. Co-op: one player's Escape closes the window for
     everyone. With a shrine conversation open or a memory on the ground, a
     full vote still starts the wave with no "can't travel" message. Co-op
     with a vanilla client: the client sees the window and its vote counts;

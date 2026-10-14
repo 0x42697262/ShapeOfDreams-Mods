@@ -147,6 +147,24 @@ internal sealed class LastStandSession
 		return _vote.IsOpen;
 	}
 
+	public void OnChat(DewPlayer player, string content)
+	{
+		if (player == null || content == null
+		    || !string.Equals(content.Trim(), CommandText.VoteChat, StringComparison.OrdinalIgnoreCase))
+		{
+			return;
+		}
+
+		int wave = _waves.CurrentWave + 1;
+		if (!InTimedBreak() || !_vote.Reopen(wave, SecondsUntilNextWave()))
+		{
+			Log.Info(LogText.VoteChatIgnored(player.netId));
+			return;
+		}
+
+		Log.Info(LogText.VoteChatReopened(player.netId, wave));
+	}
+
 	public void SpawnTestBoss(string typeName)
 	{
 		if (_phase != SessionPhase.Fighting)
@@ -373,14 +391,14 @@ internal sealed class LastStandSession
 
 	private void TickWaveVote(double now)
 	{
-		if (_waves.WaveInProgress || _waves.WaitingForCurse)
+		if (!InTimedBreak())
 		{
 			_vote.Close();
 			return;
 		}
 
 		int wave = _waves.CurrentWave + 1;
-		int secondsLeft = (int)Math.Ceiling(_waves.SecondsUntilNextWave(now));
+		int secondsLeft = SecondsUntilNextWave();
 		switch (_vote.Tick(wave, secondsLeft))
 		{
 			case WaveVoteResult.Passed:
@@ -394,6 +412,16 @@ internal sealed class LastStandSession
 				ChatNotices.Broadcast(Messages.WaveVoteCanceled(wave, secondsLeft));
 				break;
 		}
+	}
+
+	private bool InTimedBreak()
+	{
+		return _phase == SessionPhase.Fighting && !_waves.WaveInProgress && !_waves.WaitingForCurse;
+	}
+
+	private int SecondsUntilNextWave()
+	{
+		return (int)Math.Ceiling(_waves.SecondsUntilNextWave(_now));
 	}
 
 	public string Describe()

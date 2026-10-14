@@ -48,6 +48,26 @@ internal sealed class WaveVote
 		}
 	}
 
+	public bool Reopen(int wave, int secondsLeft)
+	{
+		try
+		{
+			ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
+			if (zones == null || zones.isVoting || secondsLeft <= Tuning.WaveVoteMinSeconds)
+			{
+				return false;
+			}
+
+			Open(zones, wave, secondsLeft);
+			return _open != null;
+		}
+		catch (Exception e)
+		{
+			_errors.Report(Time.time, LogText.WaveVoteFailed, e);
+			return false;
+		}
+	}
+
 	public void Close()
 	{
 		_spent = false;

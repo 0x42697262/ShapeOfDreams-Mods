@@ -44,6 +44,8 @@ internal static class GameNames
 
 	public const string VoteStatusUpdate = "UpdateVoteStatus";
 
+	public const string ChatMessageCommand = "UserCode_CmdSendChatMessage__String__NetworkConnectionToClient";
+
 	public const string VoteStartedRpc = "RpcInvokeVoteStarted";
 
 	public const string VoteCompletedRpc = "RpcInvokeVoteCompleted";

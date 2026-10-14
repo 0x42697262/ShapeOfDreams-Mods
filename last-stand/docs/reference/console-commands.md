@@ -19,3 +19,11 @@ With Developer Mode on (F1, then `` ` ``):
 | `laststand_testboss [type]` | Cheat: spawns a weak level 1 heroic boss (host, in the arena; needs `Allow cheat commands`) |
 | `laststand_config` | Opens the Last Stand settings window. Refused while connected to someone else's lobby or run (`NetworkClient.active` without `NetworkServer.active`): only the host's settings apply. Works on the title screen and when hosting |
 | `laststand_solo` | Starts a solo Last Stand run |
+
+## Chat commands
+
+Any player, vanilla clients included, types these in the game's chat:
+
+| Command | Does |
+|---|---|
+| `!vote` | Reopens the [wave vote](../waves/wave-vote.md) after someone canceled it, in a break with more than 5 s left |

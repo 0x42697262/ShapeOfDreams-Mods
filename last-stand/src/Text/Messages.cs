@@ -148,7 +148,8 @@ internal static class Messages
 
 	public static string WaveVoteCanceled(int wave, int seconds)
 	{
-		return SharedMessages.Notice($"Vote canceled. Wave {wave} arrives in {seconds} s.");
+		return SharedMessages.Notice(
+			$"Vote canceled. Wave {wave} arrives in {seconds} s. Type {CommandText.VoteChat} to vote again.");
 	}
 
 	public static string WaveVotePassed(int wave)

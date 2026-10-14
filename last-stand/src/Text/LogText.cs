@@ -434,6 +434,16 @@ internal static class LogText
 		return $"wave vote: canceled by a player; wave {wave} starts on its timer in {seconds} s.";
 	}
 
+	public static string VoteChatReopened(uint player, int wave)
+	{
+		return $"wave vote: player {player} typed {CommandText.VoteChat}; vote for wave {wave} reopened.";
+	}
+
+	public static string VoteChatIgnored(uint player)
+	{
+		return $"wave vote: player {player} typed {CommandText.VoteChat}, but a vote is open or none can open now; ignored.";
+	}
+
 	public static string WaveVotePassed(int wave)
 	{
 		return $"wave vote: every live player voted; wave {wave} starts now.";

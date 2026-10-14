@@ -20,9 +20,16 @@ break ends, as before. It's always on; there's no setting.
   everyone (the cancel key, `Escape` by default). The game's cancel runs:
   chat says the player canceled the travel vote and the window closes on
   every screen. Last Stand then posts `Vote canceled. Wave N arrives in S
-  s.` The wave starts on its timer, and the vote comes back after the next
-  wave. If several players press it, the first cancel wins: the cancel key
-  only works while a vote is open, so the others do nothing.
+  s. Type !vote to vote again.` The wave starts on its timer unless someone
+  brings the vote back. If several players press it, the first cancel wins:
+  the cancel key only works while a vote is open, so the others do nothing.
+- **`!vote` brings it back.** Any player typing `!vote` in chat (any case)
+  reopens the window for everyone, with every vote reset, as long as the
+  next wave waits on a timer with more than 5 s left and no vote is open.
+  It doesn't count as the typer's vote; they press Tab like everyone else.
+  The `!vote` message itself still shows in chat. Typed at any other time,
+  it's ignored (log: `… typed !vote, but a vote is open or none can open
+  now; ignored.`).
 - **It closes** when the wave starts, by vote or by timer, and when the
   fight stops (camp, game over, mod unload).
 
@@ -74,6 +81,14 @@ The window's text is the game's travel-vote text ("<host> started a travel
 vote", "traveling in N seconds"), since vanilla clients can only show what
 the game has. With `voteType` `None`, none of the next-node, next-zone or
 sidetrack panels show.
+
+`!vote` works with only the host modded because every chat message goes
+through the server: a client's `ChatManager.CmdSendChatMessage` runs
+`UserCode_CmdSendChatMessage__String__NetworkConnectionToClient` on the
+host, which broadcasts it. `ChatCommandPatch`, a postfix there, hands the
+text and the sender's player (`NetworkConnectionToClient.GetPlayer()`) to
+the session, which reopens the vote through `WaveVote.Reopen`. The host's
+own messages take the same path.
 
 If any step throws, the error is logged (at most once every 5 s), the vote
 is given up for that break, and the wave starts on its timer.

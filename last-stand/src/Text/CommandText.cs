@@ -2,6 +2,8 @@ namespace LastStand.Text;
 
 internal static class CommandText
 {
+	public const string VoteChat = "!vote";
+
 	public const string Status = "laststand_status";
 	public const string StatusDescription = "Report the Last Stand session state";
 
