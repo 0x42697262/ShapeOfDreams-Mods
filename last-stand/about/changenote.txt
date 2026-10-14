@@ -11,6 +11,7 @@
 
 [b]Fixed[/b]
 [list]
+[*]Leaving a run and resuming it later started over at wave 1 with the difficulty reset. It now continues from the last cleared wave (a wave you quit during starts again).
 [*]The Primus boss preview cutscene could still play in the arena with cutscene skipping on.
 [/list]
 
