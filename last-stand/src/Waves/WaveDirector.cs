@@ -389,7 +389,7 @@ internal sealed class WaveDirector
 
 	private static double MonsterWorld(double extraWorlds)
 	{
-		return WorldScaling.RealZoneIndex() + Tuning.WorldOfZoneIndexZero + extraWorlds;
+		return WorldScaling.RealWorld() + extraWorlds;
 	}
 
 	private void OnEnemyHit(EnemyHit hit)

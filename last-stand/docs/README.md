@@ -31,6 +31,7 @@ For working notes, hard constraints and the in-game test list, see
 | [Environments](waves/environments.md) | Room modifiers that last one wave |
 | [Fast kill follows the players](waves/pace-by-player.md) | Why the fast kill's world raise shrinks when the player who earned it leaves |
 | [Dark urge](waves/dark-urge.md) | The co-op curse that lets heroes hurt each other |
+| [Wave vote](waves/wave-vote.md) | Everyone votes with Tab in a break to start the next wave at once |
 | [Curse to start](waves/curse-to-start.md) | Difficulty option: each wave waits for a curse on everyone |
 
 ## Rewards

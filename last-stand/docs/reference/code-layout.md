@@ -13,7 +13,7 @@
 | `src/Combat` | Monster catalog, spawning, heroic bosses, stat bonuses on spawn, hunter zones, wave environments, tracking enemies, Pain |
 | `src/Loot` | Loot rules, rarity tables and ledger (plain logic), drops |
 | `src/Well` | The Dream Well and Altar of Cleansing (kept at unlimited uses), the Shrine of Ascension (opens after wave 10, uses back every 10th wave), the Maw of Doom at a fixed use count, the Shrine of Destiny (2 claims per player each wave), and the Hatred Remnant (once per player each wave) |
-| `src/Game` | Thin wrappers over game APIs (such as `WorldScaling`, the game's world curves), and game identifiers |
+| `src/Game` | Thin wrappers over game APIs (such as `WorldScaling`, the game's world curves, and `WaveVote`, the game's vote window), and game identifiers |
 | `src/Config` | The mod config, its validated snapshot, the choice lists, the schema version (`ConfigSchema.Current`) and internal tuning |
 | `src/Text` | Every player-facing, config, log and command string, and `ModText` (mode name and description, window note, notice color, tick error, page titles) |
 | `src/Patches` | Harmony hooks. Each one only hands off to the code above |

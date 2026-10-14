@@ -28,6 +28,8 @@ internal static class Tuning
 
 	public const float TrackerRefreshSeconds = 1f;
 
+	public const int WaveVoteMinSeconds = 5;
+
 	public const int MinStartingWorld = 1;
 
 	public const double StartingDreamDustGrowthPerWorld = 2.0;

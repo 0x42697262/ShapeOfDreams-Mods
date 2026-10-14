@@ -1,3 +1,5 @@
+using LastStand.Config;
+
 namespace LastStand.Game;
 
 internal static class WorldScaling
@@ -16,6 +18,11 @@ internal static class WorldScaling
 	{
 		ZoneManager zones = NetworkedManagerBase<ZoneManager>.softInstance;
 		return zones != null ? zones.currentZoneIndex : ZoneIndexOfWorldOne;
+	}
+
+	public static int RealWorld()
+	{
+		return (int)RealZoneIndex() + Tuning.WorldOfZoneIndexZero;
 	}
 
 	public static void BonusPercentFor(Entity entity, double extraWorlds, out double healthPercent,

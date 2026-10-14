@@ -16,7 +16,9 @@ essences and turns what you collect into upgrades.
   room by default; the host can pick another world's, or turn on
   **Random arena** to get a random world's boss room each run.
 - A new wave starts **once the last one is cleared**, after a short break.
-  Each wave is bigger and stronger than the last.
+  Each wave is bigger and stronger than the last. In the break, everyone
+  can press **Tab** to vote; once every live player has, the next wave
+  starts right away.
 - Monsters get **stronger every wave by the game's own world scaling**:
   they fight like one world higher every 25 waves, a little more each
   wave, and from wave 200 one world higher every 5 waves. Only their

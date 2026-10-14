@@ -37,5 +37,7 @@ player takes a curse at the [Hatred Remnant](../shrines/hatred-remnant.md).
   `laststand_skip` skip the hold the same way.
 - After a mod reload in a break, the hold starts again and the choices are
   given back, so nobody is locked out.
+- There's no [wave vote](wave-vote.md) during the hold. After a curse,
+  the 3 s delay is too short for one (votes open with more than 5 s left).
 - Turning the option off in a break lets the next wave start after the
   normal break.

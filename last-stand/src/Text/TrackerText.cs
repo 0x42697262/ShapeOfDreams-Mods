@@ -4,9 +4,9 @@ namespace LastStand.Text;
 
 internal static class TrackerText
 {
-	public static string NextWave(int wave, int seconds)
+	public static string World(int world)
 	{
-		return $"Wave {wave} in {seconds}s";
+		return $"World {world}";
 	}
 
 	public static string AwaitingCurse(int wave)

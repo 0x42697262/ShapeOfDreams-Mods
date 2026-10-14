@@ -54,6 +54,8 @@ internal static class LogText
 
 	public const string TrackerFailed = "wave tracker: update failed.";
 
+	public const string WaveVoteFailed = "wave vote: failed; the next wave starts on its timer.";
+
 	public const string CheatNoHostHero = "cheat: the host has no living hero to drop it near.";
 
 	public const string SkipNotPossible = "skip: only works while fighting in the arena.";
@@ -420,6 +422,21 @@ internal static class LogText
 	public static string WaveCleared(int wave)
 	{
 		return $"wave {wave} cleared.";
+	}
+
+	public static string WaveVoteOpened(int wave, int seconds)
+	{
+		return $"wave vote: open for wave {wave}, {seconds} s left; it starts once every live player votes.";
+	}
+
+	public static string WaveVoteCanceled(int wave)
+	{
+		return $"wave vote: canceled by a player; wave {wave} starts on its timer.";
+	}
+
+	public static string WaveVotePassed(int wave)
+	{
+		return $"wave vote: every live player voted; wave {wave} starts now.";
 	}
 
 	public static string SpawnSkipped(EnemyTier tier)

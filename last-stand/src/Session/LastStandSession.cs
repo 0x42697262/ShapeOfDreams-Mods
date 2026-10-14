@@ -28,6 +28,8 @@ internal sealed class LastStandSession
 
 	private readonly WaveTracker _tracker = new WaveTracker();
 
+	private readonly WaveVote _vote = new WaveVote();
+
 	private readonly StartingWorld _world = new StartingWorld();
 
 	private readonly GoldPrices _goldPrices = new GoldPrices();
@@ -137,6 +139,12 @@ internal sealed class LastStandSession
 		_pain.Tick(now, _settings.Pain);
 		_panel.Tick(_waves.HasArenaModifier || _pain.ZoneActive);
 		Shrines.Tick(now, _waves.ClearedWaves, _settings.AscensionResetWaves, _settings.Waves.CurseToStart);
+		TickWaveVote(now);
+	}
+
+	public bool OwnsVote()
+	{
+		return _vote.IsOpen;
 	}
 
 	public void SpawnTestBoss(string typeName)
@@ -360,7 +368,27 @@ internal sealed class LastStandSession
 			return TrackerText.WaveRunning(_waves.CurrentWave, _enemies.Occupied(now) + _waves.PendingSpawns);
 		}
 
-		return TrackerText.NextWave(_waves.CurrentWave + 1, (int)Math.Ceiling(_waves.SecondsUntilNextWave(now)));
+		return TrackerText.World(WorldScaling.RealWorld());
+	}
+
+	private void TickWaveVote(double now)
+	{
+		if (_waves.WaveInProgress || _waves.WaitingForCurse || _waves.CurrentWave < Tuning.FirstWave)
+		{
+			_vote.Close();
+			return;
+		}
+
+		int wave = _waves.CurrentWave + 1;
+		if (!_vote.Tick(wave, (int)Math.Ceiling(_waves.SecondsUntilNextWave(now))))
+		{
+			return;
+		}
+
+		_vote.Close();
+		_waves.StartNextWaveNow(now);
+		Log.Info(LogText.WaveVotePassed(wave));
+		ChatNotices.Broadcast(Messages.WaveVotePassed(wave));
 	}
 
 	public string Describe()
@@ -429,6 +457,7 @@ internal sealed class LastStandSession
 		_goldPrices.Restore();
 		_curseStart.Reset();
 		_music.Reset();
+		_vote.Close();
 		_arenaNode = ArenaLocator.NoNode;
 	}
 

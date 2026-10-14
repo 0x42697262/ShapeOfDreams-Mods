@@ -560,6 +560,21 @@ These were checked in the decompiled code.
   and spawns `Shrine_BossSoul`, then a mid-run save. A revive routine also runs.
   `Monster` doesn't override `OnDeath`, so the base is `Entity.OnDeath`.
   `Mon_Primus_BossPrimusAeron.OnDeath` calls `Primus_Ending.StartPrimusDeath`.
+- **Votes.** `ZoneManager.isVoting`, `voteType`, `voteData` and
+  `voteRemainingSeconds` are SyncVars with private setters;
+  `DewPlayer.isReady` is a SyncVar with a public setter. The vote key
+  (`controls.travelVote`, Tab / Select) sends `CmdSetIsReady(!isReady)` and
+  the cancel key (`travelVoteCancel`, Escape / Start) `CmdCancelVote`, both
+  only while `isVoting`. `CmdSetIsReady` calls `UpdateVoteStatus` (internal,
+  server), which 0.4 s later runs `WaitAndCompleteVote` if every player is
+  ready or has no live hero. That waits on `GetCannotTravelReason` (held
+  item, conversation, artifact story, dropped memory or essence reachable
+  from `Rift.instance`; a live boss cancels) before acting on `voteType`;
+  `None` does nothing. `StartVote_Imp` (private) marks the starter ready and
+  counts down from 6 s. The window (`UI_InGame_VoteDisplay`) opens on
+  `RpcInvokeVoteStarted(player)`, shows the player's name and
+  `voteRemainingSeconds`, and closes on `RpcInvokeVoteCompleted` or
+  `RpcInvokeVoteCanceled`. See `docs/waves/wave-vote.md`.
 - **Zones.** `ZoneManager.LoadNextZoneByContentSettings` lists zones with
   `DewResources.FindAllByNameSubstring<Zone>("Zone_")` and
   `DewBuildProfile.current.content.FilterZones`. `Zone.zoneTier` orders them.
@@ -645,7 +660,7 @@ Each answer still needs to be seen working:
     souls still appear.
 24. **Wave tracker:** in the arena the quest tracker shows "Threat Level
     Rising / Powerful Monsters" with a kill icon and `Wave 12: 34 monsters
-    left` or `Wave 13 in 5s`, on the host and a vanilla client, including
+    left` or, between waves, `World N`, on the host and a vanilla client, including
     one who joins mid-run (log: `wave tracker: title sent to N ready
     connection(s)`). It never reads "Limbo" or `ui.!`. Check that the
     once-a-second update flash isn't distracting, that it's gone in camp and
@@ -1286,6 +1301,22 @@ Each answer still needs to be seen working:
     'Room_Primus_Boss_0'.` and no `Playing cutscene 'TEMP CUTSCENE'` line; the boss
     preview doesn't play and the boss music still starts. Reload the mod,
     start a new run: same. Same with Dream Arena loaded.
+131. **Wave vote** (`WaveVote`): clear wave 1 solo. The vote window opens
+    with no travel panel, its "traveling in" seconds count down with the
+    break, and the log shows `wave vote: open for wave 2, 20 s left`. Press
+    Tab: wave 2 starts at once, chat says `Everyone is ready. Wave 2 starts
+    now.` and the window closes. Next break, don't vote: the window closes
+    when the wave starts on its timer. Next break, press Escape: chat says
+    you canceled, the log shows `canceled by a player`, no new window that
+    break. With a shrine conversation open or a memory on the ground, a
+    full vote still starts the wave with no "can't travel" message. Co-op
+    with a vanilla client: the client sees the window and its vote counts;
+    the wave waits until both have voted, and a knocked-out player doesn't
+    block it. No window before wave 1, during a curse hold or in the 3 s
+    after a curse.
+132. **Tracker shows the world between waves**: with `Starting world` 6,
+    the quest tracker reads `World 6` between waves (never `Wave N in Ns`)
+    and `Wave N: M monsters left` during a wave.
 
 ## Conventions
 

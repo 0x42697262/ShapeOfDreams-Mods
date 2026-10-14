@@ -3,7 +3,9 @@
 The first wave starts 10 s after arrival. A wave is **cleared** when everything
 in it has spawned and died. The next wave starts 20 s after that, or 40 s after
 a wave that had a miniboss, a Pain miniboss or a heroic boss (10, 20, 30, 40,
-50, 60… and the heroic boss waves 25, 75, 125…), so the party can use the well and pick up rewards. The pace is
+50, 60… and the heroic boss waves 25, 75, 125…), so the party can use the well and pick up rewards.
+If every live player votes in the break's [wave vote](wave-vote.md) (`Tab`),
+the next wave starts at once. The pace is
 set by how fast the party kills, not by a timer. The chat notice for a cleared
 wave gives the break that applies. After a mod reload between waves, the
 normal break is used, because the cleared wave's plan didn't survive. The score is the wave reached.

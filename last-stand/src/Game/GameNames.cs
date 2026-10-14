@@ -42,6 +42,12 @@ internal static class GameNames
 
 	public const string ShrineOnUse = "OnUse";
 
+	public const string VoteStatusUpdate = "UpdateVoteStatus";
+
+	public const string VoteStartedRpc = "RpcInvokeVoteStarted";
+
+	public const string VoteCompletedRpc = "RpcInvokeVoteCompleted";
+
 	public const string DefaultTestBoss = ForestBoss;
 
 	public const string DefaultHeroicBosses =

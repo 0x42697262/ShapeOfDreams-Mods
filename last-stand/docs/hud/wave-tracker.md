@@ -17,7 +17,14 @@ tracker on the right shows the wave to everyone, vanilla clients included:
 |---|---|
 | Title | Threat Level Rising |
 | Description | Powerful Monsters |
-| Progress (kill icon) | `Wave 12: 34 monsters left` or `Wave 13 in 5s` |
+| Progress (kill icon) | `Wave 12: 34 monsters left` during a wave, `World 6` between waves |
+
+Between waves it shows the run's world (`ZoneManager.currentZoneIndex` + 1,
+which [Starting world](../start/starting-world.md) sets), not a countdown:
+the break's countdown is in the [wave vote](../waves/wave-vote.md) window.
+With [Curse to start](../waves/curse-to-start.md) holding the wave, it reads
+`Wave N: choose a curse`. The countdown (`Wave 13 in 5s`) was removed in
+v0.14.0.
 
 It works because `DewQuest.currentProgress` is a synced string that every
 client's tracker prints as-is, next to the icon for the synced `progressType`
