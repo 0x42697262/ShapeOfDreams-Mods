@@ -1,6 +1,6 @@
 # Wave vote
 
-After a wave is cleared, the game's own vote window (the one a travel vote
+After a wave is cleared, and on arrival before wave 1, the game's own vote window (the one a travel vote
 uses) opens for the break. Each player presses the vote key (`Tab` by
 default, `Select` on a gamepad) to mark themselves ready. Once every live
 player is ready, the next wave starts at once. Otherwise it starts when the
@@ -11,11 +11,11 @@ break ends, as before. It's always on; there's no setting.
   don't block it, and AI allies aren't asked. Solo, one press starts the
   wave. A player who joins during a break doesn't see the window (RPCs
   aren't replayed) but counts, and can still vote with the key.
-- **When it opens.** In a break on a timer after a cleared wave, with more
-  than 5 s left (`Tuning.WaveVoteMinSeconds`), so it doesn't flash up for
-  the last seconds or the 3 s after a curse. Not before wave 1 (the first
-  wave's 10 s arrival delay has no vote), and not while
-  [Curse to start](curse-to-start.md) holds the wave.
+- **When it opens.** Whenever the next wave waits on a timer with more
+  than 5 s left (`Tuning.WaveVoteMinSeconds`): every break after a cleared
+  wave, and the 10 s arrival delay before wave 1, so the party can skip
+  straight to it. Not in the last seconds or the 3 s after a curse, and
+  not while [Curse to start](curse-to-start.md) holds the wave.
 - **One vote per break.** Any player with a live hero can cancel it for
   everyone (the cancel key, `Escape` by default). The game's cancel runs:
   chat says the player canceled the travel vote and the window closes on

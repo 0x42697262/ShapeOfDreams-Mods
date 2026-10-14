@@ -660,7 +660,7 @@ Each answer still needs to be seen working:
     souls still appear.
 24. **Wave tracker:** in the arena the quest tracker shows "Threat Level
     Rising / Powerful Monsters" with a kill icon and `Wave 12: 34 monsters
-    left` or, between waves, `World N`, on the host and a vanilla client, including
+    left` or, between waves, `Wave N`, on the host and a vanilla client, including
     one who joins mid-run (log: `wave tracker: title sent to N ready
     connection(s)`). It never reads "Limbo" or `ui.!`. Check that the
     once-a-second update flash isn't distracting, that it's gone in camp and
@@ -1314,11 +1314,12 @@ Each answer still needs to be seen working:
     full vote still starts the wave with no "can't travel" message. Co-op
     with a vanilla client: the client sees the window and its vote counts;
     the wave waits until both have voted, and a knocked-out player doesn't
-    block it. No window before wave 1, during a curse hold or in the 3 s
-    after a curse.
-132. **Tracker shows the world between waves**: with `Starting world` 6,
-    the quest tracker reads `World 6` between waves (never `Wave N in Ns`)
-    and `Wave N: M monsters left` during a wave.
+    block it. On arrival, the window opens for wave 1 (`open for wave 1,
+    10 s left`) and a full vote starts it at once. No window during a curse
+    hold or in the 3 s after a curse.
+132. **Tracker shows the next wave between waves**: on arrival the quest
+    tracker reads `Wave 1`, after clearing wave 5 `Wave 6` (never `Wave N
+    in Ns`), and `Wave N: M monsters left` during a wave.
 
 ## Conventions
 

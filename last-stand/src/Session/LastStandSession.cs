@@ -368,12 +368,12 @@ internal sealed class LastStandSession
 			return TrackerText.WaveRunning(_waves.CurrentWave, _enemies.Occupied(now) + _waves.PendingSpawns);
 		}
 
-		return TrackerText.World(WorldScaling.RealWorld());
+		return TrackerText.UpcomingWave(_waves.CurrentWave + 1);
 	}
 
 	private void TickWaveVote(double now)
 	{
-		if (_waves.WaveInProgress || _waves.WaitingForCurse || _waves.CurrentWave < Tuning.FirstWave)
+		if (_waves.WaveInProgress || _waves.WaitingForCurse)
 		{
 			_vote.Close();
 			return;
