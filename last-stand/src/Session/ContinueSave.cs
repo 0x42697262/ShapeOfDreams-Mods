@@ -28,6 +28,14 @@ internal static class ContinueSave
 		}
 	}
 
+	public static void OnGameStarted()
+	{
+		if (DewNetworkManager.startSettings?.continueData == null)
+		{
+			ProgressStore.ForgetContinued();
+		}
+	}
+
 	public static void Read(DewPersistence.GameData data)
 	{
 		try

@@ -44,7 +44,7 @@ internal static class ProgressStore
 	{
 		string run = CurrentRunKey();
 		if (run == null || !TryParse(Stored(), out string savedRun, out int savedNode, out wave, out inProgress, out pace)
-		    || savedRun != run || savedNode != node)
+		    || (savedRun != run && savedRun != ModIdentity.ContinuedRunKey) || savedNode != node)
 		{
 			wave = 0;
 			inProgress = false;
@@ -52,7 +52,21 @@ internal static class ProgressStore
 			return false;
 		}
 
+		if (savedRun != run)
+		{
+			Store(run, node, wave, inProgress, pace);
+		}
+
 		return true;
+	}
+
+	public static void ForgetContinued()
+	{
+		if (TryParse(Stored(), out string savedRun, out _, out _, out _, out _)
+		    && savedRun == ModIdentity.ContinuedRunKey)
+		{
+			Forget();
+		}
 	}
 
 	public static string Snapshot()
@@ -67,8 +81,7 @@ internal static class ProgressStore
 	{
 		wave = 0;
 		wasInProgress = false;
-		if (!TryParse(saved, out string savedRun, out int node, out int savedWave, out wasInProgress,
-			    out PaceLedger pace))
+		if (!TryParse(saved, out _, out int node, out int savedWave, out wasInProgress, out PaceLedger pace))
 		{
 			Forget();
 			return false;
@@ -81,7 +94,7 @@ internal static class ProgressStore
 			return false;
 		}
 
-		Store(savedRun, node, wave, false, pace);
+		Store(ModIdentity.ContinuedRunKey, node, wave, false, pace);
 		return true;
 	}
 

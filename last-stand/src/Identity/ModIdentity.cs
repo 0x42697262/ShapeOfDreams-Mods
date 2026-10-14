@@ -22,6 +22,8 @@ internal static partial class ModIdentity
 
 	public const string ContinueProgressField = "progress";
 
+	public const string ContinuedRunKey = "continued";
+
 	public const string NoPlayerKey = "x";
 
 	public const string SteamPlayerKeyPrefix = "s";

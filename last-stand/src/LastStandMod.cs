@@ -32,6 +32,7 @@ public class LastStandMod : ModEntry
 
 	protected override void OnGameStarted()
 	{
+		ContinueSave.OnGameStarted();
 		Session?.Reset();
 		Session?.UseSettings(SessionSettings.From(config));
 	}

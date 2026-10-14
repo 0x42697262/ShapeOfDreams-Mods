@@ -112,9 +112,17 @@ Three things used to send a run back to wave 1, and all are fixed:
   reads entries named after its own managers, so it ignores ours, and the
   save stays loadable without the mod. On continue, `PlayGameManager`
   passes the save to `DewPersistence.ApplyGameData`; a prefix there
-  (`ContinueSaveReadPatch`) puts the entry back in memory, and the game
-  restores `runId`, so the arrival in the arena resumes it like a mod
-  reload. A save without the entry clears what's in memory, so a stale
+  (`ContinueSaveReadPatch`) puts the entry back in memory under the key
+  `continued` instead of its saved run key, since the game is loading that
+  very save and `runId` isn't restored yet at that point. The first arrival
+  in the arena takes a `continued` entry whatever the run, and stores it
+  again under the run's `runId`, so later mod reloads find it as usual.
+  When a game starts without continue data
+  (`DewNetworkManager.startSettings.continueData` is null), an unclaimed
+  `continued` entry is dropped, so a new run can't pick it up. Keying by the
+  saved run would break on saves written before the key changed: in
+  testing, a save keyed `instance:seed` resumed wave 31 into memory, the
+  arrival didn't match it against `runId`, and the run started at wave 1. A save without the entry clears what's in memory, so a stale
   mid-wave state can't be resumed. The read doesn't check the game mode,
   since the lobby settings may not be restored yet, but it only reads Last
   Stand's own entry. A wave saved as in progress (it shouldn't happen any
